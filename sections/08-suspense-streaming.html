@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suspense &amp; Streaming — App Router Guide</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="shell">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="content">
+    <div class="content-inner">
+      <div class="kicker">Chapter 8 · Part B — Contain the Unknown</div>
+      <h1>Suspense &amp; Streaming</h1>
+      <p class="lede">Loading is not a component concern — it's a structural one. Suspense moves "what shows while we wait" out of components and into the tree, where the framework can stream around it. This chapter covers how suspension works, what triggers it, and the loading-state doctrine that follows from it.</p>
+
+      <h2 id="mechanism">8.1 How Suspense actually works</h2>
+      <p>A <code>&lt;Suspense&gt;</code> boundary is a declaration about the tree: <em>"everything below this point may not be ready yet — here is what to show in its place."</em> When a component inside the boundary <strong>suspends</strong> (it's waiting on something asynchronous), React walks <em>up</em> the tree to the nearest boundary, renders its <code>fallback</code> there, and — when the wait resolves — swaps the real content into the exact same slot. The component itself never knows any of this happened. That's the entire point: the waiting is handled <em>above</em> the component, by structure, not <em>inside</em> it, by state.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+          <!-- three-phase storyboard -->
+          <text x="125" y="24" font-size="12.5" fill="#171717" text-anchor="middle" font-weight="600">t₀ — shell paints</text>
+          <text x="360" y="24" font-size="12.5" fill="#171717" text-anchor="middle" font-weight="600">t₁ — data resolves</text>
+          <text x="595" y="24" font-size="12.5" fill="#171717" text-anchor="middle" font-weight="600">t₂ — swap in place</text>
+
+          <!-- panel 1 -->
+          <rect x="30" y="36" width="190" height="180" rx="8" fill="#ffffff" stroke="#c9c9c9"/>
+          <rect x="44" y="50" width="162" height="26" rx="5" fill="#eaf3fe" stroke="#0070f3"/>
+          <text x="125" y="67" font-size="10" fill="#0757ba" text-anchor="middle">page header — known</text>
+          <rect x="44" y="86" width="162" height="116" rx="6" fill="#eaf3fe" stroke="#0070f3"/>
+          <text x="125" y="103" font-size="10" fill="#0757ba" text-anchor="middle">container — reserves space</text>
+          <rect x="56" y="112" width="138" height="80" rx="5" fill="#fdf3e3" stroke="#b45309" stroke-dasharray="5 4"/>
+          <text x="125" y="132" font-size="9.5" fill="#8a5a00" text-anchor="middle">⏳ fallback (skeleton)</text>
+          <rect x="66" y="144" width="118" height="7" rx="3" fill="#f3e2c0"/>
+          <rect x="66" y="158" width="118" height="7" rx="3" fill="#f3e2c0"/>
+          <rect x="66" y="172" width="86" height="7" rx="3" fill="#f3e2c0"/>
+          <text x="125" y="234" font-size="9.5" fill="#737373" text-anchor="middle">HTML streamed immediately —</text>
+          <text x="125" y="248" font-size="9.5" fill="#737373" text-anchor="middle">structure + fallback, real first paint</text>
+
+          <!-- panel 2 -->
+          <rect x="265" y="36" width="190" height="180" rx="8" fill="#ffffff" stroke="#c9c9c9"/>
+          <rect x="279" y="50" width="162" height="26" rx="5" fill="#eaf3fe" stroke="#0070f3"/>
+          <text x="360" y="67" font-size="10" fill="#0757ba" text-anchor="middle">page header — untouched</text>
+          <rect x="279" y="86" width="162" height="116" rx="6" fill="#eaf3fe" stroke="#0070f3"/>
+          <rect x="291" y="112" width="138" height="80" rx="5" fill="#fdf3e3" stroke="#b45309" stroke-dasharray="5 4"/>
+          <text x="360" y="132" font-size="9.5" fill="#8a5a00" text-anchor="middle">⏳ still fallback</text>
+          <rect x="301" y="144" width="118" height="7" rx="3" fill="#f3e2c0"/>
+          <rect x="301" y="158" width="118" height="7" rx="3" fill="#f3e2c0"/>
+          <text x="360" y="234" font-size="9.5" fill="#737373" text-anchor="middle">server finishes the await;</text>
+          <text x="360" y="248" font-size="9.5" fill="#737373" text-anchor="middle">content chunk streams down the wire</text>
+
+          <!-- panel 3 -->
+          <rect x="500" y="36" width="190" height="180" rx="8" fill="#ffffff" stroke="#c9c9c9"/>
+          <rect x="514" y="50" width="162" height="26" rx="5" fill="#eaf3fe" stroke="#0070f3"/>
+          <text x="595" y="67" font-size="10" fill="#0757ba" text-anchor="middle">page header — never moved</text>
+          <rect x="514" y="86" width="162" height="116" rx="6" fill="#eaf3fe" stroke="#0070f3"/>
+          <rect x="526" y="112" width="138" height="80" rx="5" fill="#e7f5ee" stroke="#2ea06d"/>
+          <text x="595" y="132" font-size="9.5" fill="#157a4c" text-anchor="middle">✓ real content</text>
+          <rect x="536" y="144" width="118" height="7" rx="3" fill="#bfe3d0"/>
+          <rect x="536" y="158" width="118" height="7" rx="3" fill="#bfe3d0"/>
+          <rect x="536" y="172" width="98" height="7" rx="3" fill="#bfe3d0"/>
+          <text x="595" y="234" font-size="9.5" fill="#737373" text-anchor="middle">swapped into the same slot —</text>
+          <text x="595" y="248" font-size="9.5" fill="#737373" text-anchor="middle">zero layout shift, container never changed</text>
+
+          <line x1="228" y1="126" x2="257" y2="126" stroke="#737373" stroke-width="1.5"/>
+          <line x1="463" y1="126" x2="492" y2="126" stroke="#737373" stroke-width="1.5"/>
+        </svg>
+        <figcaption>The lifecycle of one suspended region. The boundary lives inside a known container that reserves space, so the fallback → content swap moves nothing around it — this is the mechanical link between Suspense and content shifting.</figcaption>
+      </figure>
+
+      <h3 id="triggers">What triggers a Suspense boundary</h3>
+      <p>These are framework mechanics, worth knowing precisely: <span class="chip chip-critical">Critical</span></p>
+      <ul>
+        <li><strong>An async server component awaiting</strong> inside the boundary — the canonical App Router case. The server streams the fallback, keeps working, and streams the content when the await resolves.</li>
+        <li><strong><code>use(promise)</code></strong> in a client component — React 19's way to read a promise (often one passed down from a server component) with Suspense semantics.</li>
+        <li><strong>Suspense-enabled data hooks</strong> — SWR with <code>suspense:&nbsp;true</code>, React Query's <code>useSuspenseQuery</code>.</li>
+        <li><strong><code>lazy()</code> components</strong> and dynamic imports while their code loads (§5).</li>
+        <li><strong><code>useSearchParams()</code></strong> in a client component requires a boundary above it during prerendering — a mandatory, mechanical case with its own dedicated pattern in <a href="04-client-server-boundaries.html#searchparams-boundary">§4.6</a>.</li>
+      </ul>
+      <p>Just as important is what does <em>not</em> trigger suspension: <strong>a fetch inside <code>useEffect</code> is invisible to React.</strong> Nothing suspends, no boundary activates, no streaming happens — the framework doesn't even know the component is waiting. Every hand-rolled <code>isLoading</code> flag in our codebases exists because the fetching pattern opted out of the mechanism that would have made it unnecessary.</p>
+      <div class="callout callout-info">
+        <div class="callout-title">Boundaries don't re-trigger on updates</div>
+        <p>A boundary that has already revealed content will <strong>not</strong> revert to its fallback when an update inside it suspends during a <em>transition</em> — router navigations and <code>startTransition</code> updates keep the existing content visible while the new content prepares. React 19.2 further batches how server-streamed boundaries reveal. The fallback is a <em>first-render</em> device; everything after first render should follow the stale-content rules in §8.4.</p>
+      </div>
+
+      <h2 id="streaming">8.2 Streaming: Suspense on the server</h2>
+      <p>Without Suspense, server rendering is all-or-nothing: the response can't start until every fetch on the page finishes, so the slowest request sets the time-to-first-byte for the entire page. With Suspense boundaries, the server streams the page in order of readiness — the shell (layout, containers, everything known) goes out immediately, and each suspended region follows as its data resolves, injected into its reserved slot without re-rendering anything around it. (Making the waits themselves small and parallel — rather than just streaming around them — is <a href="09-blocking-requests.html">§9</a>'s subject.)</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 286" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+          <text x="14" y="24" font-size="12.5" fill="#b3261e" font-weight="600">Blocking SSR — response waits for the slowest fetch</text>
+          <!-- lane 1 -->
+          <rect x="90" y="38" width="150" height="24" rx="5" fill="#fdf3e3" stroke="#b45309"/>
+          <text x="165" y="54" font-size="10" fill="#8a5a00" text-anchor="middle">fetch program (fast)</text>
+          <rect x="90" y="68" width="330" height="24" rx="5" fill="#fdf3e3" stroke="#b45309"/>
+          <text x="255" y="84" font-size="10" fill="#8a5a00" text-anchor="middle">fetch report rows (slow)</text>
+          <rect x="424" y="53" width="90" height="24" rx="5" fill="#eaf3fe" stroke="#0070f3"/>
+          <text x="469" y="69" font-size="10" fill="#0757ba" text-anchor="middle">render all</text>
+          <rect x="518" y="53" width="120" height="24" rx="5" fill="#e7f5ee" stroke="#2ea06d"/>
+          <text x="578" y="69" font-size="10" fill="#157a4c" text-anchor="middle">send — first paint</text>
+          <line x1="638" y1="46" x2="638" y2="100" stroke="#2ea06d" stroke-dasharray="3 3"/>
+          <text x="638" y="114" font-size="10" fill="#157a4c" text-anchor="middle">user sees anything: late</text>
+          <text x="82" y="55" font-size="10" fill="#737373" text-anchor="end">server</text>
+
+          <line x1="14" y1="136" x2="706" y2="136" stroke="#e0e0e0"/>
+
+          <text x="14" y="162" font-size="12.5" fill="#157a4c" font-weight="600">Streaming SSR — response starts immediately, regions arrive by readiness</text>
+          <!-- shell chunk -->
+          <rect x="90" y="176" width="110" height="24" rx="5" fill="#e7f5ee" stroke="#2ea06d"/>
+          <text x="145" y="192" font-size="10" fill="#157a4c" text-anchor="middle">shell + fallbacks</text>
+          <line x1="202" y1="169" x2="202" y2="238" stroke="#2ea06d" stroke-dasharray="3 3"/>
+          <text x="212" y="185" font-size="10" fill="#157a4c">first paint — structure, header,</text>
+          <text x="212" y="199" font-size="10" fill="#157a4c">containers, skeletons in place</text>
+          <!-- parallel fetches -->
+          <rect x="90" y="212" width="150" height="24" rx="5" fill="#fdf3e3" stroke="#b45309"/>
+          <text x="165" y="228" font-size="10" fill="#8a5a00" text-anchor="middle">fetch program (fast)</text>
+          <rect x="244" y="212" width="86" height="24" rx="5" fill="#fdf3e3" stroke="#b45309"/>
+          <text x="287" y="228" font-size="10" fill="#8a5a00" text-anchor="middle">chunk: header</text>
+          <rect x="90" y="248" width="330" height="24" rx="5" fill="#fdf3e3" stroke="#b45309"/>
+          <text x="255" y="264" font-size="10" fill="#8a5a00" text-anchor="middle">fetch report rows (slow)</text>
+          <rect x="424" y="248" width="86" height="24" rx="5" fill="#fdf3e3" stroke="#b45309"/>
+          <text x="467" y="264" font-size="10" fill="#8a5a00" text-anchor="middle">chunk: table</text>
+          <text x="82" y="193" font-size="10" fill="#737373" text-anchor="end">server</text>
+          <text x="530" y="228" font-size="10" fill="#737373">each region swaps in as it's ready —</text>
+          <text x="530" y="242" font-size="10" fill="#737373">the fast parts never wait for the slow</text>
+
+        </svg>
+        <figcaption>Recreated from the Next.js docs' streaming illustration: same fetches, same durations — blocking SSR gates the whole page on the slowest fetch, while streaming sends the known shell at once and fills each suspended region by readiness.</figcaption>
+      </figure>
+
+      <p>Two placement rules follow: <span class="chip chip-next">Next.js</span> <span class="chip chip-critical">Critical</span></p>
+      <ul>
+        <li><strong><code>loading.tsx</code> is a route-level Suspense boundary</strong> the framework wires up for you — it wraps the page and shows instantly on navigation. Use it for the route transition, but treat it as the coarsest tool: a whole-page skeleton is exactly the page-level skeleton we avoid (§8.4). Prefer a <code>loading.tsx</code> that renders the page's known scaffold, with granular boundaries inside the page doing the real work.</li>
+        <li><strong>Granular boundaries around each data-dependent region</strong> — one per self-fetching component (§10.3), placed inside the known container (§7). This is also what Partial Prerendering builds on: with <code>cacheComponents</code>, everything outside your Suspense boundaries becomes the static shell served instantly, and the boundaries define exactly where dynamic content streams in.</li>
+      </ul>
+
+      <h2 id="no-own-loading">8.3 Components must not define their own loading states</h2>
+      <p><span class="chip chip-react">React</span> <span class="chip chip-critical">Critical</span> A component that renders its own spinner has made three decisions it has no business making: <em>that</em> it is worth waiting for (its parent's composition decides that), <em>where</em> the waiting UI appears (the boundary above decides that), and <em>what the rest of the page does meanwhile</em> (it can't know). The costs show up immediately:</p>
+      <ul>
+        <li><strong>Loading becomes un-composable.</strong> Compose three self-spinning components and you get three spinners resolving at different moments — spinner cascades, each swap shifting layout. With boundaries, the composing parent decides: one boundary around all three, or one each, without touching any of them.</li>
+        <li><strong>The loading UI is welded to the data mechanism.</strong> Move the fetch from client to server, add a cache, wrap it in a transition — and the hand-rolled <code>isLoading</code> plumbing has to be rewritten every time. A fallback on a boundary survives all of those changes.</li>
+        <li><strong>It's invisible to the framework.</strong> Streaming, PPR, and transition semantics all operate on boundaries. A component-owned spinner opts out of every one of them.</li>
+      </ul>
+
+      <div class="compare">
+        <div class="bad">
+          <div class="col-label">✕ Component owns its loading state</div>
+          <pre class="code"><span class="filename">ProgramStats.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramStats</span>({ programId }) {
+  <span class="tok-kw">const</span> { data, isLoading } = <span class="tok-fn">useProgram</span>(programId);
+
+  <span class="tok-com">/* This component just decided that the page
+     shows a spinner here. Nobody composing it
+     gets a say. */</span>
+  <span class="tok-kw">if</span> (isLoading) <span class="tok-kw">return</span> &lt;<span class="tok-fn">Spinner</span> /&gt;;
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">StatsRow</span> <span class="tok-prop">stats</span>={data.stats} /&gt;;
+}</pre>
+        </div>
+        <div class="good">
+          <div class="col-label">✓ Boundary owns it — component just renders</div>
+          <pre class="code"><span class="filename">ProgramStats.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramStats</span>({ programId }) {
+  <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> <span class="tok-fn">getProgram</span>(programId);
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">StatsRow</span> <span class="tok-prop">stats</span>={program.stats} /&gt;;
+}</pre>
+          <pre class="code"><span class="filename">page.tsx — the composer decides</span>&lt;<span class="tok-fn">StatsContainer</span>&gt;
+  &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
+    &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={id} /&gt;
+  &lt;/<span class="tok-fn">Suspense</span>&gt;
+&lt;/<span class="tok-fn">StatsContainer</span>&gt;</pre>
+        </div>
+      </div>
+
+      <h2 id="skeletons">8.4 Skeletons — scoped, colocated, structural</h2>
+      <p>The container doctrine is <a href="07-containers-content-shifting.html">§7</a>'s subject — containers known and immediate, fallback and content swapped inside them, one shared footprint, and neither occupant bringing its own chrome. All of it applies verbatim to fallbacks: <strong>the fallback is simply the container's first occupant.</strong> <span class="chip chip-react">React</span> <span class="chip chip-critical">Critical</span> What belongs to this chapter is the fallback itself — the skeleton:</p>
+      <ul>
+        <li><strong>Scope skeletons per server component (or per client component when needed) — never per page.</strong> <span class="chip chip-very">Very important</span> A page-level skeleton is a second, shadow implementation of the entire page layout. It drifts the moment anyone changes the real page, and nobody remembers to update it — the maintainability cost compounds with every route. A per-component skeleton is small, sits next to the component it mirrors (<code>StatsRow.tsx</code> / <code>StatsSkeleton.tsx</code>), and changes in the same PR when the component changes.</li>
+        <li><strong>Keep skeletons structural, not photorealistic.</strong> They exist to hold reserved space and signal "coming" — a few bars matching the content's rough geometry. The more detailed the skeleton, the faster it drifts.</li>
+        <li><strong>Skeletons appear exactly once per region: on first load.</strong> Never on refetch — that's the next section.</li>
+      </ul>
+
+      <h2 id="refetch">8.5 Refetches show stale content — never fallbacks</h2>
+      <p><span class="chip chip-react">React</span> <span class="chip chip-critical">Critical</span> A skeleton answers the question "what goes here?" — a question that's only ever open <em>once</em>. On a refetch, the answer is already on screen. Replacing real content with a skeleton destroys information the user was looking at, resets their scroll and reading position, and shifts layout twice for zero benefit. The rule, in stale-while-revalidate terms: <strong>existing content is never replaced while new content loads; loading is only ever <em>indicated</em>, alongside the stale content.</strong></p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 208" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+          <text x="14" y="24" font-size="12.5" fill="#171717" font-weight="600">First load — the only time a fallback appears</text>
+          <rect x="90" y="36" width="180" height="30" rx="6" fill="#fdf3e3" stroke="#b45309" stroke-dasharray="5 4"/>
+          <text x="180" y="55" font-size="10.5" fill="#8a5a00" text-anchor="middle">skeleton (unknown)</text>
+          <rect x="274" y="36" width="340" height="30" rx="6" fill="#e7f5ee" stroke="#2ea06d"/>
+          <text x="444" y="55" font-size="10.5" fill="#157a4c" text-anchor="middle">content</text>
+
+          <line x1="14" y1="92" x2="706" y2="92" stroke="#e0e0e0"/>
+
+          <text x="14" y="118" font-size="12.5" fill="#171717" font-weight="600">Every load after that — stale content stays, loading is only indicated</text>
+          <rect x="90" y="130" width="240" height="30" rx="6" fill="#e7f5ee" stroke="#2ea06d"/>
+          <text x="198" y="149" font-size="10.5" fill="#157a4c" text-anchor="middle">stale content — still visible, still usable</text>
+          <circle cx="312" cy="145" r="7" fill="none" stroke="#0070f3" stroke-width="2" stroke-dasharray="9 4"/>
+          <rect x="334" y="130" width="280" height="30" rx="6" fill="#e7f5ee" stroke="#2ea06d"/>
+          <text x="474" y="149" font-size="10.5" fill="#157a4c" text-anchor="middle">fresh content — swapped when ready</text>
+          <text x="90" y="182" font-size="10" fill="#737373">subtle indicator (corner spinner, dimmed rows, progress bar) —</text>
+          <text x="90" y="196" font-size="10" fill="#737373">the user never loses what they had; nothing unmounts, nothing shifts</text>
+        </svg>
+        <figcaption>The stale-while-revalidate presentation rule. The fallback answers "what goes here?" — asked once. Refetch, revalidation, filter change, pagination: stale + indicator, always — loading is a status you indicate, not a state you swap to.</figcaption>
+      </figure>
+
+      <p>The tools, by situation:</p>
+      <ul>
+        <li><strong>URL-driven server UI (the default case)</strong> — <em>transitions</em>. The App Router performs navigations inside <code>startTransition</code>, so when a filter changes the URL, the already-revealed table stays on screen while the server re-renders with the new <code>searchParams</code> — the Suspense boundary does <em>not</em> revert to its fallback. Wrap the <code>router.replace()</code> in your own <code>useTransition</code> and <code>isPending</code> is your indicator.</li>
+        <li><strong>Client-fetched data</strong> — SWR / React Query already behave this way: <code>data</code> keeps its previous value while <code>isValidating</code>/<code>isFetching</code> is true (use <code>keepPreviousData</code> when the key changes). Bind your indicator to <code>isValidating</code>; never gate the content on it.</li>
+        <li><strong>Client-rendered results of a fast-changing value</strong> — <code>useDeferredValue</code>: when the value drives client-side rendering or client-fetched queries (an autocomplete, search-as-you-type against the client cache), render against the deferred value; <code>value !== deferredValue</code> drives the dimmed opacity. Same presentation rule, client-side mechanism.</li>
+      </ul>
+
+      <p>Here is the default case assembled end to end — and notice it's the whole guide in one example: the URL is the state (§6), the input and the dim-wrapper are client leaves (§4), the rows are a server component fetching by <code>searchParams</code>, and the fallback appears exactly once:</p>
+
+      <pre class="code"><span class="filename">app/reports/page.tsx — server: the URL is the input</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ searchParams }) {
+  <span class="tok-kw">const</span> { q = <span class="tok-str">""</span> } = <span class="tok-kw">await</span> searchParams;
+  <span class="tok-kw">return</span> (
+    <span class="tok-com">// One shared, thin client provider gives the input and the table a single isPending.</span>
+    &lt;<span class="tok-fn">QueryTransitionProvider</span>&gt;
+      <span class="tok-com">{/* This boundary is required because SearchInput reads the URL with
+          useSearchParams (§4.6). It is necessary so that: (1) the static shell
+          can prerender and stream without knowing the request's search params;
+          (2) the client-side-rendering bailout stays scoped to this leaf instead
+          of climbing to the nearest ancestor boundary and taking the whole page
+          with it; and (3) the build passes under cacheComponents/PPR, which
+          requires every request-time read to sit inside a Suspense boundary. */}</span>
+      &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">SearchInputSkeleton</span> /&gt;}&gt;
+        &lt;<span class="tok-fn">SearchInput</span> /&gt;
+      &lt;/<span class="tok-fn">Suspense</span>&gt;
+      <span class="tok-com">{/* The known container reserves the table's space (§7). */}</span>
+      &lt;<span class="tok-fn">TableContainer</span>&gt;
+        <span class="tok-com">{/* A client shell that dims; the server-rendered rows pass through as children. */}</span>
+        &lt;<span class="tok-fn">StaleContent</span>&gt;
+          <span class="tok-com">{/* The fallback appears exactly once, on first load. */}</span>
+          &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">TableSkeleton</span> /&gt;}&gt;
+            <span class="tok-com">{/* A server component that fetches based on the query in the URL. */}</span>
+            &lt;<span class="tok-fn">ReportRows</span> <span class="tok-prop">query</span>={q} /&gt;
+          &lt;/<span class="tok-fn">Suspense</span>&gt;
+        &lt;/<span class="tok-fn">StaleContent</span>&gt;
+      &lt;/<span class="tok-fn">TableContainer</span>&gt;
+    &lt;/<span class="tok-fn">QueryTransitionProvider</span>&gt;
+  );
+}</pre>
+
+      <pre class="code"><span class="filename">ReportRows.tsx — server: only ever renders finished knowledge</span><span class="tok-kw">export async function</span> <span class="tok-fn">ReportRows</span>({ query }) {
+  <span class="tok-com">// The data layer call is cached and deduped (§11).</span>
+  <span class="tok-kw">const</span> rows = <span class="tok-kw">await</span> <span class="tok-fn">getReportRows</span>(query);
+
+  <span class="tok-com">/* The await above has finished by the time this renders, so "empty" here can
+     only mean finished-and-empty — the unknown case cannot reach this component (§8.6). */</span>
+  <span class="tok-kw">if</span> (rows.length === <span class="tok-str">0</span>) <span class="tok-kw">return</span> &lt;<span class="tok-fn">EmptyState</span> <span class="tok-prop">query</span>={query} /&gt;;
+
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">Rows</span> <span class="tok-prop">rows</span>={rows} /&gt;;
+}</pre>
+
+      <pre class="code"><span class="filename">QueryTransition.tsx — client: one transition, shared by the leaves</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">const</span> Ctx = <span class="tok-fn">createContext</span>({ isPending: <span class="tok-kw">false</span>, update: (fn: () =&gt; <span class="tok-kw">void</span>) =&gt; {} });
+<span class="tok-kw">export const</span> <span class="tok-fn">useQueryTransition</span> = () =&gt; <span class="tok-fn">use</span>(Ctx);
+
+<span class="tok-kw">export function</span> <span class="tok-fn">QueryTransitionProvider</span>({ children }) {
+  <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
+  <span class="tok-kw">return</span> &lt;Ctx <span class="tok-prop">value</span>={{ isPending, update: startTransition }}&gt;{children}&lt;/Ctx&gt;;
+}</pre>
+
+      <div class="compare">
+        <div class="good">
+          <div class="col-label">✓ SearchInput — client leaf, owns the URL</div>
+          <pre class="code"><span class="filename">SearchInput.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">SearchInput</span>() {
+  <span class="tok-kw">const</span> params = <span class="tok-fn">useSearchParams</span>();
+  <span class="tok-kw">const</span> router = <span class="tok-fn">useRouter</span>();
+  <span class="tok-kw">const</span> { isPending, update } = <span class="tok-fn">useQueryTransition</span>();
+
+  <span class="tok-com">/* The change handler is debounced upstream;
+     each accepted change rewrites the URL inside
+     the shared transition, which keeps the stale
+     rows visible. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Input</span>
+      <span class="tok-prop">defaultValue</span>={params.<span class="tok-fn">get</span>(<span class="tok-str">"q"</span>) ?? <span class="tok-str">""</span>}
+      <span class="tok-prop">isLoading</span>={isPending}
+      <span class="tok-prop">onValueChange</span>={(q) =&gt;
+        <span class="tok-fn">update</span>(() =&gt; {
+          <span class="tok-kw">const</span> next = <span class="tok-fn">withParam</span>(params, <span class="tok-str">"q"</span>, q);
+          router.<span class="tok-fn">replace</span>(<span class="tok-str">`?${</span>next<span class="tok-str">}`</span>);
+        })}
+    /&gt;
+  );
+}</pre>
+        </div>
+        <div class="good">
+          <div class="col-label">✓ StaleContent — client shell, dims what passes through</div>
+          <pre class="code"><span class="filename">StaleContent.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">StaleContent</span>({ children }) {
+  <span class="tok-kw">const</span> { isPending } = <span class="tok-fn">useQueryTransition</span>();
+
+  <span class="tok-com">/* The children are the server-rendered rows,
+     passing through the boundary (§4.4). This
+     shell only indicates loading — it never
+     replaces them. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;div <span class="tok-prop">style</span>={{ opacity: isPending ? <span class="tok-str">0.6</span> : <span class="tok-str">1</span> }}&gt;
+      {children}
+    &lt;/div&gt;
+  );
+}</pre>
+        </div>
+      </div>
+
+      <p>The flow on a filter change: the input calls <code>router.replace()</code> inside the shared transition → the server re-renders <code>ReportRows</code> with the new query → because it's a transition and the boundary has already revealed, <strong>the stale rows never leave the screen</strong>; they just dim until the fresh server render streams in and swaps. The skeleton appeared exactly once, at first load. And note what <code>ReportRows</code> gets for free by being a server component: it only ever runs when the data is <em>finished</em>, so the unknown-vs-empty question (§8.6) collapses — <code>undefined</code> can't reach it, and the empty check is honestly just "finished and empty." One caveat to keep it honest: don't put a <code>key</code> tied to the query on the Suspense boundary — a remounted boundary is "new content" and <em>will</em> re-show its fallback.</p>
+
+      <h2 id="orthogonal">8.6 Loading, data, and empty are three separate questions</h2>
+      <p>The deepest of the loading-state mistakes is structural: the <code>if (isLoading) … else if (!data) … else …</code> chain. It welds three independent questions into one sequence, and every branch is wrong in some state:</p>
+      <ul>
+        <li><strong>"Is a request in flight?"</strong> — a <em>status</em>, true on first load and on every refetch. It decorates the UI (indicator, dimming); it must never decide <em>which</em> UI renders — that's how refetches turn into skeletons.</li>
+        <li><strong>"Do we have data?"</strong> — a question about <em>knowledge</em>: <code>undefined</code> means <em>we don't know yet</em> (no request has finished). It's answered by the presence of a value, not by the loading flag.</li>
+        <li><strong>"Is the data empty?"</strong> — only askable <em>after</em> we have knowledge: the request finished and returned nothing. Empty state visibility has exactly one condition: <strong>finished, and empty.</strong> It has nothing to do with loading.</li>
+      </ul>
+      <p>This is also why the data layer must never default missing data to an empty array. <span class="chip chip-react">React</span> <span class="chip chip-critical">Critical</span> <code>data ?? []</code> feels like defensive convenience, but it <em>erases the distinction between "unknown" and "known-empty"</em> — downstream code can no longer tell whether to show a skeleton or an empty state, and the classic bug appears: an "No results" flash on every first load, before the data arrives. <code>undefined</code> is information. Preserve it end to end, and let the leaf that renders decide.</p>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 720 392" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+          <defs>
+            <marker id="aE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#737373"/></marker>
+          </defs>
+
+          <!-- LANE 1: data defaulted to [] -->
+          <text x="360" y="22" font-size="12.5" fill="#b3261e" text-anchor="middle" font-weight="600">const { data = [] } — unknown and empty collapse into one value</text>
+          <rect x="120" y="36" width="180" height="104" rx="8" fill="#ffffff" stroke="#c9c9c9"/>
+          <rect x="134" y="52" width="152" height="72" rx="5" fill="#fdecea" stroke="#d93025" stroke-dasharray="5 4"/>
+          <text x="210" y="86" font-size="11" fill="#b3261e" text-anchor="middle">“No results found”</text>
+          <text x="210" y="102" font-size="8.5" fill="#b3261e" text-anchor="middle">shown while the request is still in flight</text>
+          <line x1="304" y1="88" x2="416" y2="88" stroke="#737373" stroke-width="1.5" marker-end="url(#aE)"/>
+          <rect x="420" y="36" width="180" height="104" rx="8" fill="#ffffff" stroke="#c9c9c9"/>
+          <rect x="436" y="54" width="148" height="9" rx="3" fill="#bfe3d0"/>
+          <rect x="436" y="72" width="148" height="9" rx="3" fill="#bfe3d0"/>
+          <rect x="436" y="90" width="148" height="9" rx="3" fill="#bfe3d0"/>
+          <rect x="436" y="108" width="148" height="9" rx="3" fill="#bfe3d0"/>
+          <text x="210" y="158" font-size="10" fill="#737373" text-anchor="middle">t₀ — request in flight</text>
+          <text x="510" y="158" font-size="10" fill="#737373" text-anchor="middle">t₁ — response: 12 rows</text>
+          <text x="360" y="178" font-size="10.5" fill="#b0483e" text-anchor="middle">“No results” answered the question before it finished — the rows then contradict it</text>
+
+          <line x1="14" y1="194" x2="706" y2="194" stroke="#e0e0e0"/>
+
+          <!-- LANE 2: undefined preserved -->
+          <text x="360" y="212" font-size="12.5" fill="#157a4c" text-anchor="middle" font-weight="600">data: Row[] | undefined — unknown stays unknown</text>
+          <rect x="120" y="224" width="180" height="104" rx="8" fill="#ffffff" stroke="#c9c9c9"/>
+          <rect x="134" y="240" width="152" height="72" rx="5" fill="#fdf3e3" stroke="#b45309" stroke-dasharray="5 4"/>
+          <rect x="146" y="254" width="128" height="7" rx="3" fill="#f3e2c0"/>
+          <rect x="146" y="268" width="128" height="7" rx="3" fill="#f3e2c0"/>
+          <rect x="146" y="282" width="96" height="7" rx="3" fill="#f3e2c0"/>
+          <text x="210" y="303" font-size="8.5" fill="#8a5a00" text-anchor="middle">⏳ skeleton — “we don't know yet”</text>
+          <line x1="304" y1="276" x2="416" y2="276" stroke="#737373" stroke-width="1.5" marker-end="url(#aE)"/>
+          <rect x="420" y="224" width="180" height="104" rx="8" fill="#ffffff" stroke="#c9c9c9"/>
+          <rect x="436" y="242" width="148" height="9" rx="3" fill="#bfe3d0"/>
+          <rect x="436" y="260" width="148" height="9" rx="3" fill="#bfe3d0"/>
+          <rect x="436" y="278" width="148" height="9" rx="3" fill="#bfe3d0"/>
+          <rect x="436" y="296" width="148" height="9" rx="3" fill="#bfe3d0"/>
+          <text x="210" y="346" font-size="10" fill="#737373" text-anchor="middle">t₀ — request in flight</text>
+          <text x="510" y="346" font-size="10" fill="#737373" text-anchor="middle">t₁ — response: 12 rows</text>
+          <text x="360" y="366" font-size="10.5" fill="#2e7d5b" text-anchor="middle">unknown renders as unknown; an empty state could only appear after a finished, empty response</text>
+        </svg>
+        <figcaption>The empty-state flash, frame by frame. Same request, same 12 rows — the only difference is whether the data layer erased <code>undefined</code>. Defaulting to <code>[]</code> makes the component answer "is it empty?" before "do we know?" has resolved, so every first load flashes a false "No results".</figcaption>
+      </figure>
+
+      <div class="compare">
+        <div class="bad">
+          <div class="col-label">✕ One chain, three welded questions</div>
+          <pre class="code"><span class="filename">the classic — every branch misbehaves</span><span class="tok-com">/* Defaulting data to [] makes unknown and
+   empty identical. */</span>
+<span class="tok-kw">const</span> { data = [], isLoading } = <span class="tok-fn">useReportRows</span>(q);
+
+<span class="tok-com">/* On every refetch, real content is replaced
+   by a skeleton. */</span>
+<span class="tok-kw">if</span> (isLoading) <span class="tok-kw">return</span> &lt;<span class="tok-fn">TableSkeleton</span> /&gt;;
+
+<span class="tok-com">/* This flashes an empty state before the first
+   response arrives, because [] can no longer
+   say "not loaded yet". */</span>
+<span class="tok-kw">if</span> (data.length === <span class="tok-str">0</span>) <span class="tok-kw">return</span> &lt;<span class="tok-fn">EmptyState</span> /&gt;;
+
+<span class="tok-kw">return</span> &lt;<span class="tok-fn">Rows</span> <span class="tok-prop">rows</span>={data} /&gt;;</pre>
+        </div>
+        <div class="good">
+          <div class="col-label">✓ Three independent decisions</div>
+          <pre class="code"><span class="filename">status decorates; knowledge decides</span><span class="tok-com">/* The data is Row[] | undefined, and is
+   never defaulted. */</span>
+<span class="tok-kw">const</span> { data, isValidating } = <span class="tok-fn">useReportRows</span>(q);
+<span class="tok-kw">const</span> hasData = data !== <span class="tok-kw">undefined</span>;
+
+<span class="tok-com">/* Loading is indicated independently of what
+   renders inside — the container shows a subtle
+   indicator whenever a refetch is in flight. */</span>
+<span class="tok-kw">return</span> (
+  &lt;<span class="tok-fn">TableContainer</span>
+    <span class="tok-prop">isRefreshing</span>={isValidating &amp;&amp; hasData}&gt;
+    {!hasData ? (
+      <span class="tok-com">/* Unknown — the request has not
+         finished. First load only. */</span>
+      &lt;<span class="tok-fn">TableSkeleton</span> /&gt;
+    ) : data.length === <span class="tok-str">0</span> ? (
+      <span class="tok-com">/* Finished and empty — the only
+         condition that shows an empty state. */</span>
+      &lt;<span class="tok-fn">EmptyState</span> /&gt;
+    ) : (
+      &lt;<span class="tok-fn">Rows</span> <span class="tok-prop">rows</span>={data} /&gt;
+    )}
+  &lt;/<span class="tok-fn">TableContainer</span>&gt;
+);</pre>
+        </div>
+      </div>
+
+      <p>The full state space, made explicit — every cell reachable, every cell deliberate:</p>
+      <table class="tbl">
+        <thead><tr><th>Knowledge (<code>data</code>)</th><th>Status (request)</th><th>Render</th></tr></thead>
+        <tbody>
+          <tr><td><code>undefined</code> — unknown</td><td>in flight (first load)</td><td>Fallback/skeleton, inside the reserved container. <strong>The only skeleton case.</strong></td></tr>
+          <tr><td><code>undefined</code> — unknown</td><td>failed</td><td>Error state via the boundary (<code>error.tsx</code> / error boundary) — <strong>never an empty state</strong>.</td></tr>
+          <tr><td><code>Row[]</code>, n &gt; 0</td><td>revalidating</td><td>Stale rows + indicator. <strong>Content never unmounts.</strong></td></tr>
+          <tr><td><code>[]</code> — known-empty</td><td>finished</td><td>Empty state. <strong>The <em>only</em> condition that shows it: finished and empty.</strong></td></tr>
+          <tr><td><code>[]</code> — known-empty</td><td>revalidating</td><td>Empty state + indicator — an empty result being refreshed is <strong>still known-empty</strong>.</td></tr>
+          <tr><td><code>Row[]</code>, n &gt; 0</td><td>idle</td><td>Rows. The happy path.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="rules">The rules</h2>
+      <table class="tbl">
+        <thead><tr><th>Rule</th><th>Scope</th><th>Importance</th></tr></thead>
+        <tbody>
+          <tr><td>Components <strong>never define their own loading states</strong> — boundaries above them do.</td><td><span class="chip chip-react">React</span></td><td><span class="chip chip-critical">Critical</span></td></tr>
+          <tr><td>Fallbacks live <strong>inside known containers</strong>; neither fallback nor suspended component includes the container.</td><td><span class="chip chip-react">React</span></td><td><span class="chip chip-critical">Critical</span></td></tr>
+          <tr><td>Skeletons are <strong>scoped per component, colocated with it</strong> — never page-level.</td><td><span class="chip chip-react">React</span></td><td><span class="chip chip-very">Very important</span></td></tr>
+          <tr><td>Refetches never replace content: <strong>stale stays visible, loading is indicated</strong> (<code>isValidating</code>, <code>useDeferredValue</code>, <code>isPending</code>).</td><td><span class="chip chip-react">React</span></td><td><span class="chip chip-critical">Critical</span></td></tr>
+          <tr><td>Loading status, data presence, and emptiness are <strong>decided independently</strong> — no if/else chains across them.</td><td><span class="chip chip-react">React</span></td><td><span class="chip chip-critical">Critical</span></td></tr>
+          <tr><td>The data layer never defaults <code>undefined</code> to <code>[]</code> — <strong>unknown and known-empty are different facts</strong>.</td><td><span class="chip chip-react">React</span></td><td><span class="chip chip-critical">Critical</span></td></tr>
+          <tr><td>Use <strong>granular Suspense boundaries per data region</strong>; <code>loading.tsx</code> renders scaffold, not a page skeleton.</td><td><span class="chip chip-next">Next.js</span></td><td><span class="chip chip-very">Very important</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <div class="callout-title">Where to go deeper</div>
+        <p>React 19 docs: <a href="https://react.dev/reference/react/Suspense" target="_blank" rel="noopener">&lt;Suspense&gt;</a> · <a href="https://react.dev/reference/react/useDeferredValue" target="_blank" rel="noopener">useDeferredValue</a> · <a href="https://react.dev/reference/react/useTransition" target="_blank" rel="noopener">useTransition</a> · <a href="https://react.dev/reference/react/use" target="_blank" rel="noopener">use</a>. Next.js docs: <a href="https://nextjs.org/docs/app/api-reference/file-conventions/loading" target="_blank" rel="noopener">loading.js</a> · <a href="https://nextjs.org/docs/app/getting-started/fetching-data" target="_blank" rel="noopener">Fetching Data &amp; Streaming</a> · <a href="https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents" target="_blank" rel="noopener">cacheComponents / PPR</a>. Full list in <a href="17-references.html">§17</a>.</p>
+      </div>
+
+      <div id="pager"></div>
+    </div>
+  </main>
+</div>
+<script src="../assets/nav.js"></script>
+</body>
+</html>
