@@ -42,7 +42,7 @@
   JavaScript arrives. The practical consequence, and the reason this chapter leads Part A:
   <strong>everything the server can resolve arrives finished</strong>, and only the parts
   you explicitly carve out ever depend on the client. The rest of Part A is about keeping
-  that carved-out surface small (<a href="05-client-server-boundaries.html">§5</a>–<a href="08-server-resolvable-state.html">§8</a>); Part B is about handling what remains (<a href="09-containers-content-shifting.html">§9</a>–<a href="11-blocking-requests.html">§11</a>).
+  that carved-out surface small (<a href="05-client-server-boundaries.html">§5</a>–<a href="08-server-resolvable-state.html">§8</a>); Part B is about handling what remains (<a href="09-containers-content-shifting.html">§9</a>–<a href="12-blocking-requests.html">§12</a>).
 </p>
 
 <h2 id="benefits">4.2 What you get for it</h2>
@@ -89,7 +89,7 @@
       <td>
         Rendered output is an artifact the framework can
         <strong>cache and reuse across users</strong>; see
-        <a href="#page-cache">§4.4</a> and <a href="13-dedupe-caching.html">§13</a>.
+        <a href="#page-cache">§4.4</a> and <a href="14-dedupe-caching.html">§14</a>.
       </td>
     </tr>
     <tr>
@@ -406,7 +406,7 @@ The spinner tower. Client-side, each DOM layer is blocked by the client-side req
   <em>does</em> need request-time data, the modern model (Partial Prerendering /
   <code>cacheComponents</code>) caches the static shell and streams only the dynamic holes
   into it. The mechanics (<code>"use cache"</code>, revalidation, cache tags) live in
-  <a href="13-dedupe-caching.html">§13</a>; what belongs here is the architectural point:
+  <a href="14-dedupe-caching.html">§14</a>; what belongs here is the architectural point:
 </p>
 <p>
   <strong>Only server-rendered content can participate in this cache.</strong>
@@ -536,7 +536,7 @@ Two routing modes, one rendering model. The first visit is server routing: a com
   from the same architecture, without building either by hand. But notice it's
   conditional: the seamless merge works because the server renders segments the router can
   splice. A page that client-fetches everything after mount gets neither benefit: its
-  first visit is a shell, and its navigations re-run the whole fetch choreography (<a href="11-blocking-requests.html#client">§11.4</a>).
+  first visit is a shell, and its navigations re-run the whole fetch choreography (<a href="12-blocking-requests.html#client">§12.4</a>).
 </p>
 
 <h3 id="prefetching">Links and prefetching</h3>
@@ -639,7 +639,7 @@ Two routing modes, one rendering model. The first visit is server routing: a com
     <a href="https://nextjs.org/docs/app/getting-started/linking-and-navigating" target="_blank" rel="noopener">Linking and Navigating</a>
     (RSC payload, prefetching, client transitions, the dynamic-routes-without-<code>loading.tsx</code>
     trap) ·
-    <a href="https://nextjs.org/docs/app/guides/prefetching" target="_blank" rel="noopener">Prefetching guide</a>. Full list in <a href="19-references.html">§19</a>.
+    <a href="https://nextjs.org/docs/app/guides/prefetching" target="_blank" rel="noopener">Prefetching guide</a>. Full list in <a href="20-references.html">§20</a>.
   </p>
 
 </div>

@@ -42,7 +42,7 @@
     <strong>Decouple the parts</strong>, so each region's requirements can change without
     rewiring its neighbors. Decoupling buys more than safe change: a component that asks
     for its own data instead of receiving it through props is <em>portable</em>, so it can
-    be dropped onto any page without a chain of wiring following it (<a href="12-minimize-the-wires.html">§12</a>), and it lets the interactive parts that
+    be dropped onto any page without a chain of wiring following it (<a href="13-minimize-the-wires.html">§13</a>), and it lets the interactive parts that
     need hydration be pushed down into small leaves instead of dragging whole regions
     across the client boundary (<a href="05-client-server-boundaries.html">§5</a>).
   </li>
@@ -179,7 +179,7 @@ The anatomy of a page under this model: the structure and containers are known a
   </div>
   <p class="goal-tag">
     The parts you must wait for may not disturb anything around them. Elaborated in
-    <a href="09-containers-content-shifting.html">§9</a>–<a href="11-blocking-requests.html">§11</a>.
+    <a href="09-containers-content-shifting.html">§9</a>–<a href="12-blocking-requests.html">§12</a>.
   </p>
   <ul class="goal-list">
     <li>
@@ -192,11 +192,11 @@ The anatomy of a page under this model: the structure and containers are known a
     </li>
     <li>
       <span class="g-text">Minimize what sits behind any single blocking request, on the server and the
-        client alike.</span><span class="g-chips"><span class="chip chip-react">React</span></span><span class="g-ref"><a href="11-blocking-requests.html">§11</a></span>
+        client alike.</span><span class="g-chips"><span class="chip chip-react">React</span></span><span class="g-ref"><a href="12-blocking-requests.html">§12</a></span>
     </li>
     <li>
       <span class="g-text">Isolate data dependencies, so a change in what a region needs affects only the
-        region it determines, never the surrounding content.</span><span class="g-chips"><span class="chip chip-react">React</span></span><span class="g-ref"><a href="10-suspense-streaming.html">§10</a>–<a href="11-blocking-requests.html">§11</a></span>
+        region it determines, never the surrounding content.</span><span class="g-chips"><span class="chip chip-react">React</span></span><span class="g-ref"><a href="10-suspense-streaming.html">§10</a>–<a href="12-blocking-requests.html">§12</a></span>
     </li>
   </ul>
 </div>
@@ -208,26 +208,26 @@ The anatomy of a page under this model: the structure and containers are known a
   </div>
   <p class="goal-tag">
     Minimize the wires that connect parts of the UI together. Elaborated in
-    <a href="12-minimize-the-wires.html">§12</a>–<a href="14-component-breakdown.html">§14</a>.
+    <a href="13-minimize-the-wires.html">§13</a>–<a href="15-component-breakdown.html">§15</a>.
   </p>
   <ul class="goal-list">
     <li>
       <span class="g-text">Minimize data exchange between components and modules: never pass a child
-        anything the parent doesn't itself need.</span><span class="g-chips"><span class="chip chip-react">React</span></span><span class="g-ref"><a href="12-minimize-the-wires.html">§12</a></span>
+        anything the parent doesn't itself need.</span><span class="g-chips"><span class="chip chip-react">React</span></span><span class="g-ref"><a href="13-minimize-the-wires.html">§13</a></span>
     </li>
     <li>
       <span class="g-text">Prefer repetition backed by dedupe over shared plumbing: it is better for two
         components to ask the same question than to be wired together; deduped fetches and
-        cached functions make the repetition free.</span><span class="g-chips"><span class="chip chip-next">Next.js</span></span><span class="g-ref"><a href="13-dedupe-caching.html">§13</a></span>
+        cached functions make the repetition free.</span><span class="g-chips"><span class="chip chip-next">Next.js</span></span><span class="g-ref"><a href="14-dedupe-caching.html">§14</a></span>
     </li>
     <li>
       <span class="g-text">Communicate through the URL and the cache, not through callbacks up to
-        parents.</span><span class="g-chips"><span class="chip chip-react">React</span></span><span class="g-ref"><a href="12-minimize-the-wires.html">§12</a>,
+        parents.</span><span class="g-chips"><span class="chip chip-react">React</span></span><span class="g-ref"><a href="13-minimize-the-wires.html">§13</a>,
         <a href="08-server-resolvable-state.html">§8</a></span>
     </li>
     <li>
       <span class="g-text">Break components down by UI <em>and</em> responsibility - small, portable, one
-        component per file.</span><span class="g-chips"><span class="chip chip-react">React</span></span><span class="g-ref"><a href="14-component-breakdown.html">§14</a></span>
+        component per file.</span><span class="g-chips"><span class="chip chip-react">React</span></span><span class="g-ref"><a href="15-component-breakdown.html">§15</a></span>
     </li>
   </ul>
 </div>

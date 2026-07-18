@@ -24,30 +24,31 @@ export const TOC = [
     items: [
       { n: '9', title: 'Containers & Content Shifting', file: '09-containers-content-shifting.html' },
       { n: '10', title: 'Suspense & Streaming', file: '10-suspense-streaming.html' },
-      { n: '11', title: 'Blocking Requests', file: '11-blocking-requests.html' },
+      { n: '11', title: 'Designing for the Unknown', file: '11-designing-for-the-unknown.html' },
+      { n: '12', title: 'Blocking Requests', file: '12-blocking-requests.html' },
     ],
   },
   {
     part: 'Part C: Decouple the Parts',
     items: [
-      { n: '12', title: 'Minimize the Wires', file: '12-minimize-the-wires.html' },
-      { n: '13', title: 'Dedupe & Caching', file: '13-dedupe-caching.html' },
-      { n: '14', title: 'Component Breakdown', file: '14-component-breakdown.html' },
+      { n: '13', title: 'Minimize the Wires', file: '13-minimize-the-wires.html' },
+      { n: '14', title: 'Dedupe & Caching', file: '14-dedupe-caching.html' },
+      { n: '15', title: 'Component Breakdown', file: '15-component-breakdown.html' },
     ],
   },
   {
     part: 'Part D: Applied',
     items: [
-      { n: '15', title: 'Worked Example', file: '15-worked-example.html' },
-      { n: '16', title: "Signs You're Doing It Wrong", file: '16-signs-doing-it-wrong.html' },
-      { n: '17', title: 'Applied to Tracker', file: '17-applied-to-tracker.html' },
+      { n: '16', title: 'Worked Example', file: '16-worked-example.html' },
+      { n: '17', title: "Signs You're Doing It Wrong", file: '17-signs-doing-it-wrong.html' },
+      { n: '18', title: 'Applied to Tracker', file: '18-applied-to-tracker.html' },
     ],
   },
   {
     part: 'Appendix',
     items: [
-      { n: '18', title: 'New Primitives', file: '18-new-primitives.html' },
-      { n: '19', title: 'References', file: '19-references.html' },
+      { n: '19', title: 'New Primitives', file: '19-new-primitives.html' },
+      { n: '20', title: 'References', file: '20-references.html' },
     ],
   },
 ];

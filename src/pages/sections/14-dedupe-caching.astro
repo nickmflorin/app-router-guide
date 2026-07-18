@@ -11,16 +11,16 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title="Dedupe &amp; Caching - App Router Guide" root="..">
-<div class="kicker">Chapter 13 · Part C: Decouple the Parts</div>
+<div class="kicker">Chapter 14 · Part C: Decouple the Parts</div>
 <h1>Dedupe &amp; Caching</h1>
 <p class="lede">
-  <a href="12-minimize-the-wires.html">§12</a> argued that components should ask for their
+  <a href="13-minimize-the-wires.html">§13</a> argued that components should ask for their
   own data instead of being wired together, and that the repetition is free. This chapter
   is the receipts: the layers that collapse many identical questions into one real
   request, on the server and on the client.
 </p>
 
-<h2 id="layers">13.1 The layers</h2>
+<h2 id="layers">14.1 The layers</h2>
 <p>
   Think of every data access as a question (<code>getProgram(42)</code>) asked by
   whichever components need it, however many times they like. Between the question and the
@@ -350,7 +350,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
 </Fragment>
 </Diagram>
 
-<h2 id="server">13.2 The server data layer</h2>
+<h2 id="server">14.2 The server data layer</h2>
 <p>
   The pattern that makes all of Part C work:
   <strong
@@ -426,11 +426,11 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   parent, doesn't set a consistency token in the URL, doesn't orchestrate a
   <code>refetchAll()</code>. It invalidates the tag, and every component that reads
   <code>getFormTemplates()</code>, wherever it sits in the tree, gets fresh data on the
-  next render. That's <a href="12-minimize-the-wires.html#callbacks">§12.4</a>'s
+  next render. That's <a href="13-minimize-the-wires.html#callbacks">§13.4</a>'s
   "communicate through the cache" made concrete.
 </p>
 
-<h2 id="client">13.3 The client data layer</h2>
+<h2 id="client">14.3 The client data layer</h2>
 <p>
   Some data genuinely must load from the client: it only exists after an interaction, or
   it polls, or it's driven by rapidly-changing client state. For that:
@@ -496,7 +496,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   </p>
 </Callout>
 
-<h2 id="choosing">13.4 Choosing the layer</h2>
+<h2 id="choosing">14.4 Choosing the layer</h2>
 <table class="tbl">
   <thead>
     <tr>
@@ -536,7 +536,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   </tbody>
 </table>
 
-<h2 id="extends-fetch">13.5 How Next.js extends fetch</h2>
+<h2 id="extends-fetch">14.5 How Next.js extends fetch</h2>
 <p>
   One thing that trips people up: <code>fetch</code> on the server does not behave like
   <code>fetch</code> in the browser. Next.js replaces the global <code>fetch</code> with
@@ -573,17 +573,17 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
 
 <p>
   This is why the audit's blanket <code>export const dynamic = "force-dynamic"</code> plus
-  <code>no-store</code> everywhere (<a href="17-applied-to-tracker.html#finding-7">§17</a
+  <code>no-store</code> everywhere (<a href="18-applied-to-tracker.html#finding-7">§18</a
   >) is so costly: it tells this extended <code>fetch</code> to skip the Data Cache on
   every call, throwing away a layer the framework hands you for free. The habit to build
   is the inverse: cache by default with a declared <code>revalidate</code> and
   <code>tags</code>, and reach for <code>no-store</code> only where the data is genuinely
   per-request. When you call through the database or an SDK instead of <code>fetch</code>,
-  you don't get this automatically, which is exactly why <a href="#server">§13.2</a>'s
+  you don't get this automatically, which is exactly why <a href="#server">§14.2</a>'s
   <code>cache()</code> and <code>"use cache"</code> exist to fill the gap.
 </p>
 
-<h2 id="swr-depth">13.6 SWR, in more depth</h2>
+<h2 id="swr-depth">14.6 SWR, in more depth</h2>
 <p>
   On the client, the whole model rests on one idea:
   <strong>the key is the identity of the data.</strong> Two components that pass the same
@@ -629,11 +629,11 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   cache that a key is stale and every reader of that key updates itself. Passing new data
   to <code>mutate</code> paints it optimistically and revalidates in the background, which
   pairs naturally with
-  <a href="18-new-primitives.html#use-optimistic">§18's <code>useOptimistic</code></a> for
+  <a href="19-new-primitives.html#use-optimistic">§19's <code>useOptimistic</code></a> for
   action-driven writes.
 </p>
 
-<h2 id="when-client">13.7 When client fetching is the right tool</h2>
+<h2 id="when-client">14.7 When client fetching is the right tool</h2>
 <p>
   Server-first does not mean the client never fetches. It means client fetching is a
   <em>deliberate</em> choice for the cases that genuinely call for it, not the default for
@@ -763,7 +763,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
       >Next.js: Migrating to Cache Components</a
     >
     · <a href="https://swr.vercel.app" target="_blank" rel="noopener">SWR docs</a>. Full
-    list in <a href="19-references.html">§19</a>.
+    list in <a href="20-references.html">§20</a>.
   </p>
 </GoDeeper>
 </GuidePage>

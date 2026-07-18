@@ -13,7 +13,7 @@
       <main class="content">
         <div class="content-inner">
           
-  <div class="kicker">Chapter 18 · Appendix</div>
+  <div class="kicker">Chapter 19 · Appendix</div>
   <h1>New Primitives</h1>
   <p class="lede">
     The reference catalog behind <a href="01-introduction.html#direction">§1</a>'s direction of
@@ -45,7 +45,7 @@
     entry links there instead of repeating the doctrine.
   </p>
 
-  <h2 id="map">18.1 The map</h2>
+  <h2 id="map">19.1 The map</h2>
   <table class="tbl">
     <thead>
       <tr>
@@ -193,14 +193,14 @@
     </tbody>
   </table>
 
-  <h2 id="actions">18.2 Actions and mutations</h2>
+  <h2 id="actions">19.2 Actions and mutations</h2>
 
   <h3 id="use-server">Server Functions (<code>"use server"</code>)</h3>
   <p>
     A server function is an async function that runs on the server but is
     <strong>callable from client code as if it were local</strong>. React serializes the call across
     the network; Next.js wires it to an endpoint automatically. This is the primitive that makes our
-    73 pass-through proxy handlers (<a href="17-applied-to-tracker.html#finding-1">§17</a>)
+    73 pass-through proxy handlers (<a href="18-applied-to-tracker.html#finding-1">§18</a>)
     unnecessary for mutations: no route handler, no manual fetch, and end-to-end type safety,
     because the function's signature <em>is</em> the contract.
   </p>
@@ -219,7 +219,7 @@
   <p>
     The calling side, with its pending state, is the self-contained button pattern that
     <a href="05-client-server-boundaries.html#self-contained">§5.7</a> owns; the post-mutation refresh
-    channel is <a href="13-dedupe-caching.html#server">§13.2</a>'s invalidation story; the
+    channel is <a href="14-dedupe-caching.html#server">§14.2</a>'s invalidation story; the
     architecture, and why to prefer actions over proxy routes, is the focus of <a href="05-client-server-boundaries.html#server-actions">§5.10</a>. Docs:
     <a href="https://react.dev/reference/rsc/use-server" target="_blank" rel="noopener">React: "use server"</a>
     ·
@@ -296,7 +296,7 @@
     Reads <strong>the pending state of the nearest ancestor form</strong> from anywhere inside it. Its
     point is composition: a shared submit button can disable itself in any form it's dropped into, without
     a single prop being threaded to it (the
-    <a href="12-minimize-the-wires.html">§12</a> spirit, applied to forms).
+    <a href="13-minimize-the-wires.html">§13</a> spirit, applied to forms).
   </p>
   <div class="snippet">
   
@@ -356,7 +356,7 @@
     <a href="https://react.dev/reference/react/useOptimistic" target="_blank" rel="noopener">React: useOptimistic</a>.
   </p>
 
-  <h2 id="async">18.3 Async UI and transitions</h2>
+  <h2 id="async">19.3 Async UI and transitions</h2>
 
   <h3 id="use"><code>use()</code></h3>
   <p>
@@ -517,14 +517,14 @@
   
 </div>
 
-  <h2 id="utilities">18.4 Utilities</h2>
+  <h2 id="utilities">19.4 Utilities</h2>
 
   <h3 id="use-effect-event"><code>useEffectEvent</code></h3>
   <p>
     Extracts the <strong>non-reactive part of an effect</strong>: the returned function always sees
     the latest props and state, but is not a dependency, so the effect stops re-running (and
     re-connecting, re-subscribing, re-firing) when those values change. Stable as of React 19.2. It
-    is a scalpel for the few legitimate effects that remain after <a href="17-applied-to-tracker.html#finding-3">§17's Finding 3</a> is fixed; it is not a license to write more effects.
+    is a scalpel for the few legitimate effects that remain after <a href="18-applied-to-tracker.html#finding-3">§18's Finding 3</a> is fixed; it is not a license to write more effects.
   </p>
   <div class="snippet">
   
@@ -614,7 +614,7 @@
     Per-request memoization for server functions:
     <strong>same arguments, one execution, per request</strong>. It is the foundation of the server
     data layer, and it already has a full treatment in
-    <a href="13-dedupe-caching.html#server">§13.2</a>; it appears here only so the catalog is
+    <a href="14-dedupe-caching.html#server">§14.2</a>; it appears here only so the catalog is
     complete. Docs:
     <a href="https://react.dev/reference/react/cache" target="_blank" rel="noopener">React: cache</a>.
   </p>
@@ -651,7 +651,7 @@
     <a href="https://react.dev/reference/react/Profiler" target="_blank" rel="noopener">React: Profiler</a>.
   </p>
 
-  <h2 id="compiler">18.5 The React Compiler</h2>
+  <h2 id="compiler">19.5 The React Compiler</h2>
   <p>
     The compiler (1.0, October 2025) memoizes automatically at build time: it analyzes component
     code and skips re-renders that provably change nothing, which is the work
@@ -659,7 +659,7 @@
     hand. Two consequences for us. First,
     <strong>new code should not hand-roll memoization</strong>; write plain idiomatic components and
     let the compiler prove what's stable. Second, the compiler rewards the exact discipline this
-    guide teaches: small, decoupled components with narrow props (<a href="12-minimize-the-wires.html">§12</a>, <a href="14-component-breakdown.html">§14</a>) give it clean units to optimize, while God
+    guide teaches: small, decoupled components with narrow props (<a href="13-minimize-the-wires.html">§13</a>, <a href="15-component-breakdown.html">§15</a>) give it clean units to optimize, while God
     components (<a href="05-client-server-boundaries.html#god-components">§5.9</a>) give it one
     giant opaque one. It changes none of the architecture in this guide; it removes the busywork
     that made bad architecture feel cheap. Docs:
@@ -678,7 +678,7 @@
       ·
       <a href="https://react.dev/blog/2025/10/01/react-19-2" target="_blank" rel="noopener">React 19.2 release post</a>
       ·
-      <a href="https://nextjs.org/docs/app/api-reference/functions" target="_blank" rel="noopener">Next.js: API reference</a>. Full list in <a href="19-references.html">§19</a>.
+      <a href="https://nextjs.org/docs/app/api-reference/functions" target="_blank" rel="noopener">Next.js: API reference</a>. Full list in <a href="20-references.html">§20</a>.
     </p>
   
 </div>

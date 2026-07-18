@@ -263,7 +263,7 @@ The lifecycle of one suspended region. The boundary lives inside a known contain
   each suspended region follows as its data resolves, injected into its reserved slot
   without re-rendering anything around it. (Making the waits themselves small and
   parallel, rather than just streaming around them, is
-  <a href="11-blocking-requests.html">§11</a>'s subject.)
+  <a href="12-blocking-requests.html">§12</a>'s subject.)
 </p>
 
 <figure class="diagram">
@@ -364,7 +364,7 @@ Recreated from the Next.js docs' streaming illustration: same fetches, same dura
   </li>
   <li>
     <strong>Granular boundaries around each data-dependent region</strong>: one per
-    self-fetching component (<a href="12-minimize-the-wires.html#streaming">§12.3</a>),
+    self-fetching component (<a href="13-minimize-the-wires.html#streaming">§13.3</a>),
     placed inside the known container (<a href="09-containers-content-shifting.html">§9</a>). This is also what Partial Prerendering builds on: with
     <code>cacheComponents</code>, everything outside your Suspense boundaries becomes the
     static shell served instantly, and the boundaries define exactly where dynamic content
@@ -516,7 +516,7 @@ loading.tsx and error.tsx are sugar for boundaries Next.js wraps around your pag
   skeleton is; if the data resolves in a handful of milliseconds, the fallback is a flash
   of noise that was never worth painting. In those cases it is legitimate to let the
   server block on the fetch, provided the wait is kept small and parallel
-  (<a href="11-blocking-requests.html">§11</a>).
+  (<a href="12-blocking-requests.html">§12</a>).
 </p>
 <div class="callout callout-voice">
   <div class="callout-title">The two questions to ask per region</div>
@@ -775,7 +775,7 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
 <div class="snippet">
   
 <pre class="code"><span class="filename">ReportRows.tsx - server: only ever renders finished knowledge</span><span class="tok-kw">export async function</span> <span class="tok-fn">ReportRows</span>({ query }) {
-  <span class="tok-com">// The data layer call is cached and deduped (§13).</span>
+  <span class="tok-com">// The data layer call is cached and deduped (§14).</span>
   <span class="tok-kw">const</span> rows = <span class="tok-kw">await</span> <span class="tok-fn">getReportRows</span>(query);
 
   <span class="tok-com">/* The await above has finished by the time this renders, so "empty" here can
@@ -1451,7 +1451,7 @@ One container's whole life. The skeleton exists only in the first frame, while t
 
 <p>
   The API reference for <code>useTransition</code> and <code>useDeferredValue</code> is in
-  <a href="18-new-primitives.html#use-transition">§18.3</a>; the caveat list lives in the
+  <a href="19-new-primitives.html#use-transition">§19.3</a>; the caveat list lives in the
   <a href="https://react.dev/reference/react/startTransition" target="_blank" rel="noopener">React docs</a>.
 </p>
 
@@ -1542,7 +1542,7 @@ One container's whole life. The skeleton exists only in the first frame, while t
     ·
     <a href="https://nextjs.org/docs/app/getting-started/fetching-data" target="_blank" rel="noopener">Fetching Data &amp; Streaming</a>
     ·
-    <a href="https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents" target="_blank" rel="noopener">cacheComponents / PPR</a>. Full list in <a href="19-references.html">§19</a>.
+    <a href="https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents" target="_blank" rel="noopener">cacheComponents / PPR</a>. Full list in <a href="20-references.html">§20</a>.
   </p>
 
 </div>

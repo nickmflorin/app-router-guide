@@ -170,6 +170,30 @@ folded into the existing "Server-first is not optional" alert.)
       generate the HTML. (**Partially done**)
 - [ ] Elaborate on how with NextJS, the API is your HTML. The server returns HTML not the data that
       is used to generate HTML.
+- [ ] Simplicity
+  - [ ] Backend vs. Client Side - backend is serial, you know what things are each step of the way.
+        You're not worried about user events, timing, network requests, latency, ad blockers, etc.
+  - [ ] General note about how client side stuff is always more complicated than backend because you
+        have user interactions and timing to worry about. Additional variables from user's network
+        connection, browser, speed, internet, firewalls, ad blockers. etc.
+- [ ] Discussion of the nextjs page cache or html cached output and how that relates to the server
+      content that is maximized.
+- [ ] How CSR forces you to choose between using fallback values OR not revealing any content until
+      it's loaded. How complex that makes things. Examples with UserProfilePage and the height of
+      the text content. Maybe videos
+- [x] Benefits of SSR and how that relates to the various goals here.
+- [x] CONTENT SHIFTING **ELABORATE**
+- [x] Simplicity: Difficulty with timing and render blocking requests, nested spinners down through
+      the dom tree, spinners showing on top of spinners, etc. etc **Elaborate**
+- [x] Server should be source of truth - everything should point back to the server as much as it
+      can. **Elaborate**
+
+### Decoupling
+
+- [ ] PORTABILITY and importance of portable components. Slot usages, how you can provide server
+      components to slots in client components. How you can provide client components to slots in
+      server components. Code examples, diagrams, etc.
+- [ ] **Diagrams on portability**
 
 ### Containing the Unknown
 
@@ -178,7 +202,6 @@ folded into the existing "Server-first is not optional" alert.)
 - [ ] Discuss how skeletons should not be used to replace entire content unless that content is
       fundamentally not known on first render. Things that can be rendered on the screen even if
       data is still loading should always be on the screen (like Form inputs, buttons, etc.)
-- [ ]
 
 ### Client Boundaries
 
@@ -201,6 +224,11 @@ folded into the existing "Server-first is not optional" alert.)
 - [ ] Examples of difficult patterns - two stacked tables.
 - [x] Loading, data and empty states as three different questions
   - [ ] Talk about empty state flickering and use a diagram.
+- [x] Diagrams for Reserving space honestly similar to the web app diagram view (the diagram on the
+      goals page thesis section that shows the URL bar). Diagrams use arrows to show how content
+      expands to fill space and how it is reserved. Diagrams show how to reserve space for content
+      that is not known on first render. Diagrams show how to reserve space for content that is not
+      known on first render yet will eventually appear. **REVISIT AND IMPROVE**
 
 ### Signs You are Doing It Wrong
 
@@ -256,44 +284,23 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
 
 - [x] Diagram for client vs server side routing in nextjs (**Partially done**)
 - [x] Should probably discuss use transitions at some point
-- [ ] General note about how client side stuff is always more complicated than backend because you
-      have user interactions and timing to worry about. Additional variables from user's network
-      connection, browser, speed, internet, firewalls, ad blockers. etc.
 - [ ] **Expanding on habits** you keep to include other things like prop drilling, dependent
       components, containers and space allocation. Auth on the frontend.
 - [x] Expand on "decouple the parts" so its also about allowing client boundaries to be pushed
       further down and isolated inside of smaller more granular pieces.
-- [ ] Content about how Vercel and React are working together and how React 19 and app router have
+- [x] Content about how Vercel and React are working together and how React 19 and app router have
       been coming out in tandem. **ELABORATE ON THIS**
 - [x] Code example for React cache and SWR cache diagrams
 - [x] Suspense works for client components too!
-- [ ] Simplicity
-  - [ ] Backend vs. Client Side - backend is serial, you know what things are each step of the way.
-        You're not worried about user events, timing, network requests, latency, ad blockers, etc.
-- [x] Benefits of SSR and how that relates to the various goals here.
-  - [x] CONTENT SHIFTING **ELABORATE**
-  - [x] Simplicity: Difficulty with timing and render blocking requests, nested spinners down
-        through the dom tree, spinners showing on top of spinners, etc. etc **Elaborate**
-  - [x] Server should be source of truth - everything should point back to the server as much as it
-        can. **Elaborate**
-- [ ] **Diagrams on portability**
 - [x] How all of these things affect how we break components down. How components that are not pure
       should be in dedicated files. Inclusion of things like code splitting and bundle size.
 - [x] Bundle Size & Code Splitting Dedicated Section?
-- [ ] Discussion of the nextjs page cache or html cached output and how that relates to the server
-      content that is maximized.
-- [ ] How CSR forces you to choose between using fallback values OR not revealing any content until
-      it's loaded. How complex that makes things. Examples with UserProfilePage and the height of
-      the text content. Maybe videos
 - [x] How NextJS manipulates `fetch`. This should likely be part of the discussion on deduplication
       and caching.
 - [x] Client components rendering server components. (**Partially done**)
 - [x] We need to talk about React's Transition API and how it's used, when to use it.
 - [x] SWR and `useSWR` discussed in way more depth. Might want to do this alongside of the dedupe
       and caching content but also the content on when client side fetching is appropriate.
-- [ ] PORTABILITY and importance of portable components. Slot usages, how you can provide server
-      components to slots in client components. How you can provide client components to slots in
-      server components. Code examples, diagrams, etc.
 - [x] Server Actions
   - [x] We need to talk more thoroughly about what server actions/server functions are, how they
         actually work under the hood, and what the benefits are. We should also go on to discuss
@@ -305,11 +312,11 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
         allowed to access it, etc. separately and distinctly. When we add HTTP middlemen, we now
         have to standardize and communicate those errors through the HTTP layer but also we have to
         now account for things like network errors, timeouts, etc. The discussion should use the
-        direct Prisma access as an example, but also mention how the Tracker pattern of funneling
-        through an API layer on the same app UI is not good because it adds a second HTTP layer that
-        things have to be handled through. The less middlemen the better - we should be using server
-        actions that talk to the APIs we have setup as separate services directly, rather than
-        proxying through NextJS API routes.
+        direct **Prisma access as an example**, but also mention how the Tracker pattern of
+        funneling through an API layer on the same app UI is not good because it adds a second HTTP
+        layer that things have to be handled through. The less middlemen the better - we should be
+        using server actions that talk to the APIs we have setup as separate services directly,
+        rather than proxying through NextJS API routes.
   - [ ] The above needs to be expanded on more to include code snippets and direct prisma usage.
   - [x] Server Functions (React)
   - [x] Referencing docs in React 19
@@ -317,7 +324,7 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
   - [x] useFormStatus
   - [x] useActionState
   - [x] How they work under the hood
-  - [ ] What we lose when we go through HTTP middleman (Expand more on this)
+  - [ ] **What we lose when we go through HTTP middleman (Expand more on this)**
     - [x] Type Safety (end to end)
     - [x] latency and speed
     - [x] simplicity
@@ -332,11 +339,6 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
       avoid waterfalls and how to avoid them when they are unavoidable. Diagrams should show how to
       avoid waterfalls when you have a lot of client components that are all trying to load data at
       the same time.
-- [x] Diagrams for Reserving space honestly similar to the web app diagram view (the diagram on the
-      goals page thesis section that shows the URL bar). Diagrams use arrows to show how content
-      expands to fill space and how it is reserved. Diagrams show how to reserve space for content
-      that is not known on first render. Diagrams show how to reserve space for content that is not
-      known on first render yet will eventually appear. **REVISIT AND IMPROVE**
 
 (Done 2026-07-17: remaining themes placed as follows. Transitions ("use transitions" / React's
 Transition API) -> §18.4 useTransition, expanded with the three canonical uses (expensive non-urgent
