@@ -545,11 +545,22 @@ const TOC = [
         try {
           const d = JSON.parse(reader.result);
           if (!d || !Array.isArray(d.notes)) throw new Error('bad shape');
-          data = { notes: d.notes };
+          /* MERGE rather than replace, so loading can never lose local notes
+             that haven't been saved yet. The file wins for notes both sides
+             know (that's how Claude's resolutions arrive); local-only notes
+             (new, unsaved) survive. */
+          const merged = {};
+          data.notes.forEach(n => {
+            merged[n.id] = n;
+          });
+          d.notes.forEach(n => {
+            merged[n.id] = n;
+          });
+          data = { notes: Object.values(merged) };
           persist();
           renderPins();
           renderPanel();
-          toast('Notes loaded');
+          toast('Notes merged from file');
         } catch (e) {
           toast('Not a valid notes file');
         }
