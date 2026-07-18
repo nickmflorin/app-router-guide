@@ -33,6 +33,8 @@ const prefix = root === '.' ? '' : `${root}/`;
         </div>
       </main>
     </div>
+    {/* Generated at build time; a script tag (not fetch) so file:// works. */}
+    <script is:inline defer src={`${prefix}assets/search-index.js`}></script>
     <script is:inline src={`${prefix}assets/nav.js`}></script>
   </body>
 </html>

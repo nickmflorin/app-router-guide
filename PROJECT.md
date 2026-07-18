@@ -93,6 +93,13 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   worked example: page header + data table (parallel routes, containers in layout, suspense
   placement, deferred values, flex-grow scroll, deduped queries).
 
+- 2026-07-18: **Sidebar search added.** `scripts/build_search_index.py` (now part of `npm run
+  build`, after relativize) parses built pages into html-guide/assets/search-index.js
+  (window.ARG_SEARCH_INDEX; a script tag, not fetch, so file:// works). nav.js renders a search
+  input above the TOC: as-you-type results replace the TOC list (chapter, heading, highlighted
+  snippet, link to page#anchor), arrow-key + Enter navigation, "/" focuses, Esc clears. Sidebar
+  scroll position also persists across navigations (sessionStorage). Search works in the
+  html-guide folder distribution; the single-file artifact bundle does NOT have search yet.
 - 2026-07-18: **Inserted new chapter §11 "Designing for the Unknown" (Part B), per Nick.** Full
   restructuring-rule pass: old §11-19 shifted to §12-20; files renamed 11-19 -> 12-20; toc.js,
   nav.js, index.astro, kickers, in-page N.M headings, and every cross-ref updated; verified

@@ -153,6 +153,13 @@ const TOC = [
           </div>
         </div>
       </a>`;
+    html += `
+      <div class="side-search">
+        <input id="side-search-input" type="search" placeholder="Search the guide&hellip;  /"
+          autocomplete="off" spellcheck="false" aria-label="Search the guide">
+      </div>
+      <div id="side-search-results" hidden></div>`;
+    html += '<div id="side-toc">';
     for (const group of TOC) {
       if (group.part) html += `<div class="part-label">${group.part}</div>`;
       for (const item of group.items) {
@@ -160,6 +167,7 @@ const TOC = [
         html += `<a class="${cls}" href="${prefix}${item.file}"><span class="n">${item.n}</span>${item.title}</a>`;
       }
     }
+    html += '</div>';
     sidebar.innerHTML = html;
 
     /* Keep the sidebar's scroll position across page loads. Each chapter is
@@ -181,9 +189,144 @@ const TOC = [
     sessionStorage.setItem(SCROLL_KEY, String(sidebar.scrollTop));
     sidebar.addEventListener(
       'scroll',
-      () => sessionStorage.setItem(SCROLL_KEY, String(sidebar.scrollTop)),
+      () => {
+        // Don't record positions from the search-results view; only the TOC's.
+        const toc = document.getElementById('side-toc');
+        if (toc && toc.hidden) return;
+        sessionStorage.setItem(SCROLL_KEY, String(sidebar.scrollTop));
+      },
       { passive: true }
     );
+
+    /* ---- sidebar search over the build-time index (search-index.js) ---- */
+    const searchInput = document.getElementById('side-search-input');
+    const resultsEl = document.getElementById('side-search-results');
+    const tocEl = document.getElementById('side-toc');
+    if (searchInput && resultsEl && tocEl) {
+      const esc = s =>
+        s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+      const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      let active = -1;
+
+      const highlight = (text, tokens) => {
+        const re = new RegExp('(' + tokens.map(t => escRe(esc(t))).join('|') + ')', 'gi');
+        return esc(text).replace(re, '<mark>$1</mark>');
+      };
+
+      const search = q => {
+        const tokens = q.toLowerCase().split(/\s+/).filter(Boolean).slice(0, 8);
+        const index = (window.ARG_SEARCH_INDEX && window.ARG_SEARCH_INDEX.entries) || [];
+        const scored = [];
+        for (const e of index) {
+          const h = e.h.toLowerCase();
+          const t = e.t.toLowerCase();
+          const c = e.c.toLowerCase();
+          let score = 0;
+          let ok = true;
+          for (const tok of tokens) {
+            const inH = h.includes(tok);
+            const inC = c.includes(tok);
+            const inT = t.includes(tok);
+            if (!inH && !inC && !inT) {
+              ok = false;
+              break;
+            }
+            if (inH) score += 20;
+            if (inC) score += 8;
+            if (inT) score += 3;
+            if (inH && new RegExp('\\b' + escRe(tok)).test(h)) score += 6;
+          }
+          if (ok) scored.push([score, e]);
+        }
+        scored.sort((a, b) => b[0] - a[0]);
+        return { tokens, hits: scored.slice(0, 15).map(x => x[1]) };
+      };
+
+      const snippet = (e, tokens) => {
+        const lower = e.t.toLowerCase();
+        let pos = -1;
+        for (const tok of tokens) {
+          const i = lower.indexOf(tok);
+          if (i !== -1 && (pos === -1 || i < pos)) pos = i;
+        }
+        if (pos === -1) return '';
+        const start = Math.max(0, pos - 55);
+        let s = e.t.slice(start, start + 160);
+        if (start > 0) s = '…' + s;
+        if (start + 160 < e.t.length) s += '…';
+        return highlight(s, tokens);
+      };
+
+      const render = q => {
+        active = -1;
+        if (!q) {
+          resultsEl.hidden = true;
+          resultsEl.innerHTML = '';
+          tocEl.hidden = false;
+          return;
+        }
+        const { tokens, hits } = search(q);
+        tocEl.hidden = true;
+        resultsEl.hidden = false;
+        if (!hits.length) {
+          resultsEl.innerHTML =
+            '<div class="sr-empty">No matches. Try fewer or different words.</div>';
+          return;
+        }
+        resultsEl.innerHTML = hits
+          .map(e => {
+            const href = prefix + e.f + (e.a ? '#' + e.a : '');
+            return (
+              `<a class="sr-item" href="${href}">` +
+              `<span class="sr-chapter">${e.n} · ${esc(e.c)}</span>` +
+              `<span class="sr-heading">${highlight(e.h || e.c, tokens)}</span>` +
+              `<span class="sr-snippet">${snippet(e, tokens)}</span>` +
+              `</a>`
+            );
+          })
+          .join('');
+        sidebar.scrollTop = 0;
+      };
+
+      const setActive = next => {
+        const items = resultsEl.querySelectorAll('.sr-item');
+        if (!items.length) return;
+        active = (next + items.length) % items.length;
+        items.forEach((el, i) => el.classList.toggle('active', i === active));
+        items[active].scrollIntoView({ block: 'nearest' });
+      };
+
+      searchInput.addEventListener('input', () => render(searchInput.value.trim()));
+      searchInput.addEventListener('keydown', e => {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          setActive(active + 1);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          setActive(active - 1);
+        } else if (e.key === 'Enter') {
+          const items = resultsEl.querySelectorAll('.sr-item');
+          const target = items[active === -1 ? 0 : active];
+          if (target) target.click();
+        } else if (e.key === 'Escape') {
+          searchInput.value = '';
+          render('');
+          searchInput.blur();
+        }
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+          const t = document.activeElement;
+          const typing =
+            t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+          if (!typing) {
+            e.preventDefault();
+            searchInput.focus();
+            searchInput.select();
+          }
+        }
+      });
+    }
   }
 
   const pager = document.getElementById('pager');
