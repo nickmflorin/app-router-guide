@@ -161,6 +161,29 @@ const TOC = [
       }
     }
     sidebar.innerHTML = html;
+
+    /* Keep the sidebar's scroll position across page loads. Each chapter is
+       its own document, so without this the sidebar snaps back to the top on
+       every navigation. Save continuously, restore after render, and fall
+       back to scrolling the current item into view (first visit, deep link,
+       or a stale position that would hide it). */
+    const SCROLL_KEY = 'arg-sidebar-scroll';
+    const saved = sessionStorage.getItem(SCROLL_KEY);
+    if (saved !== null) sidebar.scrollTop = parseInt(saved, 10) || 0;
+    const current = sidebar.querySelector('.toc-item.current');
+    if (current) {
+      const top = current.offsetTop - sidebar.scrollTop;
+      if (top < 0 || top > sidebar.clientHeight - current.offsetHeight) {
+        sidebar.scrollTop =
+          current.offsetTop - sidebar.clientHeight / 2 + current.offsetHeight / 2;
+      }
+    }
+    sessionStorage.setItem(SCROLL_KEY, String(sidebar.scrollTop));
+    sidebar.addEventListener(
+      'scroll',
+      () => sessionStorage.setItem(SCROLL_KEY, String(sidebar.scrollTop)),
+      { passive: true }
+    );
   }
 
   const pager = document.getElementById('pager');

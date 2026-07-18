@@ -41,8 +41,7 @@ clarification before proceeding.
 - [ ] Suspense arrives (React 16.6) async UI becomes the framework's problem: the first crack in
       "every component fends for itself" - I don't understand what this means on the timeline
       elaborate.
-
-- [ ] Further elaboration on how "use client" is a "last resort" and should be avoided as much as
+- [x] Further elaboration on how "use client" is a "last resort" and should be avoided as much as
       possible. It is not a preference, it is a requirement for using React 19 and the App Router,
       and deviation from that will make things very difficult. Treating everything that cannot be
       rendered fully on the server as a COST that must be justified, not the other way around.
@@ -60,7 +59,7 @@ clarification before proceeding.
       flashing and shifting around, things should be loading in a way that is predictable and
       understandable to the user.
 - [x] diagram for callbacks are wires too section
-- [ ] How server first means that you sometimes have to break your components apart in a different
+- [x] How server first means that you sometimes have to break your components apart in a different
       seemingly-awkward-at-first way. It means you have to separate the server from client parts.
 - [x] Wholesale grid: the whole table waits - the left and right views should be aligned so that the
       content area is the same height as the sub parts. same thing with the Wholesale: one fused
@@ -70,7 +69,7 @@ clarification before proceeding.
 - [x] Consider moving explanation of perceived performance up, tie it together with cumulative
       layout shift. Tie together with TTI and why its a dead metric. (**Partially done**)
 - [x] Rename Tracker references to Tracker
-- [ ] Importance of 1 component per file.
+- [x] Importance of 1 component per file.
 
 ## Page Content to Add or Modify
 
@@ -194,10 +193,10 @@ folded into the existing "Server-first is not optional" alert.)
 
 ### Decoupling
 
-- [ ] PORTABILITY and importance of portable components. Slot usages, how you can provide server
+- [x] PORTABILITY and importance of portable components. Slot usages, how you can provide server
       components to slots in client components. How you can provide client components to slots in
       server components. Code examples, diagrams, etc.
-- [ ] **Diagrams on portability**
+- [x] **Diagrams on portability**
 
 ### Containing the Unknown
 
@@ -238,7 +237,7 @@ folded into the existing "Server-first is not optional" alert.)
 
 **ADDITIONAL**
 
-- [ ] You are doing it wrong if you are hiding visible and known content on first paint behind a
+- [x] You are doing it wrong if you are hiding visible and known content on first paint behind a
       skeleton that is supposed to only represent the unknown content.
 
 This section should be organized so that some of the items are grouped together but also that for
@@ -321,7 +320,7 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
         layer that things have to be handled through. The less middlemen the better - we should be
         using server actions that talk to the APIs we have setup as separate services directly,
         rather than proxying through NextJS API routes.
-  - [ ] The above needs to be expanded on more to include code snippets and direct prisma usage.
+  - [x] The above needs to be expanded on more to include code snippets and direct prisma usage.
   - [x] Server Functions (React)
   - [x] Referencing docs in React 19
   - [x] Forms & Actions
