@@ -130,6 +130,18 @@ home per technique + cross-references).
   document for every `[N]`, do those tasks, and flip each `[N]` to `[x]` once addressed. A "ready"
   request never touches plain `[ ]` items unless Nick names them. The legend also lives in the
   working-notes.md header.
+- **Page annotation workflow (built 2026-07-17).** nav.js ships a draft annotation layer: "+ Add
+  note" in the top-right toolbar arms note mode; clicking any block (paragraph, diagram figure,
+  code, table, callout, li, heading) opens a dialog; notes render as numbered amber gutter pins
+  with a "Notes (n)" panel (jump/edit/resolve/delete). Storage: localStorage key `arg-notes-v1`;
+  "Save to file" writes `supplementary/page-notes.json` (File System Access API, download
+  fallback); "Load file" imports it back. THE CONTRACT: when Nick says "address my page notes" (or
+  similar), read `supplementary/page-notes.json`, act on every note with status "open", then set
+  its status to "resolved" and add a short `resolution` field describing what was done; Nick
+  re-imports the file in the browser to clear the pins. Notes locate their target via
+  content-inner child-index `path` with a text `snippet` fallback and a nearest-heading `anchor`
+  for human context. The whole module (bottom of nav.js) + .draft-tools/.note-* CSS is removed
+  when the guide ships.
 - **NO EM DASHES, ever (per Nick, 2026-07-16).** The document must contain zero U+2014 characters.
   Use commas, colons, semicolons, parentheses, or split the sentence; plain hyphens are allowed
   where a compound or short-label separator reads naturally. En dashes (U+2013) for numeric ranges
