@@ -346,49 +346,80 @@ const TOC = [
   });
 
   /* ---------- dialog ---------- */
+  /* Crash-safe editing: the note is persisted to localStorage the moment the
+     dialog opens (so a hot reload can't lose it), and every keystroke
+     autosaves on a short debounce. "Done" just closes; "Discard" deletes.
+     Notes left empty are discarded on close. */
   let dialog = null;
   function closeDialog() {
     if (dialog) {
+      if (dialog._flush) dialog._flush();
       dialog.remove();
       dialog = null;
     }
   }
+  function removeNote(note) {
+    data.notes = data.notes.filter(x => x.id !== note.id);
+    persist();
+    renderPins();
+    renderPanel();
+  }
   function openDialog(block, existing) {
     closeDialog();
+    let note = existing;
+    if (!note) {
+      note = {
+        id: 'n' + Date.now().toString(36),
+        page: page,
+        ts: new Date().toISOString(),
+        status: 'open',
+        text: '',
+        target: buildTarget(block),
+      };
+      data.notes.push(note);
+      persist();
+      renderPins();
+    }
     dialog = document.createElement('div');
     dialog.className = 'note-dialog';
-    const where = existing ? existing.target.snippet : buildTarget(block).snippet;
     dialog.innerHTML =
       '<div class="np-where" style="margin-bottom:6px;color:#8a5a00;font-size:11px"></div>' +
-      '<textarea placeholder="What should change here?"></textarea>' +
+      '<textarea placeholder="What should change here? (autosaves as you type)"></textarea>' +
       '<div class="nd-actions">' +
-      '<button type="button" class="note-btn" data-act="cancel">Cancel</button>' +
-      '<button type="button" class="note-btn active" data-act="save">Save note</button></div>';
-    dialog.querySelector('.np-where').textContent = '“' + where.slice(0, 70) + '…”';
+      '<button type="button" class="note-btn" data-act="discard">Discard</button>' +
+      '<button type="button" class="note-btn active" data-act="done">Done</button></div>';
+    dialog.querySelector('.np-where').textContent = '“' + note.target.snippet.slice(0, 70) + '…”';
     const ta = dialog.querySelector('textarea');
-    if (existing) ta.value = existing.text;
-    dialog.querySelector('[data-act="cancel"]').addEventListener('click', closeDialog);
-    dialog.querySelector('[data-act="save"]').addEventListener('click', () => {
-      const text = ta.value.trim();
-      if (text) {
-        if (existing) {
-          existing.text = text;
-        } else {
-          data.notes.push({
-            id: 'n' + Date.now().toString(36),
-            page: page,
-            ts: new Date().toISOString(),
-            status: 'open',
-            text: text,
-            target: buildTarget(block),
-          });
-        }
-        persist();
-        renderPins();
-        renderPanel();
-        flash(block);
-      }
+    ta.value = note.text;
+    let autosaveTimer = null;
+    function commit() {
+      clearTimeout(autosaveTimer);
+      note.text = ta.value.trim();
+      persist();
+      renderPins();
+      renderPanel();
+    }
+    ta.addEventListener('input', () => {
+      clearTimeout(autosaveTimer);
+      autosaveTimer = setTimeout(commit, 250);
+    });
+    /* Whatever closes the dialog (Done, Escape, another dialog opening),
+       the latest text is flushed first; empty notes are dropped. */
+    dialog._flush = () => {
+      commit();
+      if (!note.text) removeNote(note);
+    };
+    dialog.querySelector('[data-act="discard"]').addEventListener('click', () => {
+      dialog._flush = null;
+      removeNote(note);
       closeDialog();
+      toast('Note discarded');
+    });
+    dialog.querySelector('[data-act="done"]').addEventListener('click', () => {
+      const keep = ta.value.trim();
+      closeDialog();
+      if (keep) flash(block || document.body);
+      else toast('Empty note discarded');
     });
     document.body.appendChild(dialog);
     ta.focus();
