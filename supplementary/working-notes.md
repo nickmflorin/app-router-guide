@@ -24,7 +24,7 @@ clarification before proceeding.
 - [ ] Summary rules at the top for each page (i.e. a TL;DR section that says DOs and Donts) Can use
       a dropdown/accordion style thing.
 - [ ] The how to read this document section should use alignment for pills and text.
-- [ ] Trying to use horizontal divider lines for tables and/or a light gray thin border around the
+- [x] Trying to use horizontal divider lines for tables and/or a light gray thin border around the
       table area.
 - [x] TODO-style widgets that I can embed directly in the HTML to mark things that need to be done
       or inserted in place.
@@ -32,7 +32,7 @@ clarification before proceeding.
       corner whichever makes more sense, next to or in line with the file name. Same thing with good
       patterns but with green check marks.
 - [x] JSX in code blocks not always indented. Has additional space after { ...}
-- [ ] What earns a dynamic import, and what doesn't - section table should have horizontal lines
+- [x] What earns a dynamic import, and what doesn't - section table should have horizontal lines
       similar to other tables. All table should be consistently displayed. header styling, font,
       colors, should all be consistent.
 
@@ -55,7 +55,7 @@ clarification before proceeding.
       striving for an app with a production/professional level look and feel - things shouldn't be
       flashing and shifting around, things should be loading in a way that is predictable and
       understandable to the user.
-- [ ] diagram for callbacks are wires too section
+- [x] diagram for callbacks are wires too section
 - [ ] How server first means that you sometimes have to break your components apart in a different
       seemingly-awkward-at-first way. It means you have to separate the server from client parts.
 - [x] Wholesale grid: the whole table waits - the left and right views should be aligned so that the
@@ -261,7 +261,7 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
       connection, browser, speed, internet, firewalls, ad blockers. etc.
 - [ ] **Expanding on habits** you keep to include other things like prop drilling, dependent
       components, containers and space allocation. Auth on the frontend.
-- [ ] Expand on "decouple the parts" so its also about allowing client boundaries to be pushed
+- [x] Expand on "decouple the parts" so its also about allowing client boundaries to be pushed
       further down and isolated inside of smaller more granular pieces.
 - [ ] Content about how Vercel and React are working together and how React 19 and app router have
       been coming out in tandem. **ELABORATE ON THIS**
@@ -355,7 +355,7 @@ Nick, §18 is a reference catalog only, so the in-depth content moved into the C
 keep the old UI alive". §18 now holds only short reference entries that link out to those core
 sections.)
 
-- [ ] Transitions need to be expanded on more to include other use cases of deferring state updates.
+- [x] Transitions need to be expanded on more to include other use cases of deferring state updates.
 - [ ] The same three reads, three shapes - diagram needs to be better. It should incorporate an
       understanding of how suspense can parallelize server reads and how the server reads are not
       longer than the client ones.
