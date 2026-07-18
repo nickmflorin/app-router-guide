@@ -14,6 +14,33 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 3. PDF — generated later from (1).
 4. HTML slide deck — summarized (less detailed) version for the team presentation.
 
+## ASTRO MIGRATION (2026-07-17, per Nick: Astro 6 + Tailwind 4 hybrid; Phase 1 in progress)
+
+- **Source of truth is moving to `src/`** (Astro pages/components/layouts). `html-guide/` becomes
+  BUILD OUTPUT (`npm run build`, outDir html-guide, build.format 'file' so URLs/filenames are
+  unchanged; compressHTML off). Until the first successful build verifies parity, the committed
+  html-guide pages remain canonical; after that, NEVER hand-edit html-guide.
+- Components: Chip (k=react|next|critical|very|imp), Callout (kind,title), GoDeeper, Diagram
+  (default slot = svg, named slot caption), Compare + CompareCol (kind,label). Layout:
+  GuidePage.astro (title, root='.'|'..', cover). Chrome (sidebar/pager/code-wrap/DRAFT/annotations)
+  still runtime via public/assets/nav.js in Phase 1.
+- Static assets live in `public/assets/` (style.css, nav.js, logomark.svg) → copied into
+  html-guide/assets at build.
+- **.astro authoring gotchas:** braces in text are Astro expressions → literal { } in prose/inline
+  code must be &#123;/&#125;; pre.code blocks carry `is:raw` (converter added them; keep the
+  attribute on new code blocks). Prettier needs prettier-plugin-astro configured (add `plugins:
+  ['prettier-plugin-astro']` to .prettierrc.yaml AFTER npm install).
+- scripts/migrate_to_astro.py = the one-time converter (re-runnable, reads html-guide → writes
+  src/pages). scripts/verify_build.py = post-build parity diff vs git ref.
+- **Workflow after parity: edit src/, `npm run build`, then run svg_lint + verification against the
+  built html-guide** (the linter parses figure.diagram, which only exists post-build). Artifact
+  bundler still reads html-guide → unchanged.
+- PHASE 1 REMAINING: Nick runs `npm install` (sandbox registry blocked) → run build → fix compile
+  errors → verify_build parity → flip source of truth + prettierignore html-guide. PHASE 2
+  (Tailwind hybrid): import src/styles/tailwind.css, map palette to theme tokens, convert
+  design-system classes via @apply, utilities for layout; component-by-component with Nick
+  reviewing visually.
+
 ## Repo structure (reorganized 2026-07-16 — per Nick, so future distributables aren't crammed together)
 
 - `html-guide/` — THE canonical document: index.html + sections/\*.html + assets/ (style.css,
