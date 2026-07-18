@@ -6,6 +6,7 @@ import GoDeeper from '../../components/GoDeeper.astro';
 import Diagram from '../../components/Diagram.astro';
 import Compare from '../../components/Compare.astro';
 import CompareCol from '../../components/CompareCol.astro';
+import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title="First-Render JavaScript - App Router Guide" root="..">
@@ -180,6 +181,7 @@ The same page, two bundles. Amber code is invisible at first paint by definition
   with conditional rendering, "first renders" becomes "the user actually asked for it":
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">components/program/AnalyticsSection.tsx</span><span class="tok-dir">"use client"</span>;
@@ -208,6 +210,7 @@ The same page, two bundles. Amber code is invisible at first paint by definition
     &lt;/<span class="tok-fn">Collapsible</span>&gt;
   );
 }</pre>
+</Snippet>
 
 <p>
   This is the same shape as
@@ -246,6 +249,7 @@ The same page, two bundles. Amber code is invisible at first paint by definition
   </li>
 </ul>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">components/campus/CampusMapPanel.tsx</span><span class="tok-dir">"use client"</span>;
@@ -259,6 +263,7 @@ The same page, two bundles. Amber code is invisible at first paint by definition
   () =&gt; <span class="tok-kw">import</span>(<span class="tok-str">"./CampusMap"</span>).<span class="tok-fn">then</span>((m) =&gt; m.CampusMap),
   { <span class="tok-prop">ssr</span>: <span class="tok-kw">false</span>, <span class="tok-prop">loading</span>: () =&gt; &lt;<span class="tok-fn">MapSkeleton</span> /&gt; }
 );</pre>
+</Snippet>
 
 <p>
   Libraries can be split without splitting a component at all - a plain
@@ -266,6 +271,7 @@ The same page, two bundles. Amber code is invisible at first paint by definition
   used only after the user types, a CSV exporter used only on the export click:
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">components/table/ExportButton.tsx</span><span class="tok-dir">"use client"</span>;
@@ -289,6 +295,7 @@ The same page, two bundles. Amber code is invisible at first paint by definition
     &lt;/<span class="tok-fn">Button</span>&gt;
   );
 }</pre>
+</Snippet>
 
 <h2 id="candidates">6.4 What earns a dynamic import, and what doesn't</h2>
 <p>

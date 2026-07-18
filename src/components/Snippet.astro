@@ -1,0 +1,12 @@
+---
+/* The container for ONE code snippet: a <pre class="code"> plus its optional
+   <CodeCaption>, passed as children. The container owns all outer spacing and
+   all compare-column flex behavior, so the caption's distance from the code
+   box is identical everywhere (prose flow, list items, compare columns).
+   Every pre.code in the guide lives inside one of these; never place a bare
+   pre or a sibling caption directly in the page. */
+---
+
+<div class="snippet">
+  <slot />
+</div>

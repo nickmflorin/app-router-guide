@@ -7,6 +7,7 @@ import Diagram from '../../components/Diagram.astro';
 import Compare from '../../components/Compare.astro';
 import CompareCol from '../../components/CompareCol.astro';
 import CodeCaption from '../../components/CodeCaption.astro';
+import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title="Server-Resolvable State - App Router Guide" root="..">
@@ -177,6 +178,7 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
   prop; both are Promises in Next 16:
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">app/programs/[programId]/reports/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ReportsPage</span>({ params, searchParams }: <span class="tok-fn">PageProps</span>) {
@@ -190,6 +192,7 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
 
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">ReportTable</span> <span class="tok-prop">reports</span>={reports} /&gt;;
 }</pre>
+</Snippet>
 
 <p>
   The writing side you've already seen: an interactive leaf updates the query string with
@@ -234,6 +237,7 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
 
 <Compare>
 <CompareCol kind="bad" label="✕ Tabs in state: the smell">
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">ProgramView.tsx</span><span class="tok-dir">"use client"</span>;
@@ -257,9 +261,11 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
 <CodeCaption>
   View identity held in memory: not shareable, not refresh-proof, invisible to the server, and every panel ships to the client whether shown or not.
 </CodeCaption>
+    </Snippet>
   
 </CompareCol>
 <CompareCol kind="good" label="✓ Tabs as route segments">
+    <Snippet>
     <pre class="code" is:raw><span class="filename">the route structure</span>app/
 └── programs/
     └── [programId]/
@@ -283,6 +289,7 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
   and each brings its own <code>loading.tsx</code> and <code>error.tsx</code> boundaries
   (<a href="10-suspense-streaming.html#streaming">§10.2</a>).
 </CodeCaption>
+    </Snippet>
 </CompareCol>
 </Compare>
 
@@ -295,6 +302,7 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
   row of links; its only client concern is knowing which one is active:
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">components/program/ProgramTabs.tsx</span><span class="tok-dir">"use client"</span>;
@@ -322,6 +330,7 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
     &lt;/<span class="tok-fn">TabList</span>&gt;
   );
 }</pre>
+</Snippet>
 
 <p>
   When segments are too heavy for the case (small toggle-like tabs inside one page), the
@@ -368,6 +377,7 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
   the new payload arrives (or reverts it if the navigation fails):
 </p>
 
+<Snippet>
 <pre class="code" is:raw><span class="filename">ViewTabs.tsx (inner; the baked-in Suspense wrapper of §5.6 is omitted)</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ViewTabsInner</span>() {
@@ -409,6 +419,7 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
   by the page render; only the panel content waits, dimmed, per
   <a href="10-suspense-streaming.html#refetch">§10.5</a>.
 </CodeCaption>
+</Snippet>
 <p>
   The result is the best of both worlds from <a href="#tabs">§8.3</a>'s ladder: the URL
   stays the source of truth (shareable, refresh-proof, server-rendered), and the
@@ -428,6 +439,7 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
   <Chip k="very" />
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">app/(dashboard)/layout.tsx</span><span class="tok-kw">import</span> { cookies } <span class="tok-kw">from</span> <span class="tok-str">"next/headers"</span>;
@@ -441,6 +453,7 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
 
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">Shell</span> <span class="tok-prop">sidebarCollapsed</span>={collapsed}&gt;{children}&lt;/<span class="tok-fn">Shell</span>&gt;;
 }</pre>
+</Snippet>
 
 <p>
   The same caveat as search params applies: reading cookies makes that part of the tree

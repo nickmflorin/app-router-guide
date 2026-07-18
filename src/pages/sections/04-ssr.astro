@@ -6,6 +6,7 @@ import GoDeeper from '../../components/GoDeeper.astro';
 import Diagram from '../../components/Diagram.astro';
 import Compare from '../../components/Compare.astro';
 import CompareCol from '../../components/CompareCol.astro';
+import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title="Server-Side Rendering - App Router Guide" root="..">
@@ -731,6 +732,7 @@ Two routing modes, one rendering model. The first visit is server routing: a com
   all.
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">app/layout.tsx</span><span class="tok-com">{/* Prefetched automatically when the link enters the viewport or is hovered. */}</span>
@@ -743,6 +745,7 @@ Two routing modes, one rendering model. The first visit is server routing: a com
    links (an infinite-scroll table of rows), where eagerly prefetching every
    visible row is wasted work. Prefetch-on-hover is the middle ground. */}</span>
 &lt;<span class="tok-fn">Link</span> <span class="tok-prop">prefetch</span>={<span class="tok-kw">false</span>} <span class="tok-prop">href</span>=<span class="tok-str">"/programs/42"</span>&gt;Program 42&lt;/<span class="tok-fn">Link</span>&gt;</pre>
+</Snippet>
 
 <p>
   How much can be prefetched is, once again, a known/unknown question, this time asked

@@ -7,6 +7,7 @@ import Diagram from '../../components/Diagram.astro';
 import Compare from '../../components/Compare.astro';
 import CompareCol from '../../components/CompareCol.astro';
 import CodeCaption from '../../components/CodeCaption.astro';
+import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title="Containers &amp; Content Shifting - App Router Guide" root="..">
@@ -503,11 +504,14 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
 
 <Compare>
 <CompareCol kind="bad" label="✕ Occupants own chrome and size">
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">page.tsx</span>&lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
   &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={id} /&gt;
 &lt;/<span class="tok-fn">Suspense</span>&gt;</pre>
+    </Snippet>
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">StatsSkeleton.tsx</span><span class="tok-kw">export function</span> <span class="tok-fn">StatsSkeleton</span>() {
@@ -520,9 +524,11 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
 <CodeCaption>
   The fallback brings its own card: chrome that is torn down and rebuilt when the content arrives. Then <code>ProgramStats</code> renders another Card, and since neither declares a height, the swap reflows the page anyway.
 </CodeCaption>
+    </Snippet>
   
 </CompareCol>
 <CompareCol kind="good" label="✓ Container owns chrome and size; occupants fill it">
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">page.tsx</span>&lt;<span class="tok-fn">StatsCard</span>&gt;
@@ -533,6 +539,8 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
 <CodeCaption>
   The container is server markup in the scaffold: chrome plus reserved height, painted with the shell.
 </CodeCaption>
+    </Snippet>
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">StatsCard.tsx - server, known, immediate</span><span class="tok-kw">export function</span> <span class="tok-fn">StatsCard</span>({ children }) {
@@ -545,6 +553,7 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
     &lt;/section&gt;
   );
 }</pre>
+    </Snippet>
   
 </CompareCol>
 </Compare>
@@ -583,6 +592,7 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
   </li>
 </ul>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">app/(admin)/reports/layout.tsx - the flex-grow-and-scroll frame</span><span class="tok-kw">export default function</span> <span class="tok-fn">ReportsLayout</span>({ children }) {
@@ -598,6 +608,7 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
     &lt;/div&gt;
   );
 }</pre>
+</Snippet>
 
 <Diagram>
   <svg

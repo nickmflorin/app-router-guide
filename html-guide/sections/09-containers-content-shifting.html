@@ -226,9 +226,15 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
 <div class="bad">
   <div class="col-label">✕ Occupants own chrome and size</div>
   
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">page.tsx</span>&lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
   &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={id} /&gt;
 &lt;/<span class="tok-fn">Suspense</span>&gt;</pre>
+    
+</div>
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">StatsSkeleton.tsx</span><span class="tok-kw">export function</span> <span class="tok-fn">StatsSkeleton</span>() {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Card</span> <span class="tok-prop">title</span>=<span class="tok-str">"Stats"</span>&gt;
@@ -241,11 +247,15 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
   The fallback brings its own card: chrome that is torn down and rebuilt when the content arrives. Then <code>ProgramStats</code> renders another Card, and since neither declares a height, the swap reflows the page anyway.
 
 </div>
+    
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ Container owns chrome and size; occupants fill it</div>
+  
+    <div class="snippet">
   
     <pre class="code"><span class="filename">page.tsx</span>&lt;<span class="tok-fn">StatsCard</span>&gt;
   &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
@@ -257,6 +267,10 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
   The container is server markup in the scaffold: chrome plus reserved height, painted with the shell.
 
 </div>
+    
+</div>
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">StatsCard.tsx - server, known, immediate</span><span class="tok-kw">export function</span> <span class="tok-fn">StatsCard</span>({ children }) {
   <span class="tok-kw">return</span> (
     &lt;section <span class="tok-prop">className</span>=<span class="tok-str">"card"</span>&gt;
@@ -267,6 +281,8 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
     &lt;/section&gt;
   );
 }</pre>
+    
+</div>
   
 
 </div>
@@ -307,6 +323,8 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
   </li>
 </ul>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">app/(admin)/reports/layout.tsx - the flex-grow-and-scroll frame</span><span class="tok-kw">export default function</span> <span class="tok-fn">ReportsLayout</span>({ children }) {
   <span class="tok-kw">return</span> (
     <span class="tok-com">{/* The column is exactly viewport height; the page never grows. */}</span>
@@ -320,6 +338,8 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
     &lt;/div&gt;
   );
 }</pre>
+
+</div>
 
 <figure class="diagram">
   

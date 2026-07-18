@@ -204,6 +204,8 @@
     unnecessary for mutations: no route handler, no manual fetch, and end-to-end type safety,
     because the function's signature <em>is</em> the contract.
   </p>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">actions/programs.ts</span><span class="tok-dir">"use server"</span>;
 <span class="tok-kw">import</span> { revalidateTag } <span class="tok-kw">from</span> <span class="tok-str">"next/cache"</span>;
 
@@ -212,6 +214,8 @@
   <span class="tok-com">// Every reader of this tag refreshes; no callbacks up the tree.</span>
   <span class="tok-fn">revalidateTag</span>(<span class="tok-str">`program-${id}`</span>);
 }</pre>
+  
+</div>
   <p>
     The calling side, with its pending state, is the self-contained button pattern that
     <a href="05-client-server-boundaries.html#self-contained">§5.7</a> owns; the post-mutation refresh
@@ -230,6 +234,8 @@
     the fields serialized into search params (the URL-writing search input of <a href="08-server-resolvable-state.html#url-state">§8.2</a>, with the destination's <code>loading.tsx</code> prefetched); a <em>function</em> makes it an action-backed
     mutation form.
   </p>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">components/programs/ProgramSearch.tsx</span><span class="tok-kw">import</span> <span class="tok-fn">Form</span> <span class="tok-kw">from</span> <span class="tok-str">"next/form"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramSearch</span>() {
@@ -242,6 +248,8 @@
     &lt;/<span class="tok-fn">Form</span>&gt;
   );
 }</pre>
+  
+</div>
   <p>
     Note the page rendering this is still a server component: no directive, no hooks. Docs:
     <a href="https://nextjs.org/docs/app/api-reference/components/form" target="_blank" rel="noopener">Next.js: Form</a>
@@ -258,6 +266,8 @@
     state pair. (If you're searching the docs: this hook replaced the earlier
     <code>useFormState</code> from react-dom.)
   </p>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">components/programs/CreateProgramForm.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useActionState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 <span class="tok-kw">import</span> { createProgram } <span class="tok-kw">from</span> <span class="tok-str">"@/actions/programs"</span>;
@@ -274,6 +284,8 @@
     &lt;/form&gt;
   );
 }</pre>
+  
+</div>
   <p>
     Docs:
     <a href="https://react.dev/reference/react/useActionState" target="_blank" rel="noopener">React: useActionState</a>.
@@ -286,6 +298,8 @@
     a single prop being threaded to it (the
     <a href="12-minimize-the-wires.html">§12</a> spirit, applied to forms).
   </p>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">components/forms/SearchButton.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useFormStatus } <span class="tok-kw">from</span> <span class="tok-str">"react-dom"</span>;
 
@@ -298,6 +312,8 @@
     &lt;/<span class="tok-fn">Button</span>&gt;
   );
 }</pre>
+  
+</div>
   <p>
     Docs:
     <a href="https://react.dev/reference/react-dom/hooks/useFormStatus" target="_blank" rel="noopener">React: useFormStatus</a>.
@@ -312,6 +328,8 @@
     <a href="10-suspense-streaming.html#refetch">§10</a>: the existing content is never replaced by
     a spinner; it just updates.
   </p>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">components/programs/LikeButton.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useOptimistic } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 <span class="tok-kw">import</span> { likeProgram } <span class="tok-kw">from</span> <span class="tok-str">"@/actions/programs"</span>;
@@ -331,6 +349,8 @@
     &lt;/form&gt;
   );
 }</pre>
+  
+</div>
   <p>
     Docs:
     <a href="https://react.dev/reference/react/useOptimistic" target="_blank" rel="noopener">React: useOptimistic</a>.
@@ -347,6 +367,8 @@
     rendered (<a href="10-suspense-streaming.html">§10</a>). The request begins on the server, the
     HTML streams, and the client never runs a fetch-in-effect.
   </p>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">app/programs/[programId]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramPage</span>({ params }: <span class="tok-fn">PageProps</span>) {
   <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
   <span class="tok-com">// Deliberately not awaited: the promise itself crosses the boundary.</span>
@@ -357,6 +379,10 @@
     &lt;/<span class="tok-fn">Suspense</span>&gt;
   );
 }</pre>
+  
+</div>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">components/programs/ProgramNotes.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { use } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
@@ -365,6 +391,8 @@
   <span class="tok-kw">const</span> notes = <span class="tok-fn">use</span>(notesPromise);
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">NotesList</span> <span class="tok-prop">notes</span>={notes} /&gt;;
 }</pre>
+  
+</div>
   <p>
     Docs:
     <a href="https://react.dev/reference/react/use" target="_blank" rel="noopener">React: use</a>
@@ -381,6 +409,8 @@
     <a href="10-suspense-streaming.html#transitions">§10.7</a>.
   </p>
 
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">components/programs/ArchiveButton.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useTransition } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 <span class="tok-kw">import</span> { archiveProgram } <span class="tok-kw">from</span> <span class="tok-str">"@/actions/programs"</span>;
@@ -396,6 +426,8 @@
     &lt;/<span class="tok-fn">Button</span>&gt;
   );
 }</pre>
+  
+</div>
   <p>
     Docs:
     <a href="https://react.dev/reference/react/useTransition" target="_blank" rel="noopener">React: useTransition</a>.
@@ -408,6 +440,8 @@
     table problem in <a href="10-suspense-streaming.html">§10</a>: the input stays crisp, the table
     catches up when it can, and nothing flashes a spinner.
   </p>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">components/programs/ProgramFilter.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useDeferredValue, useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
@@ -422,6 +456,8 @@
     &lt;/&gt;
   );
 }</pre>
+  
+</div>
   <p>
     Docs:
     <a href="https://react.dev/reference/react/useDeferredValue" target="_blank" rel="noopener">React: useDeferredValue</a>.
@@ -435,6 +471,8 @@
     <em>where the user is</em> belong in the URL. Activity is for the panels that genuinely remain client
     state (interaction, not identity) and are expensive to remount.
   </p>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">components/editor/EditorPanels.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { Activity } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
@@ -451,6 +489,8 @@
     &lt;/&gt;
   );
 }</pre>
+  
+</div>
   <p>
     Docs:
     <a href="https://react.dev/reference/react/Activity" target="_blank" rel="noopener">React: Activity</a>.
@@ -486,6 +526,8 @@
     re-connecting, re-subscribing, re-firing) when those values change. Stable as of React 19.2. It
     is a scalpel for the few legitimate effects that remain after <a href="17-applied-to-tracker.html#finding-3">§17's Finding 3</a> is fixed; it is not a license to write more effects.
   </p>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">components/jobs/JobStatusToast.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useEffect, useEffectEvent } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
@@ -499,6 +541,8 @@
   }, [jobId]);
   <span class="tok-kw">return null</span>;
 }</pre>
+  
+</div>
   <p>
     Docs:
     <a href="https://react.dev/reference/react/useEffectEvent" target="_blank" rel="noopener">React: useEffectEvent</a>.
@@ -510,6 +554,8 @@
     or randomly generated element ids are a hydration-mismatch factory in an SSR world; this is the
     sanctioned replacement, chiefly for accessibility wiring.
   </p>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">components/forms/EmailField.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useId } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
@@ -523,6 +569,8 @@
     &lt;/&gt;
   );
 }</pre>
+  
+</div>
   <p>
     Docs:
     <a href="https://react.dev/reference/react/useId" target="_blank" rel="noopener">React: useId</a>.
@@ -535,6 +583,8 @@
     with <code>useEffect</code> +
     <code>useState</code>.
   </p>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">hooks/useOnlineStatus.ts</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useSyncExternalStore } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
@@ -552,6 +602,8 @@
      so the SSR pass and hydration agree. */</span>
   <span class="tok-kw">return</span> <span class="tok-fn">useSyncExternalStore</span>(subscribe, () =&gt; navigator.onLine, () =&gt; <span class="tok-kw">true</span>);
 }</pre>
+  
+</div>
   <p>
     Docs:
     <a href="https://react.dev/reference/react/useSyncExternalStore" target="_blank" rel="noopener">React: useSyncExternalStore</a>.
@@ -573,6 +625,8 @@
     component: an inline hint for navigations that can't be instant (prefetching disabled, or a dynamic
     route without a <code>loading.tsx</code>). Prefer route-level fallbacks and prefetching first (<a href="04-ssr.html#prefetching">§4.5</a>); reach for this when a specific slow transition needs feedback <em>at the link</em>.
   </p>
+  <div class="snippet">
+  
   <pre class="code"><span class="filename">components/nav/LinkPendingDot.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useLinkStatus } <span class="tok-kw">from</span> <span class="tok-str">"next/link"</span>;
 
@@ -583,6 +637,8 @@
      (the §9 container rule, at the scale of a dot). */</span>
   <span class="tok-kw">return</span> &lt;span <span class="tok-prop">aria-hidden</span> <span class="tok-prop">className</span>={pending ? <span class="tok-str">"dot dot-pending"</span> : <span class="tok-str">"dot"</span>} /&gt;;
 }</pre>
+  
+</div>
   <p>
     Docs:
     <a href="https://nextjs.org/docs/app/api-reference/functions/use-link-status" target="_blank" rel="noopener">Next.js: useLinkStatus</a>.

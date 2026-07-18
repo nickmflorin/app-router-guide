@@ -554,6 +554,8 @@ Two routing modes, one rendering model. The first visit is server routing: a com
   all.
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">app/layout.tsx</span><span class="tok-com">{/* Prefetched automatically when the link enters the viewport or is hovered. */}</span>
 &lt;<span class="tok-fn">Link</span> <span class="tok-prop">href</span>=<span class="tok-str">"/programs"</span>&gt;Programs&lt;/<span class="tok-fn">Link</span>&gt;
 
@@ -564,6 +566,8 @@ Two routing modes, one rendering model. The first visit is server routing: a com
    links (an infinite-scroll table of rows), where eagerly prefetching every
    visible row is wasted work. Prefetch-on-hover is the middle ground. */}</span>
 &lt;<span class="tok-fn">Link</span> <span class="tok-prop">prefetch</span>={<span class="tok-kw">false</span>} <span class="tok-prop">href</span>=<span class="tok-str">"/programs/42"</span>&gt;Program 42&lt;/<span class="tok-fn">Link</span>&gt;</pre>
+
+</div>
 
 <p>
   How much can be prefetched is, once again, a known/unknown question, this time asked

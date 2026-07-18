@@ -148,6 +148,8 @@ The same page, two bundles. Amber code is invisible at first paint by definition
   with conditional rendering, "first renders" becomes "the user actually asked for it":
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">components/program/AnalyticsSection.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
@@ -174,6 +176,8 @@ The same page, two bundles. Amber code is invisible at first paint by definition
     &lt;/<span class="tok-fn">Collapsible</span>&gt;
   );
 }</pre>
+
+</div>
 
 <p>
   This is the same shape as
@@ -208,6 +212,8 @@ The same page, two bundles. Amber code is invisible at first paint by definition
   </li>
 </ul>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">components/campus/CampusMapPanel.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
@@ -220,12 +226,16 @@ The same page, two bundles. Amber code is invisible at first paint by definition
   { <span class="tok-prop">ssr</span>: <span class="tok-kw">false</span>, <span class="tok-prop">loading</span>: () =&gt; &lt;<span class="tok-fn">MapSkeleton</span> /&gt; }
 );</pre>
 
+</div>
+
 <p>
   Libraries can be split without splitting a component at all - a plain
   <code>await import()</code> inside the handler that needs it. A fuzzy-search library
   used only after the user types, a CSV exporter used only on the export click:
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">components/table/ExportButton.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ExportButton</span>({ rows }: { rows: <span class="tok-fn">Row</span>[] }) {
@@ -247,6 +257,8 @@ The same page, two bundles. Amber code is invisible at first paint by definition
     &lt;/<span class="tok-fn">Button</span>&gt;
   );
 }</pre>
+
+</div>
 
 <h2 id="candidates">6.4 What earns a dynamic import, and what doesn't</h2>
 <p>

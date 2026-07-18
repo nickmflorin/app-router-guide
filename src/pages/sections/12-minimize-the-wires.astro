@@ -7,6 +7,7 @@ import Diagram from '../../components/Diagram.astro';
 import Compare from '../../components/Compare.astro';
 import CompareCol from '../../components/CompareCol.astro';
 import CodeCaption from '../../components/CodeCaption.astro';
+import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title="Minimize the Wires - App Router Guide" root="..">
@@ -392,6 +393,7 @@ The same three components, wired two ways. Left: the parent fetches once and dri
 
 <Compare>
 <CompareCol kind="bad" label="✕ Parent as data router">
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
@@ -413,9 +415,11 @@ The same three components, wired two ways. Left: the parent fetches once and dri
 <CodeCaption>
   The Header needs one more field? Edit Header, Page, and <code>getProgram</code>: three files, every time.
 </CodeCaption>
+    </Snippet>
   
 </CompareCol>
 <CompareCol kind="good" label="✓ Independent children, deduped data layer">
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
@@ -428,6 +432,8 @@ The same three components, wired two ways. Left: the parent fetches once and dri
     &lt;/&gt;
   );
 }</pre>
+    </Snippet>
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">components/program/ProgramHeader.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramHeader</span>({ programId }) {
@@ -436,6 +442,7 @@ The same three components, wired two ways. Left: the parent fetches once and dri
   <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> <span class="tok-fn">getProgram</span>(programId);
   <span class="tok-kw">return</span> &lt;header&gt;{program.name} …&lt;/header&gt;;
 }</pre>
+    </Snippet>
   
 </CompareCol>
 </Compare>
@@ -632,6 +639,7 @@ Boundary placement follows the data. Drilled props force one big boundary above 
 
 <Compare>
 <CompareCol kind="bad" label="✕ Reports up through a wire">
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
@@ -654,9 +662,11 @@ Boundary placement follows the data. Drilled props force one big boundary above 
 <CodeCaption>
   The button must be handed a wire: someone above must exist, must care, and must never change shape.
 </CodeCaption>
+    </Snippet>
   
 </CompareCol>
 <CompareCol kind="good" label="✓ Invalidates the data's name">
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
@@ -683,6 +693,7 @@ Boundary placement follows the data. Drilled props force one big boundary above 
 <CodeCaption>
   No wire: the mutation invalidates the name the data lives under, and every reader refires on its own.
 </CodeCaption>
+    </Snippet>
   
 </CompareCol>
 </Compare>

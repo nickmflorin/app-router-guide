@@ -7,6 +7,7 @@ import Diagram from '../../components/Diagram.astro';
 import Compare from '../../components/Compare.astro';
 import CompareCol from '../../components/CompareCol.astro';
 import CodeCaption from '../../components/CodeCaption.astro';
+import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title="Bundle Size &amp; Code Splitting - App Router Guide" root="..">
@@ -196,6 +197,7 @@ The same table, two architectures. On the left, a wholesale grid fuses the knowa
   awaits the rows, gets all three for free.
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">app/reports/hours/page.tsx (server component)</span><span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
@@ -214,6 +216,7 @@ The same table, two architectures. On the left, a wholesale grid fuses the knowa
     &lt;/table&gt;
   );
 }</pre>
+</Snippet>
 
 <p>
   The same contrast, seen as an actual page rather than a stack of boxes, makes the
@@ -451,6 +454,7 @@ The reports page, laid out both ways. On the left, the wholesale grid makes the 
   skeleton, sized to match.
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">components/reports/HoursGrid.tsx</span><span class="tok-dir">"use client"</span>;
@@ -467,6 +471,7 @@ The reports page, laid out both ways. On the left, the wholesale grid makes the 
 <span class="tok-kw">export function</span> <span class="tok-fn">HoursGrid</span>({ rows }: { rows: <span class="tok-fn">Row</span>[] }) {
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">DataGrid</span> <span class="tok-prop">rows</span>={rows} /&gt;;
 }</pre>
+</Snippet>
 
 <Callout kind="warn" title="Deferring a heavy import is a fallback, not a fix">
   <p>
@@ -492,6 +497,7 @@ The reports page, laid out both ways. On the left, the wholesale grid makes the 
 
 <Compare>
 <CompareCol kind="bad" label="✕ Barrel: one name pulls the whole package">
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;
@@ -500,9 +506,11 @@ The reports page, laid out both ways. On the left, the wholesale grid makes the 
 <CodeCaption>
   Pulling from the @/ui barrel adds the whole library to this route's graph: Button drags in Modal, DatePicker, RichTextEditor, and everything else the barrel re-exports.
 </CodeCaption>
+    </Snippet>
   
 </CompareCol>
 <CompareCol kind="good" label="✓ Direct: one name pulls one module">
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;
@@ -511,6 +519,7 @@ The reports page, laid out both ways. On the left, the wholesale grid makes the 
 <CodeCaption>
   Imports only Button's module; nothing else in @/ui joins this route's bundle.
 </CodeCaption>
+    </Snippet>
   
 </CompareCol>
 </Compare>

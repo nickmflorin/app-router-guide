@@ -387,6 +387,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 <div class="bad">
   <div class="col-label">✕ Wrapper converts its contents</div>
   
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">CollapsibleSection.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-com">/* Importing it drags it across the boundary:
@@ -402,11 +404,15 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
     &lt;/section&gt;
   );
 }</pre>
+    
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ Wrapper receives server-rendered children</div>
+  
+    <div class="snippet">
   
     <pre class="code"><span class="filename">CollapsibleSection.tsx: client shell, knows nothing</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">export function</span> <span class="tok-fn">CollapsibleSection</span>({ children }) {
@@ -418,12 +424,18 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
     &lt;/section&gt;
   );
 }</pre>
+    
+</div>
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">page.tsx: server composes through the shell</span>&lt;<span class="tok-fn">CollapsibleSection</span>&gt;
   <span class="tok-com">{/* ActivityFeed stays a server component; it
       fetches, renders, and ships 0 KB of JS; it
       passes through the shell as HTML. */}</span>
   &lt;<span class="tok-fn">ActivityFeed</span> <span class="tok-prop">programId</span>={id} /&gt;
 &lt;/<span class="tok-fn">CollapsibleSection</span>&gt;</pre>
+    
+</div>
   
 
 </div>
@@ -512,6 +524,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 <div class="bad">
   <div class="col-label">✕ Fused: configured with data + functions</div>
   
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">app layout (forced client)</span><span class="tok-dir">"use client"</span>;
 
 &lt;<span class="tok-fn">Sidebar</span>
@@ -528,10 +542,14 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   Here <code>onClick</code> is a function, and functions cannot cross the server-client boundary, so this layout must be a client component just to describe its sidebar. The library made the boundary decision for every consumer.
 
 </div>
+    
+</div>
 
 </div>
 <div class="good">
   <div class="col-label">✓ Composed: structure + leaf items</div>
+  
+    <div class="snippet">
   
     <pre class="code"><span class="filename">app layout (stays server)</span>&lt;<span class="tok-fn">Sidebar</span>&gt;
   &lt;<span class="tok-fn">SidebarLinkItem</span> <span class="tok-prop">href</span>=<span class="tok-str">"/home"</span> <span class="tok-prop">icon</span>={&lt;<span class="tok-fn">HomeIcon</span> /&gt;}&gt;
@@ -550,6 +568,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   No directive anywhere in this file: the container and link items are server-safe because navigation is an href, not a click handler. Only the sign-out leaf ships JavaScript, and it owns its own click.
 
 </div>
+    
+</div>
 
 </div>
 
@@ -560,6 +580,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   them carries the directive, and which do not need it at all:
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">packages/ui/sidebar/Sidebar.tsx: structure, no directive</span><span class="tok-kw">export function</span> <span class="tok-fn">Sidebar</span>({ children }: { children: React.ReactNode }) {
   <span class="tok-kw">return</span> &lt;nav <span class="tok-prop">className</span>=<span class="tok-str">"sidebar"</span>&gt;{children}&lt;/nav&gt;;
 }</pre>
@@ -569,6 +591,10 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 
 </div>
 
+</div>
+
+<div class="snippet">
+  
 <pre class="code"><span class="filename">packages/ui/sidebar/SidebarLinkItem.tsx: navigation, no directive</span><span class="tok-kw">export function</span> <span class="tok-fn">SidebarLinkItem</span>({ href, icon, children }: <span class="tok-fn">SidebarLinkItemProps</span>) {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Link</span> <span class="tok-prop">href</span>={href} <span class="tok-prop">className</span>=<span class="tok-str">"sidebar-item"</span>&gt;
@@ -584,6 +610,10 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 
 </div>
 
+</div>
+
+<div class="snippet">
+  
 <pre class="code"><span class="filename">packages/ui/sidebar/SidebarButtonItem.tsx: the interactive leaf, own file</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">SidebarButtonItem</span>({ icon, onClick, children }: <span class="tok-fn">SidebarButtonItemProps</span>) {
@@ -597,6 +627,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 <div class="code-caption">
   
   The one part that genuinely needs an event handler, isolated in its own file so that importing the container never drags it across the boundary.
+
+</div>
 
 </div>
 
@@ -624,6 +656,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 <div class="bad">
   <div class="col-label">✕ Imported directly: the composite goes client</div>
   
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">ProgramPicker.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">import</span> Select <span class="tok-kw">from</span> <span class="tok-str">"react-select"</span>;
@@ -642,10 +676,14 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   Because <code>react-select</code> is interactive, this entire composite goes client: the layout, the label, the help text. Every component that embeds <code>ProgramPicker</code> inherits the same fate.
 
 </div>
+    
+</div>
 
 </div>
 <div class="good">
   <div class="col-label">✓ Internalized: the third-party part is the leaf</div>
+  
+    <div class="snippet">
   
     <pre class="code"><span class="filename">ui/Select.tsx, then ProgramPicker.tsx</span><span class="tok-dir">"use client"</span>;
 
@@ -655,6 +693,10 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   The third-party component is internalized once, behind our own client file: this wrapper is the leaf, and nothing else needs the directive.
 
 </div>
+    
+</div>
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">ProgramPicker.tsx: no directive</span><span class="tok-kw">import</span> { Select } <span class="tok-kw">from</span> <span class="tok-str">"@/ui/Select"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramPicker</span>({ programs }) {
@@ -671,6 +713,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   The composite stays a server component; only the internalized Select ships JavaScript.
   The wrapper is also the single seam for theming or replacing the library later.
 
+</div>
+    
 </div>
 
 </div>
@@ -716,6 +760,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   Because forgetting the wrapper is easy and the failure is confusing, make the boundary
   part of the component itself; consumers should never need to remember it:
 </p>
+<div class="snippet">
+  
 <pre class="code"><span class="filename">SearchInput.tsx: the boundary is part of the component's public shape</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">SearchInput</span>(props: <span class="tok-fn">SearchInputProps</span>) {
@@ -734,6 +780,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 <div class="code-caption">
   
   The exported component bakes its own <code>Suspense</code> boundary in, so no call site can forget it. The fallback mirrors the input's geometry (same reserved space, <a href="09-containers-content-shifting.html">§9</a>), so nothing shifts when it resolves.
+
+</div>
 
 </div>
 <p>
@@ -765,6 +813,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 <div class="bad">
   <div class="col-label">✕ The page owns the interaction</div>
   
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-com">/* One button's mechanics hoisted the whole
@@ -789,11 +839,15 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
     &lt;/<span class="tok-fn">ProgramHeader</span>&gt;
   );
 }</pre>
+    
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ The leaf owns the interaction</div>
+  
+    <div class="snippet">
   
     <pre class="code"><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-com">/* Server component: no "use client",
    no handlers, no loading flags. */</span>
@@ -809,6 +863,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
     &lt;/<span class="tok-fn">ProgramHeader</span>&gt;
   );
 }</pre>
+    
+</div>
   
 
 </div>
@@ -822,6 +878,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   local loading state; it reserves no content space and replaces nothing):
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">components/program/PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">import</span> { useTransition } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
@@ -854,6 +912,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   );
 }</pre>
 
+</div>
+
 <p>
   Pause on that import, because it's the part people don't believe: a
   <em>client</em> component imported a <em>server</em> function and called it in a click
@@ -881,6 +941,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   the chunk downloads on first open, and until then the page carries only the button (<a href="06-first-render-js.html">§6</a>'s subject, met here in its most common form):
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">components/program/DeleteProgramButton.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
@@ -914,6 +976,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   );
 }</pre>
 
+</div>
+
 <p>
   Look at the wire count. The parent hands each of these components an <code>id</code>:
   identity, the one prop that's always legitimate (<a href="12-minimize-the-wires.html">§12</a>). That is the entire contract. No <code>onPublish</code>, no
@@ -933,6 +997,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   <code>useRefetch()</code> and stays ignorant of who actually refires:
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">The context approach: workable, but note what it costs</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">const</span> { refetch } = <span class="tok-fn">useRefetch</span>();
@@ -956,6 +1022,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 
 </div>
 
+</div>
+
 <p>
   This is genuinely better than drilling an <code>onSuccess</code> callback through three
   layers: the intermediate components stay clean. But look at what it presumes:
@@ -975,6 +1043,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   anybody:
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">actions/programs.ts</span><span class="tok-dir">"use server"</span>;
 
 <span class="tok-kw">import</span> { revalidateTag } <span class="tok-kw">from</span> <span class="tok-str">"next/cache"</span>;
@@ -995,6 +1065,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   <span class="tok-fn">revalidateTag</span>(<span class="tok-str">`program-${id}`</span>);
   <span class="tok-kw">return</span> {};
 }</pre>
+
+</div>
 
 <figure class="diagram">
   
@@ -1081,6 +1153,8 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
   query param and lets the route re-render:
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">components/table/SearchInput.tsx (inner; see §5.6 for the baked-in boundary)</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">function</span> <span class="tok-fn">SearchInputInner</span>() {
@@ -1103,6 +1177,8 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
     /&gt;
   );
 }</pre>
+
+</div>
 
 <p>
   This is the pattern <a href="10-suspense-streaming.html#refetch">§10.5</a>'s worked
@@ -1128,6 +1204,8 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
   <span class="chip chip-very">Very important</span>
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">components/program/ProgramDrawer.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">import</span> useSWR <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
@@ -1155,6 +1233,10 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
 
 </div>
 
+</div>
+
+<div class="snippet">
+  
 <pre class="code"><span class="filename">components/program/PublishButton.tsx (SWR flavor)</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">import</span> { mutate } <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
@@ -1184,6 +1266,8 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
 
 </div>
 
+</div>
+
 <p>
   Server tag, URL param, SWR key: three spellings of one idea. The leaf and the parent
   agree on a <em>name</em> for the data, and communicate by invalidating the name. The
@@ -1201,6 +1285,8 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
   all of it down through props and context:
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">The shape to fear: three jobs in one hook</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">useProgramsManager</span>() {
@@ -1234,12 +1320,16 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
 
 </div>
 
+</div>
+
 <p>
   That's the hook spelling. The same disease wears a component costume just as often: a
   page or container that fetches everything in sight, holds state it never reads, and
   threads all of it down through layers that are nothing but couriers:
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">app/programs/page.tsx: the component spelling</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">export default function</span> <span class="tok-fn">ProgramsPage</span>() {
@@ -1275,6 +1365,8 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
     &lt;/<span class="tok-fn">SectionLayout</span>&gt;
   );
 }</pre>
+
+</div>
 
 <p>
   Read the page's own render: it uses <em>none</em> of what it gathered. Every fetch,

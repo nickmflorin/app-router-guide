@@ -7,6 +7,7 @@ import Diagram from '../../components/Diagram.astro';
 import Compare from '../../components/Compare.astro';
 import CompareCol from '../../components/CompareCol.astro';
 import CodeCaption from '../../components/CodeCaption.astro';
+import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title="Dedupe &amp; Caching - App Router Guide" root="..">
@@ -361,6 +362,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   the tree, as many times as composition requires.
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">data/programs.ts</span><span class="tok-kw">import</span> { cache } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
@@ -374,6 +376,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   <span class="tok-kw">if</span> (!res.ok) <span class="tok-kw">throw new</span> <span class="tok-fn">ProgramError</span>(res);
   <span class="tok-kw">return</span> res.json() <span class="tok-kw">as</span> <span class="tok-fn">Promise</span>&lt;<span class="tok-fn">Program</span>&gt;;
 });</pre>
+</Snippet>
 
 <p>
   Two subtleties worth knowing. First, <code>fetch</code> itself dedupes identical calls
@@ -391,6 +394,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   <Chip k="very" />
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">data/templates.ts</span><span class="tok-kw">import</span> { cacheLife, cacheTag } <span class="tok-kw">from</span> <span class="tok-str">"next/cache"</span>;
@@ -404,6 +408,8 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   <span class="tok-fn">cacheTag</span>(<span class="tok-str">"form-templates"</span>);
   <span class="tok-kw">return</span> api.templates.<span class="tok-fn">list</span>();
 }</pre>
+</Snippet>
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">actions/templates.ts</span><span class="tok-dir">"use server"</span>;
@@ -414,6 +420,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   <span class="tok-com">// Every reader updates: no callbacks up the tree, no refetchAll().</span>
   <span class="tok-fn">revalidateTag</span>(<span class="tok-str">"form-templates"</span>);
 }</pre>
+</Snippet>
 <p>
   Note what the mutation does <em>not</em> do: it doesn't call a callback up to some
   parent, doesn't set a consistency token in the URL, doesn't orchestrate a
@@ -437,6 +444,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
 
 <Compare>
 <CompareCol kind="bad" label="✕ Hand-rolled: no dedupe layer exists">
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">every component, separately</span><span class="tok-dir">"use client"</span>;
@@ -453,8 +461,10 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   Two components asking this way means two requests, two loading states, and
   two error paths, with zero sharing between them.
 </CodeCaption>
+    </Snippet>
 </CompareCol>
 <CompareCol kind="good" label="✓ Shared hook: the key IS the dedupe">
+    <Snippet>
     <pre
                 class="code" is:raw
               ><span class="filename">hooks/useProgram.ts</span><span class="tok-dir">"use client"</span>;
@@ -468,6 +478,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   Any number of components can call this hook with the same id: one cache
   entry, one request, revalidated on focus and updated by <code>mutate()</code>.
 </CodeCaption>
+    </Snippet>
 </CompareCol>
 </Compare>
 
@@ -539,6 +550,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   options.
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">data/stats.ts</span><span class="tok-kw">export async function</span> <span class="tok-fn">getPublicStats</span>() {
@@ -557,6 +569,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
 <CodeCaption>
   Next reads the options off <code>fetch</code> itself: this response is cached across requests and tagged, so a mutation can invalidate exactly this data later.
 </CodeCaption>
+</Snippet>
 
 <p>
   This is why the audit's blanket <code>export const dynamic = "force-dynamic"</code> plus
@@ -579,6 +592,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   off that key.
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">hooks/useJobStatus.ts</span><span class="tok-dir">"use client"</span>;
@@ -597,6 +611,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
     },
   );
 }</pre>
+</Snippet>
 
 <p>
   The revalidation triggers are the reason SWR feels alive without any manual wiring: by
@@ -648,6 +663,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   component: the panel and its data are both loaded only when needed.
 </p>
 
+<Snippet>
 <pre
             class="code" is:raw
           ><span class="filename">components/programs/RowActions.tsx</span><span class="tok-dir">"use client"</span>;
@@ -667,6 +683,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
     &lt;/&gt;
   );
 }</pre>
+</Snippet>
 
 <p>
   The test is the one from

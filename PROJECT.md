@@ -209,12 +209,15 @@ home per technique + cross-references).
   "onClick..."). Per Nick, 2026-07-18.
 - **Whole-snippet comments are captions (per Nick, 2026-07-18):** any comment describing the
   snippet as a whole (not a specific line) lives in a <CodeCaption>, not in the code; swept
-  guide-wide 2026-07-18. Compare columns: only the LAST pre in a column flexes (CSS), so
-  stacked snippets stay natural-size and final snippet bottoms align across columns.
-- **Code captions (per Nick, 2026-07-18):** summary-style commentary moves OUT of code snippets
-  into a <CodeCaption> right under the pre (styled like diagram figcaptions, .code-caption).
-  In-code comments stay for line-level explanation only. Applied first in §13.3; adopt gradually
-  wherever a snippet ends in a summary comment.
+  guide-wide 2026-07-18. In-code comments stay for line-level explanation only.
+- **Every pre lives inside a <Snippet> (per Nick, 2026-07-18):** src/components/Snippet.astro
+  wraps ONE <pre class="code"> plus its optional <CodeCaption> (as children). The .snippet
+  container owns ALL outer spacing (pre and caption have no outer margins), so the caption sits
+  a fixed 6px under the code box everywhere. Never author a bare pre or a sibling caption.
+  Compare columns (CSS): only the LAST .snippet in a column flexes; inside it, the pre fills
+  the leftover height UNLESS the snippet has a caption (:has), in which case the pre keeps its
+  natural height so the caption hugs it and slack falls below the caption. li > .snippet gets
+  the tighter list margin.
 - **NO EM DASHES, ever (per Nick, 2026-07-16).** The document must contain zero U+2014 characters.
   Use commas, colons, semicolons, parentheses, or split the sentence; plain hyphens are allowed
   where a compound or short-label separator reads naturally. En dashes (U+2013) for numeric ranges

@@ -140,6 +140,8 @@ The lifecycle of one suspended region. The boundary lives inside a known contain
     <strong>An async server component awaiting</strong> inside the boundary: the canonical
     App Router case. The server streams the fallback, keeps working, and streams the
     content when the await resolves.
+    <div class="snippet">
+  
     <pre class="code"><span class="tok-com">{/* The await inside ReportRows suspends this boundary. */}</span>
 &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">RowsSkeleton</span> /&gt;}&gt;
   &lt;<span class="tok-fn">ReportRows</span> <span class="tok-prop">programId</span>={id} /&gt;
@@ -149,11 +151,15 @@ The lifecycle of one suspended region. The boundary lives inside a known contain
   <span class="tok-kw">const</span> rows = <span class="tok-kw">await</span> <span class="tok-fn">getRows</span>(programId);
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">TableBody</span> <span class="tok-prop">rows</span>={rows} /&gt;;
 }</pre>
+    
+</div>
   </li>
   <li>
     <strong><code>use(promise)</code></strong> in a client component: React 19's way to
     read a promise (often one passed down from a server component) with Suspense
     semantics.
+    <div class="snippet">
+  
     <pre class="code"><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">function</span> <span class="tok-fn">Comments</span>({ commentsPromise }) {
@@ -161,10 +167,14 @@ The lifecycle of one suspended region. The boundary lives inside a known contain
   <span class="tok-kw">const</span> comments = <span class="tok-fn">use</span>(commentsPromise);
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">CommentList</span> <span class="tok-prop">comments</span>={comments} /&gt;;
 }</pre>
+    
+</div>
   </li>
   <li>
     <strong>Suspense-enabled data hooks</strong>: SWR with
     <code>suspense:&nbsp;true</code>, React Query's <code>useSuspenseQuery</code>.
+    <div class="snippet">
+  
     <pre class="code"><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">function</span> <span class="tok-fn">ProgramStats</span>({ programId }) {
@@ -172,22 +182,30 @@ The lifecycle of one suspended region. The boundary lives inside a known contain
   <span class="tok-kw">const</span> { data } = <span class="tok-fn">useSWR</span>([<span class="tok-str">"stats"</span>, programId], fetcher, { <span class="tok-prop">suspense</span>: <span class="tok-kw">true</span> });
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">StatsRow</span> <span class="tok-prop">stats</span>={data} /&gt;;
 }</pre>
+    
+</div>
   </li>
   <li>
     <strong><code>lazy()</code> components</strong> and dynamic imports while their code
     loads (<a href="06-first-render-js.html">§6</a>).
+    <div class="snippet">
+  
     <pre class="code"><span class="tok-kw">const</span> EnrollmentChart = <span class="tok-fn">dynamic</span>(() =&gt; <span class="tok-kw">import</span>(<span class="tok-str">"./EnrollmentChart"</span>));
 
 <span class="tok-com">{/* While the chunk downloads, the boundary shows the fallback. */}</span>
 &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">ChartSkeleton</span> /&gt;}&gt;
   &lt;<span class="tok-fn">EnrollmentChart</span> /&gt;
 &lt;/<span class="tok-fn">Suspense</span>&gt;</pre>
+    
+</div>
   </li>
   <li>
     <strong><code>useSearchParams()</code></strong> in a client component requires a
     boundary above it during prerendering: a mandatory, mechanical case with its own
     dedicated pattern in
     <a href="05-client-server-boundaries.html#searchparams-boundary">§5.6</a>.
+    <div class="snippet">
+  
     <pre class="code"><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">function</span> <span class="tok-fn">SearchInputInner</span>() {
@@ -195,6 +213,8 @@ The lifecycle of one suspended region. The boundary lives inside a known contain
   <span class="tok-kw">const</span> params = <span class="tok-fn">useSearchParams</span>();
   <span class="tok-com">// …</span>
 }</pre>
+    
+</div>
   </li>
 </ul>
 <div class="callout callout-info">
@@ -510,6 +530,8 @@ loading.tsx and error.tsx are sugar for boundaries Next.js wraps around your pag
 <div class="bad">
   <div class="col-label">✕ Component owns its loading state</div>
   
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">ProgramStats.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramStats</span>({ programId }) {
   <span class="tok-kw">const</span> { data, isLoading } = <span class="tok-fn">useProgram</span>(programId);
@@ -520,21 +542,31 @@ loading.tsx and error.tsx are sugar for boundaries Next.js wraps around your pag
   <span class="tok-kw">if</span> (isLoading) <span class="tok-kw">return</span> &lt;<span class="tok-fn">Spinner</span> /&gt;;
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">StatsRow</span> <span class="tok-prop">stats</span>={data.stats} /&gt;;
 }</pre>
+    
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ Boundary owns it: component just renders</div>
   
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">ProgramStats.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramStats</span>({ programId }) {
   <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> <span class="tok-fn">getProgram</span>(programId);
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">StatsRow</span> <span class="tok-prop">stats</span>={program.stats} /&gt;;
 }</pre>
+    
+</div>
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">page.tsx - the composer decides</span>&lt;<span class="tok-fn">StatsContainer</span>&gt;
   &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
     &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={id} /&gt;
   &lt;/<span class="tok-fn">Suspense</span>&gt;
 &lt;/<span class="tok-fn">StatsContainer</span>&gt;</pre>
+    
+</div>
   
 
 </div>
@@ -669,6 +701,8 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
   fallback appears exactly once:
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">app/reports/page.tsx - server: the URL is the input</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ searchParams }) {
   <span class="tok-kw">const</span> { q = <span class="tok-str">""</span> } = <span class="tok-kw">await</span> searchParams;
   <span class="tok-kw">return</span> (
@@ -699,6 +733,10 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
   );
 }</pre>
 
+</div>
+
+<div class="snippet">
+  
 <pre class="code"><span class="filename">ReportRows.tsx - server: only ever renders finished knowledge</span><span class="tok-kw">export async function</span> <span class="tok-fn">ReportRows</span>({ query }) {
   <span class="tok-com">// The data layer call is cached and deduped (§13).</span>
   <span class="tok-kw">const</span> rows = <span class="tok-kw">await</span> <span class="tok-fn">getReportRows</span>(query);
@@ -710,6 +748,10 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">Rows</span> <span class="tok-prop">rows</span>={rows} /&gt;;
 }</pre>
 
+</div>
+
+<div class="snippet">
+  
 <pre class="code"><span class="filename">QueryTransition.tsx - client: one transition, shared by the leaves</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">const</span> Ctx = <span class="tok-fn">createContext</span>({ isPending: <span class="tok-kw">false</span>, update: (fn: () =&gt; <span class="tok-kw">void</span>) =&gt; {} });
 <span class="tok-kw">export const</span> <span class="tok-fn">useQueryTransition</span> = () =&gt; <span class="tok-fn">use</span>(Ctx);
@@ -719,10 +761,14 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
   <span class="tok-kw">return</span> &lt;Ctx <span class="tok-prop">value</span>={{ isPending, update: startTransition }}&gt;{children}&lt;/Ctx&gt;;
 }</pre>
 
+</div>
+
 <div class="compare">
   
 <div class="good">
   <div class="col-label">✓ SearchInput: client leaf, owns the URL</div>
+  
+    <div class="snippet">
   
     <pre class="code"><span class="filename">SearchInput.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">export function</span> <span class="tok-fn">SearchInput</span>() {
@@ -746,11 +792,15 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
     /&gt;
   );
 }</pre>
+    
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ StaleContent: client shell, dims what passes through</div>
+  
+    <div class="snippet">
   
     <pre class="code"><span class="filename">StaleContent.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">export function</span> <span class="tok-fn">StaleContent</span>({ children }) {
@@ -766,6 +816,8 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
     &lt;/div&gt;
   );
 }</pre>
+    
+</div>
   
 
 </div>
@@ -794,6 +846,8 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
   render behind and dim until they catch up:
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">ProgramFilter.tsx - client: search-as-you-type over client data</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramFilter</span>({ programs }) {
@@ -822,6 +876,8 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
     &lt;/&gt;
   );
 }</pre>
+
+</div>
 
 <p>
   Two mechanisms, one rule. The transition example indicates with
@@ -953,6 +1009,8 @@ The empty-state flash, frame by frame. Same request, same 12 rows; the only diff
 <div class="bad">
   <div class="col-label">✕ One chain, three welded questions</div>
   
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">the classic: every branch misbehaves</span><span class="tok-kw">const</span> { data = [], isLoading } = <span class="tok-fn">useReportRows</span>(q);
 
 <span class="tok-com">/* On every refetch, real content is replaced
@@ -970,11 +1028,15 @@ The empty-state flash, frame by frame. Same request, same 12 rows; the only diff
   Defaulting data to [] makes unknown and known-empty identical.
 
 </div>
+    
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ Three independent decisions</div>
+  
+    <div class="snippet">
   
     <pre class="code"><span class="filename">status decorates; knowledge decides</span><span class="tok-kw">const</span> { data, isValidating } = <span class="tok-fn">useReportRows</span>(q);
 <span class="tok-kw">const</span> hasData = data !== <span class="tok-kw">undefined</span>;
@@ -1002,6 +1064,8 @@ The empty-state flash, frame by frame. Same request, same 12 rows; the only diff
   
   The data stays <code>Row[] | undefined</code> and is never defaulted.
 
+</div>
+    
 </div>
   
 

@@ -140,6 +140,8 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
 <div class="bad">
   <div class="col-label">✕ Serialized: wait is the sum</div>
   
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
   <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
 
@@ -151,11 +153,15 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
   <span class="tok-kw">const</span> rows = <span class="tok-kw">await</span> <span class="tok-fn">getRows</span>(id);
   <span class="tok-com">// …render everything from here</span>
 }</pre>
+    
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ Parallel: wait is the max</div>
+  
+    <div class="snippet">
   
     <pre class="code"><span class="filename">page.tsx: siblings parallelize naturally</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
   <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
@@ -171,6 +177,10 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
     &lt;/&gt;
   );
 }</pre>
+    
+</div>
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">when one component needs several answers</span><span class="tok-kw">const</span> [program, stats] = <span class="tok-kw">await</span> <span class="tok-fn">Promise.all</span>([
   <span class="tok-fn">getProgram</span>(id),
   <span class="tok-fn">getStats</span>(id),
@@ -179,6 +189,8 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
   
   Inside a single component: start all the requests first, then await them together.
 
+</div>
+    
 </div>
   
 
@@ -207,6 +219,8 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
   <span class="chip chip-very">Very important</span>
 </p>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">ProgramManagerCard.tsx - the chain waits here, not at the page</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramManagerCard</span>({ programId }) {
   <span class="tok-com">/* getUser genuinely depends on the program's answer. Because the chain
      lives in this leaf, only this card pays for two round trips - the page,
@@ -215,6 +229,8 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
   <span class="tok-kw">const</span> manager = <span class="tok-kw">await</span> <span class="tok-fn">getUser</span>(program.managerId);
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">ContactCard</span> <span class="tok-prop">person</span>={manager} /&gt;;
 }</pre>
+
+</div>
 
 <h2 id="parallel-routes">11.3 Parallel routes: independence with a file address</h2>
 <p>
@@ -371,6 +387,8 @@ Slots are filesystem convention becoming layout props (redrawn from the Next.js
   </figcaption>
 </figure>
 
+<div class="snippet">
+  
 <pre class="code"><span class="filename">app/programs/[id]/layout.tsx - slots arrive as props</span><span class="tok-kw">export default function</span> <span class="tok-fn">ProgramLayout</span>({ children, header, summary }) {
   <span class="tok-kw">return</span> (
     &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex h-full flex-col"</span>&gt;
@@ -382,6 +400,8 @@ Slots are filesystem convention becoming layout props (redrawn from the Next.js
     &lt;/div&gt;
   );
 }</pre>
+
+</div>
 
 <p>
   When to reach for a slot instead of a plain component: when the region deserves

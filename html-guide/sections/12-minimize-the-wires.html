@@ -194,6 +194,8 @@ The same three components, wired two ways. Left: the parent fetches once and dri
 <div class="bad">
   <div class="col-label">✕ Parent as data router</div>
   
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
   <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
   <span class="tok-com">// This fetches the union of every child's needs.</span>
@@ -215,11 +217,15 @@ The same three components, wired two ways. Left: the parent fetches once and dri
   The Header needs one more field? Edit Header, Page, and <code>getProgram</code>: three files, every time.
 
 </div>
+    
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ Independent children, deduped data layer</div>
+  
+    <div class="snippet">
   
     <pre class="code"><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
   <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
@@ -231,12 +237,18 @@ The same three components, wired two ways. Left: the parent fetches once and dri
     &lt;/&gt;
   );
 }</pre>
+    
+</div>
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">components/program/ProgramHeader.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramHeader</span>({ programId }) {
   <span class="tok-com">/* It asks for itself; the dedupe layer
      makes this free (§13). */</span>
   <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> <span class="tok-fn">getProgram</span>(programId);
   <span class="tok-kw">return</span> &lt;header&gt;{program.name} …&lt;/header&gt;;
 }</pre>
+    
+</div>
   
 
 </div>
@@ -379,6 +391,8 @@ Boundary placement follows the data. Drilled props force one big boundary above 
 <div class="bad">
   <div class="col-label">✕ Reports up through a wire</div>
   
+    <div class="snippet">
+  
     <pre class="code"><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({
@@ -401,11 +415,15 @@ Boundary placement follows the data. Drilled props force one big boundary above 
   The button must be handed a wire: someone above must exist, must care, and must never change shape.
 
 </div>
+    
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ Invalidates the data&#39;s name</div>
+  
+    <div class="snippet">
   
     <pre class="code"><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
 
@@ -432,6 +450,8 @@ Boundary placement follows the data. Drilled props force one big boundary above 
   
   No wire: the mutation invalidates the name the data lives under, and every reader refires on its own.
 
+</div>
+    
 </div>
   
 

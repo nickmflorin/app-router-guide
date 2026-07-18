@@ -616,7 +616,21 @@ pre.code {
   font-family: var(--mono);
   font-size: 13px;
   line-height: 1.65;
+  margin: 0;
+}
+
+/* ---------- snippet container ---------- */
+/* One code snippet = the pre plus its optional caption, in one container
+   (<Snippet>). The container owns ALL outer spacing; the pre and the caption
+   own none, so the caption sits the same fixed distance under the code box
+   everywhere: prose flow, list items, compare columns. */
+.snippet {
   margin: 18px 0;
+}
+.snippet .code-caption {
+  /* Hug the code box; slight left pad so text clears the border radius. */
+  margin: 6px 2px 0;
+  padding-left: 3px;
 }
 pre.code .code-line {
   min-height: 1.65em;
@@ -667,7 +681,7 @@ pre.code .filename {
   gap: 14px;
   min-width: 0;
 }
-.compare pre.code,
+.compare .snippet,
 .compare figure.diagram {
   width: 100%;
 }
@@ -685,14 +699,25 @@ pre.code .filename {
   color: var(--green);
 }
 /* Only the LAST snippet in a column absorbs leftover height, so stacked
-   snippets keep their natural size and the final snippet's bottom edge stays
-   flush across columns. */
-.compare pre.code {
+   snippets keep their natural size. Inside that stretched snippet the code
+   box fills the space UNLESS a caption follows it: then the code box keeps
+   its natural height so the caption hugs it, and the leftover column height
+   falls harmlessly below the caption. */
+.compare .snippet {
   margin: 0;
   flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
-.compare > div > pre.code:last-of-type {
+.compare > div > .snippet:last-of-type {
   flex: 1 1 auto;
+}
+.compare .snippet pre.code {
+  flex: 1 1 auto;
+}
+.compare .snippet:has(.code-caption) pre.code {
+  flex: 0 0 auto;
 }
 .compare figure.diagram {
   margin: 0;
@@ -922,22 +947,16 @@ a.toc-row .soon {
 /* Nested snippets inside list items (e.g. the Suspense-trigger bullets):
    align with the bullet TEXT (the li content box), not the marker, and sit
    tighter than a top-level code block. */
-li > pre.code {
+li > .snippet {
   margin: 10px 0 4px;
 }
 
 /* ---------- code captions ---------- */
 /* The code counterpart of a diagram's figcaption: formal prose right under
-   a pre.code, replacing summary-style comments inside the snippet. */
+   a pre.code. Lives inside a <Snippet> with the pre it describes; the
+   snippet container owns its spacing. */
 .code-caption {
   color: var(--muted);
   font-size: 13px;
   line-height: 1.5;
-  /* Hug the snippet above; slight left pad so text clears the border radius. */
-  margin: -12px 2px 16px;
-  padding-left: 3px;
-}
-.compare .code-caption {
-  margin-top: 4px;
-  margin-bottom: 4px;
 }
