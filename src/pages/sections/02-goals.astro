@@ -10,364 +10,363 @@ import CompareCol from '../../components/CompareCol.astro';
 
 <GuidePage title="The Goals - App Router Guide" root="..">
 <div class="kicker">Chapter 2</div>
-          <h1>The Goals</h1>
-          <p class="lede">
-            What you are optimizing, on every page, every time. Patterns come later; this chapter is
-            only about ends, so that when techniques conflict you know which one wins.
-          </p>
+<h1>The Goals</h1>
+<p class="lede">
+  What you are optimizing, on every page, every time. Patterns come later; this chapter is
+  only about ends, so that when techniques conflict you know which one wins.
+</p>
 
-          <h2 id="thesis">The thesis</h2>
-          <p>
-            Every page you build divides into two kinds of content: what can be
-            <strong>known</strong> the moment the first render happens, and what cannot. Your job
-            (the actual job, underneath every framework feature and pattern in this guide) is to:
-          </p>
-          <ol>
-            <li>
-              <strong>Separate</strong> the known from the unknown, deliberately, on every page.
-            </li>
-            <li>
-              <strong>Maximize the known</strong>: make the first render carry as much finished
-              content as possible.
-            </li>
-            <li>
-              <strong>Contain the unknown</strong>: the parts you must wait for may not disturb
-              anything around them.
-            </li>
-            <li>
-              <strong>Decouple the parts</strong>, so each region's requirements can change without
-              rewiring its neighbors.
-            </li>
-          </ol>
-          <p>
-            Server-side rendering is what makes this framing powerful: in a browser-only app, almost
-            nothing is knowable at first render: the client starts blank and earns every pixel
-            through requests. On the server, the page's structure, its static content, and any data
-            the server can fetch are all knowable
-            <em>before the first byte reaches the browser</em>. The App Router exists to make that
-            surface as large as possible. Treat it like an SPA and you shrink the known back down to
-            a spinner.
-          </p>
+<h2 id="thesis">The thesis</h2>
+<p>
+  Every page you build divides into two kinds of content: what can be
+  <strong>known</strong> the moment the first render happens, and what cannot. Your job
+  (the actual job, underneath every framework feature and pattern in this guide) is to:
+</p>
+<ol>
+  <li>
+    <strong>Separate</strong> the known from the unknown, deliberately, on every page.
+  </li>
+  <li>
+    <strong>Maximize the known</strong>: make the first render carry as much finished
+    content as possible.
+  </li>
+  <li>
+    <strong>Contain the unknown</strong>: the parts you must wait for may not disturb
+    anything around them.
+  </li>
+  <li>
+    <strong>Decouple the parts</strong>, so each region's requirements can change without
+    rewiring its neighbors.
+  </li>
+</ol>
+<p>
+  Server-side rendering is what makes this framing powerful: in a browser-only app, almost
+  nothing is knowable at first render: the client starts blank and earns every pixel
+  through requests. On the server, the page's structure, its static content, and any data
+  the server can fetch are all knowable
+  <em>before the first byte reaches the browser</em>. The App Router exists to make that
+  surface as large as possible. Treat it like an SPA and you shrink the known back down to
+  a spinner.
+</p>
 
-          <Diagram>
-            <svg
-              viewBox="0 0 720 397"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
-            >
-              <!-- browser frame -->
-              <rect x="8" y="2" width="704" height="360" rx="10" fill="#ffffff" stroke="#d4d4d4" />
-              <circle cx="28" cy="20" r="4" fill="#c9c9c9" />
-              <circle cx="42" cy="20" r="4" fill="#c9c9c9" />
-              <circle cx="56" cy="20" r="4" fill="#c9c9c9" />
-              <rect x="72" y="12" width="240" height="16" rx="8" fill="#f2f2f2" stroke="#e0e0e0" />
-              <text x="84" y="24" font-size="10" fill="#737373">
-                app.crafteducation.com/programs/42
-              </text>
+<Diagram>
+  <svg
+    viewBox="0 0 720 397"
+    xmlns="http://www.w3.org/2000/svg"
+    font-family="Inter, system-ui, sans-serif"
+  >
+    <!-- browser frame -->
+    <rect x="8" y="2" width="704" height="360" rx="10" fill="#ffffff" stroke="#d4d4d4" />
+    <circle cx="28" cy="20" r="4" fill="#c9c9c9" />
+    <circle cx="42" cy="20" r="4" fill="#c9c9c9" />
+    <circle cx="56" cy="20" r="4" fill="#c9c9c9" />
+    <rect x="72" y="12" width="240" height="16" rx="8" fill="#f2f2f2" stroke="#e0e0e0" />
+    <text x="84" y="24" font-size="10" fill="#737373">
+      app.crafteducation.com/programs/42
+    </text>
 
-              <!-- top nav: known -->
-              <rect
-                x="24"
-                y="40"
-                width="672"
-                height="34"
-                rx="6"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-                stroke-width="1.5"
-              />
-              <text x="36" y="61" font-size="11" fill="#0757ba">Top navigation: layout.tsx</text>
-              <circle cx="676" cy="57" r="6" fill="none" stroke="#0891b2" stroke-width="1.5" />
+    <!-- top nav: known -->
+    <rect
+      x="24"
+      y="40"
+      width="672"
+      height="34"
+      rx="6"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+      stroke-width="1.5"
+    />
+    <text x="36" y="61" font-size="11" fill="#0757ba">Top navigation: layout.tsx</text>
+    <circle cx="676" cy="57" r="6" fill="none" stroke="#0891b2" stroke-width="1.5" />
 
-              <!-- sidebar: known -->
-              <!-- data-lint-ignore: sidebar scene: nav items intentionally sit at the top -->
-              <rect
-                data-lint-ignore="scene"
-                x="24"
-                y="82"
-                width="130"
-                height="264"
-                rx="6"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-                stroke-width="1.5"
-              />
-              <text x="36" y="102" font-size="11" fill="#0757ba">Sidebar</text>
-              <text x="36" y="117" font-size="10" fill="#56789e">layout.tsx</text>
-              <rect x="36" y="130" width="106" height="8" rx="4" fill="#c4dbf7" />
-              <rect x="36" y="146" width="106" height="8" rx="4" fill="#c4dbf7" />
-              <rect x="36" y="162" width="106" height="8" rx="4" fill="#c4dbf7" />
+    <!-- sidebar: known -->
+    <!-- data-lint-ignore: sidebar scene: nav items intentionally sit at the top -->
+    <rect
+      data-lint-ignore="scene"
+      x="24"
+      y="82"
+      width="130"
+      height="264"
+      rx="6"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+      stroke-width="1.5"
+    />
+    <text x="36" y="102" font-size="11" fill="#0757ba">Sidebar</text>
+    <text x="36" y="117" font-size="10" fill="#56789e">layout.tsx</text>
+    <rect x="36" y="130" width="106" height="8" rx="4" fill="#c4dbf7" />
+    <rect x="36" y="146" width="106" height="8" rx="4" fill="#c4dbf7" />
+    <rect x="36" y="162" width="106" height="8" rx="4" fill="#c4dbf7" />
 
-              <!-- page header container: known, with unknown inside -->
-              <rect
-                x="166"
-                y="82"
-                width="530"
-                height="70"
-                rx="6"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-                stroke-width="1.5"
-              />
-              <text x="178" y="100" font-size="11" fill="#0757ba">
-                Page header container: reserves its space
-              </text>
-              <rect
-                x="178"
-                y="108"
-                width="300"
-                height="34"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-                stroke-width="1.5"
-                stroke-dasharray="5 4"
-              />
-              <text x="190" y="129" font-size="11" fill="#8a5a00">
-                await program → title, status
-              </text>
-              <circle cx="668" cy="117" r="6" fill="none" stroke="#0891b2" stroke-width="1.5" />
-              <text x="600" y="121" font-size="10" fill="#0891b2">actions</text>
+    <!-- page header container: known, with unknown inside -->
+    <rect
+      x="166"
+      y="82"
+      width="530"
+      height="70"
+      rx="6"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+      stroke-width="1.5"
+    />
+    <text x="178" y="100" font-size="11" fill="#0757ba">
+      Page header container: reserves its space
+    </text>
+    <rect
+      x="178"
+      y="108"
+      width="300"
+      height="34"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+      stroke-width="1.5"
+      stroke-dasharray="5 4"
+    />
+    <text x="190" y="129" font-size="11" fill="#8a5a00">
+      await program → title, status
+    </text>
+    <circle cx="668" cy="117" r="6" fill="none" stroke="#0891b2" stroke-width="1.5" />
+    <text x="600" y="121" font-size="10" fill="#0891b2">actions</text>
 
-              <!-- table container: known, with unknown inside -->
-              <rect
-                x="166"
-                y="164"
-                width="530"
-                height="182"
-                rx="6"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-                stroke-width="1.5"
-              />
-              <text x="178" y="182" font-size="11" fill="#0757ba">
-                Table container: toolbar, columns, reserved height
-              </text>
-              <rect x="178" y="192" width="180" height="22" rx="5" fill="#d8e8fc" />
-              <text x="188" y="207" font-size="10" fill="#527dad">search</text>
-              <circle cx="348" cy="203" r="6" fill="none" stroke="#0891b2" stroke-width="1.5" />
-              <!-- data-lint-ignore: reserved-height region: emptiness below the bars is the point -->
-              <rect
-                data-lint-ignore="scene"
-                x="178"
-                y="224"
-                width="506"
-                height="110"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-                stroke-width="1.5"
-                stroke-dasharray="5 4"
-              />
-              <text x="190" y="245" font-size="11" fill="#8a5a00">
-                await rows → &lt;TableBody /&gt;
-              </text>
-              <rect x="190" y="256" width="482" height="7" rx="3" fill="#f3e2c0" />
-              <rect x="190" y="270" width="482" height="7" rx="3" fill="#f3e2c0" />
-              <rect x="190" y="284" width="482" height="7" rx="3" fill="#f3e2c0" />
+    <!-- table container: known, with unknown inside -->
+    <rect
+      x="166"
+      y="164"
+      width="530"
+      height="182"
+      rx="6"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+      stroke-width="1.5"
+    />
+    <text x="178" y="182" font-size="11" fill="#0757ba">
+      Table container: toolbar, columns, reserved height
+    </text>
+    <rect x="178" y="192" width="180" height="22" rx="5" fill="#d8e8fc" />
+    <text x="188" y="207" font-size="10" fill="#527dad">search</text>
+    <circle cx="348" cy="203" r="6" fill="none" stroke="#0891b2" stroke-width="1.5" />
+    <!-- data-lint-ignore: reserved-height region: emptiness below the bars is the point -->
+    <rect
+      data-lint-ignore="scene"
+      x="178"
+      y="224"
+      width="506"
+      height="110"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+      stroke-width="1.5"
+      stroke-dasharray="5 4"
+    />
+    <text x="190" y="245" font-size="11" fill="#8a5a00">
+      await rows → &lt;TableBody /&gt;
+    </text>
+    <rect x="190" y="256" width="482" height="7" rx="3" fill="#f3e2c0" />
+    <rect x="190" y="270" width="482" height="7" rx="3" fill="#f3e2c0" />
+    <rect x="190" y="284" width="482" height="7" rx="3" fill="#f3e2c0" />
 
-              <!-- legend -->
-              <rect
-                x="24"
-                y="380"
-                width="14"
-                height="14"
-                rx="3"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-                stroke-width="1.5"
-              />
-              <text x="46" y="392" font-size="12" fill="#171717">
-                Known: streamed as HTML on first response
-              </text>
-              <rect
-                x="344"
-                y="380"
-                width="14"
-                height="14"
-                rx="3"
-                fill="#fdf3e3"
-                stroke="#b45309"
-                stroke-width="1.5"
-                stroke-dasharray="4 3"
-              />
-              <text x="366" y="392" font-size="12" fill="#171717">
-                Unknown: suspended, streams in
-              </text>
-              <circle cx="590" cy="387" r="6" fill="none" stroke="#0891b2" stroke-width="1.5" />
-              <text x="604" y="392" font-size="12" fill="#171717">Interactive leaf</text>
-            </svg>
-            
+    <!-- legend -->
+    <rect
+      x="24"
+      y="380"
+      width="14"
+      height="14"
+      rx="3"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+      stroke-width="1.5"
+    />
+    <text x="46" y="392" font-size="12" fill="#171717">
+      Known: streamed as HTML on first response
+    </text>
+    <rect
+      x="344"
+      y="380"
+      width="14"
+      height="14"
+      rx="3"
+      fill="#fdf3e3"
+      stroke="#b45309"
+      stroke-width="1.5"
+      stroke-dasharray="4 3"
+    />
+    <text x="366" y="392" font-size="12" fill="#171717">
+      Unknown: suspended, streams in
+    </text>
+    <circle cx="590" cy="387" r="6" fill="none" stroke="#0891b2" stroke-width="1.5" />
+    <text x="604" y="392" font-size="12" fill="#171717">Interactive leaf</text>
+  </svg>
+  
 <Fragment slot="caption">
 The anatomy of a page under this model: the structure and containers are known and
-              render immediately; data-dependent regions are unknown and stream into space reserved
-              for them; interactivity is confined to small leaves.
+    render immediately; data-dependent regions are unknown and stream into space reserved
+    for them; interactivity is confined to small leaves.
 </Fragment>
 </Diagram>
 
-          <p>
-            The three meta-goals below organize the rest of this document. Each sub-goal is an
-            <em>end</em>, tagged by scope; the chapters of Parts A–C cover the techniques (the
-            means) for achieving them.
-          </p>
+<p>
+  The three meta-goals below organize the rest of this document. Each sub-goal is an
+  <em>end</em>, tagged by scope; the chapters of Parts A–C cover the techniques (the
+  means) for achieving them.
+</p>
 
-          <div class="goal-card goal-a">
-            <div class="goal-head">
-              <span class="goal-letter">A</span>
-              <h3 id="goal-a">Maximize the Known</h3>
-            </div>
-            <p class="goal-tag">
-              Make the first render carry as much finished content as possible. Elaborated in
-              <a href="04-ssr.html">§4</a>–<a href="08-server-resolvable-state.html">§8</a>.
-            </p>
-            <ul class="goal-list">
-              <li>
-                <span class="g-text"
-                  >Maximize above-the-fold content delivered as real HTML on the first response, not
-                  shells that earn their content later.</span
-                ><span class="g-chips"><Chip k="next" /></span
-                ><span class="g-ref"><a href="04-ssr.html">§4</a></span>
-              </li>
-              <li>
-                <span class="g-text"
-                  >Push interactivity down as far as humanly possible: client boundaries at the
-                  leaves (a button, a filter, an input), never at pages or layouts.</span
-                ><span class="g-chips"><Chip k="next" /></span
-                ><span class="g-ref"><a href="05-client-server-boundaries.html">§5</a></span>
-              </li>
-              <li>
-                <span class="g-text"
-                  >Minimize the JavaScript required for first render: anything not needed at first
-                  paint loads behind a dynamic boundary.</span
-                ><span class="g-chips"><Chip k="react" /></span
-                ><span class="g-ref"><a href="06-first-render-js.html">§6</a></span>
-              </li>
-              <li>
-                <span class="g-text"
-                  >Prefer state the server can resolve (the URL, route params, search params,
-                  cookies) over client state the server can't see.</span
-                ><span class="g-chips"><Chip k="next" /></span
-                ><span class="g-ref"><a href="08-server-resolvable-state.html">§8</a></span>
-              </li>
-            </ul>
-          </div>
+<div class="goal-card goal-a">
+  <div class="goal-head">
+    <span class="goal-letter">A</span>
+    <h3 id="goal-a">Maximize the Known</h3>
+  </div>
+  <p class="goal-tag">
+    Make the first render carry as much finished content as possible. Elaborated in
+    <a href="04-ssr.html">§4</a>–<a href="08-server-resolvable-state.html">§8</a>.
+  </p>
+  <ul class="goal-list">
+    <li>
+      <span class="g-text"
+        >Maximize above-the-fold content delivered as real HTML on the first response, not
+        shells that earn their content later.</span
+      ><span class="g-chips"><Chip k="next" /></span
+      ><span class="g-ref"><a href="04-ssr.html">§4</a></span>
+    </li>
+    <li>
+      <span class="g-text"
+        >Push interactivity down as far as humanly possible: client boundaries at the
+        leaves (a button, a filter, an input), never at pages or layouts.</span
+      ><span class="g-chips"><Chip k="next" /></span
+      ><span class="g-ref"><a href="05-client-server-boundaries.html">§5</a></span>
+    </li>
+    <li>
+      <span class="g-text"
+        >Minimize the JavaScript required for first render: anything not needed at first
+        paint loads behind a dynamic boundary.</span
+      ><span class="g-chips"><Chip k="react" /></span
+      ><span class="g-ref"><a href="06-first-render-js.html">§6</a></span>
+    </li>
+    <li>
+      <span class="g-text"
+        >Prefer state the server can resolve (the URL, route params, search params,
+        cookies) over client state the server can't see.</span
+      ><span class="g-chips"><Chip k="next" /></span
+      ><span class="g-ref"><a href="08-server-resolvable-state.html">§8</a></span>
+    </li>
+  </ul>
+</div>
 
-          <div class="goal-card goal-b">
-            <div class="goal-head">
-              <span class="goal-letter">B</span>
-              <h3 id="goal-b">Contain the Unknown</h3>
-            </div>
-            <p class="goal-tag">
-              The parts you must wait for may not disturb anything around them. Elaborated in
-              <a href="09-containers-content-shifting.html">§9</a>–<a
-                href="11-blocking-requests.html"
-                >§11</a
-              >.
-            </p>
-            <ul class="goal-list">
-              <li>
-                <span class="g-text"
-                  >Minimize content shifting. Containers are known: they render immediately and
-                  reserve accurate space for both the fallback and the real content.</span
-                ><span class="g-chips"><Chip k="react" /></span
-                ><span class="g-ref"><a href="09-containers-content-shifting.html">§9</a></span>
-              </li>
-              <li>
-                <span class="g-text"
-                  >Loading and error states belong to boundaries, not components: a component never
-                  shows its own spinner.</span
-                ><span class="g-chips"><Chip k="react" /></span
-                ><span class="g-ref"><a href="10-suspense-streaming.html">§10</a></span>
-              </li>
-              <li>
-                <span class="g-text"
-                  >Minimize what sits behind any single blocking request, on the server and the
-                  client alike.</span
-                ><span class="g-chips"><Chip k="react" /></span
-                ><span class="g-ref"><a href="11-blocking-requests.html">§11</a></span>
-              </li>
-              <li>
-                <span class="g-text"
-                  >Isolate data dependencies, so a change in what a region needs affects only the
-                  region it determines, never the surrounding content.</span
-                ><span class="g-chips"><Chip k="react" /></span
-                ><span class="g-ref"
-                  ><a href="10-suspense-streaming.html">§10</a>–<a href="11-blocking-requests.html"
-                    >§11</a
-                  ></span
-                >
-              </li>
-            </ul>
-          </div>
+<div class="goal-card goal-b">
+  <div class="goal-head">
+    <span class="goal-letter">B</span>
+    <h3 id="goal-b">Contain the Unknown</h3>
+  </div>
+  <p class="goal-tag">
+    The parts you must wait for may not disturb anything around them. Elaborated in
+    <a href="09-containers-content-shifting.html">§9</a>–<a
+      href="11-blocking-requests.html"
+      >§11</a
+    >.
+  </p>
+  <ul class="goal-list">
+    <li>
+      <span class="g-text"
+        >Minimize content shifting. Containers are known: they render immediately and
+        reserve accurate space for both the fallback and the real content.</span
+      ><span class="g-chips"><Chip k="react" /></span
+      ><span class="g-ref"><a href="09-containers-content-shifting.html">§9</a></span>
+    </li>
+    <li>
+      <span class="g-text"
+        >Loading and error states belong to boundaries, not components: a component never
+        shows its own spinner.</span
+      ><span class="g-chips"><Chip k="react" /></span
+      ><span class="g-ref"><a href="10-suspense-streaming.html">§10</a></span>
+    </li>
+    <li>
+      <span class="g-text"
+        >Minimize what sits behind any single blocking request, on the server and the
+        client alike.</span
+      ><span class="g-chips"><Chip k="react" /></span
+      ><span class="g-ref"><a href="11-blocking-requests.html">§11</a></span>
+    </li>
+    <li>
+      <span class="g-text"
+        >Isolate data dependencies, so a change in what a region needs affects only the
+        region it determines, never the surrounding content.</span
+      ><span class="g-chips"><Chip k="react" /></span
+      ><span class="g-ref"
+        ><a href="10-suspense-streaming.html">§10</a>–<a href="11-blocking-requests.html"
+          >§11</a
+        ></span
+      >
+    </li>
+  </ul>
+</div>
 
-          <div class="goal-card goal-c">
-            <div class="goal-head">
-              <span class="goal-letter">C</span>
-              <h3 id="goal-c">Decouple the Parts</h3>
-            </div>
-            <p class="goal-tag">
-              Minimize the wires that connect parts of the UI together. Elaborated in
-              <a href="12-minimize-the-wires.html">§12</a>–<a href="14-component-breakdown.html"
-                >§14</a
-              >.
-            </p>
-            <ul class="goal-list">
-              <li>
-                <span class="g-text"
-                  >Minimize data exchange between components and modules: never pass a child
-                  anything the parent doesn't itself need.</span
-                ><span class="g-chips"><Chip k="react" /></span
-                ><span class="g-ref"><a href="12-minimize-the-wires.html">§12</a></span>
-              </li>
-              <li>
-                <span class="g-text"
-                  >Prefer repetition backed by dedupe over shared plumbing: it is better for two
-                  components to ask the same question than to be wired together; deduped fetches and
-                  cached functions make the repetition free.</span
-                ><span class="g-chips"><Chip k="next" /></span
-                ><span class="g-ref"><a href="13-dedupe-caching.html">§13</a></span>
-              </li>
-              <li>
-                <span class="g-text"
-                  >Communicate through the URL and the cache, not through callbacks up to
-                  parents.</span
-                ><span class="g-chips"><Chip k="react" /></span
-                ><span class="g-ref"
-                  ><a href="12-minimize-the-wires.html">§12</a>,
-                  <a href="08-server-resolvable-state.html">§8</a></span
-                >
-              </li>
-              <li>
-                <span class="g-text"
-                  >Break components down by UI <em>and</em> responsibility - small, portable, one
-                  component per file.</span
-                ><span class="g-chips"><Chip k="react" /></span
-                ><span class="g-ref"><a href="14-component-breakdown.html">§14</a></span>
-              </li>
-            </ul>
-          </div>
+<div class="goal-card goal-c">
+  <div class="goal-head">
+    <span class="goal-letter">C</span>
+    <h3 id="goal-c">Decouple the Parts</h3>
+  </div>
+  <p class="goal-tag">
+    Minimize the wires that connect parts of the UI together. Elaborated in
+    <a href="12-minimize-the-wires.html">§12</a>–<a href="14-component-breakdown.html"
+      >§14</a
+    >.
+  </p>
+  <ul class="goal-list">
+    <li>
+      <span class="g-text"
+        >Minimize data exchange between components and modules: never pass a child
+        anything the parent doesn't itself need.</span
+      ><span class="g-chips"><Chip k="react" /></span
+      ><span class="g-ref"><a href="12-minimize-the-wires.html">§12</a></span>
+    </li>
+    <li>
+      <span class="g-text"
+        >Prefer repetition backed by dedupe over shared plumbing: it is better for two
+        components to ask the same question than to be wired together; deduped fetches and
+        cached functions make the repetition free.</span
+      ><span class="g-chips"><Chip k="next" /></span
+      ><span class="g-ref"><a href="13-dedupe-caching.html">§13</a></span>
+    </li>
+    <li>
+      <span class="g-text"
+        >Communicate through the URL and the cache, not through callbacks up to
+        parents.</span
+      ><span class="g-chips"><Chip k="react" /></span
+      ><span class="g-ref"
+        ><a href="12-minimize-the-wires.html">§12</a>,
+        <a href="08-server-resolvable-state.html">§8</a></span
+      >
+    </li>
+    <li>
+      <span class="g-text"
+        >Break components down by UI <em>and</em> responsibility - small, portable, one
+        component per file.</span
+      ><span class="g-chips"><Chip k="react" /></span
+      ><span class="g-ref"><a href="14-component-breakdown.html">§14</a></span>
+    </li>
+  </ul>
+</div>
 
-          <h2 id="tension">When goals collide</h2>
-          <p>
-            These goals occasionally pull against each other, and it's worth knowing the tiebreakers
-            in advance. Containing the unknown (B) can tempt you to over-fragment a page into a
-            dozen suspense boundaries, but decoupling (C) is about <em>dependencies</em>, not
-            confetti; a boundary should trace a real data dependency, not a visual whim. Maximizing
-            the known (A) can tempt you to block the whole page on a fetch so everything arrives
-            "known", but that violates B: knowledge that arrives late and all-at-once is worse than
-            structure that arrives instantly with the slow parts contained. When in doubt:
-            <strong>structure first, then contain, then optimize what's inside</strong>.
-          </p>
+<h2 id="tension">When goals collide</h2>
+<p>
+  These goals occasionally pull against each other, and it's worth knowing the tiebreakers
+  in advance. Containing the unknown (B) can tempt you to over-fragment a page into a
+  dozen suspense boundaries, but decoupling (C) is about <em>dependencies</em>, not
+  confetti; a boundary should trace a real data dependency, not a visual whim. Maximizing
+  the known (A) can tempt you to block the whole page on a fetch so everything arrives
+  "known", but that violates B: knowledge that arrives late and all-at-once is worse than
+  structure that arrives instantly with the slow parts contained. When in doubt:
+  <strong>structure first, then contain, then optimize what's inside</strong>.
+</p>
 
-          <Callout kind="info" title="Why no importance chips in this chapter">
-            <p>
-              Goals are ends, not rules: there's nothing here to have an exception to. The
-              importance chips (<Chip k="critical" />
-              <Chip k="very" />
-              <Chip k="imp" />) appear from
-              <a href="05-client-server-boundaries.html">§5</a> onward, where concrete practices
-              start.
-            </p>
-          
+<Callout kind="info" title="Why no importance chips in this chapter">
+  <p>
+    Goals are ends, not rules: there's nothing here to have an exception to. The
+    importance chips (<Chip k="critical" />
+    <Chip k="very" />
+    <Chip k="imp" />) appear from
+    <a href="05-client-server-boundaries.html">§5</a> onward, where concrete practices
+    start.
+  </p>
 </Callout>
 </GuidePage>

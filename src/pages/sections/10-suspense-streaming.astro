@@ -10,842 +10,840 @@ import CompareCol from '../../components/CompareCol.astro';
 
 <GuidePage title="Suspense &amp; Streaming - App Router Guide" root="..">
 <div class="kicker">Chapter 10 · Part B: Contain the Unknown</div>
-          <h1>Suspense &amp; Streaming</h1>
-          <p class="lede">
-            Loading is not a component concern. It's a structural one. Suspense moves "what shows
-            while we wait" out of components and into the tree, where the framework can stream
-            around it. This chapter covers how suspension works, what triggers it, and the
-            loading-state doctrine that follows from it.
-          </p>
+<h1>Suspense &amp; Streaming</h1>
+<p class="lede">
+  Loading is not a component concern. It's a structural one. Suspense moves "what shows
+  while we wait" out of components and into the tree, where the framework can stream
+  around it. This chapter covers how suspension works, what triggers it, and the
+  loading-state doctrine that follows from it.
+</p>
 
-          <h2 id="mechanism">10.1 How Suspense actually works</h2>
-          <p>
-            A <code>&lt;Suspense&gt;</code> boundary is a declaration about the tree:
-            <em
-              >"everything below this point may not be ready yet; here is what to show in its
-              place."</em
-            >
-            When a component inside the boundary <strong>suspends</strong> (it's waiting on
-            something asynchronous), React walks <em>up</em> the tree to the nearest boundary,
-            renders its <code>fallback</code> there, and, when the wait resolves, swaps the real
-            content into the exact same slot. The component itself never knows any of this happened.
-            That's the entire point: the waiting is handled <em>above</em> the component, by
-            structure, not <em>inside</em> it, by state.
-          </p>
+<h2 id="mechanism">10.1 How Suspense actually works</h2>
+<p>
+  A <code>&lt;Suspense&gt;</code> boundary is a declaration about the tree:
+  <em
+    >"everything below this point may not be ready yet; here is what to show in its
+    place."</em
+  >
+  When a component inside the boundary <strong>suspends</strong> (it's waiting on
+  something asynchronous), React walks <em>up</em> the tree to the nearest boundary,
+  renders its <code>fallback</code> there, and, when the wait resolves, swaps the real
+  content into the exact same slot. The component itself never knows any of this happened.
+  That's the entire point: the waiting is handled <em>above</em> the component, by
+  structure, not <em>inside</em> it, by state.
+</p>
 
-          <Diagram>
-            <svg
-              viewBox="0 0 720 239"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
-            >
-              <!-- three-phase storyboard -->
-              <text
-                x="125"
-                y="10.28"
-                font-size="11.5"
-                fill="#171717"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                t₀: shell paints
-              </text>
-              <text
-                x="360"
-                y="10.28"
-                font-size="11.5"
-                fill="#171717"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                t₁: data resolves
-              </text>
-              <text
-                x="595"
-                y="10.28"
-                font-size="11.5"
-                fill="#171717"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                t₂: swap in place
-              </text>
+<Diagram>
+  <svg
+    viewBox="0 0 720 239"
+    xmlns="http://www.w3.org/2000/svg"
+    font-family="Inter, system-ui, sans-serif"
+  >
+    <!-- three-phase storyboard -->
+    <text
+      x="125"
+      y="10.28"
+      font-size="11.5"
+      fill="#171717"
+      text-anchor="middle"
+      font-weight="500"
+    >
+      t₀: shell paints
+    </text>
+    <text
+      x="360"
+      y="10.28"
+      font-size="11.5"
+      fill="#171717"
+      text-anchor="middle"
+      font-weight="500"
+    >
+      t₁: data resolves
+    </text>
+    <text
+      x="595"
+      y="10.28"
+      font-size="11.5"
+      fill="#171717"
+      text-anchor="middle"
+      font-weight="500"
+    >
+      t₂: swap in place
+    </text>
 
-              <!-- panel 1 -->
-              <rect
-                x="30"
-                y="22.28"
-                width="190"
-                height="180"
-                rx="8"
-                fill="#ffffff"
-                stroke="#c9c9c9"
-              />
-              <rect
-                x="44"
-                y="36.28"
-                width="162"
-                height="26"
-                rx="5"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-              />
-              <text x="125" y="53.28" font-size="10" fill="#0757ba" text-anchor="middle">
-                page header: known
-              </text>
-              <rect
-                x="44"
-                y="72.28"
-                width="162"
-                height="116"
-                rx="6"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-              />
-              <text x="125" y="89.28" font-size="10" fill="#0757ba" text-anchor="middle">
-                container: reserves space
-              </text>
-              <rect
-                x="56"
-                y="98.28"
-                width="138"
-                height="80"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-                stroke-dasharray="5 4"
-              />
-              <text x="125" y="118.28" font-size="9.5" fill="#8a5a00" text-anchor="middle">
-                ⏳ fallback (skeleton)
-              </text>
-              <rect x="66" y="130.28" width="118" height="7" rx="3" fill="#f3e2c0" />
-              <rect x="66" y="144.28" width="118" height="7" rx="3" fill="#f3e2c0" />
-              <rect x="66" y="158.28" width="86" height="7" rx="3" fill="#f3e2c0" />
-              <text x="125" y="220.28" font-size="9.5" fill="#737373" text-anchor="middle">
-                HTML streamed immediately:
-              </text>
-              <text x="125" y="234.28" font-size="9.5" fill="#737373" text-anchor="middle">
-                structure + fallback, real first paint
-              </text>
+    <!-- panel 1 -->
+    <rect
+      x="30"
+      y="22.28"
+      width="190"
+      height="180"
+      rx="8"
+      fill="#ffffff"
+      stroke="#c9c9c9"
+    />
+    <rect
+      x="44"
+      y="36.28"
+      width="162"
+      height="26"
+      rx="5"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+    />
+    <text x="125" y="53.28" font-size="10" fill="#0757ba" text-anchor="middle">
+      page header: known
+    </text>
+    <rect
+      x="44"
+      y="72.28"
+      width="162"
+      height="116"
+      rx="6"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+    />
+    <text x="125" y="89.28" font-size="10" fill="#0757ba" text-anchor="middle">
+      container: reserves space
+    </text>
+    <rect
+      x="56"
+      y="98.28"
+      width="138"
+      height="80"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+      stroke-dasharray="5 4"
+    />
+    <text x="125" y="118.28" font-size="9.5" fill="#8a5a00" text-anchor="middle">
+      ⏳ fallback (skeleton)
+    </text>
+    <rect x="66" y="130.28" width="118" height="7" rx="3" fill="#f3e2c0" />
+    <rect x="66" y="144.28" width="118" height="7" rx="3" fill="#f3e2c0" />
+    <rect x="66" y="158.28" width="86" height="7" rx="3" fill="#f3e2c0" />
+    <text x="125" y="220.28" font-size="9.5" fill="#737373" text-anchor="middle">
+      HTML streamed immediately:
+    </text>
+    <text x="125" y="234.28" font-size="9.5" fill="#737373" text-anchor="middle">
+      structure + fallback, real first paint
+    </text>
 
-              <!-- panel 2 -->
-              <rect
-                x="265"
-                y="22.28"
-                width="190"
-                height="180"
-                rx="8"
-                fill="#ffffff"
-                stroke="#c9c9c9"
-              />
-              <rect
-                x="279"
-                y="36.28"
-                width="162"
-                height="26"
-                rx="5"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-              />
-              <text x="360" y="53.28" font-size="10" fill="#0757ba" text-anchor="middle">
-                page header: untouched
-              </text>
-              <rect
-                x="279"
-                y="72.28"
-                width="162"
-                height="116"
-                rx="6"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-              />
-              <rect
-                x="291"
-                y="98.28"
-                width="138"
-                height="80"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-                stroke-dasharray="5 4"
-              />
-              <text x="360" y="118.28" font-size="9.5" fill="#8a5a00" text-anchor="middle">
-                ⏳ still fallback
-              </text>
-              <rect x="301" y="130.28" width="118" height="7" rx="3" fill="#f3e2c0" />
-              <rect x="301" y="144.28" width="118" height="7" rx="3" fill="#f3e2c0" />
-              <rect x="301" y="158.28" width="86" height="7" rx="3" fill="#f3e2c0" />
-              <text x="360" y="220.28" font-size="9.5" fill="#737373" text-anchor="middle">
-                server finishes the await;
-              </text>
-              <text x="360" y="234.28" font-size="9.5" fill="#737373" text-anchor="middle">
-                content chunk streams down the wire
-              </text>
+    <!-- panel 2 -->
+    <rect
+      x="265"
+      y="22.28"
+      width="190"
+      height="180"
+      rx="8"
+      fill="#ffffff"
+      stroke="#c9c9c9"
+    />
+    <rect
+      x="279"
+      y="36.28"
+      width="162"
+      height="26"
+      rx="5"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+    />
+    <text x="360" y="53.28" font-size="10" fill="#0757ba" text-anchor="middle">
+      page header: untouched
+    </text>
+    <rect
+      x="279"
+      y="72.28"
+      width="162"
+      height="116"
+      rx="6"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+    />
+    <rect
+      x="291"
+      y="98.28"
+      width="138"
+      height="80"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+      stroke-dasharray="5 4"
+    />
+    <text x="360" y="118.28" font-size="9.5" fill="#8a5a00" text-anchor="middle">
+      ⏳ still fallback
+    </text>
+    <rect x="301" y="130.28" width="118" height="7" rx="3" fill="#f3e2c0" />
+    <rect x="301" y="144.28" width="118" height="7" rx="3" fill="#f3e2c0" />
+    <rect x="301" y="158.28" width="86" height="7" rx="3" fill="#f3e2c0" />
+    <text x="360" y="220.28" font-size="9.5" fill="#737373" text-anchor="middle">
+      server finishes the await;
+    </text>
+    <text x="360" y="234.28" font-size="9.5" fill="#737373" text-anchor="middle">
+      content chunk streams down the wire
+    </text>
 
-              <!-- panel 3 -->
-              <rect
-                x="500"
-                y="22.28"
-                width="190"
-                height="180"
-                rx="8"
-                fill="#ffffff"
-                stroke="#c9c9c9"
-              />
-              <rect
-                x="514"
-                y="36.28"
-                width="162"
-                height="26"
-                rx="5"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-              />
-              <text x="595" y="53.28" font-size="10" fill="#0757ba" text-anchor="middle">
-                page header: never moved
-              </text>
-              <rect
-                x="514"
-                y="72.28"
-                width="162"
-                height="116"
-                rx="6"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-              />
-              <rect
-                x="526"
-                y="98.28"
-                width="138"
-                height="80"
-                rx="5"
-                fill="#e7f5ee"
-                stroke="#2ea06d"
-              />
-              <text x="595" y="118.28" font-size="9.5" fill="#157a4c" text-anchor="middle">
-                ✓ real content
-              </text>
-              <rect x="536" y="130.28" width="118" height="7" rx="3" fill="#bfe3d0" />
-              <rect x="536" y="144.28" width="118" height="7" rx="3" fill="#bfe3d0" />
-              <rect x="536" y="158.28" width="98" height="7" rx="3" fill="#bfe3d0" />
-              <text x="595" y="220.28" font-size="9.5" fill="#737373" text-anchor="middle">
-                swapped into the same slot:
-              </text>
-              <text x="595" y="234.28" font-size="9.5" fill="#737373" text-anchor="middle">
-                zero layout shift, container never changed
-              </text>
+    <!-- panel 3 -->
+    <rect
+      x="500"
+      y="22.28"
+      width="190"
+      height="180"
+      rx="8"
+      fill="#ffffff"
+      stroke="#c9c9c9"
+    />
+    <rect
+      x="514"
+      y="36.28"
+      width="162"
+      height="26"
+      rx="5"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+    />
+    <text x="595" y="53.28" font-size="10" fill="#0757ba" text-anchor="middle">
+      page header: never moved
+    </text>
+    <rect
+      x="514"
+      y="72.28"
+      width="162"
+      height="116"
+      rx="6"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+    />
+    <rect
+      x="526"
+      y="98.28"
+      width="138"
+      height="80"
+      rx="5"
+      fill="#e7f5ee"
+      stroke="#2ea06d"
+    />
+    <text x="595" y="118.28" font-size="9.5" fill="#157a4c" text-anchor="middle">
+      ✓ real content
+    </text>
+    <rect x="536" y="130.28" width="118" height="7" rx="3" fill="#bfe3d0" />
+    <rect x="536" y="144.28" width="118" height="7" rx="3" fill="#bfe3d0" />
+    <rect x="536" y="158.28" width="98" height="7" rx="3" fill="#bfe3d0" />
+    <text x="595" y="220.28" font-size="9.5" fill="#737373" text-anchor="middle">
+      swapped into the same slot:
+    </text>
+    <text x="595" y="234.28" font-size="9.5" fill="#737373" text-anchor="middle">
+      zero layout shift, container never changed
+    </text>
 
-              <line x1="228" y1="112.28" x2="257" y2="112.28" stroke="#737373" stroke-width="1.5" />
-              <line x1="463" y1="112.28" x2="492" y2="112.28" stroke="#737373" stroke-width="1.5" />
-            </svg>
-            
+    <line x1="228" y1="112.28" x2="257" y2="112.28" stroke="#737373" stroke-width="1.5" />
+    <line x1="463" y1="112.28" x2="492" y2="112.28" stroke="#737373" stroke-width="1.5" />
+  </svg>
+  
 <Fragment slot="caption">
 The lifecycle of one suspended region. The boundary lives inside a known container
-              that reserves space, so the fallback → content swap moves nothing around it; this is
-              the mechanical link between Suspense and content shifting.
+    that reserves space, so the fallback → content swap moves nothing around it; this is
+    the mechanical link between Suspense and content shifting.
 </Fragment>
 </Diagram>
 
-          <h3 id="triggers">What triggers a Suspense boundary</h3>
-          <p>
-            These are framework mechanics, worth knowing precisely:
-            <Chip k="critical" />
-          </p>
-          <ul>
-            <li>
-              <strong>An async server component awaiting</strong> inside the boundary: the canonical
-              App Router case. The server streams the fallback, keeps working, and streams the
-              content when the await resolves.
-            </li>
-            <li>
-              <strong><code>use(promise)</code></strong> in a client component: React 19's way to
-              read a promise (often one passed down from a server component) with Suspense
-              semantics.
-            </li>
-            <li>
-              <strong>Suspense-enabled data hooks</strong>: SWR with
-              <code>suspense:&nbsp;true</code>, React Query's <code>useSuspenseQuery</code>.
-            </li>
-            <li>
-              <strong><code>lazy()</code> components</strong> and dynamic imports while their code
-              loads (<a href="06-first-render-js.html">§6</a>).
-            </li>
-            <li>
-              <strong><code>useSearchParams()</code></strong> in a client component requires a
-              boundary above it during prerendering: a mandatory, mechanical case with its own
-              dedicated pattern in
-              <a href="05-client-server-boundaries.html#searchparams-boundary">§5.6</a>.
-            </li>
-          </ul>
-          <Callout kind="info" title="Suspense is not a server-only feature">
-            <p>
-              Notice that three of those five triggers fire in the browser. It is a common blind
-              spot to think of Suspense as a server-rendering mechanism: a client component that
-              reads a promise with <code>use()</code>, a Suspense-enabled data hook, or a
-              <code>lazy()</code> chunk all suspend and reveal through the same boundary. The
-              boundary doesn't care which side of the network its child runs on; it cares only that
-              the child is waiting. So the whole doctrine of this chapter, that the boundary owns
-              the loading state and the component never rolls its own, applies to genuinely-client
-              subtrees exactly as it does to server data.
-            </p>
-          
+<h3 id="triggers">What triggers a Suspense boundary</h3>
+<p>
+  These are framework mechanics, worth knowing precisely:
+  <Chip k="critical" />
+</p>
+<ul>
+  <li>
+    <strong>An async server component awaiting</strong> inside the boundary: the canonical
+    App Router case. The server streams the fallback, keeps working, and streams the
+    content when the await resolves.
+  </li>
+  <li>
+    <strong><code>use(promise)</code></strong> in a client component: React 19's way to
+    read a promise (often one passed down from a server component) with Suspense
+    semantics.
+  </li>
+  <li>
+    <strong>Suspense-enabled data hooks</strong>: SWR with
+    <code>suspense:&nbsp;true</code>, React Query's <code>useSuspenseQuery</code>.
+  </li>
+  <li>
+    <strong><code>lazy()</code> components</strong> and dynamic imports while their code
+    loads (<a href="06-first-render-js.html">§6</a>).
+  </li>
+  <li>
+    <strong><code>useSearchParams()</code></strong> in a client component requires a
+    boundary above it during prerendering: a mandatory, mechanical case with its own
+    dedicated pattern in
+    <a href="05-client-server-boundaries.html#searchparams-boundary">§5.6</a>.
+  </li>
+</ul>
+<Callout kind="info" title="Suspense is not a server-only feature">
+  <p>
+    Notice that three of those five triggers fire in the browser. It is a common blind
+    spot to think of Suspense as a server-rendering mechanism: a client component that
+    reads a promise with <code>use()</code>, a Suspense-enabled data hook, or a
+    <code>lazy()</code> chunk all suspend and reveal through the same boundary. The
+    boundary doesn't care which side of the network its child runs on; it cares only that
+    the child is waiting. So the whole doctrine of this chapter, that the boundary owns
+    the loading state and the component never rolls its own, applies to genuinely-client
+    subtrees exactly as it does to server data.
+  </p>
 </Callout>
-          <p>
-            Just as important is what does <em>not</em> trigger suspension:
-            <strong>a fetch inside <code>useEffect</code> is invisible to React.</strong> Nothing
-            suspends, no boundary activates, no streaming happens; the framework doesn't even know
-            the component is waiting. Every hand-rolled <code>isLoading</code> flag in our codebases
-            exists because the fetching pattern opted out of the mechanism that would have made it
-            unnecessary.
-          </p>
-          <Callout kind="info" title="Boundaries don't re-trigger on updates">
-            <p>
-              A boundary that has already revealed content will <strong>not</strong> revert to its
-              fallback when an update inside it suspends during a <em>transition</em>: router
-              navigations and <code>startTransition</code> updates keep the existing content visible
-              while the new content prepares. React 19.2 further batches how server-streamed
-              boundaries reveal. The fallback is a <em>first-render</em> device; everything after
-              first render should follow the stale-content rules in <a href="#skeletons">§10.4</a>.
-            </p>
-          
+<p>
+  Just as important is what does <em>not</em> trigger suspension:
+  <strong>a fetch inside <code>useEffect</code> is invisible to React.</strong> Nothing
+  suspends, no boundary activates, no streaming happens; the framework doesn't even know
+  the component is waiting. Every hand-rolled <code>isLoading</code> flag in our codebases
+  exists because the fetching pattern opted out of the mechanism that would have made it
+  unnecessary.
+</p>
+<Callout kind="info" title="Boundaries don't re-trigger on updates">
+  <p>
+    A boundary that has already revealed content will <strong>not</strong> revert to its
+    fallback when an update inside it suspends during a <em>transition</em>: router
+    navigations and <code>startTransition</code> updates keep the existing content visible
+    while the new content prepares. React 19.2 further batches how server-streamed
+    boundaries reveal. The fallback is a <em>first-render</em> device; everything after
+    first render should follow the stale-content rules in <a href="#skeletons">§10.4</a>.
+  </p>
 </Callout>
 
-          <h2 id="streaming">10.2 Streaming: Suspense on the server</h2>
-          <p>
-            Without Suspense, server rendering is all-or-nothing: the response can't start until
-            every fetch on the page finishes, so the slowest request sets the time-to-first-byte for
-            the entire page. With Suspense boundaries, the server streams the page in order of
-            readiness: the shell (layout, containers, everything known) goes out immediately, and
-            each suspended region follows as its data resolves, injected into its reserved slot
-            without re-rendering anything around it. (Making the waits themselves small and
-            parallel, rather than just streaming around them, is
-            <a href="11-blocking-requests.html">§11</a>'s subject.)
-          </p>
+<h2 id="streaming">10.2 Streaming: Suspense on the server</h2>
+<p>
+  Without Suspense, server rendering is all-or-nothing: the response can't start until
+  every fetch on the page finishes, so the slowest request sets the time-to-first-byte for
+  the entire page. With Suspense boundaries, the server streams the page in order of
+  readiness: the shell (layout, containers, everything known) goes out immediately, and
+  each suspended region follows as its data resolves, injected into its reserved slot
+  without re-rendering anything around it. (Making the waits themselves small and
+  parallel, rather than just streaming around them, is
+  <a href="11-blocking-requests.html">§11</a>'s subject.)
+</p>
 
-          <Diagram>
-            <svg
-              viewBox="0 0 720 261"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
-            >
-              <text x="14" y="10.28" font-size="11.5" fill="#b3261e" font-weight="500">
-                Blocking SSR: response waits for the slowest fetch
-              </text>
-              <!-- lane 1 -->
-              <rect
-                x="90"
-                y="24.28"
-                width="150"
-                height="24"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-              />
-              <text x="165" y="40.28" font-size="10" fill="#8a5a00" text-anchor="middle">
-                fetch program (fast)
-              </text>
-              <rect
-                x="90"
-                y="54.28"
-                width="330"
-                height="24"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-              />
-              <text x="255" y="70.28" font-size="10" fill="#8a5a00" text-anchor="middle">
-                fetch report rows (slow)
-              </text>
-              <rect
-                x="424"
-                y="39.28"
-                width="90"
-                height="24"
-                rx="5"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-              />
-              <text x="469" y="55.28" font-size="10" fill="#0757ba" text-anchor="middle">
-                render all
-              </text>
-              <rect
-                x="518"
-                y="39.28"
-                width="120"
-                height="24"
-                rx="5"
-                fill="#e7f5ee"
-                stroke="#2ea06d"
-              />
-              <text x="578" y="55.28" font-size="10" fill="#157a4c" text-anchor="middle">
-                send: first paint
-              </text>
-              <line
-                x1="638"
-                y1="32.28"
-                x2="638"
-                y2="86.28"
-                stroke="#2ea06d"
-                stroke-dasharray="3 3"
-              />
-              <text x="638" y="100.28" font-size="10" fill="#157a4c" text-anchor="middle">
-                user sees anything: late
-              </text>
-              <text x="82" y="41.28" font-size="10" fill="#737373" text-anchor="end">server</text>
+<Diagram>
+  <svg
+    viewBox="0 0 720 261"
+    xmlns="http://www.w3.org/2000/svg"
+    font-family="Inter, system-ui, sans-serif"
+  >
+    <text x="14" y="10.28" font-size="11.5" fill="#b3261e" font-weight="500">
+      Blocking SSR: response waits for the slowest fetch
+    </text>
+    <!-- lane 1 -->
+    <rect
+      x="90"
+      y="24.28"
+      width="150"
+      height="24"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+    />
+    <text x="165" y="40.28" font-size="10" fill="#8a5a00" text-anchor="middle">
+      fetch program (fast)
+    </text>
+    <rect
+      x="90"
+      y="54.28"
+      width="330"
+      height="24"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+    />
+    <text x="255" y="70.28" font-size="10" fill="#8a5a00" text-anchor="middle">
+      fetch report rows (slow)
+    </text>
+    <rect
+      x="424"
+      y="39.28"
+      width="90"
+      height="24"
+      rx="5"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+    />
+    <text x="469" y="55.28" font-size="10" fill="#0757ba" text-anchor="middle">
+      render all
+    </text>
+    <rect
+      x="518"
+      y="39.28"
+      width="120"
+      height="24"
+      rx="5"
+      fill="#e7f5ee"
+      stroke="#2ea06d"
+    />
+    <text x="578" y="55.28" font-size="10" fill="#157a4c" text-anchor="middle">
+      send: first paint
+    </text>
+    <line
+      x1="638"
+      y1="32.28"
+      x2="638"
+      y2="86.28"
+      stroke="#2ea06d"
+      stroke-dasharray="3 3"
+    />
+    <text x="638" y="100.28" font-size="10" fill="#157a4c" text-anchor="middle">
+      user sees anything: late
+    </text>
+    <text x="82" y="41.28" font-size="10" fill="#737373" text-anchor="end">server</text>
 
-              <line x1="14" y1="122.28" x2="706" y2="122.28" stroke="#e0e0e0" />
+    <line x1="14" y1="122.28" x2="706" y2="122.28" stroke="#e0e0e0" />
 
-              <text x="14" y="148.28" font-size="11.5" fill="#157a4c" font-weight="500">
-                Streaming SSR: response starts immediately, regions arrive by readiness
-              </text>
-              <!-- shell chunk -->
-              <rect
-                x="90"
-                y="162.28"
-                width="110"
-                height="24"
-                rx="5"
-                fill="#e7f5ee"
-                stroke="#2ea06d"
-              />
-              <text x="145" y="178.28" font-size="10" fill="#157a4c" text-anchor="middle">
-                shell + fallbacks
-              </text>
-              <line
-                x1="202"
-                y1="155.28"
-                x2="202"
-                y2="224.28"
-                stroke="#2ea06d"
-                stroke-dasharray="3 3"
-              />
-              <text x="212" y="171.28" font-size="10" fill="#157a4c">
-                first paint: structure, header,
-              </text>
-              <text x="212" y="185.28" font-size="10" fill="#157a4c">
-                containers, skeletons in place
-              </text>
-              <!-- parallel fetches -->
-              <rect
-                x="90"
-                y="198.28"
-                width="150"
-                height="24"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-              />
-              <text x="165" y="214.28" font-size="10" fill="#8a5a00" text-anchor="middle">
-                fetch program (fast)
-              </text>
-              <rect
-                x="244"
-                y="198.28"
-                width="86"
-                height="24"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-              />
-              <text x="287" y="214.28" font-size="10" fill="#8a5a00" text-anchor="middle">
-                chunk: header
-              </text>
-              <rect
-                x="90"
-                y="234.28"
-                width="330"
-                height="24"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-              />
-              <text x="255" y="250.28" font-size="10" fill="#8a5a00" text-anchor="middle">
-                fetch report rows (slow)
-              </text>
-              <rect
-                x="424"
-                y="234.28"
-                width="86"
-                height="24"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-              />
-              <text x="467" y="250.28" font-size="10" fill="#8a5a00" text-anchor="middle">
-                chunk: table
-              </text>
-              <text x="82" y="179.28" font-size="10" fill="#737373" text-anchor="end">server</text>
-              <text x="514" y="214.28" font-size="10" fill="#737373">
-                each region swaps in as it's ready;
-              </text>
-              <text x="508" y="228.28" font-size="10" fill="#737373">
-                the fast parts never wait for the slow
-              </text>
-            </svg>
-            
+    <text x="14" y="148.28" font-size="11.5" fill="#157a4c" font-weight="500">
+      Streaming SSR: response starts immediately, regions arrive by readiness
+    </text>
+    <!-- shell chunk -->
+    <rect
+      x="90"
+      y="162.28"
+      width="110"
+      height="24"
+      rx="5"
+      fill="#e7f5ee"
+      stroke="#2ea06d"
+    />
+    <text x="145" y="178.28" font-size="10" fill="#157a4c" text-anchor="middle">
+      shell + fallbacks
+    </text>
+    <line
+      x1="202"
+      y1="155.28"
+      x2="202"
+      y2="224.28"
+      stroke="#2ea06d"
+      stroke-dasharray="3 3"
+    />
+    <text x="212" y="171.28" font-size="10" fill="#157a4c">
+      first paint: structure, header,
+    </text>
+    <text x="212" y="185.28" font-size="10" fill="#157a4c">
+      containers, skeletons in place
+    </text>
+    <!-- parallel fetches -->
+    <rect
+      x="90"
+      y="198.28"
+      width="150"
+      height="24"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+    />
+    <text x="165" y="214.28" font-size="10" fill="#8a5a00" text-anchor="middle">
+      fetch program (fast)
+    </text>
+    <rect
+      x="244"
+      y="198.28"
+      width="86"
+      height="24"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+    />
+    <text x="287" y="214.28" font-size="10" fill="#8a5a00" text-anchor="middle">
+      chunk: header
+    </text>
+    <rect
+      x="90"
+      y="234.28"
+      width="330"
+      height="24"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+    />
+    <text x="255" y="250.28" font-size="10" fill="#8a5a00" text-anchor="middle">
+      fetch report rows (slow)
+    </text>
+    <rect
+      x="424"
+      y="234.28"
+      width="86"
+      height="24"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+    />
+    <text x="467" y="250.28" font-size="10" fill="#8a5a00" text-anchor="middle">
+      chunk: table
+    </text>
+    <text x="82" y="179.28" font-size="10" fill="#737373" text-anchor="end">server</text>
+    <text x="514" y="214.28" font-size="10" fill="#737373">
+      each region swaps in as it's ready;
+    </text>
+    <text x="508" y="228.28" font-size="10" fill="#737373">
+      the fast parts never wait for the slow
+    </text>
+  </svg>
+  
 <Fragment slot="caption">
 Recreated from the Next.js docs' streaming illustration: same fetches, same durations;
-              blocking SSR gates the whole page on the slowest fetch, while streaming sends the
-              known shell at once and fills each suspended region by readiness.
+    blocking SSR gates the whole page on the slowest fetch, while streaming sends the
+    known shell at once and fills each suspended region by readiness.
 </Fragment>
 </Diagram>
 
-          <p>
-            Two placement rules follow: <Chip k="next" />
-            <Chip k="critical" />
-          </p>
-          <ul>
-            <li>
-              <strong><code>loading.tsx</code> is a route-level Suspense boundary</strong> the
-              framework wires up for you: it wraps the page and shows instantly on navigation. Use
-              it for the route transition, but treat it as the coarsest tool: a whole-page skeleton
-              is exactly the page-level skeleton we avoid (<a href="#skeletons">§10.4</a>). Prefer a
-              <code>loading.tsx</code> that renders the page's known scaffold, with granular
-              boundaries inside the page doing the real work.
-            </li>
-            <li>
-              <strong>Granular boundaries around each data-dependent region</strong>: one per
-              self-fetching component (<a href="12-minimize-the-wires.html#streaming">§12.3</a>),
-              placed inside the known container (<a href="09-containers-content-shifting.html">§9</a
-              >). This is also what Partial Prerendering builds on: with
-              <code>cacheComponents</code>, everything outside your Suspense boundaries becomes the
-              static shell served instantly, and the boundaries define exactly where dynamic content
-              streams in.
-            </li>
-          </ul>
+<p>
+  Two placement rules follow: <Chip k="next" />
+  <Chip k="critical" />
+</p>
+<ul>
+  <li>
+    <strong><code>loading.tsx</code> is a route-level Suspense boundary</strong> the
+    framework wires up for you: it wraps the page and shows instantly on navigation. Use
+    it for the route transition, but treat it as the coarsest tool: a whole-page skeleton
+    is exactly the page-level skeleton we avoid (<a href="#skeletons">§10.4</a>). Prefer a
+    <code>loading.tsx</code> that renders the page's known scaffold, with granular
+    boundaries inside the page doing the real work.
+  </li>
+  <li>
+    <strong>Granular boundaries around each data-dependent region</strong>: one per
+    self-fetching component (<a href="12-minimize-the-wires.html#streaming">§12.3</a>),
+    placed inside the known container (<a href="09-containers-content-shifting.html">§9</a
+    >). This is also what Partial Prerendering builds on: with
+    <code>cacheComponents</code>, everything outside your Suspense boundaries becomes the
+    static shell served instantly, and the boundaries define exactly where dynamic content
+    streams in.
+  </li>
+</ul>
 
-          <p>
-            It helps to see what these files literally <em>are</em>. You never write the wrappers;
-            Next.js assembles them around your page from the files' presence alone:
-          </p>
+<p>
+  It helps to see what these files literally <em>are</em>. You never write the wrappers;
+  Next.js assembles them around your page from the files' presence alone:
+</p>
 
-          <Diagram>
-            <svg
-              viewBox="0 0 720 198"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
-            >
-              <defs>
-                <marker
-                  id="aW"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path
-                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-                    fill="none"
-                    stroke="#b45309"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </marker>
-                <marker
-                  id="aX"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path
-                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-                    fill="none"
-                    stroke="#b3261e"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </marker>
-              </defs>
+<Diagram>
+  <svg
+    viewBox="0 0 720 198"
+    xmlns="http://www.w3.org/2000/svg"
+    font-family="Inter, system-ui, sans-serif"
+  >
+    <defs>
+      <marker
+        id="aW"
+        viewBox="0 0 10 10"
+        refX="8"
+        refY="5"
+        markerWidth="6"
+        markerHeight="6"
+        orient="auto-start-reverse"
+      >
+        <path
+          d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+          fill="none"
+          stroke="#b45309"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </marker>
+      <marker
+        id="aX"
+        viewBox="0 0 10 10"
+        refX="8"
+        refY="5"
+        markerWidth="6"
+        markerHeight="6"
+        orient="auto-start-reverse"
+      >
+        <path
+          d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+          fill="none"
+          stroke="#b3261e"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </marker>
+    </defs>
 
-              <!-- loading.tsx file card -->
-              <rect x="14" y="2" width="244" height="80" rx="8" fill="#ffffff" stroke="#c9c9c9" />
-              <text
-                x="30"
-                y="20"
-                font-size="10"
-                fill="#8a5a00"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                loading.tsx
-              </text>
-              <line x1="15" y1="28" x2="257" y2="28" stroke="#e5e5e5" />
-              <text
-                x="30"
-                y="44"
-                font-size="9.5"
-                fill="#171717"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                export default function Loading() &#123;
-              </text>
-              <text
-                x="30"
-                y="58"
-                font-size="9.5"
-                fill="#171717"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                return &lt;PageScaffoldSkeleton /&gt;;
-              </text>
-              <text
-                x="30"
-                y="72"
-                font-size="9.5"
-                fill="#171717"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &#125;
-              </text>
+    <!-- loading.tsx file card -->
+    <rect x="14" y="2" width="244" height="80" rx="8" fill="#ffffff" stroke="#c9c9c9" />
+    <text
+      x="30"
+      y="20"
+      font-size="10"
+      fill="#8a5a00"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      loading.tsx
+    </text>
+    <line x1="15" y1="28" x2="257" y2="28" stroke="#e5e5e5" />
+    <text
+      x="30"
+      y="44"
+      font-size="9.5"
+      fill="#171717"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      export default function Loading() &#123;
+    </text>
+    <text
+      x="30"
+      y="58"
+      font-size="9.5"
+      fill="#171717"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      return &lt;PageScaffoldSkeleton /&gt;;
+    </text>
+    <text
+      x="30"
+      y="72"
+      font-size="9.5"
+      fill="#171717"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &#125;
+    </text>
 
-              <!-- error.tsx file card -->
-              <rect x="14" y="116" width="244" height="80" rx="8" fill="#ffffff" stroke="#c9c9c9" />
-              <text
-                x="30"
-                y="134"
-                font-size="10"
-                fill="#b3261e"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                error.tsx
-              </text>
-              <line x1="15" y1="142" x2="257" y2="142" stroke="#e5e5e5" />
-              <text
-                x="30"
-                y="158"
-                font-size="9.5"
-                fill="#171717"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                export default function Error(props) &#123;
-              </text>
-              <text
-                x="30"
-                y="172"
-                font-size="9.5"
-                fill="#171717"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                return &lt;RegionError &#123;...props&#125; /&gt;;
-              </text>
-              <text
-                x="30"
-                y="186"
-                font-size="9.5"
-                fill="#171717"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &#125;
-              </text>
+    <!-- error.tsx file card -->
+    <rect x="14" y="116" width="244" height="80" rx="8" fill="#ffffff" stroke="#c9c9c9" />
+    <text
+      x="30"
+      y="134"
+      font-size="10"
+      fill="#b3261e"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      error.tsx
+    </text>
+    <line x1="15" y1="142" x2="257" y2="142" stroke="#e5e5e5" />
+    <text
+      x="30"
+      y="158"
+      font-size="9.5"
+      fill="#171717"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      export default function Error(props) &#123;
+    </text>
+    <text
+      x="30"
+      y="172"
+      font-size="9.5"
+      fill="#171717"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      return &lt;RegionError &#123;...props&#125; /&gt;;
+    </text>
+    <text
+      x="30"
+      y="186"
+      font-size="9.5"
+      fill="#171717"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &#125;
+    </text>
 
-              <!-- the assembled tree -->
-              <!-- data-lint-ignore: code mock; inline pills sit mid-line -->
-              <rect
-                data-lint-ignore="scene"
-                x="300"
-                y="2"
-                width="406"
-                height="178"
-                rx="8"
-                fill="#ffffff"
-                stroke="#c9c9c9"
-              />
-              <text
-                x="316"
-                y="20"
-                font-size="10"
-                fill="#666666"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                the tree Next.js assembles; you never write this
-              </text>
-              <line x1="301" y1="28" x2="705" y2="28" stroke="#e5e5e5" />
-              <text
-                x="316"
-                y="50"
-                font-size="10"
-                fill="#0757ba"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &lt;Layout&gt;
-              </text>
-              <text x="692" y="50" font-size="8.5" fill="#527dad" text-anchor="end">
-                the known scaffold (§9)
-              </text>
-              <rect x="478" y="57" width="60" height="16" rx="4" fill="#fdecea" stroke="#b3261e" />
-              <text
-                x="316"
-                y="69"
-                font-size="10"
-                fill="#171717"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &lt;ErrorBoundary fallback=&#123;
-              </text>
-              <text
-                x="482"
-                y="69"
-                font-size="10"
-                fill="#b3261e"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &lt;Error /&gt;
-              </text>
-              <text
-                x="542"
-                y="69"
-                font-size="10"
-                fill="#171717"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &#125;&gt;
-              </text>
-              <text x="692" y="69" font-size="8.5" fill="#b0483e" text-anchor="end">
-                failure, contained
-              </text>
-              <rect x="462" y="76" width="72" height="16" rx="4" fill="#fdf3e3" stroke="#b45309" />
-              <text
-                x="316"
-                y="88"
-                font-size="10"
-                fill="#171717"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &lt;Suspense fallback=&#123;
-              </text>
-              <text
-                x="466"
-                y="88"
-                font-size="10"
-                fill="#8a5a00"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &lt;Loading /&gt;
-              </text>
-              <text
-                x="538"
-                y="88"
-                font-size="10"
-                fill="#171717"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &#125;&gt;
-              </text>
-              <text x="692" y="88" font-size="8.5" fill="#8a5a00" text-anchor="end">
-                the unknown, contained (§10)
-              </text>
-              <rect x="350" y="95" width="58" height="16" rx="4" fill="#e7f5ee" stroke="#2ea06d" />
-              <text
-                x="316"
-                y="107"
-                font-size="10"
-                fill="#171717"
-                font-family="Geist Mono, ui-monospace, monospace"
-              ></text>
-              <text
-                x="354"
-                y="107"
-                font-size="10"
-                fill="#157a4c"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &lt;Page /&gt;
-              </text>
-              <text x="692" y="107" font-size="8.5" fill="#2e7d5b" text-anchor="end">
-                your content, aware of neither
-              </text>
-              <text
-                x="316"
-                y="126"
-                font-size="10"
-                fill="#666666"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &lt;/Suspense&gt;
-              </text>
-              <text
-                x="316"
-                y="145"
-                font-size="10"
-                fill="#666666"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &lt;/ErrorBoundary&gt;
-              </text>
-              <text
-                x="316"
-                y="164"
-                font-size="10"
-                fill="#0757ba"
-                font-family="Geist Mono, ui-monospace, monospace"
-              >
-                &lt;/Layout&gt;
-              </text>
+    <!-- the assembled tree -->
+    <!-- data-lint-ignore: code mock; inline pills sit mid-line -->
+    <rect
+      data-lint-ignore="scene"
+      x="300"
+      y="2"
+      width="406"
+      height="178"
+      rx="8"
+      fill="#ffffff"
+      stroke="#c9c9c9"
+    />
+    <text
+      x="316"
+      y="20"
+      font-size="10"
+      fill="#666666"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      the tree Next.js assembles; you never write this
+    </text>
+    <line x1="301" y1="28" x2="705" y2="28" stroke="#e5e5e5" />
+    <text
+      x="316"
+      y="50"
+      font-size="10"
+      fill="#0757ba"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &lt;Layout&gt;
+    </text>
+    <text x="692" y="50" font-size="8.5" fill="#527dad" text-anchor="end">
+      the known scaffold (§9)
+    </text>
+    <rect x="478" y="57" width="60" height="16" rx="4" fill="#fdecea" stroke="#b3261e" />
+    <text
+      x="316"
+      y="69"
+      font-size="10"
+      fill="#171717"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &lt;ErrorBoundary fallback=&#123;
+    </text>
+    <text
+      x="482"
+      y="69"
+      font-size="10"
+      fill="#b3261e"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &lt;Error /&gt;
+    </text>
+    <text
+      x="542"
+      y="69"
+      font-size="10"
+      fill="#171717"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &#125;&gt;
+    </text>
+    <text x="692" y="69" font-size="8.5" fill="#b0483e" text-anchor="end">
+      failure, contained
+    </text>
+    <rect x="462" y="76" width="72" height="16" rx="4" fill="#fdf3e3" stroke="#b45309" />
+    <text
+      x="316"
+      y="88"
+      font-size="10"
+      fill="#171717"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &lt;Suspense fallback=&#123;
+    </text>
+    <text
+      x="466"
+      y="88"
+      font-size="10"
+      fill="#8a5a00"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &lt;Loading /&gt;
+    </text>
+    <text
+      x="538"
+      y="88"
+      font-size="10"
+      fill="#171717"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &#125;&gt;
+    </text>
+    <text x="692" y="88" font-size="8.5" fill="#8a5a00" text-anchor="end">
+      the unknown, contained (§10)
+    </text>
+    <rect x="350" y="95" width="58" height="16" rx="4" fill="#e7f5ee" stroke="#2ea06d" />
+    <text
+      x="316"
+      y="107"
+      font-size="10"
+      fill="#171717"
+      font-family="Geist Mono, ui-monospace, monospace"
+    ></text>
+    <text
+      x="354"
+      y="107"
+      font-size="10"
+      fill="#157a4c"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &lt;Page /&gt;
+    </text>
+    <text x="692" y="107" font-size="8.5" fill="#2e7d5b" text-anchor="end">
+      your content, aware of neither
+    </text>
+    <text
+      x="316"
+      y="126"
+      font-size="10"
+      fill="#666666"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &lt;/Suspense&gt;
+    </text>
+    <text
+      x="316"
+      y="145"
+      font-size="10"
+      fill="#666666"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &lt;/ErrorBoundary&gt;
+    </text>
+    <text
+      x="316"
+      y="164"
+      font-size="10"
+      fill="#0757ba"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      &lt;/Layout&gt;
+    </text>
 
-              <!-- file → pill wiring -->
-              <path
-                d="M 258 42 L 272 42 L 272 84 L 296 84"
-                fill="none"
-                stroke="#b45309"
-                stroke-width="1.5"
-                marker-end="url(#aW)"
-              />
-              <path
-                d="M 258 156 L 284 156 L 284 65 L 296 65"
-                fill="none"
-                stroke="#b3261e"
-                stroke-width="1.5"
-                marker-end="url(#aX)"
-              />
-            </svg>
-            
+    <!-- file → pill wiring -->
+    <path
+      d="M 258 42 L 272 42 L 272 84 L 296 84"
+      fill="none"
+      stroke="#b45309"
+      stroke-width="1.5"
+      marker-end="url(#aW)"
+    />
+    <path
+      d="M 258 156 L 284 156 L 284 65 L 296 65"
+      fill="none"
+      stroke="#b3261e"
+      stroke-width="1.5"
+      marker-end="url(#aX)"
+    />
+  </svg>
+  
 <Fragment slot="caption">
 loading.tsx and error.tsx are sugar for boundaries Next.js wraps around your page
-              (pattern from the Next.js docs). In contain-the-unknown terms: the Layout is the known
-              scaffold and never unmounts; Suspense contains the waiting; the ErrorBoundary contains
-              the failing; and the page itself knows about none of it.
+    (pattern from the Next.js docs). In contain-the-unknown terms: the Layout is the known
+    scaffold and never unmounts; Suspense contains the waiting; the ErrorBoundary contains
+    the failing; and the page itself knows about none of it.
 </Fragment>
 </Diagram>
 
-          <h2 id="no-own-loading">10.3 Components must not define their own loading states</h2>
-          <p>
-            <Chip k="react" />
-            <Chip k="critical" /> A component that renders its own
-            spinner has made three decisions it has no business making: <em>that</em> it is worth
-            waiting for (its parent's composition decides that), <em>where</em> the waiting UI
-            appears (the boundary above decides that), and
-            <em>what the rest of the page does meanwhile</em> (it can't know). The costs show up
-            immediately:
-          </p>
-          <ul>
-            <li>
-              <strong>Loading becomes un-composable.</strong> Compose three self-spinning components
-              and you get three spinners resolving at different moments: spinner cascades, each swap
-              shifting layout. With boundaries, the composing parent decides: one boundary around
-              all three, or one each, without touching any of them.
-            </li>
-            <li>
-              <strong>The loading UI is welded to the data mechanism.</strong> Move the fetch from
-              client to server, add a cache, wrap it in a transition, and the hand-rolled
-              <code>isLoading</code> plumbing has to be rewritten every time. A fallback on a
-              boundary survives all of those changes.
-            </li>
-            <li>
-              <strong>It's invisible to the framework.</strong> Streaming, PPR, and transition
-              semantics all operate on boundaries. A component-owned spinner opts out of every one
-              of them.
-            </li>
-          </ul>
+<h2 id="no-own-loading">10.3 Components must not define their own loading states</h2>
+<p>
+  <Chip k="react" />
+  <Chip k="critical" /> A component that renders its own
+  spinner has made three decisions it has no business making: <em>that</em> it is worth
+  waiting for (its parent's composition decides that), <em>where</em> the waiting UI
+  appears (the boundary above decides that), and
+  <em>what the rest of the page does meanwhile</em> (it can't know). The costs show up
+  immediately:
+</p>
+<ul>
+  <li>
+    <strong>Loading becomes un-composable.</strong> Compose three self-spinning components
+    and you get three spinners resolving at different moments: spinner cascades, each swap
+    shifting layout. With boundaries, the composing parent decides: one boundary around
+    all three, or one each, without touching any of them.
+  </li>
+  <li>
+    <strong>The loading UI is welded to the data mechanism.</strong> Move the fetch from
+    client to server, add a cache, wrap it in a transition, and the hand-rolled
+    <code>isLoading</code> plumbing has to be rewritten every time. A fallback on a
+    boundary survives all of those changes.
+  </li>
+  <li>
+    <strong>It's invisible to the framework.</strong> Streaming, PPR, and transition
+    semantics all operate on boundaries. A component-owned spinner opts out of every one
+    of them.
+  </li>
+</ul>
 
-          <Compare>
+<Compare>
 <CompareCol kind="bad" label="✕ Component owns its loading state">
-              <pre
+    <pre
                 class="code" is:raw
               ><span class="filename">ProgramStats.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramStats</span>({ programId }) {
@@ -857,200 +855,200 @@ loading.tsx and error.tsx are sugar for boundaries Next.js wraps around your pag
   <span class="tok-kw">if</span> (isLoading) <span class="tok-kw">return</span> &lt;<span class="tok-fn">Spinner</span> /&gt;;
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">StatsRow</span> <span class="tok-prop">stats</span>={data.stats} /&gt;;
 }</pre>
-            
+  
 </CompareCol>
 <CompareCol kind="good" label="✓ Boundary owns it: component just renders">
-              <pre
+    <pre
                 class="code" is:raw
               ><span class="filename">ProgramStats.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramStats</span>({ programId }) {
   <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> <span class="tok-fn">getProgram</span>(programId);
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">StatsRow</span> <span class="tok-prop">stats</span>={program.stats} /&gt;;
 }</pre>
-              <pre
+    <pre
                 class="code" is:raw
               ><span class="filename">page.tsx - the composer decides</span>&lt;<span class="tok-fn">StatsContainer</span>&gt;
   &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
     &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={id} /&gt;
   &lt;/<span class="tok-fn">Suspense</span>&gt;
 &lt;/<span class="tok-fn">StatsContainer</span>&gt;</pre>
-            
+  
 </CompareCol>
 </Compare>
 
-          <h2 id="skeletons">10.4 Skeletons: scoped, colocated, structural</h2>
-          <p>
-            The container doctrine is <a href="09-containers-content-shifting.html">§9</a>'s
-            subject: containers known and immediate, fallback and content swapped inside them, one
-            shared footprint, and neither occupant bringing its own chrome. All of it applies
-            verbatim to fallbacks:
-            <strong>the fallback is simply the container's first occupant.</strong>
-            <Chip k="react" />
-            <Chip k="critical" /> What belongs to this chapter is the
-            fallback itself, the skeleton:
-          </p>
-          <ul>
-            <li>
-              <strong
-                >Scope skeletons per server component (or per client component when needed), never
-                per page.</strong
-              >
-              <Chip k="very" /> A page-level skeleton is a second,
-              shadow implementation of the entire page layout. It drifts the moment anyone changes
-              the real page, and nobody remembers to update it; the maintainability cost compounds
-              with every route. A per-component skeleton is small, sits next to the component it
-              mirrors (<code>StatsRow.tsx</code> / <code>StatsSkeleton.tsx</code>), and changes in
-              the same PR when the component changes.
-            </li>
-            <li>
-              <strong>Keep skeletons structural, not photorealistic.</strong> They exist to hold
-              reserved space and signal "coming": a few bars matching the content's rough geometry.
-              The more detailed the skeleton, the faster it drifts.
-            </li>
-            <li>
-              <strong>Skeletons appear exactly once per region: on first load.</strong> Never on
-              refetch; that's the next section.
-            </li>
-          </ul>
+<h2 id="skeletons">10.4 Skeletons: scoped, colocated, structural</h2>
+<p>
+  The container doctrine is <a href="09-containers-content-shifting.html">§9</a>'s
+  subject: containers known and immediate, fallback and content swapped inside them, one
+  shared footprint, and neither occupant bringing its own chrome. All of it applies
+  verbatim to fallbacks:
+  <strong>the fallback is simply the container's first occupant.</strong>
+  <Chip k="react" />
+  <Chip k="critical" /> What belongs to this chapter is the
+  fallback itself, the skeleton:
+</p>
+<ul>
+  <li>
+    <strong
+      >Scope skeletons per server component (or per client component when needed), never
+      per page.</strong
+    >
+    <Chip k="very" /> A page-level skeleton is a second,
+    shadow implementation of the entire page layout. It drifts the moment anyone changes
+    the real page, and nobody remembers to update it; the maintainability cost compounds
+    with every route. A per-component skeleton is small, sits next to the component it
+    mirrors (<code>StatsRow.tsx</code> / <code>StatsSkeleton.tsx</code>), and changes in
+    the same PR when the component changes.
+  </li>
+  <li>
+    <strong>Keep skeletons structural, not photorealistic.</strong> They exist to hold
+    reserved space and signal "coming": a few bars matching the content's rough geometry.
+    The more detailed the skeleton, the faster it drifts.
+  </li>
+  <li>
+    <strong>Skeletons appear exactly once per region: on first load.</strong> Never on
+    refetch; that's the next section.
+  </li>
+</ul>
 
-          <h2 id="refetch">10.5 Refetches show stale content, never fallbacks</h2>
-          <p>
-            <Chip k="react" />
-            <Chip k="critical" /> A skeleton answers the question "what
-            goes here?", a question that's only ever open <em>once</em>. On a refetch, the answer is
-            already on screen. Replacing real content with a skeleton destroys information the user
-            was looking at, resets their scroll and reading position, and shifts layout twice for
-            zero benefit. The rule, in stale-while-revalidate terms:
-            <strong
-              >existing content is never replaced while new content loads; loading is only ever
-              <em>indicated</em>, alongside the stale content.</strong
-            >
-          </p>
+<h2 id="refetch">10.5 Refetches show stale content, never fallbacks</h2>
+<p>
+  <Chip k="react" />
+  <Chip k="critical" /> A skeleton answers the question "what
+  goes here?", a question that's only ever open <em>once</em>. On a refetch, the answer is
+  already on screen. Replacing real content with a skeleton destroys information the user
+  was looking at, resets their scroll and reading position, and shifts layout twice for
+  zero benefit. The rule, in stale-while-revalidate terms:
+  <strong
+    >existing content is never replaced while new content loads; loading is only ever
+    <em>indicated</em>, alongside the stale content.</strong
+  >
+</p>
 
-          <Diagram>
-            <svg
-              viewBox="0 0 720 187"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
-            >
-              <text x="14" y="10.28" font-size="11.5" fill="#171717" font-weight="500">
-                First load: the only time a fallback appears
-              </text>
-              <rect
-                x="90"
-                y="22.28"
-                width="180"
-                height="30"
-                rx="6"
-                fill="#fdf3e3"
-                stroke="#b45309"
-                stroke-dasharray="5 4"
-              />
-              <text x="180" y="41.28" font-size="10.5" fill="#8a5a00" text-anchor="middle">
-                skeleton (unknown)
-              </text>
-              <rect
-                x="274"
-                y="22.28"
-                width="340"
-                height="30"
-                rx="6"
-                fill="#e7f5ee"
-                stroke="#2ea06d"
-              />
-              <text x="444" y="41.28" font-size="10.5" fill="#157a4c" text-anchor="middle">
-                content
-              </text>
+<Diagram>
+  <svg
+    viewBox="0 0 720 187"
+    xmlns="http://www.w3.org/2000/svg"
+    font-family="Inter, system-ui, sans-serif"
+  >
+    <text x="14" y="10.28" font-size="11.5" fill="#171717" font-weight="500">
+      First load: the only time a fallback appears
+    </text>
+    <rect
+      x="90"
+      y="22.28"
+      width="180"
+      height="30"
+      rx="6"
+      fill="#fdf3e3"
+      stroke="#b45309"
+      stroke-dasharray="5 4"
+    />
+    <text x="180" y="41.28" font-size="10.5" fill="#8a5a00" text-anchor="middle">
+      skeleton (unknown)
+    </text>
+    <rect
+      x="274"
+      y="22.28"
+      width="340"
+      height="30"
+      rx="6"
+      fill="#e7f5ee"
+      stroke="#2ea06d"
+    />
+    <text x="444" y="41.28" font-size="10.5" fill="#157a4c" text-anchor="middle">
+      content
+    </text>
 
-              <line x1="14" y1="74.28" x2="706" y2="74.28" stroke="#e0e0e0" />
+    <line x1="14" y1="74.28" x2="706" y2="74.28" stroke="#e0e0e0" />
 
-              <text x="14" y="104.28" font-size="11.5" fill="#171717" font-weight="500">
-                Every load after that: stale content stays, loading is only indicated
-              </text>
-              <rect
-                x="90"
-                y="116.28"
-                width="240"
-                height="30"
-                rx="6"
-                fill="#e7f5ee"
-                stroke="#2ea06d"
-              />
-              <text x="198" y="135.28" font-size="10.5" fill="#157a4c" text-anchor="middle">
-                stale content: visible, usable
-              </text>
-              <circle
-                cx="312"
-                cy="131.28"
-                r="7"
-                fill="none"
-                stroke="#0070f3"
-                stroke-width="2"
-                stroke-dasharray="9 4"
-              />
-              <rect
-                x="334"
-                y="116.28"
-                width="280"
-                height="30"
-                rx="6"
-                fill="#e7f5ee"
-                stroke="#2ea06d"
-              />
-              <text x="474" y="135.28" font-size="10.5" fill="#157a4c" text-anchor="middle">
-                fresh content, swapped when ready
-              </text>
-              <text x="90" y="168.28" font-size="10" fill="#737373">
-                subtle indicator (corner spinner, dimmed rows, progress bar):
-              </text>
-              <text x="90" y="182.28" font-size="10" fill="#737373">
-                the user never loses what they had; nothing unmounts, nothing shifts
-              </text>
-            </svg>
-            
+    <text x="14" y="104.28" font-size="11.5" fill="#171717" font-weight="500">
+      Every load after that: stale content stays, loading is only indicated
+    </text>
+    <rect
+      x="90"
+      y="116.28"
+      width="240"
+      height="30"
+      rx="6"
+      fill="#e7f5ee"
+      stroke="#2ea06d"
+    />
+    <text x="198" y="135.28" font-size="10.5" fill="#157a4c" text-anchor="middle">
+      stale content: visible, usable
+    </text>
+    <circle
+      cx="312"
+      cy="131.28"
+      r="7"
+      fill="none"
+      stroke="#0070f3"
+      stroke-width="2"
+      stroke-dasharray="9 4"
+    />
+    <rect
+      x="334"
+      y="116.28"
+      width="280"
+      height="30"
+      rx="6"
+      fill="#e7f5ee"
+      stroke="#2ea06d"
+    />
+    <text x="474" y="135.28" font-size="10.5" fill="#157a4c" text-anchor="middle">
+      fresh content, swapped when ready
+    </text>
+    <text x="90" y="168.28" font-size="10" fill="#737373">
+      subtle indicator (corner spinner, dimmed rows, progress bar):
+    </text>
+    <text x="90" y="182.28" font-size="10" fill="#737373">
+      the user never loses what they had; nothing unmounts, nothing shifts
+    </text>
+  </svg>
+  
 <Fragment slot="caption">
 The stale-while-revalidate presentation rule. The fallback answers "what goes here?",
-              asked once. Refetch, revalidation, filter change, pagination: stale + indicator,
-              always: loading is a status you indicate, not a state you swap to.
+    asked once. Refetch, revalidation, filter change, pagination: stale + indicator,
+    always: loading is a status you indicate, not a state you swap to.
 </Fragment>
 </Diagram>
 
-          <p>The tools, by situation:</p>
-          <ul>
-            <li>
-              <strong>URL-driven server UI (the default case)</strong>: <em>transitions</em>. The
-              App Router performs navigations inside <code>startTransition</code>, so when a filter
-              changes the URL, the already-revealed table stays on screen while the server
-              re-renders with the new <code>searchParams</code>; the Suspense boundary does
-              <em>not</em> revert to its fallback. Wrap the <code>router.replace()</code> in your
-              own <code>useTransition</code> and <code>isPending</code> is your indicator.
-            </li>
-            <li>
-              <strong>Client-fetched data</strong>: SWR / React Query already behave this way:
-              <code>data</code> keeps its previous value while <code>isValidating</code>/<code
-                >isFetching</code
-              >
-              is true (use <code>keepPreviousData</code> when the key changes). Bind your indicator
-              to <code>isValidating</code>; never gate the content on it.
-            </li>
-            <li>
-              <strong>Client-rendered results of a fast-changing value</strong>:
-              <code>useDeferredValue</code>. When the value drives client-side rendering or
-              client-fetched queries (an autocomplete, search-as-you-type against the client cache),
-              render against the deferred value; <code>value !== deferredValue</code> drives the
-              dimmed opacity. Same presentation rule, client-side mechanism.
-            </li>
-          </ul>
+<p>The tools, by situation:</p>
+<ul>
+  <li>
+    <strong>URL-driven server UI (the default case)</strong>: <em>transitions</em>. The
+    App Router performs navigations inside <code>startTransition</code>, so when a filter
+    changes the URL, the already-revealed table stays on screen while the server
+    re-renders with the new <code>searchParams</code>; the Suspense boundary does
+    <em>not</em> revert to its fallback. Wrap the <code>router.replace()</code> in your
+    own <code>useTransition</code> and <code>isPending</code> is your indicator.
+  </li>
+  <li>
+    <strong>Client-fetched data</strong>: SWR / React Query already behave this way:
+    <code>data</code> keeps its previous value while <code>isValidating</code>/<code
+      >isFetching</code
+    >
+    is true (use <code>keepPreviousData</code> when the key changes). Bind your indicator
+    to <code>isValidating</code>; never gate the content on it.
+  </li>
+  <li>
+    <strong>Client-rendered results of a fast-changing value</strong>:
+    <code>useDeferredValue</code>. When the value drives client-side rendering or
+    client-fetched queries (an autocomplete, search-as-you-type against the client cache),
+    render against the deferred value; <code>value !== deferredValue</code> drives the
+    dimmed opacity. Same presentation rule, client-side mechanism.
+  </li>
+</ul>
 
-          <p>
-            Here is the default case assembled end to end, and notice it's the whole guide in one
-            example: the URL is the state (<a href="08-server-resolvable-state.html">§8</a>), the
-            input and the dim-wrapper are client leaves (<a href="05-client-server-boundaries.html"
-              >§5</a
-            >), the rows are a server component fetching by <code>searchParams</code>, and the
-            fallback appears exactly once:
-          </p>
+<p>
+  Here is the default case assembled end to end, and notice it's the whole guide in one
+  example: the URL is the state (<a href="08-server-resolvable-state.html">§8</a>), the
+  input and the dim-wrapper are client leaves (<a href="05-client-server-boundaries.html"
+    >§5</a
+  >), the rows are a server component fetching by <code>searchParams</code>, and the
+  fallback appears exactly once:
+</p>
 
-          <pre
+<pre
             class="code" is:raw
           ><span class="filename">app/reports/page.tsx - server: the URL is the input</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ searchParams }) {
   <span class="tok-kw">const</span> { q = <span class="tok-str">""</span> } = <span class="tok-kw">await</span> searchParams;
@@ -1082,7 +1080,7 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
   );
 }</pre>
 
-          <pre
+<pre
             class="code" is:raw
           ><span class="filename">ReportRows.tsx - server: only ever renders finished knowledge</span><span class="tok-kw">export async function</span> <span class="tok-fn">ReportRows</span>({ query }) {
   <span class="tok-com">// The data layer call is cached and deduped (§13).</span>
@@ -1095,7 +1093,7 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">Rows</span> <span class="tok-prop">rows</span>={rows} /&gt;;
 }</pre>
 
-          <pre
+<pre
             class="code" is:raw
           ><span class="filename">QueryTransition.tsx - client: one transition, shared by the leaves</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">const</span> Ctx = <span class="tok-fn">createContext</span>({ isPending: <span class="tok-kw">false</span>, update: (fn: () =&gt; <span class="tok-kw">void</span>) =&gt; {} });
@@ -1106,9 +1104,9 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
   <span class="tok-kw">return</span> &lt;Ctx <span class="tok-prop">value</span>={{ isPending, update: startTransition }}&gt;{children}&lt;/Ctx&gt;;
 }</pre>
 
-          <Compare>
+<Compare>
 <CompareCol kind="good" label="✓ SearchInput: client leaf, owns the URL">
-              <pre
+    <pre
                 class="code" is:raw
               ><span class="filename">SearchInput.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">export function</span> <span class="tok-fn">SearchInput</span>() {
@@ -1132,10 +1130,10 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
     /&gt;
   );
 }</pre>
-            
+  
 </CompareCol>
 <CompareCol kind="good" label="✓ StaleContent: client shell, dims what passes through">
-              <pre
+    <pre
                 class="code" is:raw
               ><span class="filename">StaleContent.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">export function</span> <span class="tok-fn">StaleContent</span>({ children }) {
@@ -1151,239 +1149,239 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
     &lt;/div&gt;
   );
 }</pre>
-            
+  
 </CompareCol>
 </Compare>
 
-          <p>
-            The flow on a filter change: the input calls <code>router.replace()</code> inside the
-            shared transition → the server re-renders <code>ReportRows</code> with the new query →
-            because it's a transition and the boundary has already revealed,
-            <strong>the stale rows never leave the screen</strong>; they just dim until the fresh
-            server render streams in and swaps. The skeleton appeared exactly once, at first load.
-            And note what <code>ReportRows</code> gets for free by being a server component: it only
-            ever runs when the data is <em>finished</em>, so the unknown-vs-empty question (<a
-              href="#orthogonal"
-              >§10.6</a
-            >) collapses: <code>undefined</code> can't reach it, and the empty check is honestly
-            just "finished and empty." One caveat to keep it honest: don't put a
-            <code>key</code> tied to the query on the Suspense boundary: a remounted boundary is
-            "new content" and <em>will</em> re-show its fallback.
-          </p>
+<p>
+  The flow on a filter change: the input calls <code>router.replace()</code> inside the
+  shared transition → the server re-renders <code>ReportRows</code> with the new query →
+  because it's a transition and the boundary has already revealed,
+  <strong>the stale rows never leave the screen</strong>; they just dim until the fresh
+  server render streams in and swaps. The skeleton appeared exactly once, at first load.
+  And note what <code>ReportRows</code> gets for free by being a server component: it only
+  ever runs when the data is <em>finished</em>, so the unknown-vs-empty question (<a
+    href="#orthogonal"
+    >§10.6</a
+  >) collapses: <code>undefined</code> can't reach it, and the empty check is honestly
+  just "finished and empty." One caveat to keep it honest: don't put a
+  <code>key</code> tied to the query on the Suspense boundary: a remounted boundary is
+  "new content" and <em>will</em> re-show its fallback.
+</p>
 
-          <h2 id="orthogonal">10.6 Loading, data, and empty are three separate questions</h2>
-          <p>
-            The deepest of the loading-state mistakes is structural: the
-            <code>if (isLoading) … else if (!data) … else …</code> chain. It welds three independent
-            questions into one sequence, and every branch is wrong in some state:
-          </p>
-          <ul>
-            <li>
-              <strong>"Is a request in flight?"</strong> A <em>status</em>, true on first load and
-              on every refetch. It decorates the UI (indicator, dimming); it must never decide
-              <em>which</em> UI renders; that's how refetches turn into skeletons.
-            </li>
-            <li>
-              <strong>"Do we have data?"</strong> A question about <em>knowledge</em>:
-              <code>undefined</code> means <em>we don't know yet</em> (no request has finished).
-              It's answered by the presence of a value, not by the loading flag.
-            </li>
-            <li>
-              <strong>"Is the data empty?"</strong> Only askable <em>after</em> we have knowledge:
-              the request finished and returned nothing. Empty state visibility has exactly one
-              condition: <strong>finished, and empty.</strong> It has nothing to do with loading.
-            </li>
-          </ul>
-          <p>
-            This is also why the data layer must never default missing data to an empty array.
-            <Chip k="react" />
-            <Chip k="critical" /> <code>data ?? []</code> feels like
-            defensive convenience, but it
-            <em>erases the distinction between "unknown" and "known-empty"</em>; downstream code can
-            no longer tell whether to show a skeleton or an empty state, and the classic bug
-            appears: an "No results" flash on every first load, before the data arrives.
-            <code>undefined</code> is information. Preserve it end to end, and let the leaf that
-            renders decide.
-          </p>
+<h2 id="orthogonal">10.6 Loading, data, and empty are three separate questions</h2>
+<p>
+  The deepest of the loading-state mistakes is structural: the
+  <code>if (isLoading) … else if (!data) … else …</code> chain. It welds three independent
+  questions into one sequence, and every branch is wrong in some state:
+</p>
+<ul>
+  <li>
+    <strong>"Is a request in flight?"</strong> A <em>status</em>, true on first load and
+    on every refetch. It decorates the UI (indicator, dimming); it must never decide
+    <em>which</em> UI renders; that's how refetches turn into skeletons.
+  </li>
+  <li>
+    <strong>"Do we have data?"</strong> A question about <em>knowledge</em>:
+    <code>undefined</code> means <em>we don't know yet</em> (no request has finished).
+    It's answered by the presence of a value, not by the loading flag.
+  </li>
+  <li>
+    <strong>"Is the data empty?"</strong> Only askable <em>after</em> we have knowledge:
+    the request finished and returned nothing. Empty state visibility has exactly one
+    condition: <strong>finished, and empty.</strong> It has nothing to do with loading.
+  </li>
+</ul>
+<p>
+  This is also why the data layer must never default missing data to an empty array.
+  <Chip k="react" />
+  <Chip k="critical" /> <code>data ?? []</code> feels like
+  defensive convenience, but it
+  <em>erases the distinction between "unknown" and "known-empty"</em>; downstream code can
+  no longer tell whether to show a skeleton or an empty state, and the classic bug
+  appears: an "No results" flash on every first load, before the data arrives.
+  <code>undefined</code> is information. Preserve it end to end, and let the leaf that
+  renders decide.
+</p>
 
-          <Diagram>
-            <svg
-              viewBox="0 0 720 363"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
-            >
-              <defs>
-                <marker
-                  id="aE"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path
-                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-                    fill="none"
-                    stroke="#737373"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </marker>
-              </defs>
+<Diagram>
+  <svg
+    viewBox="0 0 720 363"
+    xmlns="http://www.w3.org/2000/svg"
+    font-family="Inter, system-ui, sans-serif"
+  >
+    <defs>
+      <marker
+        id="aE"
+        viewBox="0 0 10 10"
+        refX="8"
+        refY="5"
+        markerWidth="6"
+        markerHeight="6"
+        orient="auto-start-reverse"
+      >
+        <path
+          d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+          fill="none"
+          stroke="#737373"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </marker>
+    </defs>
 
-              <!-- LANE 1: data defaulted to [] -->
-              <text
-                x="360"
-                y="10.28"
-                font-size="11.5"
-                fill="#b3261e"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                const &#123; data = [] &#125;: unknown and empty collapse into one value
-              </text>
-              <rect
-                x="120"
-                y="24.28"
-                width="180"
-                height="104"
-                rx="8"
-                fill="#ffffff"
-                stroke="#c9c9c9"
-              />
-              <rect
-                x="134"
-                y="40.28"
-                width="152"
-                height="72"
-                rx="5"
-                fill="#fdecea"
-                stroke="#d93025"
-                stroke-dasharray="5 4"
-              />
-              <text x="210" y="74.28" font-size="11" fill="#b3261e" text-anchor="middle">
-                “No results found”
-              </text>
-              <text x="210" y="90.28" font-size="8.5" fill="#b3261e" text-anchor="middle">
-                the request is still in flight
-              </text>
-              <line
-                x1="304"
-                y1="76.28"
-                x2="416"
-                y2="76.28"
-                stroke="#737373"
-                stroke-width="1.5"
-                marker-end="url(#aE)"
-              />
-              <rect
-                x="420"
-                y="24.28"
-                width="180"
-                height="104"
-                rx="8"
-                fill="#ffffff"
-                stroke="#c9c9c9"
-              />
-              <rect x="436" y="42.28" width="148" height="9" rx="3" fill="#bfe3d0" />
-              <rect x="436" y="60.28" width="148" height="9" rx="3" fill="#bfe3d0" />
-              <rect x="436" y="78.28" width="148" height="9" rx="3" fill="#bfe3d0" />
-              <rect x="436" y="96.28" width="148" height="9" rx="3" fill="#bfe3d0" />
-              <text x="210" y="146.28" font-size="10" fill="#737373" text-anchor="middle">
-                t₀, request in flight
-              </text>
-              <text x="510" y="146.28" font-size="10" fill="#737373" text-anchor="middle">
-                t₁, response: 12 rows
-              </text>
-              <text x="360" y="166.28" font-size="10.5" fill="#b0483e" text-anchor="middle">
-                “No results” answered the question before it finished; the rows then contradict it
-              </text>
+    <!-- LANE 1: data defaulted to [] -->
+    <text
+      x="360"
+      y="10.28"
+      font-size="11.5"
+      fill="#b3261e"
+      text-anchor="middle"
+      font-weight="500"
+    >
+      const &#123; data = [] &#125;: unknown and empty collapse into one value
+    </text>
+    <rect
+      x="120"
+      y="24.28"
+      width="180"
+      height="104"
+      rx="8"
+      fill="#ffffff"
+      stroke="#c9c9c9"
+    />
+    <rect
+      x="134"
+      y="40.28"
+      width="152"
+      height="72"
+      rx="5"
+      fill="#fdecea"
+      stroke="#d93025"
+      stroke-dasharray="5 4"
+    />
+    <text x="210" y="74.28" font-size="11" fill="#b3261e" text-anchor="middle">
+      “No results found”
+    </text>
+    <text x="210" y="90.28" font-size="8.5" fill="#b3261e" text-anchor="middle">
+      the request is still in flight
+    </text>
+    <line
+      x1="304"
+      y1="76.28"
+      x2="416"
+      y2="76.28"
+      stroke="#737373"
+      stroke-width="1.5"
+      marker-end="url(#aE)"
+    />
+    <rect
+      x="420"
+      y="24.28"
+      width="180"
+      height="104"
+      rx="8"
+      fill="#ffffff"
+      stroke="#c9c9c9"
+    />
+    <rect x="436" y="42.28" width="148" height="9" rx="3" fill="#bfe3d0" />
+    <rect x="436" y="60.28" width="148" height="9" rx="3" fill="#bfe3d0" />
+    <rect x="436" y="78.28" width="148" height="9" rx="3" fill="#bfe3d0" />
+    <rect x="436" y="96.28" width="148" height="9" rx="3" fill="#bfe3d0" />
+    <text x="210" y="146.28" font-size="10" fill="#737373" text-anchor="middle">
+      t₀, request in flight
+    </text>
+    <text x="510" y="146.28" font-size="10" fill="#737373" text-anchor="middle">
+      t₁, response: 12 rows
+    </text>
+    <text x="360" y="166.28" font-size="10.5" fill="#b0483e" text-anchor="middle">
+      “No results” answered the question before it finished; the rows then contradict it
+    </text>
 
-              <line x1="14" y1="182.28" x2="706" y2="182.28" stroke="#e0e0e0" />
+    <line x1="14" y1="182.28" x2="706" y2="182.28" stroke="#e0e0e0" />
 
-              <!-- LANE 2: undefined preserved -->
-              <text
-                x="360"
-                y="204.28"
-                font-size="11.5"
-                fill="#157a4c"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                data: Row[] | undefined; unknown stays unknown
-              </text>
-              <rect
-                x="120"
-                y="216.28"
-                width="180"
-                height="104"
-                rx="8"
-                fill="#ffffff"
-                stroke="#c9c9c9"
-              />
-              <rect
-                x="134"
-                y="232.28"
-                width="152"
-                height="72"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-                stroke-dasharray="5 4"
-              />
-              <rect x="146" y="244.28" width="128" height="7" rx="3" fill="#f3e2c0" />
-              <rect x="146" y="258.28" width="128" height="7" rx="3" fill="#f3e2c0" />
-              <rect x="146" y="272.28" width="96" height="7" rx="3" fill="#f3e2c0" />
-              <text x="210" y="291.28" font-size="8.5" fill="#8a5a00" text-anchor="middle">
-                ⏳ skeleton: unknown
-              </text>
-              <line
-                x1="304"
-                y1="268.28"
-                x2="416"
-                y2="268.28"
-                stroke="#737373"
-                stroke-width="1.5"
-                marker-end="url(#aE)"
-              />
-              <rect
-                x="420"
-                y="216.28"
-                width="180"
-                height="104"
-                rx="8"
-                fill="#ffffff"
-                stroke="#c9c9c9"
-              />
-              <rect x="436" y="234.28" width="148" height="9" rx="3" fill="#bfe3d0" />
-              <rect x="436" y="252.28" width="148" height="9" rx="3" fill="#bfe3d0" />
-              <rect x="436" y="270.28" width="148" height="9" rx="3" fill="#bfe3d0" />
-              <rect x="436" y="288.28" width="148" height="9" rx="3" fill="#bfe3d0" />
-              <text x="210" y="338.28" font-size="10" fill="#737373" text-anchor="middle">
-                t₀, request in flight
-              </text>
-              <text x="510" y="338.28" font-size="10" fill="#737373" text-anchor="middle">
-                t₁, response: 12 rows
-              </text>
-              <text x="360" y="358.28" font-size="10.5" fill="#2e7d5b" text-anchor="middle">
-                unknown renders as unknown; an empty state could only appear after a finished, empty
-                response
-              </text>
-            </svg>
-            
+    <!-- LANE 2: undefined preserved -->
+    <text
+      x="360"
+      y="204.28"
+      font-size="11.5"
+      fill="#157a4c"
+      text-anchor="middle"
+      font-weight="500"
+    >
+      data: Row[] | undefined; unknown stays unknown
+    </text>
+    <rect
+      x="120"
+      y="216.28"
+      width="180"
+      height="104"
+      rx="8"
+      fill="#ffffff"
+      stroke="#c9c9c9"
+    />
+    <rect
+      x="134"
+      y="232.28"
+      width="152"
+      height="72"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+      stroke-dasharray="5 4"
+    />
+    <rect x="146" y="244.28" width="128" height="7" rx="3" fill="#f3e2c0" />
+    <rect x="146" y="258.28" width="128" height="7" rx="3" fill="#f3e2c0" />
+    <rect x="146" y="272.28" width="96" height="7" rx="3" fill="#f3e2c0" />
+    <text x="210" y="291.28" font-size="8.5" fill="#8a5a00" text-anchor="middle">
+      ⏳ skeleton: unknown
+    </text>
+    <line
+      x1="304"
+      y1="268.28"
+      x2="416"
+      y2="268.28"
+      stroke="#737373"
+      stroke-width="1.5"
+      marker-end="url(#aE)"
+    />
+    <rect
+      x="420"
+      y="216.28"
+      width="180"
+      height="104"
+      rx="8"
+      fill="#ffffff"
+      stroke="#c9c9c9"
+    />
+    <rect x="436" y="234.28" width="148" height="9" rx="3" fill="#bfe3d0" />
+    <rect x="436" y="252.28" width="148" height="9" rx="3" fill="#bfe3d0" />
+    <rect x="436" y="270.28" width="148" height="9" rx="3" fill="#bfe3d0" />
+    <rect x="436" y="288.28" width="148" height="9" rx="3" fill="#bfe3d0" />
+    <text x="210" y="338.28" font-size="10" fill="#737373" text-anchor="middle">
+      t₀, request in flight
+    </text>
+    <text x="510" y="338.28" font-size="10" fill="#737373" text-anchor="middle">
+      t₁, response: 12 rows
+    </text>
+    <text x="360" y="358.28" font-size="10.5" fill="#2e7d5b" text-anchor="middle">
+      unknown renders as unknown; an empty state could only appear after a finished, empty
+      response
+    </text>
+  </svg>
+  
 <Fragment slot="caption">
 The empty-state flash, frame by frame. Same request, same 12 rows; the only difference
-              is whether the data layer erased <code>undefined</code>. Defaulting to
-              <code>[]</code> makes the component answer "is it empty?" before "do we know?" has
-              resolved, so every first load flashes a false "No results".
+    is whether the data layer erased <code>undefined</code>. Defaulting to
+    <code>[]</code> makes the component answer "is it empty?" before "do we know?" has
+    resolved, so every first load flashes a false "No results".
 </Fragment>
 </Diagram>
 
-          <Compare>
+<Compare>
 <CompareCol kind="bad" label="✕ One chain, three welded questions">
-              <pre
+    <pre
                 class="code" is:raw
               ><span class="filename">the classic: every branch misbehaves</span><span class="tok-com">/* Defaulting data to [] makes unknown and
    empty identical. */</span>
@@ -1399,10 +1397,10 @@ The empty-state flash, frame by frame. Same request, same 12 rows; the only diff
 <span class="tok-kw">if</span> (data.length === <span class="tok-str">0</span>) <span class="tok-kw">return</span> &lt;<span class="tok-fn">EmptyState</span> /&gt;;
 
 <span class="tok-kw">return</span> &lt;<span class="tok-fn">Rows</span> <span class="tok-prop">rows</span>={data} /&gt;;</pre>
-            
+  
 </CompareCol>
 <CompareCol kind="good" label="✓ Three independent decisions">
-              <pre
+    <pre
                 class="code" is:raw
               ><span class="filename">status decorates; knowledge decides</span><span class="tok-com">/* The data is Row[] | undefined, and is
    never defaulted. */</span>
@@ -1428,212 +1426,211 @@ The empty-state flash, frame by frame. Same request, same 12 rows; the only diff
     )}
   &lt;/<span class="tok-fn">TableContainer</span>&gt;
 );</pre>
-            
+  
 </CompareCol>
 </Compare>
 
-          <p>The full state space, made explicit. Every cell reachable, every cell deliberate:</p>
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th>Knowledge (<code>data</code>)</th>
-                <th>Status (request)</th>
-                <th>Render</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>undefined</code> (unknown)</td>
-                <td>in flight (first load)</td>
-                <td>
-                  Fallback/skeleton, inside the reserved container.
-                  <strong>The only skeleton case.</strong>
-                </td>
-              </tr>
-              <tr>
-                <td><code>undefined</code> (unknown)</td>
-                <td>failed</td>
-                <td>
-                  Error state via the boundary (<code>error.tsx</code> / error boundary),
-                  <strong>never an empty state</strong>.
-                </td>
-              </tr>
-              <tr>
-                <td><code>Row[]</code>, n &gt; 0</td>
-                <td>revalidating</td>
-                <td>Stale rows + indicator. <strong>Content never unmounts.</strong></td>
-              </tr>
-              <tr>
-                <td><code>[]</code> (known-empty)</td>
-                <td>finished</td>
-                <td>
-                  Empty state.
-                  <strong>The <em>only</em> condition that shows it: finished and empty.</strong>
-                </td>
-              </tr>
-              <tr>
-                <td><code>[]</code> (known-empty)</td>
-                <td>revalidating</td>
-                <td>
-                  Empty state + indicator: an empty result being refreshed is
-                  <strong>still known-empty</strong>.
-                </td>
-              </tr>
-              <tr>
-                <td><code>Row[]</code>, n &gt; 0</td>
-                <td>idle</td>
-                <td>Rows. <strong>The happy path.</strong></td>
-              </tr>
-            </tbody>
-          </table>
+<p>The full state space, made explicit. Every cell reachable, every cell deliberate:</p>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th>Knowledge (<code>data</code>)</th>
+      <th>Status (request)</th>
+      <th>Render</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>undefined</code> (unknown)</td>
+      <td>in flight (first load)</td>
+      <td>
+        Fallback/skeleton, inside the reserved container.
+        <strong>The only skeleton case.</strong>
+      </td>
+    </tr>
+    <tr>
+      <td><code>undefined</code> (unknown)</td>
+      <td>failed</td>
+      <td>
+        Error state via the boundary (<code>error.tsx</code> / error boundary),
+        <strong>never an empty state</strong>.
+      </td>
+    </tr>
+    <tr>
+      <td><code>Row[]</code>, n &gt; 0</td>
+      <td>revalidating</td>
+      <td>Stale rows + indicator. <strong>Content never unmounts.</strong></td>
+    </tr>
+    <tr>
+      <td><code>[]</code> (known-empty)</td>
+      <td>finished</td>
+      <td>
+        Empty state.
+        <strong>The <em>only</em> condition that shows it: finished and empty.</strong>
+      </td>
+    </tr>
+    <tr>
+      <td><code>[]</code> (known-empty)</td>
+      <td>revalidating</td>
+      <td>
+        Empty state + indicator: an empty result being refreshed is
+        <strong>still known-empty</strong>.
+      </td>
+    </tr>
+    <tr>
+      <td><code>Row[]</code>, n &gt; 0</td>
+      <td>idle</td>
+      <td>Rows. <strong>The happy path.</strong></td>
+    </tr>
+  </tbody>
+</table>
 
-          <h2 id="transitions">10.7 Transitions keep the old UI alive</h2>
-          <p>
-            The callout in <a href="#mechanism">§10.1</a> noted that a boundary already showing
-            content will not fall back to its skeleton when an update inside it suspends during a
-            <em>transition</em>. That behavior deserves a rule of its own, because it is how you get
-            updates that don't flash. <Chip k="react" />
-            <Chip k="very" /> <code>useTransition</code> (and its
-            standalone form <code>startTransition</code>) marks an update as
-            <strong>non-urgent</strong>: React keeps the current UI interactive and visible while
-            the new state prepares, and gives you an <code>isPending</code> flag to show progress
-            <em>alongside</em> the old content instead of replacing it. It is the same doctrine as
-            <a href="#refetch">§10.5</a>, one level up: don't blank what you already have just
-            because something newer is on the way.
-          </p>
-          <p>
-            Reach for it in three situations. First, a state update that triggers an expensive
-            re-render, re-filtering a large list or re-laying-out a chart: wrap it in
-            <code>startTransition</code> and the input stays responsive while the heavy work runs at
-            low priority. Second, writes to router-owned state, a navigation or a
-            <code>searchParams</code> update (<a href="08-server-resolvable-state.html#url-state"
-              >§8.2</a
-            >), so the current page stays live instead of blanking while the next view prepares.
-            Third, firing a server action (<a href="05-client-server-boundaries.html#self-contained"
-              >§5.7</a
-            >), where <code>isPending</code> drives the button. The through-line is identical in all
-            three: you are telling React the update is not urgent, so it should keep the UI alive
-            while the update lands rather than yank it back to a fallback. Its close cousin
-            <code>useDeferredValue</code> does the same for a value whose update you do not own (the
-            type-to-filter case). The API reference for both is in
-            <a href="18-new-primitives.html#use-transition">§18.3</a>.
-          </p>
+<h2 id="transitions">10.7 Transitions keep the old UI alive</h2>
+<p>
+  The callout in <a href="#mechanism">§10.1</a> noted that a boundary already showing
+  content will not fall back to its skeleton when an update inside it suspends during a
+  <em>transition</em>. That behavior deserves a rule of its own, because it is how you get
+  updates that don't flash. <Chip k="react" />
+  <Chip k="very" /> <code>useTransition</code> (and its
+  standalone form <code>startTransition</code>) marks an update as
+  <strong>non-urgent</strong>: React keeps the current UI interactive and visible while
+  the new state prepares, and gives you an <code>isPending</code> flag to show progress
+  <em>alongside</em> the old content instead of replacing it. It is the same doctrine as
+  <a href="#refetch">§10.5</a>, one level up: don't blank what you already have just
+  because something newer is on the way.
+</p>
+<p>
+  Reach for it in three situations. First, a state update that triggers an expensive
+  re-render, re-filtering a large list or re-laying-out a chart: wrap it in
+  <code>startTransition</code> and the input stays responsive while the heavy work runs at
+  low priority. Second, writes to router-owned state, a navigation or a
+  <code>searchParams</code> update (<a href="08-server-resolvable-state.html#url-state"
+    >§8.2</a
+  >), so the current page stays live instead of blanking while the next view prepares.
+  Third, firing a server action (<a href="05-client-server-boundaries.html#self-contained"
+    >§5.7</a
+  >), where <code>isPending</code> drives the button. The through-line is identical in all
+  three: you are telling React the update is not urgent, so it should keep the UI alive
+  while the update lands rather than yank it back to a fallback. Its close cousin
+  <code>useDeferredValue</code> does the same for a value whose update you do not own (the
+  type-to-filter case). The API reference for both is in
+  <a href="18-new-primitives.html#use-transition">§18.3</a>.
+</p>
 
-          <h2 id="rules">The rules</h2>
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th>Rule</th>
-                <th>Scope</th>
-                <th>Importance</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  Components <strong>never define their own loading states</strong>; boundaries
-                  above them do.
-                </td>
-                <td><Chip k="react" /></td>
-                <td><Chip k="critical" /></td>
-              </tr>
-              <tr>
-                <td>
-                  Fallbacks live <strong>inside known containers</strong>; neither fallback nor
-                  suspended component includes the container.
-                </td>
-                <td><Chip k="react" /></td>
-                <td><Chip k="critical" /></td>
-              </tr>
-              <tr>
-                <td>
-                  Skeletons are <strong>scoped per component, colocated with it</strong>, never
-                  page-level.
-                </td>
-                <td><Chip k="react" /></td>
-                <td><Chip k="very" /></td>
-              </tr>
-              <tr>
-                <td>
-                  Refetches never replace content:
-                  <strong>stale stays visible, loading is indicated</strong>
-                  (<code>isValidating</code>, <code>useDeferredValue</code>,
-                  <code>isPending</code>).
-                </td>
-                <td><Chip k="react" /></td>
-                <td><Chip k="critical" /></td>
-              </tr>
-              <tr>
-                <td>
-                  Loading status, data presence, and emptiness are
-                  <strong>decided independently</strong>: no if/else chains across them.
-                </td>
-                <td><Chip k="react" /></td>
-                <td><Chip k="critical" /></td>
-              </tr>
-              <tr>
-                <td>
-                  The data layer never defaults <code>undefined</code> to <code>[]</code>;
-                  <strong>unknown and known-empty are different facts</strong>.
-                </td>
-                <td><Chip k="react" /></td>
-                <td><Chip k="critical" /></td>
-              </tr>
-              <tr>
-                <td>
-                  Use <strong>granular Suspense boundaries per data region</strong>;
-                  <code>loading.tsx</code> renders scaffold, not a page skeleton.
-                </td>
-                <td><Chip k="next" /></td>
-                <td><Chip k="very" /></td>
-              </tr>
-            </tbody>
-          </table>
+<h2 id="rules">The rules</h2>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th>Rule</th>
+      <th>Scope</th>
+      <th>Importance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        Components <strong>never define their own loading states</strong>; boundaries
+        above them do.
+      </td>
+      <td><Chip k="react" /></td>
+      <td><Chip k="critical" /></td>
+    </tr>
+    <tr>
+      <td>
+        Fallbacks live <strong>inside known containers</strong>; neither fallback nor
+        suspended component includes the container.
+      </td>
+      <td><Chip k="react" /></td>
+      <td><Chip k="critical" /></td>
+    </tr>
+    <tr>
+      <td>
+        Skeletons are <strong>scoped per component, colocated with it</strong>, never
+        page-level.
+      </td>
+      <td><Chip k="react" /></td>
+      <td><Chip k="very" /></td>
+    </tr>
+    <tr>
+      <td>
+        Refetches never replace content:
+        <strong>stale stays visible, loading is indicated</strong>
+        (<code>isValidating</code>, <code>useDeferredValue</code>,
+        <code>isPending</code>).
+      </td>
+      <td><Chip k="react" /></td>
+      <td><Chip k="critical" /></td>
+    </tr>
+    <tr>
+      <td>
+        Loading status, data presence, and emptiness are
+        <strong>decided independently</strong>: no if/else chains across them.
+      </td>
+      <td><Chip k="react" /></td>
+      <td><Chip k="critical" /></td>
+    </tr>
+    <tr>
+      <td>
+        The data layer never defaults <code>undefined</code> to <code>[]</code>;
+        <strong>unknown and known-empty are different facts</strong>.
+      </td>
+      <td><Chip k="react" /></td>
+      <td><Chip k="critical" /></td>
+    </tr>
+    <tr>
+      <td>
+        Use <strong>granular Suspense boundaries per data region</strong>;
+        <code>loading.tsx</code> renders scaffold, not a page skeleton.
+      </td>
+      <td><Chip k="next" /></td>
+      <td><Chip k="very" /></td>
+    </tr>
+  </tbody>
+</table>
 
-          <GoDeeper>
-            <p>
-              React 19 docs:
-              <a href="https://react.dev/reference/react/Suspense" target="_blank" rel="noopener"
-                >&lt;Suspense&gt;</a
-              >
-              ·
-              <a
-                href="https://react.dev/reference/react/useDeferredValue"
-                target="_blank"
-                rel="noopener"
-                >useDeferredValue</a
-              >
-              ·
-              <a
-                href="https://react.dev/reference/react/useTransition"
-                target="_blank"
-                rel="noopener"
-                >useTransition</a
-              >
-              ·
-              <a href="https://react.dev/reference/react/use" target="_blank" rel="noopener">use</a
-              >. Next.js docs:
-              <a
-                href="https://nextjs.org/docs/app/api-reference/file-conventions/loading"
-                target="_blank"
-                rel="noopener"
-                >loading.js</a
-              >
-              ·
-              <a
-                href="https://nextjs.org/docs/app/getting-started/fetching-data"
-                target="_blank"
-                rel="noopener"
-                >Fetching Data &amp; Streaming</a
-              >
-              ·
-              <a
-                href="https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents"
-                target="_blank"
-                rel="noopener"
-                >cacheComponents / PPR</a
-              >. Full list in <a href="19-references.html">§19</a>.
-            </p>
-          
+<GoDeeper>
+  <p>
+    React 19 docs:
+    <a href="https://react.dev/reference/react/Suspense" target="_blank" rel="noopener"
+      >&lt;Suspense&gt;</a
+    >
+    ·
+    <a
+      href="https://react.dev/reference/react/useDeferredValue"
+      target="_blank"
+      rel="noopener"
+      >useDeferredValue</a
+    >
+    ·
+    <a
+      href="https://react.dev/reference/react/useTransition"
+      target="_blank"
+      rel="noopener"
+      >useTransition</a
+    >
+    ·
+    <a href="https://react.dev/reference/react/use" target="_blank" rel="noopener">use</a
+    >. Next.js docs:
+    <a
+      href="https://nextjs.org/docs/app/api-reference/file-conventions/loading"
+      target="_blank"
+      rel="noopener"
+      >loading.js</a
+    >
+    ·
+    <a
+      href="https://nextjs.org/docs/app/getting-started/fetching-data"
+      target="_blank"
+      rel="noopener"
+      >Fetching Data &amp; Streaming</a
+    >
+    ·
+    <a
+      href="https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents"
+      target="_blank"
+      rel="noopener"
+      >cacheComponents / PPR</a
+    >. Full list in <a href="19-references.html">§19</a>.
+  </p>
 </GoDeeper>
 </GuidePage>

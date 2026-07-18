@@ -10,510 +10,508 @@ import CompareCol from '../../components/CompareCol.astro';
 
 <GuidePage title="The Mental Model - App Router Guide" root="..">
 <div class="kicker">Chapter 3</div>
-          <h1>The Mental Model</h1>
-          <p class="lede">
-            This is the pivot chapter. If you take one thing from this guide, take this: the model
-            you learned from years of traditional React is not the model this stack is built on, and
-            the ecosystem is moving away from it, not toward it.
-          </p>
+<h1>The Mental Model</h1>
+<p class="lede">
+  This is the pivot chapter. If you take one thing from this guide, take this: the model
+  you learned from years of traditional React is not the model this stack is built on, and
+  the ecosystem is moving away from it, not toward it.
+</p>
 
-          <p>
-            Chapter 1 traced <a href="01-introduction.html#direction">the direction of travel</a>:
-            thirteen years of platform history converging on server-first. This chapter is the
-            practical consequence: the model itself. What actually happens when an App Router page
-            renders, and exactly where the old instincts betray you.
-          </p>
+<p>
+  Chapter 1 traced <a href="01-introduction.html#direction">the direction of travel</a>:
+  thirteen years of platform history converging on server-first. This chapter is the
+  practical consequence: the model itself. What actually happens when an App Router page
+  renders, and exactly where the old instincts betray you.
+</p>
 
-          <Callout kind="voice" title="The one-sentence version">
-            <p>
-              Traditional React asks: <em>"how do I get data into my components?"</em> Server-first
-              React asks: <em>"which parts of my UI can't be finished on the server, and why?"</em>,
-              and treats every such part as a cost to be justified.
-            </p>
-          
+<Callout kind="voice" title="The one-sentence version">
+  <p>
+    Traditional React asks: <em>"how do I get data into my components?"</em> Server-first
+    React asks: <em>"which parts of my UI can't be finished on the server, and why?"</em>,
+    and treats every such part as a cost to be justified.
+  </p>
 </Callout>
 
-          <h2 id="rendering-model">3.1 What actually happens when a page renders</h2>
-          <p>
-            In the App Router, every component is a <strong>server component by default</strong>.
-            When a request comes in, the server executes your component tree (running your
-            <code>async</code> components, awaiting your data) and streams the result to the browser
-            as HTML, immediately, including real content for everything that was knowable and
-            reserved fallbacks for everything that wasn't. Client components (only the subtrees you
-            explicitly mark with <code>"use client"</code>) are the only parts that ship JavaScript,
-            hydrate, and become interactive.
-          </p>
+<h2 id="rendering-model">3.1 What actually happens when a page renders</h2>
+<p>
+  In the App Router, every component is a <strong>server component by default</strong>.
+  When a request comes in, the server executes your component tree (running your
+  <code>async</code> components, awaiting your data) and streams the result to the browser
+  as HTML, immediately, including real content for everything that was knowable and
+  reserved fallbacks for everything that wasn't. Client components (only the subtrees you
+  explicitly mark with <code>"use client"</code>) are the only parts that ship JavaScript,
+  hydrate, and become interactive.
+</p>
 
-          <Diagram>
-            <svg
-              viewBox="0 0 720 216"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
-            >
-              <defs>
-                <marker
-                  id="arr"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path
-                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-                    fill="none"
-                    stroke="#737373"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </marker>
-              </defs>
-              <!-- request -->
-              <rect x="10" y="20" width="120" height="52" rx="8" fill="#ffffff" stroke="#d4d4d4" />
-              <text x="70" y="42" font-size="12" fill="#171717" text-anchor="middle">Browser</text>
-              <text x="70" y="58" font-size="10.5" fill="#666666" text-anchor="middle">
-                GET /programs/42
-              </text>
-              <line
-                x1="130"
-                y1="46"
-                x2="176"
-                y2="46"
-                stroke="#737373"
-                stroke-width="1.5"
-                marker-end="url(#arr)"
-              />
+<Diagram>
+  <svg
+    viewBox="0 0 720 216"
+    xmlns="http://www.w3.org/2000/svg"
+    font-family="Inter, system-ui, sans-serif"
+  >
+    <defs>
+      <marker
+        id="arr"
+        viewBox="0 0 10 10"
+        refX="8"
+        refY="5"
+        markerWidth="6"
+        markerHeight="6"
+        orient="auto-start-reverse"
+      >
+        <path
+          d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+          fill="none"
+          stroke="#737373"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </marker>
+    </defs>
+    <!-- request -->
+    <rect x="10" y="20" width="120" height="52" rx="8" fill="#ffffff" stroke="#d4d4d4" />
+    <text x="70" y="42" font-size="12" fill="#171717" text-anchor="middle">Browser</text>
+    <text x="70" y="58" font-size="10.5" fill="#666666" text-anchor="middle">
+      GET /programs/42
+    </text>
+    <line
+      x1="130"
+      y1="46"
+      x2="176"
+      y2="46"
+      stroke="#737373"
+      stroke-width="1.5"
+      marker-end="url(#arr)"
+    />
 
-              <!-- server -->
-              <rect
-                x="180"
-                y="2"
-                width="230"
-                height="140"
-                rx="8"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-                stroke-width="1.5"
-              />
-              <text
-                x="295"
-                y="24"
-                font-size="12"
-                fill="#0757ba"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                Server
-              </text>
-              <rect x="194" y="34" width="202" height="26" rx="5" fill="#d8e8fc" />
-              <text x="205" y="51" font-size="10.5" fill="#23507f">render server components</text>
-              <rect x="194" y="66" width="202" height="26" rx="5" fill="#d8e8fc" />
-              <text x="205" y="83" font-size="10.5" fill="#23507f">
-                await data: parallel, deduped
-              </text>
-              <rect x="194" y="98" width="202" height="26" rx="5" fill="#d8e8fc" />
-              <text x="205" y="115" font-size="10.5" fill="#23507f">suspend the not-yet-known</text>
-              <line
-                x1="410"
-                y1="46"
-                x2="456"
-                y2="46"
-                stroke="#737373"
-                stroke-width="1.5"
-                marker-end="url(#arr)"
-              />
+    <!-- server -->
+    <rect
+      x="180"
+      y="2"
+      width="230"
+      height="140"
+      rx="8"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+      stroke-width="1.5"
+    />
+    <text
+      x="295"
+      y="24"
+      font-size="12"
+      fill="#0757ba"
+      text-anchor="middle"
+      font-weight="500"
+    >
+      Server
+    </text>
+    <rect x="194" y="34" width="202" height="26" rx="5" fill="#d8e8fc" />
+    <text x="205" y="51" font-size="10.5" fill="#23507f">render server components</text>
+    <rect x="194" y="66" width="202" height="26" rx="5" fill="#d8e8fc" />
+    <text x="205" y="83" font-size="10.5" fill="#23507f">
+      await data: parallel, deduped
+    </text>
+    <rect x="194" y="98" width="202" height="26" rx="5" fill="#d8e8fc" />
+    <text x="205" y="115" font-size="10.5" fill="#23507f">suspend the not-yet-known</text>
+    <line
+      x1="410"
+      y1="46"
+      x2="456"
+      y2="46"
+      stroke="#737373"
+      stroke-width="1.5"
+      marker-end="url(#arr)"
+    />
 
-              <!-- stream -->
-              <rect x="460" y="2" width="250" height="140" rx="8" fill="#ffffff" stroke="#d4d4d4" />
-              <text
-                x="585"
-                y="24"
-                font-size="12"
-                fill="#171717"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                Streamed response
-              </text>
-              <rect
-                x="474"
-                y="34"
-                width="222"
-                height="26"
-                rx="5"
-                fill="#e7f5ee"
-                stroke="#2ea06d"
-                stroke-width="1"
-              />
-              <text x="485" y="51" font-size="10.5" fill="#157a4c">
-                HTML: structure + known content
-              </text>
-              <rect
-                x="474"
-                y="66"
-                width="222"
-                height="26"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-                stroke-width="1"
-                stroke-dasharray="4 3"
-              />
-              <text x="485" y="83" font-size="10.5" fill="#8a5a00">
-                fallbacks in reserved containers
-              </text>
-              <rect
-                x="474"
-                y="98"
-                width="222"
-                height="26"
-                rx="5"
-                fill="#d8e8fc"
-                stroke="#0070f3"
-                stroke-width="1"
-              />
-              <text x="485" y="115" font-size="10.5" fill="#0757ba">
-                RSC payload + JS for client leaves
-              </text>
+    <!-- stream -->
+    <rect x="460" y="2" width="250" height="140" rx="8" fill="#ffffff" stroke="#d4d4d4" />
+    <text
+      x="585"
+      y="24"
+      font-size="12"
+      fill="#171717"
+      text-anchor="middle"
+      font-weight="500"
+    >
+      Streamed response
+    </text>
+    <rect
+      x="474"
+      y="34"
+      width="222"
+      height="26"
+      rx="5"
+      fill="#e7f5ee"
+      stroke="#2ea06d"
+      stroke-width="1"
+    />
+    <text x="485" y="51" font-size="10.5" fill="#157a4c">
+      HTML: structure + known content
+    </text>
+    <rect
+      x="474"
+      y="66"
+      width="222"
+      height="26"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+      stroke-width="1"
+      stroke-dasharray="4 3"
+    />
+    <text x="485" y="83" font-size="10.5" fill="#8a5a00">
+      fallbacks in reserved containers
+    </text>
+    <rect
+      x="474"
+      y="98"
+      width="222"
+      height="26"
+      rx="5"
+      fill="#d8e8fc"
+      stroke="#0070f3"
+      stroke-width="1"
+    />
+    <text x="485" y="115" font-size="10.5" fill="#0757ba">
+      RSC payload + JS for client leaves
+    </text>
 
-              <!-- timeline -->
-              <line x1="10" y1="175" x2="710" y2="175" stroke="#d4d4d4" stroke-width="1" />
-              <circle cx="120" cy="175" r="5" fill="#157a4c" />
-              <text x="120" y="197" font-size="10.5" fill="#157a4c" text-anchor="middle">
-                first paint: real content,
-              </text>
-              <text x="120" y="211" font-size="10.5" fill="#157a4c" text-anchor="middle">
-                stable layout
-              </text>
-              <circle cx="360" cy="175" r="5" fill="#b45309" />
-              <text x="360" y="197" font-size="10.5" fill="#8a5a00" text-anchor="middle">
-                suspended regions stream in,
-              </text>
-              <text x="360" y="211" font-size="10.5" fill="#8a5a00" text-anchor="middle">
-                replacing fallbacks in place
-              </text>
-              <circle cx="600" cy="175" r="5" fill="#0891b2" />
-              <text x="600" y="197" font-size="10.5" fill="#0891b2" text-anchor="middle">
-                leaves hydrate,
-              </text>
-              <text x="600" y="211" font-size="10.5" fill="#0891b2" text-anchor="middle">
-                page is interactive
-              </text>
-            </svg>
-            
+    <!-- timeline -->
+    <line x1="10" y1="175" x2="710" y2="175" stroke="#d4d4d4" stroke-width="1" />
+    <circle cx="120" cy="175" r="5" fill="#157a4c" />
+    <text x="120" y="197" font-size="10.5" fill="#157a4c" text-anchor="middle">
+      first paint: real content,
+    </text>
+    <text x="120" y="211" font-size="10.5" fill="#157a4c" text-anchor="middle">
+      stable layout
+    </text>
+    <circle cx="360" cy="175" r="5" fill="#b45309" />
+    <text x="360" y="197" font-size="10.5" fill="#8a5a00" text-anchor="middle">
+      suspended regions stream in,
+    </text>
+    <text x="360" y="211" font-size="10.5" fill="#8a5a00" text-anchor="middle">
+      replacing fallbacks in place
+    </text>
+    <circle cx="600" cy="175" r="5" fill="#0891b2" />
+    <text x="600" y="197" font-size="10.5" fill="#0891b2" text-anchor="middle">
+      leaves hydrate,
+    </text>
+    <text x="600" y="211" font-size="10.5" fill="#0891b2" text-anchor="middle">
+      page is interactive
+    </text>
+  </svg>
+  
 <Fragment slot="caption">
 One request. The server resolves everything knowable, streams structure immediately,
-              and the unknown fills in without moving anything. No client-side fetch chain, no
-              spinner-then-layout-shift choreography.
+    and the unknown fills in without moving anything. No client-side fetch chain, no
+    spinner-then-layout-shift choreography.
 </Fragment>
 </Diagram>
 
-          <p>
-            Three consequences of this model are worth internalizing, because they invert
-            traditional-React instincts:
-          </p>
-          <ul>
-            <li>
-              <strong>Data access is a render-time concern, not a lifecycle concern.</strong> A
-              server component doesn't "mount and then fetch"; it simply awaits what it needs while
-              rendering. There is no timing to coordinate, no "is the data here yet?" state to
-              manage. An entire category of client-side complexity (effects, request state machines,
-              race conditions, stale closures) exists only on the other side of the client boundary.
-              This is the deeper reason backend code has always felt simpler than frontend code: the
-              server deals in one request → one response, while the client juggles user
-              interactions, network variability, browsers, extensions, ad blockers, and time itself.
-              SSR moves work from the hard side to the easy side.
-            </li>
-            <li>
-              <strong>The bundle is the exception, not the app.</strong> Server components ship zero
-              JavaScript. Your app's JS payload is exactly the sum of its
-              <code>"use client"</code> subtrees, which is why boundary placement (<a
-                href="05-client-server-boundaries.html"
-                >§5</a
-              >) is an architectural decision, not a style preference.
-            </li>
-            <li>
-              <strong>Navigation re-renders on the server too.</strong> Client-side navigations
-              fetch the new route's server output (the RSC payload), not JSON-for-you-to-assemble.
-              Layouts persist without re-rendering; only the changing segments re-render. The
-              router, not your state management, owns the page's identity.
-            </li>
-          </ul>
+<p>
+  Three consequences of this model are worth internalizing, because they invert
+  traditional-React instincts:
+</p>
+<ul>
+  <li>
+    <strong>Data access is a render-time concern, not a lifecycle concern.</strong> A
+    server component doesn't "mount and then fetch"; it simply awaits what it needs while
+    rendering. There is no timing to coordinate, no "is the data here yet?" state to
+    manage. An entire category of client-side complexity (effects, request state machines,
+    race conditions, stale closures) exists only on the other side of the client boundary.
+    This is the deeper reason backend code has always felt simpler than frontend code: the
+    server deals in one request → one response, while the client juggles user
+    interactions, network variability, browsers, extensions, ad blockers, and time itself.
+    SSR moves work from the hard side to the easy side.
+  </li>
+  <li>
+    <strong>The bundle is the exception, not the app.</strong> Server components ship zero
+    JavaScript. Your app's JS payload is exactly the sum of its
+    <code>"use client"</code> subtrees, which is why boundary placement (<a
+      href="05-client-server-boundaries.html"
+      >§5</a
+    >) is an architectural decision, not a style preference.
+  </li>
+  <li>
+    <strong>Navigation re-renders on the server too.</strong> Client-side navigations
+    fetch the new route's server output (the RSC payload), not JSON-for-you-to-assemble.
+    Layouts persist without re-rendering; only the changing segments re-render. The
+    router, not your state management, owns the page's identity.
+  </li>
+</ul>
 
-          <h3 id="app-directory">The app directory is your app, not "routes"</h3>
-          <p>
-            It's tempting to see <code>app/</code> as the router's configuration area: thin
-            <code>page.tsx</code> files that immediately hand off to the "real" components living in
-            <code>components/</code>. That inversion is exactly backwards. The app directory
-            <em>is the application</em>: its structure, its layouts, its containers, its core
-            content. Everything related to the core parts of a page belongs there; the pieces that
-            slot into that scaffold are what live outside it.
-          </p>
-          <p>
-            This is also the answer to a question worth asking yourself:
-            <em>why does Next.js use file-based routing at all?</em> Because the filesystem makes
-            the page's composition <strong>statically knowable</strong>. Layouts nest by directory.
-            Loading and error boundaries are files, so the framework knows where they are before any
-            code runs. Code splitting falls out per-segment for free. Prefetching a link means the
-            router already knows exactly what the destination needs. Every one of those capabilities
-            depends on the tree being declared in the filesystem rather than assembled at runtime in
-            the browser. A five-line <code>page.tsx</code> that delegates everything to a giant
-            client component doesn't just "move code around"; it hides the entire page from the
-            framework.
-          </p>
+<h3 id="app-directory">The app directory is your app, not "routes"</h3>
+<p>
+  It's tempting to see <code>app/</code> as the router's configuration area: thin
+  <code>page.tsx</code> files that immediately hand off to the "real" components living in
+  <code>components/</code>. That inversion is exactly backwards. The app directory
+  <em>is the application</em>: its structure, its layouts, its containers, its core
+  content. Everything related to the core parts of a page belongs there; the pieces that
+  slot into that scaffold are what live outside it.
+</p>
+<p>
+  This is also the answer to a question worth asking yourself:
+  <em>why does Next.js use file-based routing at all?</em> Because the filesystem makes
+  the page's composition <strong>statically knowable</strong>. Layouts nest by directory.
+  Loading and error boundaries are files, so the framework knows where they are before any
+  code runs. Code splitting falls out per-segment for free. Prefetching a link means the
+  router already knows exactly what the destination needs. Every one of those capabilities
+  depends on the tree being declared in the filesystem rather than assembled at runtime in
+  the browser. A five-line <code>page.tsx</code> that delegates everything to a giant
+  client component doesn't just "move code around"; it hides the entire page from the
+  framework.
+</p>
 
-          <h2 id="old-vs-new">3.2 Why the old mental model bites you later</h2>
-          <p>
-            The dangerous thing about SPA-style code in the App Router is that
-            <strong>it works at first</strong>. The page renders. The data arrives. Nothing warns
-            you. The costs arrive later, on real networks, at real scale, and by then they're
-            structural:
-          </p>
+<h2 id="old-vs-new">3.2 Why the old mental model bites you later</h2>
+<p>
+  The dangerous thing about SPA-style code in the App Router is that
+  <strong>it works at first</strong>. The page renders. The data arrives. Nothing warns
+  you. The costs arrive later, on real networks, at real scale, and by then they're
+  structural:
+</p>
 
-          <Diagram>
-            <svg
-              viewBox="0 0 720 313"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
-            >
-              <text x="12" y="10.64" font-size="12" fill="#171717" font-weight="500">
-                SPA-style page (client-fetch chain)
-              </text>
-              <!-- track 1 -->
-              <rect
-                x="12"
-                y="24.64"
-                width="90"
-                height="24"
-                rx="5"
-                fill="#ffffff"
-                stroke="#c9c9c9"
-              />
-              <text x="57" y="40.64" font-size="10" fill="#666666" text-anchor="middle">
-                HTML shell
-              </text>
-              <rect
-                x="104"
-                y="54.64"
-                width="140"
-                height="24"
-                rx="5"
-                fill="#ffffff"
-                stroke="#c9c9c9"
-              />
-              <text x="174" y="70.64" font-size="10" fill="#666666" text-anchor="middle">
-                download + parse JS
-              </text>
-              <rect
-                x="246"
-                y="84.64"
-                width="90"
-                height="24"
-                rx="5"
-                fill="#ffffff"
-                stroke="#c9c9c9"
-              />
-              <text x="291" y="100.64" font-size="10" fill="#666666" text-anchor="middle">
-                hydrate
-              </text>
-              <rect
-                x="338"
-                y="114.64"
-                width="120"
-                height="24"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-              />
-              <text x="398" y="130.64" font-size="10" fill="#8a5a00" text-anchor="middle">
-                fetch /users/me
-              </text>
-              <rect
-                x="460"
-                y="144.64"
-                width="130"
-                height="24"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-              />
-              <text x="525" y="160.64" font-size="10" fill="#8a5a00" text-anchor="middle">
-                fetch page data
-              </text>
-              <rect
-                x="592"
-                y="174.64"
-                width="110"
-                height="24"
-                rx="5"
-                fill="#e7f5ee"
-                stroke="#2ea06d"
-              />
-              <text x="647" y="190.64" font-size="10" fill="#157a4c" text-anchor="middle">
-                content visible
-              </text>
-              <line
-                x1="647"
-                y1="204.64"
-                x2="647"
-                y2="220.64"
-                stroke="#2ea06d"
-                stroke-dasharray="3 3"
-              />
-              <text x="638" y="234.64" font-size="10" fill="#157a4c" text-anchor="middle">
-                T₅: five serialized steps
-              </text>
-              <text x="12" y="234.64" font-size="10.5" fill="#737373">
-                spinners at each step · layout shifts as each lands · every step repeats on every
-                navigation
-              </text>
+<Diagram>
+  <svg
+    viewBox="0 0 720 313"
+    xmlns="http://www.w3.org/2000/svg"
+    font-family="Inter, system-ui, sans-serif"
+  >
+    <text x="12" y="10.64" font-size="12" fill="#171717" font-weight="500">
+      SPA-style page (client-fetch chain)
+    </text>
+    <!-- track 1 -->
+    <rect
+      x="12"
+      y="24.64"
+      width="90"
+      height="24"
+      rx="5"
+      fill="#ffffff"
+      stroke="#c9c9c9"
+    />
+    <text x="57" y="40.64" font-size="10" fill="#666666" text-anchor="middle">
+      HTML shell
+    </text>
+    <rect
+      x="104"
+      y="54.64"
+      width="140"
+      height="24"
+      rx="5"
+      fill="#ffffff"
+      stroke="#c9c9c9"
+    />
+    <text x="174" y="70.64" font-size="10" fill="#666666" text-anchor="middle">
+      download + parse JS
+    </text>
+    <rect
+      x="246"
+      y="84.64"
+      width="90"
+      height="24"
+      rx="5"
+      fill="#ffffff"
+      stroke="#c9c9c9"
+    />
+    <text x="291" y="100.64" font-size="10" fill="#666666" text-anchor="middle">
+      hydrate
+    </text>
+    <rect
+      x="338"
+      y="114.64"
+      width="120"
+      height="24"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+    />
+    <text x="398" y="130.64" font-size="10" fill="#8a5a00" text-anchor="middle">
+      fetch /users/me
+    </text>
+    <rect
+      x="460"
+      y="144.64"
+      width="130"
+      height="24"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+    />
+    <text x="525" y="160.64" font-size="10" fill="#8a5a00" text-anchor="middle">
+      fetch page data
+    </text>
+    <rect
+      x="592"
+      y="174.64"
+      width="110"
+      height="24"
+      rx="5"
+      fill="#e7f5ee"
+      stroke="#2ea06d"
+    />
+    <text x="647" y="190.64" font-size="10" fill="#157a4c" text-anchor="middle">
+      content visible
+    </text>
+    <line
+      x1="647"
+      y1="204.64"
+      x2="647"
+      y2="220.64"
+      stroke="#2ea06d"
+      stroke-dasharray="3 3"
+    />
+    <text x="638" y="234.64" font-size="10" fill="#157a4c" text-anchor="middle">
+      T₅: five serialized steps
+    </text>
+    <text x="12" y="234.64" font-size="10.5" fill="#737373">
+      spinners at each step · layout shifts as each lands · every step repeats on every
+      navigation
+    </text>
 
-              <line x1="12" y1="250.64" x2="708" y2="250.64" stroke="#d4d4d4" />
+    <line x1="12" y1="250.64" x2="708" y2="250.64" stroke="#d4d4d4" />
 
-              <text x="12" y="274.64" font-size="12" fill="#171717" font-weight="500">
-                Server-first page (same data)
-              </text>
-              <rect
-                x="12"
-                y="286.64"
-                width="200"
-                height="24"
-                rx="5"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-              />
-              <text x="112" y="302.64" font-size="10" fill="#0757ba" text-anchor="middle">
-                server: fetch in parallel + render
-              </text>
-              <rect
-                x="214"
-                y="286.64"
-                width="130"
-                height="24"
-                rx="5"
-                fill="#e7f5ee"
-                stroke="#2ea06d"
-              />
-              <text x="279" y="302.64" font-size="10" fill="#157a4c" text-anchor="middle">
-                content visible: T₁
-              </text>
-              <rect
-                x="346"
-                y="286.64"
-                width="150"
-                height="24"
-                rx="5"
-                fill="#fdf3e3"
-                stroke="#b45309"
-                stroke-dasharray="4 3"
-              />
-              <text x="421" y="302.64" font-size="10" fill="#8a5a00" text-anchor="middle">
-                slow regions stream in
-              </text>
-              <rect
-                x="498"
-                y="286.64"
-                width="110"
-                height="24"
-                rx="5"
-                fill="#e0f5f9"
-                stroke="#0891b2"
-              />
-              <text x="553" y="302.64" font-size="10" fill="#0e7490" text-anchor="middle">
-                leaves hydrate
-              </text>
-            </svg>
-            
+    <text x="12" y="274.64" font-size="12" fill="#171717" font-weight="500">
+      Server-first page (same data)
+    </text>
+    <rect
+      x="12"
+      y="286.64"
+      width="200"
+      height="24"
+      rx="5"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+    />
+    <text x="112" y="302.64" font-size="10" fill="#0757ba" text-anchor="middle">
+      server: fetch in parallel + render
+    </text>
+    <rect
+      x="214"
+      y="286.64"
+      width="130"
+      height="24"
+      rx="5"
+      fill="#e7f5ee"
+      stroke="#2ea06d"
+    />
+    <text x="279" y="302.64" font-size="10" fill="#157a4c" text-anchor="middle">
+      content visible: T₁
+    </text>
+    <rect
+      x="346"
+      y="286.64"
+      width="150"
+      height="24"
+      rx="5"
+      fill="#fdf3e3"
+      stroke="#b45309"
+      stroke-dasharray="4 3"
+    />
+    <text x="421" y="302.64" font-size="10" fill="#8a5a00" text-anchor="middle">
+      slow regions stream in
+    </text>
+    <rect
+      x="498"
+      y="286.64"
+      width="110"
+      height="24"
+      rx="5"
+      fill="#e0f5f9"
+      stroke="#0891b2"
+    />
+    <text x="553" y="302.64" font-size="10" fill="#0e7490" text-anchor="middle">
+      leaves hydrate
+    </text>
+  </svg>
+  
 <Fragment slot="caption">
 The same page, same data, two architectures. The SPA chain serializes five round-trips
-              before anything meaningful paints, and pays them again on every hard navigation. The
-              server-first version parallelizes on the server and paints real content in one.
+    before anything meaningful paints, and pays them again on every hard navigation. The
+    server-first version parallelizes on the server and paints real content in one.
 </Fragment>
 </Diagram>
 
-          <p>
-            And the failure modes compound, because each one blocks the escape route from the
-            others:
-          </p>
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th>Habit you keep</th>
-                <th>Tool you lose</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Fetch after hydration (effects, client query hooks)</td>
-                <td>
-                  Streaming and <code>loading.tsx</code>:
-                  <strong>there's nothing to stream</strong>; the server finishes instantly with an
-                  empty shell.
-                </td>
-              </tr>
-              <tr>
-                <td><code>"use client"</code> at the page/layout level</td>
-                <td>
-                  Server components below it:
-                  <strong>the entire subtree is client forever</strong>; every child you add ships
-                  to the bundle.
-                </td>
-              </tr>
-              <tr>
-                <td>Requests the server never sees</td>
-                <td>
-                  The whole caching model: <code>"use cache"</code>, revalidation, request dedupe.
-                  <strong>You rebuild caching by hand</strong>, per hook.
-                </td>
-              </tr>
-              <tr>
-                <td>Mutations via hand-rolled API routes</td>
-                <td>
-                  Actions, <code>revalidatePath</code>/<code>revalidateTag</code>:
-                  <strong>read-your-writes consistency becomes your problem</strong>, solved with
-                  things like consistency tokens.
-                </td>
-              </tr>
-              <tr>
-                <td>Client state for tabs, filters, visibility</td>
-                <td>
-                  Shareable URLs, server-resolvable first render, and the router's back/forward
-                  behavior: <strong>all gone at once</strong>.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <p>
-            Read the left column against our own codebase and the pattern is uncomfortable;
-            <a href="17-applied-to-recraft.html">§17</a> does exactly that, file by file. The point
-            of this chapter isn't blame; every one of those habits was the correct professional
-            instinct in 2019. The point is that they are <em>instincts</em>, and instincts don't
-            update from warnings; they update from understanding the machine underneath. That's what
-            Parts A through C are for.
-          </p>
+<p>
+  And the failure modes compound, because each one blocks the escape route from the
+  others:
+</p>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th>Habit you keep</th>
+      <th>Tool you lose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Fetch after hydration (effects, client query hooks)</td>
+      <td>
+        Streaming and <code>loading.tsx</code>:
+        <strong>there's nothing to stream</strong>; the server finishes instantly with an
+        empty shell.
+      </td>
+    </tr>
+    <tr>
+      <td><code>"use client"</code> at the page/layout level</td>
+      <td>
+        Server components below it:
+        <strong>the entire subtree is client forever</strong>; every child you add ships
+        to the bundle.
+      </td>
+    </tr>
+    <tr>
+      <td>Requests the server never sees</td>
+      <td>
+        The whole caching model: <code>"use cache"</code>, revalidation, request dedupe.
+        <strong>You rebuild caching by hand</strong>, per hook.
+      </td>
+    </tr>
+    <tr>
+      <td>Mutations via hand-rolled API routes</td>
+      <td>
+        Actions, <code>revalidatePath</code>/<code>revalidateTag</code>:
+        <strong>read-your-writes consistency becomes your problem</strong>, solved with
+        things like consistency tokens.
+      </td>
+    </tr>
+    <tr>
+      <td>Client state for tabs, filters, visibility</td>
+      <td>
+        Shareable URLs, server-resolvable first render, and the router's back/forward
+        behavior: <strong>all gone at once</strong>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>
+  Read the left column against our own codebase and the pattern is uncomfortable;
+  <a href="17-applied-to-recraft.html">§17</a> does exactly that, file by file. The point
+  of this chapter isn't blame; every one of those habits was the correct professional
+  instinct in 2019. The point is that they are <em>instincts</em>, and instincts don't
+  update from warnings; they update from understanding the machine underneath. That's what
+  Parts A through C are for.
+</p>
 
-          <GoDeeper>
-            <p>
-              Primary sources for this chapter: the Next.js docs on
-              <a
-                href="https://nextjs.org/docs/app/getting-started/server-and-client-components"
-                target="_blank"
-                rel="noopener"
-                >Server and Client Components</a
-              >, the React docs on
-              <a
-                href="https://react.dev/reference/rsc/server-components"
-                target="_blank"
-                rel="noopener"
-                >Server Components</a
-              >, and the
-              <a href="https://nextjs.org/blog/next-16" target="_blank" rel="noopener"
-                >Next.js 16 release notes</a
-              >
-              for the caching model. Full list in <a href="19-references.html">§19</a>.
-            </p>
-          
+<GoDeeper>
+  <p>
+    Primary sources for this chapter: the Next.js docs on
+    <a
+      href="https://nextjs.org/docs/app/getting-started/server-and-client-components"
+      target="_blank"
+      rel="noopener"
+      >Server and Client Components</a
+    >, the React docs on
+    <a
+      href="https://react.dev/reference/rsc/server-components"
+      target="_blank"
+      rel="noopener"
+      >Server Components</a
+    >, and the
+    <a href="https://nextjs.org/blog/next-16" target="_blank" rel="noopener"
+      >Next.js 16 release notes</a
+    >
+    for the caching model. Full list in <a href="19-references.html">§19</a>.
+  </p>
 </GoDeeper>
 </GuidePage>

@@ -48,6 +48,11 @@
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[astro]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "prettier.documentSelectors": ["**/*.astro"],
   /* Delays auto-save to 30s so that file-change events do not race with in-flight parsers in
      other extensions (vscode-jest test discovery, tsserver). 10s was frequent enough that
      mid-edit saves were dropping jest CodeLens decorations. */

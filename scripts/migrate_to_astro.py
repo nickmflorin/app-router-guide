@@ -56,6 +56,39 @@ def extract_inner(html):
     return m.group(1)
 
 
+def dedent_outside_pre(s):
+    """Strip the carried-over base indentation (the old chrome's nesting)
+    from every line NOT inside a <pre> block, where whitespace is content."""
+    lines = s.split('\n')
+    in_pre = False
+    base = None
+    for ln in lines:
+        if not in_pre and ln.strip() and not ln.lstrip().startswith('</pre'):
+            indent = len(ln) - len(ln.lstrip(' '))
+            if ln.strip():
+                base = indent if base is None else min(base, indent)
+        if '<pre' in ln:
+            in_pre = True
+        if '</pre>' in ln:
+            in_pre = False
+    if not base:
+        return s
+    out = []
+    in_pre = False
+    for ln in lines:
+        if '<pre' in ln and not in_pre:
+            out.append(ln[base:] if ln[:base].isspace() or ln[:base] == ' ' * base else ln)
+            in_pre = '</pre>' not in ln
+            continue
+        if in_pre:
+            out.append(ln)
+            if '</pre>' in ln:
+                in_pre = False
+            continue
+        out.append(ln[base:] if ln.startswith(' ' * base) else ln)
+    return '\n'.join(out)
+
+
 def transform_chips(s):
     def repl(m):
         kind, label = m.group(1), m.group(2).strip()
@@ -168,6 +201,7 @@ def convert(src_path, out_path, root, cover):
     title = re.search(r'<title>(.*?)</title>', html, re.S).group(1).strip()
     body = extract_inner(html)
     body = re.sub(r'\s*<div id="pager"></div>\s*$', '\n', body)
+    body = dedent_outside_pre(body)
     body = transform_chips(body)
     body = transform_callouts(body)
     body = transform_diagrams(body)
