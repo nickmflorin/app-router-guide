@@ -2,6 +2,13 @@
   "name": "app-router-guide",
   "version": "0.2.0",
   "private": true,
+  "pnpm": {
+    "supportedArchitectures": {
+      "os": ["current", "linux"],
+      "cpu": ["current", "arm64"],
+      "libc": ["current", "glibc"]
+    }
+  },
   "description": "Craft Education - The App Router Guide (Astro source, html-guide/ is the built output)",
   "scripts": {
     "dev": "astro dev",

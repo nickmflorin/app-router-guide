@@ -1,559 +1,534 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Introduction - App Router Guide</title>
-    <link rel="stylesheet" href="../assets/style.css" />
-    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml">
   </head>
   <body>
     <div class="shell">
       <nav class="sidebar" id="sidebar"></nav>
       <main class="content">
         <div class="content-inner">
-          <div class="kicker">Chapter 1</div>
-          <h1>Introduction</h1>
-          <p class="lede">
-            Don't fight the framework. This chapter is about why that sentence is the whole guide in
-            miniature, and what it costs us when we do.
-          </p>
+          
+<div class="kicker">Chapter 1</div>
+<h1>Introduction</h1>
+<p class="lede">
+  Don't fight the framework. This chapter is about why that sentence is the whole guide in
+  miniature, and what it costs us when we do.
+</p>
 
-          <h2 id="dont-fight">Don't fight the framework</h2>
-          <p>
-            Next.js is not a rendering engine you bolt a React app onto. It is an opinionated
-            architecture with a specific model of how pages should be composed, where data should be
-            fetched, and where interactivity should live. When you work <em>with</em> that model, an
-            enormous amount of complexity simply disappears: loading states, request timing, cache
-            invalidation, bundle management, and layout stability are all problems the framework has
-            first-class answers for. When you work <em>against</em> it, you don't just lose those
-            answers; you actively re-create the problems they were designed to solve, and then you
-            hand-roll worse solutions to them.
-          </p>
-          <p>
-            That is the trap this guide exists to keep us out of. The patterns we've all
-            internalized from years of traditional React (fetch in an effect, hold it in state, show
-            a spinner, lift state up, pass callbacks down) are not neutral habits that happen to be
-            suboptimal here. In the App Router they are
-            <strong>load-bearing mistakes</strong>: each one forecloses a framework capability, and
-            the foreclosures compound.
-          </p>
+<h2 id="dont-fight">Don't fight the framework</h2>
+<p>
+  Next.js is not a rendering engine you bolt a React app onto. It is an opinionated
+  architecture with a specific model of how pages should be composed, where data should be
+  fetched, and where interactivity should live. When you work <em>with</em> that model, an
+  enormous amount of complexity simply disappears: loading states, request timing, cache
+  invalidation, bundle management, and layout stability are all problems the framework has
+  first-class answers for. When you work <em>against</em> it, you don't just lose those
+  answers; you actively re-create the problems they were designed to solve, and then you
+  hand-roll worse solutions to them.
+</p>
+<p>
+  That is the trap this guide exists to keep us out of. The patterns we've all
+  internalized from years of traditional React (fetch in an effect, hold it in state, show
+  a spinner, lift state up, pass callbacks down) are not neutral habits that happen to be
+  suboptimal here. In the App Router they are
+  <strong>load-bearing mistakes</strong>: each one forecloses a framework capability, and
+  the foreclosures compound.
+</p>
 
-          <div class="callout callout-warn">
-            <div class="callout-title">What it looks like when it compounds</div>
-            <p>
-              Pages that take visibly long to navigate to, in production, on real networks. Spinners
-              nested inside spinners. Content that jumps as each request lands. And the insidious
-              part: you progressively
-              <em>lose the ability to adopt the tools designed to fix these problems</em>. Streaming
-              can't help a page whose data loads after hydration. Caching can't help a request the
-              server never sees. Partial prerendering can't help a tree that's client-rendered from
-              the root. The further you build into the wrong model, the more expensive the road
-              back; the refactoring becomes a never-ending battle.
-            </p>
-          </div>
+<div class="callout callout-warn">
+  <div class="callout-title">What it looks like when it compounds</div>
+  
+  <p>
+    Pages that take visibly long to navigate to, in production, on real networks. Spinners
+    nested inside spinners. Content that jumps as each request lands. And the insidious
+    part: you progressively
+    <em>lose the ability to adopt the tools designed to fix these problems</em>. Streaming
+    can't help a page whose data loads after hydration. Caching can't help a request the
+    server never sees. Partial prerendering can't help a tree that's client-rendered from
+    the root. The further you build into the wrong model, the more expensive the road
+    back; the refactoring becomes a never-ending battle.
+  </p>
 
-          <h2 id="what-this-is">What this is, and why I wrote it</h2>
-          <p>
-            A confession about scope: this document is maybe ninety percent stitched together from
-            the official Next.js and React documentation, reorganized and elaborated, and about ten
-            percent things I have learned the hard way about what works and what doesn't. The
-            Next.js docs in particular have a habit of dropping a genuinely load-bearing idea in a
-            single sentence, somewhere near the end of a paragraph, and then moving on without ever
-            explaining the why, the how, or what it looks like in real code. This guide is my
-            attempt to slow down on exactly those sentences: to take the ones that matter most and
-            expand them into concrete examples and design patterns you can actually reach for.
-          </p>
-          <p>
-            The ten percent is the part I care about most. I started wrestling with the App Router
-            back in 2021, and it was a long, unglamorous slog of trial and error before I understood
-            how it actually wants to be used. Most of the patterns in this guide are the residue of
-            that process: the things I wish someone had handed me up front, instead of making me
-            find them one painful refactor at a time. I can't give you the intuition (that part you
-            still have to earn), but I can shorten the road, and that is the whole ambition here.
-          </p>
-          <div class="callout callout-voice">
-            <div class="callout-title">A useful way to hold it</div>
-            <p>
-              Here is the mindset that makes all of this click. If you treat every type coercion as
-              the worst thing in the world, an error to be hunted down and never tolerated, you will
-              become very good at TypeScript. In exactly the same way: if you treat every
-              <code>"use client"</code> and every <code>useEffect</code> as something that should
-              make you wince a little every time you write it, a cost to be justified rather than a
-              tool to reach for, you will become very good at the App Router, if only through the
-              trial and error of avoiding them. Treat them like a smell you actively steer away
-              from, and the design patterns in this guide start appearing on their own. I am mostly
-              just trying to save you the months it took me to notice them.
-            </p>
-          </div>
-          <p>
-            One honest caveat before we go further. No single document, and no one-hour tech collab,
-            can cover everything about server-first React, the App Router, and React 19; the surface
-            is too large and it moves too fast. This guide is a map and a set of patterns, not a
-            replacement for the docs or for your own experimentation. You will still have to put in
-            the reps. The goal is only to make those reps land faster and sting less.
-          </p>
+</div>
 
-          <h2 id="read-the-docs">Read the docs</h2>
-          <p>
-            Seriously:
-            <a href="https://nextjs.org/docs" target="_blank" rel="noopener">read them</a>. Not as
-            API reference when something breaks, but as a description of a model. The App Router
-            docs are unusually good at explaining <em>why</em> each convention exists: why layouts
-            don't re-render, why <code>loading.tsx</code> is a file and not a prop, why caching is
-            opt-in, why the client boundary is a directive. Most of the patterns in this guide are
-            not clever inventions; they are the documented, intended usage. The single biggest
-            upgrade available to us as a team is to stop treating this stack like the React we
-            already know and to step outside the traditional model we've all become accustomed to.
-          </p>
-          <p>
-            This guide is the map, not the territory. Every chapter links to the primary sources,
-            official Next.js and React documentation, collected in
-            <a href="19-references.html">§19 References</a>.
-          </p>
+<h2 id="what-this-is">What this is, and why I wrote it</h2>
+<p>
+  A confession about scope: this document is maybe ninety percent stitched together from
+  the official Next.js and React documentation, reorganized and elaborated, and about ten
+  percent things I have learned the hard way about what works and what doesn't. The
+  Next.js docs in particular have a habit of dropping a genuinely load-bearing idea in a
+  single sentence, somewhere near the end of a paragraph, and then moving on without ever
+  explaining the why, the how, or what it looks like in real code. This guide is my
+  attempt to slow down on exactly those sentences: to take the ones that matter most and
+  expand them into concrete examples and design patterns you can actually reach for.
+</p>
+<p>
+  The ten percent is the part I care about most. I started wrestling with the App Router
+  back in 2021, and it was a long, unglamorous slog of trial and error before I understood
+  how it actually wants to be used. Most of the patterns in this guide are the residue of
+  that process: the things I wish someone had handed me up front, instead of making me
+  find them one painful refactor at a time. I can't give you the intuition (that part you
+  still have to earn), but I can shorten the road, and that is the whole ambition here.
+</p>
+<div class="callout callout-voice">
+  <div class="callout-title">A useful way to hold it</div>
+  
+  <p>
+    Here is the mindset that makes all of this click. If you treat every type coercion as
+    the worst thing in the world, an error to be hunted down and never tolerated, you will
+    become very good at TypeScript. In exactly the same way: if you treat every
+    <code>"use client"</code> and every <code>useEffect</code> as something that should
+    make you wince a little every time you write it, a cost to be justified rather than a
+    tool to reach for, you will become very good at the App Router, if only through the
+    trial and error of avoiding them. Treat them like a smell you actively steer away
+    from, and the design patterns in this guide start appearing on their own. I am mostly
+    just trying to save you the months it took me to notice them.
+  </p>
 
-          <p>
-            And read both of them, not just Next.js. The React documentation (react.dev) is actually
-            quite thorough, and a surprising amount of what feels like Next.js magic is really just
-            React 19 doing its job; you will understand the framework far better once you understand
-            the library underneath it. The division of labor between the two is worth internalizing:
-            React explains the primitives in depth, and Next.js explains how they compose into an
-            application, often tersely. When the two seem to disagree, they usually don't; you are
-            just missing the React-level reason the Next.js-level rule exists.
-          </p>
-          <p>
-            There is a specific reward for pushing through the terse parts. If you commit to
-            server-first thinking and force your brain down those paths through trial and error
-            until you start getting it right, the design patterns begin to emerge on their own. And
-            then something useful happens: the next time you hit one of those single-sentence
-            pronouncements in the Next.js docs, it finally lands, because you have already felt the
-            problem it was quietly solving. Much of this guide is an attempt to front-load that
-            click, to explain the why and the how behind the terse lines so you spend less time
-            confused. It will not remove the process; nothing does. It just makes it less painful.
-          </p>
+</div>
+<p>
+  One honest caveat before we go further. No single document, and no one-hour tech collab,
+  can cover everything about server-first React, the App Router, and React 19; the surface
+  is too large and it moves too fast. This guide is a map and a set of patterns, not a
+  replacement for the docs or for your own experimentation. You will still have to put in
+  the reps. The goal is only to make those reps land faster and sting less.
+</p>
 
-          <h2 id="direction">The direction of travel</h2>
-          <p>
-            "Don't fight the framework" carries more weight once you see that the framework is a
-            moving object, and that it has been moving in one direction for over a decade. For
-            roughly ten years (call it 2013 to 2020), "a React app" meant one thing: the server
-            sends an empty HTML shell and a JavaScript bundle; the bundle boots; components mount;
-            effects fire; data is fetched; the page assembles itself in the browser. Everything we
-            internalized as "how React works" (fetch-in-effect, loading flags in state, lifting
-            state up, client routers, spinners) is machinery for surviving inside that model.
-          </p>
-          <p>
-            But that model was a stop on the road, not the destination, and the history makes the
-            trajectory hard to argue with. Trace the actual events:
-          </p>
+<h2 id="read-the-docs">Read the docs</h2>
+<p>
+  Seriously:
+  <a href="https://nextjs.org/docs" target="_blank" rel="noopener">read them</a>. Not as
+  API reference when something breaks, but as a description of a model. The App Router
+  docs are unusually good at explaining <em>why</em> each convention exists: why layouts
+  don't re-render, why <code>loading.tsx</code> is a file and not a prop, why caching is
+  opt-in, why the client boundary is a directive. Most of the patterns in this guide are
+  not clever inventions; they are the documented, intended usage. The single biggest
+  upgrade available to us as a team is to stop treating this stack like the React we
+  already know and to step outside the traditional model we've all become accustomed to.
+</p>
+<p>
+  This guide is the map, not the territory. Every chapter links to the primary sources,
+  official Next.js and React documentation, collected in
+  <a href="19-references.html">§19 References</a>.
+</p>
 
-          <figure class="diagram">
-            <svg
-              viewBox="0 0 720 556"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
-            >
-              <!-- era 1 spine + header -->
-              <text x="40" y="12" font-size="11" fill="#8a5a00" font-weight="500">
-                The client era: the browser earns every pixel
-              </text>
-              <line x1="120" y1="40" x2="120" y2="186" stroke="#e0c48f" stroke-width="1.5" />
+<p>
+  And read both of them, not just Next.js. The React documentation (react.dev) is actually
+  quite thorough, and a surprising amount of what feels like Next.js magic is really just
+  React 19 doing its job; you will understand the framework far better once you understand
+  the library underneath it. The division of labor between the two is worth internalizing:
+  React explains the primitives in depth, and Next.js explains how they compose into an
+  application, often tersely. When the two seem to disagree, they usually don't; you are
+  just missing the React-level reason the Next.js-level rule exists.
+</p>
+<p>
+  There is a specific reward for pushing through the terse parts. If you commit to
+  server-first thinking and force your brain down those paths through trial and error
+  until you start getting it right, the design patterns begin to emerge on their own. And
+  then something useful happens: the next time you hit one of those single-sentence
+  pronouncements in the Next.js docs, it finally lands, because you have already felt the
+  problem it was quietly solving. Much of this guide is an attempt to front-load that
+  click, to explain the why and the how behind the terse lines so you spend less time
+  confused. It will not remove the process; nothing does. It just makes it less painful.
+</p>
 
-              <rect x="40" y="34" width="64" height="20" rx="6" fill="#fdf3e3" stroke="#b45309" />
-              <text x="72" y="47.5" font-size="9.5" fill="#8a5a00" text-anchor="middle">
-                May 2013
-              </text>
-              <circle cx="120" cy="44" r="4.5" fill="#b45309" />
-              <text x="140" y="43" font-size="11" fill="#171717" font-weight="500">
-                React is open-sourced
-              </text>
-              <text x="140" y="58" font-size="9.5" fill="#666666">
-                components + the virtual DOM; server rendering ships day one, but the ecosystem goes
-                client
-              </text>
+<h2 id="direction">The direction of travel</h2>
+<p>
+  "Don't fight the framework" carries more weight once you see that the framework is a
+  moving object, and that it has been moving in one direction for over a decade. For
+  roughly ten years (call it 2013 to 2020), "a React app" meant one thing: the server
+  sends an empty HTML shell and a JavaScript bundle; the bundle boots; components mount;
+  effects fire; data is fetched; the page assembles itself in the browser. Everything we
+  internalized as "how React works" (fetch-in-effect, loading flags in state, lifting
+  state up, client routers, spinners) is machinery for surviving inside that model.
+</p>
+<p>
+  But that model was a stop on the road, not the destination, and the history makes the
+  trajectory hard to argue with. Trace the actual events:
+</p>
 
-              <rect x="40" y="80" width="64" height="20" rx="6" fill="#fdf3e3" stroke="#b45309" />
-              <text x="72" y="93.5" font-size="9.5" fill="#8a5a00" text-anchor="middle">2015</text>
-              <circle cx="120" cy="90" r="4.5" fill="#b45309" />
-              <text x="140" y="89" font-size="11" fill="#171717" font-weight="500">
-                The SPA toolchain hardens
-              </text>
-              <text x="140" y="104" font-size="9.5" fill="#666666">
-                Redux, client routers, fetch-in-effect: "empty div + bundle" becomes the default
-                architecture
-              </text>
+<figure class="diagram">
+  
+  <svg viewBox="0 0 720 556" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+    <!-- era 1 spine + header -->
+    <text x="40" y="12" font-size="11" fill="#8a5a00" font-weight="500">
+      The client era: the browser earns every pixel
+    </text>
+    <line x1="120" y1="40" x2="120" y2="186" stroke="#e0c48f" stroke-width="1.5"></line>
 
-              <rect x="40" y="126" width="64" height="20" rx="6" fill="#fdf3e3" stroke="#b45309" />
-              <text x="72" y="139.5" font-size="9.5" fill="#8a5a00" text-anchor="middle">
-                Oct 2016
-              </text>
-              <circle cx="120" cy="136" r="4.5" fill="#b45309" />
-              <text x="140" y="135" font-size="11" fill="#171717" font-weight="500">
-                Next.js 1.0
-              </text>
-              <text x="140" y="150" font-size="9.5" fill="#666666">
-                server rendering as a framework default, file-based routing; the counter-current
-                begins
-              </text>
+    <rect x="40" y="34" width="64" height="20" rx="6" fill="#fdf3e3" stroke="#b45309"></rect>
+    <text x="72" y="47.5" font-size="9.5" fill="#8a5a00" text-anchor="middle">
+      May 2013
+    </text>
+    <circle cx="120" cy="44" r="4.5" fill="#b45309"></circle>
+    <text x="140" y="43" font-size="11" fill="#171717" font-weight="500">
+      React is open-sourced
+    </text>
+    <text x="140" y="58" font-size="9.5" fill="#666666">
+      components + the virtual DOM; server rendering ships day one, but the ecosystem goes
+      client
+    </text>
 
-              <rect x="40" y="172" width="64" height="20" rx="6" fill="#fdf3e3" stroke="#b45309" />
-              <text x="72" y="185.5" font-size="9.5" fill="#8a5a00" text-anchor="middle">
-                Oct 2018
-              </text>
-              <circle cx="120" cy="182" r="4.5" fill="#b45309" />
-              <text x="140" y="181" font-size="11" fill="#171717" font-weight="500">
-                Suspense arrives (React 16.6)
-              </text>
-              <text x="140" y="196" font-size="9.5" fill="#666666">
-                async UI becomes the framework's problem: the first crack in "every component fends
-                for itself"
-              </text>
+    <rect x="40" y="80" width="64" height="20" rx="6" fill="#fdf3e3" stroke="#b45309"></rect>
+    <text x="72" y="93.5" font-size="9.5" fill="#8a5a00" text-anchor="middle">2015</text>
+    <circle cx="120" cy="90" r="4.5" fill="#b45309"></circle>
+    <text x="140" y="89" font-size="11" fill="#171717" font-weight="500">
+      The SPA toolchain hardens
+    </text>
+    <text x="140" y="104" font-size="9.5" fill="#666666">
+      Redux, client routers, fetch-in-effect: "empty div + bundle" becomes the default
+      architecture
+    </text>
 
-              <!-- era 2 spine + header -->
-              <text x="40" y="228" font-size="11" fill="#0757ba" font-weight="500">
-                The server era: stop shipping the app to render the app
-              </text>
-              <line x1="120" y1="256" x2="120" y2="540" stroke="#a9cdf5" stroke-width="1.5" />
+    <rect x="40" y="126" width="64" height="20" rx="6" fill="#fdf3e3" stroke="#b45309"></rect>
+    <text x="72" y="139.5" font-size="9.5" fill="#8a5a00" text-anchor="middle">
+      Oct 2016
+    </text>
+    <circle cx="120" cy="136" r="4.5" fill="#b45309"></circle>
+    <text x="140" y="135" font-size="11" fill="#171717" font-weight="500">
+      Next.js 1.0
+    </text>
+    <text x="140" y="150" font-size="9.5" fill="#666666">
+      server rendering as a framework default, file-based routing; the counter-current
+      begins
+    </text>
 
-              <rect x="40" y="250" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3" />
-              <text x="72" y="263.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
-                Dec 2020
-              </text>
-              <circle cx="120" cy="260" r="4.5" fill="#0070f3" />
-              <text x="140" y="259" font-size="11" fill="#171717" font-weight="500">
-                React Server Components announced
-              </text>
-              <text x="140" y="274" font-size="9.5" fill="#666666">
-                the zero-bundle RFC: rendering and data access return to the server
-              </text>
+    <rect x="40" y="172" width="64" height="20" rx="6" fill="#fdf3e3" stroke="#b45309"></rect>
+    <text x="72" y="185.5" font-size="9.5" fill="#8a5a00" text-anchor="middle">
+      Oct 2018
+    </text>
+    <circle cx="120" cy="182" r="4.5" fill="#b45309"></circle>
+    <text x="140" y="181" font-size="11" fill="#171717" font-weight="500">
+      Suspense arrives (React 16.6)
+    </text>
+    <text x="140" y="196" font-size="9.5" fill="#666666">
+      async UI becomes the framework's problem: the first crack in "every component fends
+      for itself"
+    </text>
 
-              <rect x="40" y="296" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3" />
-              <text x="72" y="309.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
-                Dec 2021
-              </text>
-              <circle cx="120" cy="306" r="4.5" fill="#0070f3" />
-              <text x="140" y="305" font-size="11" fill="#171717" font-weight="500">
-                React core comes to Vercel
-              </text>
-              <text x="140" y="320" font-size="9.5" fill="#666666">
-                Sebastian Markbåge (RSC's architect) leaves Meta for Vercel; more core members
-                follow
-              </text>
+    <!-- era 2 spine + header -->
+    <text x="40" y="228" font-size="11" fill="#0757ba" font-weight="500">
+      The server era: stop shipping the app to render the app
+    </text>
+    <line x1="120" y1="256" x2="120" y2="540" stroke="#a9cdf5" stroke-width="1.5"></line>
 
-              <rect x="40" y="342" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3" />
-              <text x="72" y="355.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
-                Mar 2022
-              </text>
-              <circle cx="120" cy="352" r="4.5" fill="#0070f3" />
-              <text x="140" y="351" font-size="11" fill="#171717" font-weight="500">React 18</text>
-              <text x="140" y="366" font-size="9.5" fill="#666666">
-                concurrent rendering, streaming SSR, selective hydration: the plumbing RSC needs
-              </text>
+    <rect x="40" y="250" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="72" y="263.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
+      Dec 2020
+    </text>
+    <circle cx="120" cy="260" r="4.5" fill="#0070f3"></circle>
+    <text x="140" y="259" font-size="11" fill="#171717" font-weight="500">
+      React Server Components announced
+    </text>
+    <text x="140" y="274" font-size="9.5" fill="#666666">
+      the zero-bundle RFC: rendering and data access return to the server
+    </text>
 
-              <rect x="40" y="388" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3" />
-              <text x="72" y="401.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
-                Oct 2022
-              </text>
-              <circle cx="120" cy="398" r="4.5" fill="#0070f3" />
-              <text x="140" y="397" font-size="11" fill="#171717" font-weight="500">
-                Next.js 13: the App Router
-              </text>
-              <text x="140" y="412" font-size="9.5" fill="#666666">
-                RSC as an architecture: nested layouts, streaming, colocation of data with UI
-              </text>
+    <rect x="40" y="296" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="72" y="309.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
+      Dec 2021
+    </text>
+    <circle cx="120" cy="306" r="4.5" fill="#0070f3"></circle>
+    <text x="140" y="305" font-size="11" fill="#171717" font-weight="500">
+      React core comes to Vercel
+    </text>
+    <text x="140" y="320" font-size="9.5" fill="#666666">
+      Sebastian Markbåge (RSC's architect) leaves Meta for Vercel; more core members
+      follow
+    </text>
 
-              <rect x="40" y="434" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3" />
-              <text x="72" y="447.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
-                May 2023
-              </text>
-              <circle cx="120" cy="444" r="4.5" fill="#0070f3" />
-              <text x="140" y="443" font-size="11" fill="#171717" font-weight="500">
-                App Router stable (Next 13.4)
-              </text>
-              <text x="140" y="458" font-size="9.5" fill="#666666">
-                server-first becomes the recommended path; Server Actions arrive
-              </text>
+    <rect x="40" y="342" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="72" y="355.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
+      Mar 2022
+    </text>
+    <circle cx="120" cy="352" r="4.5" fill="#0070f3"></circle>
+    <text x="140" y="351" font-size="11" fill="#171717" font-weight="500">React 18</text>
+    <text x="140" y="366" font-size="9.5" fill="#666666">
+      concurrent rendering, streaming SSR, selective hydration: the plumbing RSC needs
+    </text>
 
-              <rect x="40" y="480" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3" />
-              <text x="72" y="493.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
-                Dec 2024
-              </text>
-              <circle cx="120" cy="490" r="4.5" fill="#0070f3" />
-              <text x="140" y="489" font-size="11" fill="#171717" font-weight="500">React 19</text>
-              <text x="140" y="504" font-size="9.5" fill="#666666">
-                Actions, use(), stable RSC APIs; server-first is the platform now, not an experiment
-              </text>
+    <rect x="40" y="388" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="72" y="401.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
+      Oct 2022
+    </text>
+    <circle cx="120" cy="398" r="4.5" fill="#0070f3"></circle>
+    <text x="140" y="397" font-size="11" fill="#171717" font-weight="500">
+      Next.js 13: the App Router
+    </text>
+    <text x="140" y="412" font-size="9.5" fill="#666666">
+      RSC as an architecture: nested layouts, streaming, colocation of data with UI
+    </text>
 
-              <rect x="40" y="526" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3" />
-              <text x="72" y="539.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
-                Oct 2025
-              </text>
-              <circle cx="120" cy="536" r="4.5" fill="#0070f3" />
-              <text x="140" y="535" font-size="11" fill="#171717" font-weight="500">
-                Next.js 16 + React Compiler 1.0
-              </text>
-              <text x="140" y="550" font-size="9.5" fill="#666666">
-                "use cache" and PPR-by-default under cacheComponents; the compiler ends memo
-                busywork
-              </text>
-            </svg>
-            <figcaption>
-              Thirteen years, one direction. The client era built machinery for surviving in the
-              browser; everything since December 2020 has been about no longer needing to. Note what
-              never shipped: a better fetch-in-effect, a nicer loading flag, a faster global store.
-              The problems of the client era weren't refined; they were obsoleted. Dates are the
-              official announcements (react.dev, nextjs.org, vercel.com).
-            </figcaption>
-          </figure>
+    <rect x="40" y="434" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="72" y="447.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
+      May 2023
+    </text>
+    <circle cx="120" cy="444" r="4.5" fill="#0070f3"></circle>
+    <text x="140" y="443" font-size="11" fill="#171717" font-weight="500">
+      App Router stable (Next 13.4)
+    </text>
+    <text x="140" y="458" font-size="9.5" fill="#666666">
+      server-first becomes the recommended path; Server Actions arrive
+    </text>
 
-          <p>
-            Read the second half of that timeline the way the React and Next.js teams read it:
-            <em
-              >every major primitive shipped since December 2020 assumes a server-first
-              architecture.</em
-            >
-          </p>
-          <ul>
-            <li>
-              <strong>React Server Components</strong> moved rendering (and with it, data access) to
-              the server, making "component that runs in the browser" the explicitly-marked
-              exception rather than the assumption.
-            </li>
-            <li>
-              <strong>Actions</strong> moved mutations to the server, making "POST to an API route,
-              then juggle client state" unnecessary for the common case.
-            </li>
-            <li>
-              <strong>Suspense and streaming</strong> moved loading states out of components and
-              into the tree structure, making "this component shows its own spinner" an anti-pattern
-              rather than a convention.
-            </li>
-            <li>
-              <strong>Next.js 16's caching model</strong> (opt-in caching, partial prerendering by
-              default when enabled) is built on the assumption that most of a page is
-              server-rendered and cacheable, with dynamic regions marked by Suspense, an assumption
-              an SPA-style app violates on every page.
-            </li>
-            <li>
-              <strong>The React Compiler</strong> removes the memoization busywork that made "just
-              put everything in one big client component" feel pragmatic.
-            </li>
-          </ul>
-          <p>
-            None of them help (several literally cannot function) in a tree that is client-rendered
-            from the root. The feature-level details live in
-            <a href="18-new-primitives.html">§18</a>; what matters here is the shape of the history.
-            The client era's chronic problems (bundles that grow forever, request waterfalls,
-            loading-state choreography, caches the server never sees) were not solved
-            <em>inside</em> the client model. They were solved by leaving it. So writing SPA-style
-            code in the App Router isn't "sticking with classic React." It is building on the legacy
-            model of a platform that has already left, betting the product's future against the
-            roadmap of every tool we build on.
-          </p>
-          <p>
-            One entry on that timeline deserves a closer look, because it explains something people
-            often read as coincidence: why React's evolution and Next.js's evolution move in
-            lockstep. <strong>The React core team is no longer just Meta.</strong> In December 2021,
-            Vercel hired Sebastian Markbåge (the architect of React Server Components and much of
-            Suspense) explicitly to keep working on React from inside the company that builds
-            Next.js (<a
-              href="https://vercel.com/blog/supporting-the-future-of-react"
-              target="_blank"
-              rel="noopener"
-              >"Supporting the Future of React"</a
-            >), and more core members followed over the next two years: Andrew Clark, who led React
-            18's concurrent rendering, among them. Check
-            <a href="https://react.dev/community/team" target="_blank" rel="noopener"
-              >React's own team page</a
-            >
-            today: a substantial share of the core team draws a Vercel paycheck. The consequence is
-            structural, not cosmetic. React 19 and the App Router weren't developed in parallel and
-            reconciled later; they were <strong>co-developed</strong>, with Next.js serving as RSC's
-            reference implementation. So the App Router isn't "Vercel's interpretation of where
-            React is going." It is co-authored by the people who decide where React goes, which is
-            exactly why betting against its model is betting against React itself.
-          </p>
-          <p>
-            And none of this happened quietly. The people building the platform have been saying it
-            out loud, on stage and in writing, for over a decade. If you want the shift from the
-            primary sources, these are the ones worth your time:
-          </p>
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th style="width: 30%">When &amp; who</th>
-                <th>What they said</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <strong>Nov 2014</strong>: Guillermo Rauch (two years later: creator of Next.js)
-                </td>
-                <td>
-                  <a
-                    href="https://rauchg.com/2014/7-principles-of-rich-web-applications"
-                    target="_blank"
-                    rel="noopener"
-                    >"7 Principles of Rich Web Applications"</a
-                  >: before Next.js existed, principle #1 was already
-                  <strong>"server rendered pages are not optional."</strong> The stack we're using
-                  is this essay, industrialized.
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Mar 2018</strong>: Dan Abramov (React core), JSConf Iceland</td>
-                <td>
-                  <a
-                    href="https://legacy.reactjs.org/blog/2018/03/01/sneak-peek-beyond-react-16.html"
-                    target="_blank"
-                    rel="noopener"
-                    >"Beyond React 16"</a
-                  >, the first public Suspense demo:
-                  <strong>async UI as the framework's job</strong>, not a loading flag in every
-                  component. The doctrine of <a href="10-suspense-streaming.html">§10</a>, six years
-                  early.
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Dec 2020</strong>: Dan Abramov &amp; Lauren Tan, with Sebastian Markbåge's
-                  RFC (React core)
-                </td>
-                <td>
-                  <a
-                    href="https://react.dev/blog/2020/12/21/data-fetching-with-react-server-components"
-                    target="_blank"
-                    rel="noopener"
-                    >"Data Fetching with React Server Components"</a
-                  >, the talk and RFC that <strong>reset the entire roadmap</strong>: rendering
-                  returns to the server, at zero bundle cost. Everything since builds on this hour.
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Jan 2024</strong>: Dan Abramov, overreacted.io</td>
-                <td>
-                  <a href="https://overreacted.io/the-two-reacts/" target="_blank" rel="noopener"
-                    >"The Two Reacts"</a
-                  >, the essay form of the thesis:
-                  <strong>UI is a function of data <em>and</em> state</strong>, and no single
-                  computer can evaluate that function alone. The best deep reading on
-                  <em>why</em> the split exists.
-                </td>
-              </tr>
-              <tr>
-                <td><strong>May 2024</strong>: React Conf 2024</td>
-                <td>
-                  <a
-                    href="https://react.dev/blog/2024/05/22/react-conf-2024-recap"
-                    target="_blank"
-                    rel="noopener"
-                    >React 19 RC and the open-sourced React Compiler</a
-                  >
-                  share the keynote, and Abramov's
-                  <a href="https://conf2024.react.dev/talks/6" target="_blank" rel="noopener"
-                    >"React for Two Computers"</a
-                  >
-                  makes
-                  <strong>the conceptual case that server + client is the natural shape</strong>
-                  of a web application, a talk Rauch publicly called seminal.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <p>
-            Worth sitting with: the newest entry on that list is over two years old, and the oldest
-            is more than a decade. Adopting server-first in 2026 isn't early adoption; by the
-            platform's own telling, we're late to the memo.
-          </p>
+    <rect x="40" y="480" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="72" y="493.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
+      Dec 2024
+    </text>
+    <circle cx="120" cy="490" r="4.5" fill="#0070f3"></circle>
+    <text x="140" y="489" font-size="11" fill="#171717" font-weight="500">React 19</text>
+    <text x="140" y="504" font-size="9.5" fill="#666666">
+      Actions, use(), stable RSC APIs; server-first is the platform now, not an experiment
+    </text>
 
-          <h2 id="stakes">The stakes</h2>
-          <p>
-            The architecture and approach you use <em>now</em> sets the stage for the rest of the
-            product's life. That's not a platitude; it's the compounding math of a codebase. Every
-            new page copies the patterns of the page before it. Every hook written around a
-            client-side fetch becomes a dependency of the next feature. Conventions harden in
-            months; unwinding them takes years.
-          </p>
-          <p>
-            I say this as someone who has tried to refactor ojl-tracker out of exactly these
-            problems, repeatedly. It is a never-ending battle, and the debt was cheapest on the day
-            it was created. We do not want a re-recraft: imagine how much more confusing the Slack
-            channels, the product names, and the team names would become.
-          </p>
+    <rect x="40" y="526" width="64" height="20" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="72" y="539.5" font-size="9.5" fill="#0757ba" text-anchor="middle">
+      Oct 2025
+    </text>
+    <circle cx="120" cy="536" r="4.5" fill="#0070f3"></circle>
+    <text x="140" y="535" font-size="11" fill="#171717" font-weight="500">
+      Next.js 16 + React Compiler 1.0
+    </text>
+    <text x="140" y="550" font-size="9.5" fill="#666666">
+      "use cache" and PPR-by-default under cacheComponents; the compiler ends memo
+      busywork
+    </text>
+  </svg>
+  
 
-          <div class="callout callout-alert">
-            <div class="callout-title">Server-first is not optional</div>
-            <p>
-              Let's be unambiguous about this, because everything else in the guide depends on it. A
-              server-first mentality is
-              <strong
-                >not a preference, not a style, and not one architecture among several we could
-                reasonably choose</strong
-              >. It is the operating assumption of React 19 and the App Router: the contract every
-              primitive in this stack is built against. Every one of them assumes you are already
-              thinking this way, so when you aren't, nothing throws an error; it just quietly works
-              worse. The framework doesn't offer "SPA mode" as a supported alternative; it offers
-              silence. Build against the grain and nothing stops you: the page renders, the demo
-              works, the sprint closes. What you've actually done is taken out a loan no one issues
-              a statement for.
-            </p>
-            <p>
-              So the question is
-              <strong
-                >never whether building the old way will cause problems, only when they surface, and
-                how much product is sitting on top of them by then</strong
-              >. And when they surface, the menu is short and every item on it is expensive:
-              hand-roll custom machinery that dampens the symptoms without ever eliminating them;
-              accept the degradation as a permanent casualty and ship around it; retroactively
-              refactor large portions of the UI, which is an order of magnitude harder than building
-              it correctly was; or rewrite. There is no fifth option where it quietly works out. The
-              mental-model shift this guide describes is the requirement; the only choice we get is
-              whether we make it now, deliberately and cheaply, or later, under duress, at whatever
-              the price has grown to.
-            </p>
-          </div>
 
-          <div class="callout callout-voice">
-            <div class="callout-title">The good news</div>
-            <p>
-              You're smart, and you'll figure this out. None of this is beyond anyone on this team:
-              it's a mental-model swap, not a skill gap. But it has to be deliberate: if we keep
-              building into this thing without understanding how the technology wants to be used, we
-              will end up in a world of pain that gets harder to escape every sprint. The whole
-              point of this document is to make the deliberate path the easy one.
-            </p>
-          </div>
+  <figcaption>
+    
+Thirteen years, one direction. The client era built machinery for surviving in the
+    browser; everything since December 2020 has been about no longer needing to. Note what
+    never shipped: a better fetch-in-effect, a nicer loading flag, a faster global store.
+    The problems of the client era weren't refined; they were obsoleted. Dates are the
+    official announcements (react.dev, nextjs.org, vercel.com).
 
-          <h2 id="how-organized">How this guide is organized</h2>
-          <p>
-            <a href="02-goals.html">§2</a> defines what we're optimizing: the goals behind every
-            pattern, each tagged as universal React or Next-specific.
-            <a href="03-mental-model.html">§3</a> is the pivot of the document: what actually
-            happens when an App Router page renders, and why the traditional mental model fails
-            quietly now and loudly later. Parts A–C then elaborate each goal family with its
-            patterns, Part D applies all of it: a worked example, the
-            <a href="16-signs-doing-it-wrong.html">"Signs You're Doing It Wrong"</a> checklist, and
-            before/after case studies from our own codebase.
-          </p>
-          <p>Two chip systems annotate every practice throughout:</p>
-          <ul>
-            <li>
-              <span class="chip chip-react">React</span> /
-              <span class="chip chip-next">Next.js</span>: whether the practice applies to any React
-              app or is specific to (or dramatically amplified by) the App Router.
-            </li>
-            <li>
-              <span class="chip chip-critical">Critical</span> /
-              <span class="chip chip-very">Very important</span> /
-              <span class="chip chip-imp">Important</span>: how much it matters that we follow the
-              practice. Critical items are foundational: getting them wrong undermines the
-              architecture itself. Very important items are our default on every page, with
-              occasional exceptions. Important items are strong habits with the lowest ceremony to
-              deviate from. Wherever a practice has legitimate exceptions, they're named, so you
-              know what a valid exception looks like, and the rule never feels arbitrary.
-            </li>
-          </ul>
+  </figcaption>
+</figure>
+
+<p>
+  Read the second half of that timeline the way the React and Next.js teams read it:
+  <em>every major primitive shipped since December 2020 assumes a server-first
+    architecture.</em>
+</p>
+<ul>
+  <li>
+    <strong>React Server Components</strong> moved rendering (and with it, data access) to
+    the server, making "component that runs in the browser" the explicitly-marked
+    exception rather than the assumption.
+  </li>
+  <li>
+    <strong>Actions</strong> moved mutations to the server, making "POST to an API route,
+    then juggle client state" unnecessary for the common case.
+  </li>
+  <li>
+    <strong>Suspense and streaming</strong> moved loading states out of components and
+    into the tree structure, making "this component shows its own spinner" an anti-pattern
+    rather than a convention.
+  </li>
+  <li>
+    <strong>Next.js 16's caching model</strong> (opt-in caching, partial prerendering by
+    default when enabled) is built on the assumption that most of a page is
+    server-rendered and cacheable, with dynamic regions marked by Suspense, an assumption
+    an SPA-style app violates on every page.
+  </li>
+  <li>
+    <strong>The React Compiler</strong> removes the memoization busywork that made "just
+    put everything in one big client component" feel pragmatic.
+  </li>
+</ul>
+<p>
+  None of them help (several literally cannot function) in a tree that is client-rendered
+  from the root. The feature-level details live in
+  <a href="18-new-primitives.html">§18</a>; what matters here is the shape of the history.
+  The client era's chronic problems (bundles that grow forever, request waterfalls,
+  loading-state choreography, caches the server never sees) were not solved
+  <em>inside</em> the client model. They were solved by leaving it. So writing SPA-style
+  code in the App Router isn't "sticking with classic React." It is building on the legacy
+  model of a platform that has already left, betting the product's future against the
+  roadmap of every tool we build on.
+</p>
+<p>
+  One entry on that timeline deserves a closer look, because it explains something people
+  often read as coincidence: why React's evolution and Next.js's evolution move in
+  lockstep. <strong>The React core team is no longer just Meta.</strong> In December 2021,
+  Vercel hired Sebastian Markbåge (the architect of React Server Components and much of
+  Suspense) explicitly to keep working on React from inside the company that builds
+  Next.js (<a href="https://vercel.com/blog/supporting-the-future-of-react" target="_blank" rel="noopener">"Supporting the Future of React"</a>), and more core members followed over the next two years: Andrew Clark, who led React
+  18's concurrent rendering, among them. Check
+  <a href="https://react.dev/community/team" target="_blank" rel="noopener">React's own team page</a>
+  today: a substantial share of the core team draws a Vercel paycheck. The consequence is
+  structural, not cosmetic. React 19 and the App Router weren't developed in parallel and
+  reconciled later; they were <strong>co-developed</strong>, with Next.js serving as RSC's
+  reference implementation. So the App Router isn't "Vercel's interpretation of where
+  React is going." It is co-authored by the people who decide where React goes, which is
+  exactly why betting against its model is betting against React itself.
+</p>
+<p>
+  And none of this happened quietly. The people building the platform have been saying it
+  out loud, on stage and in writing, for over a decade. If you want the shift from the
+  primary sources, these are the ones worth your time:
+</p>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th style="width: 30%">When &amp; who</th>
+      <th>What they said</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>Nov 2014</strong>: Guillermo Rauch (two years later: creator of Next.js)
+      </td>
+      <td>
+        <a href="https://rauchg.com/2014/7-principles-of-rich-web-applications" target="_blank" rel="noopener">"7 Principles of Rich Web Applications"</a>: before Next.js existed, principle #1 was already
+        <strong>"server rendered pages are not optional."</strong> The stack we're using
+        is this essay, industrialized.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Mar 2018</strong>: Dan Abramov (React core), JSConf Iceland</td>
+      <td>
+        <a href="https://legacy.reactjs.org/blog/2018/03/01/sneak-peek-beyond-react-16.html" target="_blank" rel="noopener">"Beyond React 16"</a>, the first public Suspense demo:
+        <strong>async UI as the framework's job</strong>, not a loading flag in every
+        component. The doctrine of <a href="10-suspense-streaming.html">§10</a>, six years
+        early.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Dec 2020</strong>: Dan Abramov &amp; Lauren Tan, with Sebastian Markbåge's
+        RFC (React core)
+      </td>
+      <td>
+        <a href="https://react.dev/blog/2020/12/21/data-fetching-with-react-server-components" target="_blank" rel="noopener">"Data Fetching with React Server Components"</a>, the talk and RFC that <strong>reset the entire roadmap</strong>: rendering
+        returns to the server, at zero bundle cost. Everything since builds on this hour.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Jan 2024</strong>: Dan Abramov, overreacted.io</td>
+      <td>
+        <a href="https://overreacted.io/the-two-reacts/" target="_blank" rel="noopener">"The Two Reacts"</a>, the essay form of the thesis:
+        <strong>UI is a function of data <em>and</em> state</strong>, and no single
+        computer can evaluate that function alone. The best deep reading on
+        <em>why</em> the split exists.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>May 2024</strong>: React Conf 2024</td>
+      <td>
+        <a href="https://react.dev/blog/2024/05/22/react-conf-2024-recap" target="_blank" rel="noopener">React 19 RC and the open-sourced React Compiler</a>
+        share the keynote, and Abramov's
+        <a href="https://conf2024.react.dev/talks/6" target="_blank" rel="noopener">"React for Two Computers"</a>
+        makes
+        <strong>the conceptual case that server + client is the natural shape</strong>
+        of a web application, a talk Rauch publicly called seminal.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>
+  Worth sitting with: the newest entry on that list is over two years old, and the oldest
+  is more than a decade. Adopting server-first in 2026 isn't early adoption; by the
+  platform's own telling, we're late to the memo.
+</p>
+
+<h2 id="stakes">The stakes</h2>
+<p>
+  The architecture and approach you use <em>now</em> sets the stage for the rest of the
+  product's life. That's not a platitude; it's the compounding math of a codebase. Every
+  new page copies the patterns of the page before it. Every hook written around a
+  client-side fetch becomes a dependency of the next feature. Conventions harden in
+  months; unwinding them takes years.
+</p>
+<p>
+  I say this as someone who has tried to refactor ojl-tracker out of exactly these
+  problems, repeatedly. It is a never-ending battle, and the debt was cheapest on the day
+  it was created. We do not want a re-recraft: imagine how much more confusing the Slack
+  channels, the product names, and the team names would become.
+</p>
+
+<div class="callout callout-alert">
+  <div class="callout-title">Server-first is not optional</div>
+  
+  <p>
+    Let's be unambiguous about this, because everything else in the guide depends on it. A
+    server-first mentality is
+    <strong>not a preference, not a style, and not one architecture among several we could
+      reasonably choose</strong>. It is the operating assumption of React 19 and the App Router: the contract every
+    primitive in this stack is built against. Every one of them assumes you are already
+    thinking this way, so when you aren't, nothing throws an error; it just quietly works
+    worse. The framework doesn't offer "SPA mode" as a supported alternative; it offers
+    silence. Build against the grain and nothing stops you: the page renders, the demo
+    works, the sprint closes. What you've actually done is taken out a loan no one issues
+    a statement for.
+  </p>
+  <p>
+    So the question is
+    <strong>never whether building the old way will cause problems, only when they surface, and
+      how much product is sitting on top of them by then</strong>. And when they surface, the menu is short and every item on it is expensive:
+    hand-roll custom machinery that dampens the symptoms without ever eliminating them;
+    accept the degradation as a permanent casualty and ship around it; retroactively
+    refactor large portions of the UI, which is an order of magnitude harder than building
+    it correctly was; or rewrite. There is no fifth option where it quietly works out. The
+    mental-model shift this guide describes is the requirement; the only choice we get is
+    whether we make it now, deliberately and cheaply, or later, under duress, at whatever
+    the price has grown to.
+  </p>
+
+</div>
+
+<div class="callout callout-voice">
+  <div class="callout-title">The good news</div>
+  
+  <p>
+    You're smart, and you'll figure this out. None of this is beyond anyone on this team:
+    it's a mental-model swap, not a skill gap. But it has to be deliberate: if we keep
+    building into this thing without understanding how the technology wants to be used, we
+    will end up in a world of pain that gets harder to escape every sprint. The whole
+    point of this document is to make the deliberate path the easy one.
+  </p>
+
+</div>
+
+<h2 id="how-organized">How this guide is organized</h2>
+<p>
+  <a href="02-goals.html">§2</a> defines what we're optimizing: the goals behind every
+  pattern, each tagged as universal React or Next-specific.
+  <a href="03-mental-model.html">§3</a> is the pivot of the document: what actually
+  happens when an App Router page renders, and why the traditional mental model fails
+  quietly now and loudly later. Parts A–C then elaborate each goal family with its
+  patterns, Part D applies all of it: a worked example, the
+  <a href="16-signs-doing-it-wrong.html">"Signs You're Doing It Wrong"</a> checklist, and
+  before/after case studies from our own codebase.
+</p>
+<p>Two chip systems annotate every practice throughout:</p>
+<ul>
+  <li>
+    <span class="chip chip-react">React</span> /
+    <span class="chip chip-next">Next.js</span>: whether the practice applies to any React
+    app or is specific to (or dramatically amplified by) the App Router.
+  </li>
+  <li>
+    <span class="chip chip-critical">Critical</span> /
+    <span class="chip chip-very">Very important</span> /
+    <span class="chip chip-imp">Important</span>: how much it matters that we follow the
+    practice. Critical items are foundational: getting them wrong undermines the
+    architecture itself. Very important items are our default on every page, with
+    occasional exceptions. Important items are strong habits with the lowest ceremony to
+    deviate from. Wherever a practice has legitimate exceptions, they're named, so you
+    know what a valid exception looks like, and the rule never feels arbitrary.
+  </li>
+</ul>
+
 
           <div id="pager"></div>
         </div>

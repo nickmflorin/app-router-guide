@@ -35,8 +35,12 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 - **Workflow after parity: edit src/, `npm run build`, then run svg_lint + verification against the
   built html-guide** (the linter parses figure.diagram, which only exists post-build). Artifact
   bundler still reads html-guide → unchanged.
-- PHASE 1 REMAINING: Nick runs `npm install` (sandbox registry blocked) → run build → fix compile
-  errors → verify_build parity → flip source of truth + prettierignore html-guide. PHASE 2
+- **PHASE 1 COMPLETE (2026-07-17): build verified, `PARITY OK` against pre-migration pages.**
+  SOURCE OF TRUTH IS NOW `src/` - never hand-edit html-guide/ (astro build clears and
+  regenerates it; it stays git-tracked as the distributable). Edit loop: edit src/ → astro
+  build → svg_lint + checks against built html-guide → build_artifact.py when pushing.
+  pnpm supportedArchitectures(darwin+linux/arm64) keeps node_modules usable from the sandbox.
+  html-guide/ is prettierignored. PHASE 2
   (Tailwind hybrid): import src/styles/tailwind.css, map palette to theme tokens, convert
   design-system classes via @apply, utilities for layout; component-by-component with Nick
   reviewing visually.

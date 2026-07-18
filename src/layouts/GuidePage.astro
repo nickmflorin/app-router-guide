@@ -6,6 +6,9 @@
    in a later phase. `root` is the relative path back to the site root:
    '.' for index, '..' for section pages. */
 const { title, root = '..', cover = false } = Astro.props;
+/* '' for the index, '../' for section pages, matching the original pages'
+   relative URLs exactly. */
+const prefix = root === '.' ? '' : `${root}/`;
 ---
 
 <!doctype html>
@@ -14,8 +17,8 @@ const { title, root = '..', cover = false } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-    <link rel="stylesheet" href={`${root}/assets/style.css`} />
-    <link rel="icon" href={`${root}/assets/logomark.svg`} type="image/svg+xml" />
+    <link rel="stylesheet" href={`${prefix}assets/style.css`} />
+    <link rel="icon" href={`${prefix}assets/logomark.svg`} type="image/svg+xml" />
   </head>
   <body>
     <div class="shell">
@@ -24,10 +27,10 @@ const { title, root = '..', cover = false } = Astro.props;
         <div class={cover ? 'content-inner cover' : 'content-inner'}>
           <slot />
 
-          <div id="pager"></div>
+          {!cover && <div id="pager"></div>}
         </div>
       </main>
     </div>
-    <script is:inline src={`${root}/assets/nav.js`}></script>
+    <script is:inline src={`${prefix}assets/nav.js`}></script>
   </body>
 </html>

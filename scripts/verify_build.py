@@ -7,6 +7,7 @@ count; reports any real DOM/text drift.
 
 Run: python3 scripts/verify_build.py [git-ref]   (default: HEAD)
 """
+import html as html_mod
 import os
 import re
 import subprocess
@@ -17,9 +18,17 @@ REF = sys.argv[1] if len(sys.argv) > 1 else 'HEAD'
 
 
 def normalize(html):
-    # Drop comments, collapse all whitespace runs, trim between tags.
+    # Drop comments; unify serialization: self-closing tags become open+close,
+    # doctype lowercased, whitespace collapsed (incl. before '>').
     html = re.sub(r'<!--.*?-->', '', html, flags=re.S)
+    # Entity encoding differs between hand-authored and Astro-rendered text
+    # (&#39; vs ', &#123; vs literal braces); both render identically.
+    html = html_mod.unescape(html)
+    html = re.sub(r'<!doctype html>', '<!DOCTYPE html>', html, flags=re.I)
+    html = re.sub(r'\s*/>', '>', html)
+    html = re.sub(r'</(?:meta|link|rect|line|circle|path|use|img|br|hr|input)>', '', html)
     html = re.sub(r'\s+', ' ', html)
+    html = re.sub(r'\s*>', '>', html)
     html = re.sub(r'> <', '><', html)
     return html.strip()
 

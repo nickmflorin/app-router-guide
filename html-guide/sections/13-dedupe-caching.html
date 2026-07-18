@@ -1,376 +1,210 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dedupe &amp; Caching - App Router Guide</title>
-    <link rel="stylesheet" href="../assets/style.css" />
-    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml">
   </head>
   <body>
     <div class="shell">
       <nav class="sidebar" id="sidebar"></nav>
       <main class="content">
         <div class="content-inner">
-          <div class="kicker">Chapter 13 · Part C: Decouple the Parts</div>
-          <h1>Dedupe &amp; Caching</h1>
-          <p class="lede">
-            <a href="12-minimize-the-wires.html">§12</a> argued that components should ask for their
-            own data instead of being wired together, and that the repetition is free. This chapter
-            is the receipts: the layers that collapse many identical questions into one real
-            request, on the server and on the client.
-          </p>
+          
+<div class="kicker">Chapter 13 · Part C: Decouple the Parts</div>
+<h1>Dedupe &amp; Caching</h1>
+<p class="lede">
+  <a href="12-minimize-the-wires.html">§12</a> argued that components should ask for their
+  own data instead of being wired together, and that the repetition is free. This chapter
+  is the receipts: the layers that collapse many identical questions into one real
+  request, on the server and on the client.
+</p>
 
-          <h2 id="layers">13.1 The layers</h2>
-          <p>
-            Think of every data access as a question (<code>getProgram(42)</code>) asked by
-            whichever components need it, however many times they like. Between the question and the
-            origin (your API, your database) sit deduplication and caching layers. Each layer has a
-            different <em>lifetime</em>, and the lifetimes are the whole game:
-          </p>
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th>Layer</th>
-                <th>Lifetime</th>
-                <th>What it does</th>
-                <th>Importance</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>fetch()</code> dedupe</td>
-                <td>One render pass</td>
-                <td>
-                  Identical <code>fetch(url, options)</code> calls during a single server render
-                  <strong>share one request</strong>. Automatic.
-                </td>
-                <td><span class="chip chip-critical">Critical</span></td>
-              </tr>
-              <tr>
-                <td><code>React.cache()</code></td>
-                <td>One request</td>
-                <td>
-                  Memoizes any server function per request: DB queries, SDK calls, computations.
-                  <strong>Same args → one execution.</strong>
-                </td>
-                <td><span class="chip chip-critical">Critical</span></td>
-              </tr>
-              <tr>
-                <td><code>"use cache"</code></td>
-                <td>Cross-request</td>
-                <td>
-                  Caches a function/component's output
-                  <strong><em>across</em> requests and users</strong>; <code>cacheLife</code> sets
-                  duration, <code>cacheTag</code> enables targeted invalidation. Opt-in (Next 16,
-                  <code>cacheComponents</code>).
-                </td>
-                <td><span class="chip chip-very">Very important</span></td>
-              </tr>
-              <tr>
-                <td>SWR / React Query</td>
-                <td>Client session</td>
-                <td>
-                  Key-based client cache: components sharing a key
-                  <strong>share one entry and one request</strong>; stale-while-revalidate keeps it
-                  fresh.
-                </td>
-                <td><span class="chip chip-critical">Critical</span></td>
-              </tr>
-            </tbody>
-          </table>
+<h2 id="layers">13.1 The layers</h2>
+<p>
+  Think of every data access as a question (<code>getProgram(42)</code>) asked by
+  whichever components need it, however many times they like. Between the question and the
+  origin (your API, your database) sit deduplication and caching layers. Each layer has a
+  different <em>lifetime</em>, and the lifetimes are the whole game:
+</p>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Lifetime</th>
+      <th>What it does</th>
+      <th>Importance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fetch()</code> dedupe</td>
+      <td>One render pass</td>
+      <td>
+        Identical <code>fetch(url, options)</code> calls during a single server render
+        <strong>share one request</strong>. Automatic.
+      </td>
+      <td><span class="chip chip-critical">Critical</span></td>
+    </tr>
+    <tr>
+      <td><code>React.cache()</code></td>
+      <td>One request</td>
+      <td>
+        Memoizes any server function per request: DB queries, SDK calls, computations.
+        <strong>Same args → one execution.</strong>
+      </td>
+      <td><span class="chip chip-critical">Critical</span></td>
+    </tr>
+    <tr>
+      <td><code>"use cache"</code></td>
+      <td>Cross-request</td>
+      <td>
+        Caches a function/component's output
+        <strong><em>across</em> requests and users</strong>; <code>cacheLife</code> sets
+        duration, <code>cacheTag</code> enables targeted invalidation. Opt-in (Next 16,
+        <code>cacheComponents</code>).
+      </td>
+      <td><span class="chip chip-very">Very important</span></td>
+    </tr>
+    <tr>
+      <td>SWR / React Query</td>
+      <td>Client session</td>
+      <td>
+        Key-based client cache: components sharing a key
+        <strong>share one entry and one request</strong>; stale-while-revalidate keeps it
+        fresh.
+      </td>
+      <td><span class="chip chip-critical">Critical</span></td>
+    </tr>
+  </tbody>
+</table>
 
-          <figure class="diagram">
-            <svg
-              viewBox="0 0 720 342"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
-            >
-              <defs>
-                <marker
-                  id="aB2"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path
-                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-                    fill="none"
-                    stroke="#0070f3"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </marker>
-                <marker
-                  id="aC2"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path
-                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-                    fill="none"
-                    stroke="#0891b2"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </marker>
-              </defs>
-              <text
-                x="185"
-                y="14"
-                font-size="12"
-                fill="#0757ba"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                Server: during one request
-              </text>
-              <text
-                x="545"
-                y="14"
-                font-size="12"
-                fill="#0e7490"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                Client: during one session
-              </text>
-              <line x1="365" y1="2" x2="365" y2="340" stroke="#e0e0e0" />
+<figure class="diagram">
+  
+  <svg viewBox="0 0 720 342" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+    <defs>
+      <marker id="aB2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 2.5 1.5 L 8 5 L 2.5 8.5" fill="none" stroke="#0070f3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      </marker>
+      <marker id="aC2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 2.5 1.5 L 8 5 L 2.5 8.5" fill="none" stroke="#0891b2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      </marker>
+    </defs>
+    <text x="185" y="14" font-size="12" fill="#0757ba" text-anchor="middle" font-weight="500">
+      Server: during one request
+    </text>
+    <text x="545" y="14" font-size="12" fill="#0e7490" text-anchor="middle" font-weight="500">
+      Client: during one session
+    </text>
+    <line x1="365" y1="2" x2="365" y2="340" stroke="#e0e0e0"></line>
 
-              <!-- SERVER SIDE -->
-              <!-- components row -->
-              <rect x="22" y="30" width="100" height="34" rx="6" fill="#ffffff" stroke="#c9c9c9" />
-              <text x="72" y="51" font-size="10.5" fill="#171717" text-anchor="middle">Header</text>
-              <rect x="134" y="30" width="100" height="34" rx="6" fill="#ffffff" stroke="#c9c9c9" />
-              <text x="184" y="51" font-size="10.5" fill="#171717" text-anchor="middle">Stats</text>
-              <rect x="246" y="30" width="100" height="34" rx="6" fill="#ffffff" stroke="#c9c9c9" />
-              <text x="296" y="51" font-size="10.5" fill="#171717" text-anchor="middle">
-                Breadcrumbs
-              </text>
-              <text x="184" y="82" font-size="10" fill="#737373" text-anchor="middle">
-                each independently calls getProgram(42)
-              </text>
+    <!-- SERVER SIDE -->
+    <!-- components row -->
+    <rect x="22" y="30" width="100" height="34" rx="6" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <text x="72" y="51" font-size="10.5" fill="#171717" text-anchor="middle">Header</text>
+    <rect x="134" y="30" width="100" height="34" rx="6" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <text x="184" y="51" font-size="10.5" fill="#171717" text-anchor="middle">Stats</text>
+    <rect x="246" y="30" width="100" height="34" rx="6" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <text x="296" y="51" font-size="10.5" fill="#171717" text-anchor="middle">
+      Breadcrumbs
+    </text>
+    <text x="184" y="82" font-size="10" fill="#737373" text-anchor="middle">
+      each independently calls getProgram(42)
+    </text>
 
-              <path
-                d="M 72 64 C 72 98, 130 106, 165 114"
-                fill="none"
-                stroke="#0070f3"
-                stroke-width="1.5"
-                marker-end="url(#aB2)"
-              />
-              <line
-                x1="184"
-                y1="64"
-                x2="184"
-                y2="110"
-                stroke="#0070f3"
-                stroke-width="1.5"
-                marker-end="url(#aB2)"
-              />
-              <path
-                d="M 296 64 C 296 98, 238 106, 203 114"
-                fill="none"
-                stroke="#0070f3"
-                stroke-width="1.5"
-                marker-end="url(#aB2)"
-              />
+    <path d="M 72 64 C 72 98, 130 106, 165 114" fill="none" stroke="#0070f3" stroke-width="1.5" marker-end="url(#aB2)"></path>
+    <line x1="184" y1="64" x2="184" y2="110" stroke="#0070f3" stroke-width="1.5" marker-end="url(#aB2)"></line>
+    <path d="M 296 64 C 296 98, 238 106, 203 114" fill="none" stroke="#0070f3" stroke-width="1.5" marker-end="url(#aB2)"></path>
 
-              <rect
-                x="52"
-                y="114"
-                width="264"
-                height="48"
-                rx="8"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-                stroke-width="1.5"
-              />
-              <text
-                x="184"
-                y="134"
-                font-size="11.5"
-                fill="#0757ba"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                React.cache(): per-request memo
-              </text>
-              <text x="184" y="150" font-size="10" fill="#527dad" text-anchor="middle">
-                3 calls in, 1 execution out
-              </text>
+    <rect x="52" y="114" width="264" height="48" rx="8" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"></rect>
+    <text x="184" y="134" font-size="11.5" fill="#0757ba" text-anchor="middle" font-weight="500">
+      React.cache(): per-request memo
+    </text>
+    <text x="184" y="150" font-size="10" fill="#527dad" text-anchor="middle">
+      3 calls in, 1 execution out
+    </text>
 
-              <line
-                x1="184"
-                y1="162"
-                x2="184"
-                y2="200"
-                stroke="#0070f3"
-                stroke-width="1.5"
-                marker-end="url(#aB2)"
-              />
+    <line x1="184" y1="162" x2="184" y2="200" stroke="#0070f3" stroke-width="1.5" marker-end="url(#aB2)"></line>
 
-              <rect
-                x="52"
-                y="204"
-                width="264"
-                height="48"
-                rx="8"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-                stroke-width="1.5"
-                stroke-dasharray="6 4"
-              />
-              <text
-                x="184"
-                y="224"
-                font-size="11.5"
-                fill="#0757ba"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                "use cache": cross-request
-              </text>
-              <text x="184" y="240" font-size="10" fill="#527dad" text-anchor="middle">
-                cacheLife(…) · cacheTag("program-42") · opt-in
-              </text>
+    <rect x="52" y="204" width="264" height="48" rx="8" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5" stroke-dasharray="6 4"></rect>
+    <text x="184" y="224" font-size="11.5" fill="#0757ba" text-anchor="middle" font-weight="500">
+      "use cache": cross-request
+    </text>
+    <text x="184" y="240" font-size="10" fill="#527dad" text-anchor="middle">
+      cacheLife(…) · cacheTag("program-42") · opt-in
+    </text>
 
-              <line
-                x1="184"
-                y1="252"
-                x2="184"
-                y2="290"
-                stroke="#0070f3"
-                stroke-width="1.5"
-                marker-end="url(#aB2)"
-              />
-              <text x="196" y="276" font-size="10" fill="#737373">0 or 1 requests</text>
+    <line x1="184" y1="252" x2="184" y2="290" stroke="#0070f3" stroke-width="1.5" marker-end="url(#aB2)"></line>
+    <text x="196" y="276" font-size="10" fill="#737373">0 or 1 requests</text>
 
-              <rect
-                x="112"
-                y="294"
-                width="144"
-                height="40"
-                rx="8"
-                fill="#ffffff"
-                stroke="#b45309"
-              />
-              <text x="184" y="312" font-size="11" fill="#8a5a00" text-anchor="middle">Origin</text>
-              <text x="184" y="326" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
-                upstream API / database
-              </text>
+    <rect x="112" y="294" width="144" height="40" rx="8" fill="#ffffff" stroke="#b45309"></rect>
+    <text x="184" y="312" font-size="11" fill="#8a5a00" text-anchor="middle">Origin</text>
+    <text x="184" y="326" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
+      upstream API / database
+    </text>
 
-              <!-- CLIENT SIDE -->
-              <rect x="396" y="30" width="130" height="34" rx="6" fill="#ffffff" stroke="#c9c9c9" />
-              <text x="461" y="51" font-size="10.5" fill="#171717" text-anchor="middle">
-                FilterBar
-              </text>
-              <rect x="564" y="30" width="130" height="34" rx="6" fill="#ffffff" stroke="#c9c9c9" />
-              <text x="629" y="51" font-size="10.5" fill="#171717" text-anchor="middle">
-                ResultsBadge
-              </text>
-              <text x="545" y="82" font-size="10" fill="#737373" text-anchor="middle">
-                each calls useProgram(42): same SWR key
-              </text>
+    <!-- CLIENT SIDE -->
+    <rect x="396" y="30" width="130" height="34" rx="6" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <text x="461" y="51" font-size="10.5" fill="#171717" text-anchor="middle">
+      FilterBar
+    </text>
+    <rect x="564" y="30" width="130" height="34" rx="6" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <text x="629" y="51" font-size="10.5" fill="#171717" text-anchor="middle">
+      ResultsBadge
+    </text>
+    <text x="545" y="82" font-size="10" fill="#737373" text-anchor="middle">
+      each calls useProgram(42): same SWR key
+    </text>
 
-              <path
-                d="M 461 64 C 461 98, 500 106, 522 114"
-                fill="none"
-                stroke="#0891b2"
-                stroke-width="1.5"
-                marker-end="url(#aC2)"
-              />
-              <path
-                d="M 629 64 C 629 98, 590 106, 568 114"
-                fill="none"
-                stroke="#0891b2"
-                stroke-width="1.5"
-                marker-end="url(#aC2)"
-              />
+    <path d="M 461 64 C 461 98, 500 106, 522 114" fill="none" stroke="#0891b2" stroke-width="1.5" marker-end="url(#aC2)"></path>
+    <path d="M 629 64 C 629 98, 590 106, 568 114" fill="none" stroke="#0891b2" stroke-width="1.5" marker-end="url(#aC2)"></path>
 
-              <rect
-                x="410"
-                y="114"
-                width="270"
-                height="48"
-                rx="8"
-                fill="#e0f5f9"
-                stroke="#0891b2"
-                stroke-width="1.5"
-              />
-              <text
-                x="545"
-                y="134"
-                font-size="11.5"
-                fill="#0e7490"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                SWR cache, key: "programs/42"
-              </text>
-              <text x="545" y="150" font-size="10" fill="#3f8a99" text-anchor="middle">
-                one entry, shared · stale-while-revalidate
-              </text>
+    <rect x="410" y="114" width="270" height="48" rx="8" fill="#e0f5f9" stroke="#0891b2" stroke-width="1.5"></rect>
+    <text x="545" y="134" font-size="11.5" fill="#0e7490" text-anchor="middle" font-weight="500">
+      SWR cache, key: "programs/42"
+    </text>
+    <text x="545" y="150" font-size="10" fill="#3f8a99" text-anchor="middle">
+      one entry, shared · stale-while-revalidate
+    </text>
 
-              <line
-                x1="545"
-                y1="162"
-                x2="545"
-                y2="290"
-                stroke="#0891b2"
-                stroke-width="1.5"
-                marker-end="url(#aC2)"
-              />
-              <text x="557" y="228" font-size="10" fill="#737373">1 request · revalidates on</text>
-              <text x="557" y="243" font-size="10" fill="#737373">focus / interval / mutate()</text>
+    <line x1="545" y1="162" x2="545" y2="290" stroke="#0891b2" stroke-width="1.5" marker-end="url(#aC2)"></line>
+    <text x="557" y="228" font-size="10" fill="#737373">1 request · revalidates on</text>
+    <text x="557" y="243" font-size="10" fill="#737373">focus / interval / mutate()</text>
 
-              <rect
-                x="473"
-                y="294"
-                width="144"
-                height="40"
-                rx="8"
-                fill="#ffffff"
-                stroke="#b45309"
-              />
-              <text x="545" y="312" font-size="11" fill="#8a5a00" text-anchor="middle">
-                Network
-              </text>
-              <text x="545" y="326" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
-                route handler / API
-              </text>
-            </svg>
-            <figcaption>
-              Both sides of the boundary have a dedupe stack. Server: any number of components call
-              the same cached function during a request: one execution, and with
-              <code>"use cache"</code> possibly zero origin hits. Client: components sharing an SWR
-              key share one cache entry and one request.
-            </figcaption>
-          </figure>
+    <rect x="473" y="294" width="144" height="40" rx="8" fill="#ffffff" stroke="#b45309"></rect>
+    <text x="545" y="312" font-size="11" fill="#8a5a00" text-anchor="middle">
+      Network
+    </text>
+    <text x="545" y="326" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
+      route handler / API
+    </text>
+  </svg>
+  
 
-          <h2 id="server">13.2 The server data layer</h2>
-          <p>
-            The pattern that makes all of Part C work:
-            <strong
-              >every server data access lives in one module, and every function in it is wrapped in
-              <code>cache()</code></strong
-            >. <span class="chip chip-next">Next.js</span>
-            <span class="chip chip-critical">Critical</span> Components never call
-            <code>fetch</code> or the database directly: they call the data layer, from anywhere in
-            the tree, as many times as composition requires.
-          </p>
 
-          <pre
-            class="code"
-          ><span class="filename">data/programs.ts</span><span class="tok-kw">import</span> { cache } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+  <figcaption>
+    
+Both sides of the boundary have a dedupe stack. Server: any number of components call
+    the same cached function during a request: one execution, and with
+    <code>"use cache"</code> possibly zero origin hits. Client: components sharing an SWR
+    key share one cache entry and one request.
+
+  </figcaption>
+</figure>
+
+<h2 id="server">13.2 The server data layer</h2>
+<p>
+  The pattern that makes all of Part C work:
+  <strong>every server data access lives in one module, and every function in it is wrapped in
+    <code>cache()</code></strong>. <span class="chip chip-next">Next.js</span>
+  <span class="chip chip-critical">Critical</span> Components never call
+  <code>fetch</code> or the database directly: they call the data layer, from anywhere in
+  the tree, as many times as composition requires.
+</p>
+
+<pre class="code"><span class="filename">data/programs.ts</span><span class="tok-kw">import</span> { cache } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 <span class="tok-com">// This import turns any leak into a client bundle into a build error.</span>
 <span class="tok-kw">import</span> <span class="tok-str">"server-only"</span>;
 
@@ -382,25 +216,23 @@
   <span class="tok-kw">return</span> res.json() <span class="tok-kw">as</span> <span class="tok-fn">Promise</span>&lt;<span class="tok-fn">Program</span>&gt;;
 });</pre>
 
-          <p>
-            Two subtleties worth knowing. First, <code>fetch</code> itself dedupes identical calls
-            within a render pass <span class="chip chip-critical">Critical</span>, but
-            <code>cache()</code> is the habit to build, because it also covers database clients,
-            SDKs, and computed values, and it gives the function a single authoritative home.
-            Second, <code>cache()</code>'s lifetime is <em>one request</em>: it is a dedupe
-            mechanism, not a performance cache. User A's request never sees user B's data through
-            it, which is exactly what you want for anything personalized.
-          </p>
-          <p>
-            When data is <em>not</em> personalized and survives across requests (templates, org
-            lists, filter options, reference data), promote it one layer up with
-            <code>"use cache"</code>: <span class="chip chip-next">Next.js</span>
-            <span class="chip chip-very">Very important</span>
-          </p>
+<p>
+  Two subtleties worth knowing. First, <code>fetch</code> itself dedupes identical calls
+  within a render pass <span class="chip chip-critical">Critical</span>, but
+  <code>cache()</code> is the habit to build, because it also covers database clients,
+  SDKs, and computed values, and it gives the function a single authoritative home.
+  Second, <code>cache()</code>'s lifetime is <em>one request</em>: it is a dedupe
+  mechanism, not a performance cache. User A's request never sees user B's data through
+  it, which is exactly what you want for anything personalized.
+</p>
+<p>
+  When data is <em>not</em> personalized and survives across requests (templates, org
+  lists, filter options, reference data), promote it one layer up with
+  <code>"use cache"</code>: <span class="chip chip-next">Next.js</span>
+  <span class="chip chip-very">Very important</span>
+</p>
 
-          <pre
-            class="code"
-          ><span class="filename">data/templates.ts</span><span class="tok-kw">import</span> { cacheLife, cacheTag } <span class="tok-kw">from</span> <span class="tok-str">"next/cache"</span>;
+<pre class="code"><span class="filename">data/templates.ts</span><span class="tok-kw">import</span> { cacheLife, cacheTag } <span class="tok-kw">from</span> <span class="tok-str">"next/cache"</span>;
 
 <span class="tok-kw">export async function</span> <span class="tok-fn">getFormTemplates</span>() {
   <span class="tok-com">// The output is cached across requests AND users.</span>
@@ -411,9 +243,7 @@
   <span class="tok-fn">cacheTag</span>(<span class="tok-str">"form-templates"</span>);
   <span class="tok-kw">return</span> api.templates.<span class="tok-fn">list</span>();
 }</pre>
-          <pre
-            class="code"
-          ><span class="filename">actions/templates.ts</span><span class="tok-dir">"use server"</span>;
+<pre class="code"><span class="filename">actions/templates.ts</span><span class="tok-dir">"use server"</span>;
 <span class="tok-kw">import</span> { revalidateTag } <span class="tok-kw">from</span> <span class="tok-str">"next/cache"</span>;
 
 <span class="tok-kw">export async function</span> <span class="tok-fn">createTemplate</span>(input: <span class="tok-fn">TemplateInput</span>) {
@@ -421,33 +251,31 @@
   <span class="tok-com">// Every reader updates: no callbacks up the tree, no refetchAll().</span>
   <span class="tok-fn">revalidateTag</span>(<span class="tok-str">"form-templates"</span>);
 }</pre>
-          <p>
-            Note what the mutation does <em>not</em> do: it doesn't call a callback up to some
-            parent, doesn't set a consistency token in the URL, doesn't orchestrate a
-            <code>refetchAll()</code>. It invalidates the tag, and every component that reads
-            <code>getFormTemplates()</code>, wherever it sits in the tree, gets fresh data on the
-            next render. That's <a href="12-minimize-the-wires.html#callbacks">§12.4</a>'s
-            "communicate through the cache" made concrete.
-          </p>
+<p>
+  Note what the mutation does <em>not</em> do: it doesn't call a callback up to some
+  parent, doesn't set a consistency token in the URL, doesn't orchestrate a
+  <code>refetchAll()</code>. It invalidates the tag, and every component that reads
+  <code>getFormTemplates()</code>, wherever it sits in the tree, gets fresh data on the
+  next render. That's <a href="12-minimize-the-wires.html#callbacks">§12.4</a>'s
+  "communicate through the cache" made concrete.
+</p>
 
-          <h2 id="client">13.3 The client data layer</h2>
-          <p>
-            Some data genuinely must load from the client: it only exists after an interaction, or
-            it polls, or it's driven by rapidly-changing client state. For that:
-            <strong
-              >one shared hook per question, built on SWR (or React Query), keyed canonically. Never
-              raw <code>fetch</code> in a component, never fetch-in-effect.</strong
-            >
-            <span class="chip chip-react">React</span>
-            <span class="chip chip-critical">Critical</span>
-          </p>
+<h2 id="client">13.3 The client data layer</h2>
+<p>
+  Some data genuinely must load from the client: it only exists after an interaction, or
+  it polls, or it's driven by rapidly-changing client state. For that:
+  <strong>one shared hook per question, built on SWR (or React Query), keyed canonically. Never
+    raw <code>fetch</code> in a component, never fetch-in-effect.</strong>
+  <span class="chip chip-react">React</span>
+  <span class="chip chip-critical">Critical</span>
+</p>
 
-          <div class="compare">
-            <div class="bad">
-              <div class="col-label">✕ Hand-rolled: no dedupe layer exists</div>
-              <pre
-                class="code"
-              ><span class="filename">every component, separately</span><span class="tok-dir">"use client"</span>;
+<div class="compare">
+  
+<div class="bad">
+  <div class="col-label">✕ Hand-rolled: no dedupe layer exists</div>
+  
+    <pre class="code"><span class="filename">every component, separately</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">const</span> [program, setProgram] = <span class="tok-fn">useState</span>(<span class="tok-kw">null</span>);
 <span class="tok-kw">const</span> [isLoading, setIsLoading] = <span class="tok-fn">useState</span>(<span class="tok-kw">true</span>);
@@ -460,12 +288,13 @@
 <span class="tok-com">/* Two components means two requests, two
    loading states, two error paths, and
    zero sharing. */</span></pre>
-            </div>
-            <div class="good">
-              <div class="col-label">✓ Shared hook: the key IS the dedupe</div>
-              <pre
-                class="code"
-              ><span class="filename">hooks/useProgram.ts</span><span class="tok-dir">"use client"</span>;
+  
+
+</div>
+<div class="good">
+  <div class="col-label">✓ Shared hook: the key IS the dedupe</div>
+  
+    <pre class="code"><span class="filename">hooks/useProgram.ts</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">import</span> useSWR <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
 
@@ -475,81 +304,82 @@
 <span class="tok-com">/* Any number of components call this with
    the same id: one cache entry, one request,
    revalidated on focus, updated by mutate(). */</span></pre>
-            </div>
-          </div>
+  
 
-          <div class="callout callout-warn">
-            <div class="callout-title">Client cache is a complement, not the architecture</div>
-            <p>
-              SWR's cache lives in browser memory: it evaporates on a hard navigation and starts
-              empty for every visitor. It cannot make first render fast; only the server layers can
-              (that's Part A). The division of labor:
-              <strong
-                >server cache for what the page is born with; client cache for what it learns
-                afterwards.</strong
-              >
-              If you find most of a page's data flowing through SWR, the problem isn't the caching:
-              the fetching is on the wrong side of the boundary.
-            </p>
-          </div>
+</div>
 
-          <h2 id="choosing">13.4 Choosing the layer</h2>
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th>The data is…</th>
-                <th>Use</th>
-                <th>Example</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Needed at first render, personalized</strong></td>
-                <td><code>cache()</code> in the server data layer</td>
-                <td>program detail, user profile, permissions</td>
-              </tr>
-              <tr>
-                <td><strong>Needed at first render, shared across users</strong></td>
-                <td><code>"use cache"</code> + <code>cacheLife</code>/<code>cacheTag</code></td>
-                <td>templates, org lists, filter options, reference data</td>
-              </tr>
-              <tr>
-                <td><strong>Born from an interaction</strong></td>
-                <td>SWR / React Query shared hook</td>
-                <td>search-as-you-type results, autocomplete</td>
-              </tr>
-              <tr>
-                <td><strong>Live / polling</strong></td>
-                <td>SWR with <code>refreshInterval</code></td>
-                <td>job status, notifications badge</td>
-              </tr>
-              <tr>
-                <td><strong>Changed by a mutation</strong></td>
-                <td>
-                  Action + <code>revalidateTag</code> (server) / <code>mutate()</code> (client)
-                </td>
-                <td>everything above, after a write</td>
-              </tr>
-            </tbody>
-          </table>
+</div>
 
-          <h2 id="extends-fetch">13.5 How Next.js extends fetch</h2>
-          <p>
-            One thing that trips people up: <code>fetch</code> on the server does not behave like
-            <code>fetch</code> in the browser. Next.js replaces the global <code>fetch</code> with
-            an extended version that adds two of the layers above directly to the call.
-            <span class="chip chip-next">Next.js</span>
-            <span class="chip chip-critical">Critical</span> First, it
-            <strong>deduplicates identical requests within a single render</strong>: two components
-            that <code>fetch</code> the same URL with the same options during one pass share one
-            request. Second, it wires the call into the <strong>Data Cache</strong>, a persistent,
-            cross-request store you control through the <code>cache</code> and <code>next</code>
-            options.
-          </p>
+<div class="callout callout-warn">
+  <div class="callout-title">Client cache is a complement, not the architecture</div>
+  
+  <p>
+    SWR's cache lives in browser memory: it evaporates on a hard navigation and starts
+    empty for every visitor. It cannot make first render fast; only the server layers can
+    (that's Part A). The division of labor:
+    <strong>server cache for what the page is born with; client cache for what it learns
+      afterwards.</strong>
+    If you find most of a page's data flowing through SWR, the problem isn't the caching:
+    the fetching is on the wrong side of the boundary.
+  </p>
 
-          <pre
-            class="code"
-          ><span class="filename">data/stats.ts</span><span class="tok-com">/* Next reads the options off fetch itself: this response is cached
+</div>
+
+<h2 id="choosing">13.4 Choosing the layer</h2>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th>The data is…</th>
+      <th>Use</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Needed at first render, personalized</strong></td>
+      <td><code>cache()</code> in the server data layer</td>
+      <td>program detail, user profile, permissions</td>
+    </tr>
+    <tr>
+      <td><strong>Needed at first render, shared across users</strong></td>
+      <td><code>"use cache"</code> + <code>cacheLife</code>/<code>cacheTag</code></td>
+      <td>templates, org lists, filter options, reference data</td>
+    </tr>
+    <tr>
+      <td><strong>Born from an interaction</strong></td>
+      <td>SWR / React Query shared hook</td>
+      <td>search-as-you-type results, autocomplete</td>
+    </tr>
+    <tr>
+      <td><strong>Live / polling</strong></td>
+      <td>SWR with <code>refreshInterval</code></td>
+      <td>job status, notifications badge</td>
+    </tr>
+    <tr>
+      <td><strong>Changed by a mutation</strong></td>
+      <td>
+        Action + <code>revalidateTag</code> (server) / <code>mutate()</code> (client)
+      </td>
+      <td>everything above, after a write</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="extends-fetch">13.5 How Next.js extends fetch</h2>
+<p>
+  One thing that trips people up: <code>fetch</code> on the server does not behave like
+  <code>fetch</code> in the browser. Next.js replaces the global <code>fetch</code> with
+  an extended version that adds two of the layers above directly to the call.
+  <span class="chip chip-next">Next.js</span>
+  <span class="chip chip-critical">Critical</span> First, it
+  <strong>deduplicates identical requests within a single render</strong>: two components
+  that <code>fetch</code> the same URL with the same options during one pass share one
+  request. Second, it wires the call into the <strong>Data Cache</strong>, a persistent,
+  cross-request store you control through the <code>cache</code> and <code>next</code>
+  options.
+</p>
+
+<pre class="code"><span class="filename">data/stats.ts</span><span class="tok-com">/* Next reads the options off fetch itself: this response is cached
    across requests and tagged, so a mutation can invalidate it by tag. */</span>
 <span class="tok-kw">export async function</span> <span class="tok-fn">getPublicStats</span>() {
   <span class="tok-kw">const</span> res = <span class="tok-kw">await</span> <span class="tok-fn">fetch</span>(<span class="tok-str">`${API_URL}/stats`</span>, {
@@ -565,30 +395,27 @@
   <span class="tok-kw">return</span> res.json();
 }</pre>
 
-          <p>
-            This is why the audit's blanket <code>export const dynamic = "force-dynamic"</code> plus
-            <code>no-store</code> everywhere (<a href="17-applied-to-recraft.html#finding-7">§17</a
-            >) is so costly: it tells this extended <code>fetch</code> to skip the Data Cache on
-            every call, throwing away a layer the framework hands you for free. The habit to build
-            is the inverse: cache by default with a declared <code>revalidate</code> and
-            <code>tags</code>, and reach for <code>no-store</code> only where the data is genuinely
-            per-request. When you call through the database or an SDK instead of <code>fetch</code>,
-            you don't get this automatically, which is exactly why <a href="#server">§13.2</a>'s
-            <code>cache()</code> and <code>"use cache"</code> exist to fill the gap.
-          </p>
+<p>
+  This is why the audit's blanket <code>export const dynamic = "force-dynamic"</code> plus
+  <code>no-store</code> everywhere (<a href="17-applied-to-recraft.html#finding-7">§17</a>) is so costly: it tells this extended <code>fetch</code> to skip the Data Cache on
+  every call, throwing away a layer the framework hands you for free. The habit to build
+  is the inverse: cache by default with a declared <code>revalidate</code> and
+  <code>tags</code>, and reach for <code>no-store</code> only where the data is genuinely
+  per-request. When you call through the database or an SDK instead of <code>fetch</code>,
+  you don't get this automatically, which is exactly why <a href="#server">§13.2</a>'s
+  <code>cache()</code> and <code>"use cache"</code> exist to fill the gap.
+</p>
 
-          <h2 id="swr-depth">13.6 SWR, in more depth</h2>
-          <p>
-            On the client, the whole model rests on one idea:
-            <strong>the key is the identity of the data.</strong> Two components that pass the same
-            key read the same cache entry; a component that passes <code>null</code> as its key
-            makes no request at all. Everything else (deduplication, revalidation, mutation) hangs
-            off that key.
-          </p>
+<h2 id="swr-depth">13.6 SWR, in more depth</h2>
+<p>
+  On the client, the whole model rests on one idea:
+  <strong>the key is the identity of the data.</strong> Two components that pass the same
+  key read the same cache entry; a component that passes <code>null</code> as its key
+  makes no request at all. Everything else (deduplication, revalidation, mutation) hangs
+  off that key.
+</p>
 
-          <pre
-            class="code"
-          ><span class="filename">hooks/useJobStatus.ts</span><span class="tok-dir">"use client"</span>;
+<pre class="code"><span class="filename">hooks/useJobStatus.ts</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> useSWR <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">useJobStatus</span>(jobId: <span class="tok-fn">string</span> | <span class="tok-kw">null</span>) {
@@ -605,59 +432,57 @@
   );
 }</pre>
 
-          <p>
-            The revalidation triggers are the reason SWR feels alive without any manual wiring: by
-            default it refetches on window focus and on network reconnect, plus on whatever
-            <code>refreshInterval</code> you set. Crucially,
-            <strong>it never blanks the existing content to do so.</strong> The stale value stays on
-            screen while the new one loads, and swaps in when it arrives. That is the
-            stale-while-revalidate contract, and it is the client-side echo of the loading doctrine
-            in <a href="10-suspense-streaming.html#refetch">§10</a>: revalidation is shown alongside
-            content, never in place of it.
-          </p>
-          <p>
-            Writes go through <code>mutate</code>, which is the client mirror of
-            <code>revalidateTag</code>: instead of calling a parent back to refetch, you tell the
-            cache that a key is stale and every reader of that key updates itself. Passing new data
-            to <code>mutate</code> paints it optimistically and revalidates in the background, which
-            pairs naturally with
-            <a href="18-new-primitives.html#use-optimistic">§18's <code>useOptimistic</code></a> for
-            action-driven writes.
-          </p>
+<p>
+  The revalidation triggers are the reason SWR feels alive without any manual wiring: by
+  default it refetches on window focus and on network reconnect, plus on whatever
+  <code>refreshInterval</code> you set. Crucially,
+  <strong>it never blanks the existing content to do so.</strong> The stale value stays on
+  screen while the new one loads, and swaps in when it arrives. That is the
+  stale-while-revalidate contract, and it is the client-side echo of the loading doctrine
+  in <a href="10-suspense-streaming.html#refetch">§10</a>: revalidation is shown alongside
+  content, never in place of it.
+</p>
+<p>
+  Writes go through <code>mutate</code>, which is the client mirror of
+  <code>revalidateTag</code>: instead of calling a parent back to refetch, you tell the
+  cache that a key is stale and every reader of that key updates itself. Passing new data
+  to <code>mutate</code> paints it optimistically and revalidates in the background, which
+  pairs naturally with
+  <a href="18-new-primitives.html#use-optimistic">§18's <code>useOptimistic</code></a> for
+  action-driven writes.
+</p>
 
-          <h2 id="when-client">13.7 When client fetching is the right tool</h2>
-          <p>
-            Server-first does not mean the client never fetches. It means client fetching is a
-            <em>deliberate</em> choice for the cases that genuinely call for it, not the default for
-            everything. <span class="chip chip-react">React</span>
-            <span class="chip chip-very">Very important</span> Those cases have a clear signature:
-            the data is <strong>not needed at first paint</strong>, and it is
-            <strong>born from an interaction, a poll, or rapidly-changing client state.</strong>
-          </p>
-          <ul>
-            <li>
-              <strong>Data that only exists after an interaction:</strong> search-as-you-type
-              results, autocomplete suggestions, a filter applied in the browser. There is nothing
-              to render on the server because the input hasn't happened yet.
-            </li>
-            <li>
-              <strong>Content inside a dialog, drawer, or sheet</strong> that isn't part of the main
-              page and is opened on demand. It isn't in the first paint, so loading it when the
-              panel opens is correct, not a smell.
-            </li>
-            <li>
-              <strong>Live or polling data:</strong> a job status, a notifications badge, anything
-              that changes while the user watches it.
-            </li>
-          </ul>
-          <p>
-            The dialog case is the one worth showing, because it is the clean inverse of the God
-            component: the panel and its data are both loaded only when needed.
-          </p>
+<h2 id="when-client">13.7 When client fetching is the right tool</h2>
+<p>
+  Server-first does not mean the client never fetches. It means client fetching is a
+  <em>deliberate</em> choice for the cases that genuinely call for it, not the default for
+  everything. <span class="chip chip-react">React</span>
+  <span class="chip chip-very">Very important</span> Those cases have a clear signature:
+  the data is <strong>not needed at first paint</strong>, and it is
+  <strong>born from an interaction, a poll, or rapidly-changing client state.</strong>
+</p>
+<ul>
+  <li>
+    <strong>Data that only exists after an interaction:</strong> search-as-you-type
+    results, autocomplete suggestions, a filter applied in the browser. There is nothing
+    to render on the server because the input hasn't happened yet.
+  </li>
+  <li>
+    <strong>Content inside a dialog, drawer, or sheet</strong> that isn't part of the main
+    page and is opened on demand. It isn't in the first paint, so loading it when the
+    panel opens is correct, not a smell.
+  </li>
+  <li>
+    <strong>Live or polling data:</strong> a job status, a notifications badge, anything
+    that changes while the user watches it.
+  </li>
+</ul>
+<p>
+  The dialog case is the one worth showing, because it is the clean inverse of the God
+  component: the panel and its data are both loaded only when needed.
+</p>
 
-          <pre
-            class="code"
-          ><span class="filename">components/programs/RowActions.tsx</span><span class="tok-dir">"use client"</span>;
+<pre class="code"><span class="filename">components/programs/RowActions.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 <span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
 
@@ -675,88 +500,78 @@
   );
 }</pre>
 
-          <p>
-            The test is the one from
-            <a href="08-server-resolvable-state.html#client-state">§8.5</a>, applied to data: if the
-            content is part of what the page <em>is</em>, the server should fetch it; if it is
-            something the page <em>does</em> in response to the user, a client hook is the right
-            home. The failure mode the audit found is the first kind masquerading as the second: a
-            whole page's primary data loaded client-side as if it were interaction-born, when it was
-            the page all along.
-          </p>
+<p>
+  The test is the one from
+  <a href="08-server-resolvable-state.html#client-state">§8.5</a>, applied to data: if the
+  content is part of what the page <em>is</em>, the server should fetch it; if it is
+  something the page <em>does</em> in response to the user, a client hook is the right
+  home. The failure mode the audit found is the first kind masquerading as the second: a
+  whole page's primary data loaded client-side as if it were interaction-born, when it was
+  the page all along.
+</p>
 
-          <h2 id="rules">The rules</h2>
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th>Rule</th>
-                <th>Scope</th>
-                <th>Importance</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  All server data access lives in
-                  <strong>a dedicated data layer, wrapped in <code>cache()</code></strong
-                  >, marked <code>server-only</code>.
-                </td>
-                <td><span class="chip chip-next">Next.js</span></td>
-                <td><span class="chip chip-critical">Critical</span></td>
-              </tr>
-              <tr>
-                <td>
-                  Shared, non-personalized data is
-                  <strong>cached cross-request with <code>"use cache"</code></strong> and tagged for
-                  invalidation.
-                </td>
-                <td><span class="chip chip-next">Next.js</span></td>
-                <td><span class="chip chip-very">Very important</span></td>
-              </tr>
-              <tr>
-                <td>
-                  Client fetching goes through
-                  <strong>shared SWR/React Query hooks with canonical keys</strong>; never raw fetch
-                  in components or effects.
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><span class="chip chip-critical">Critical</span></td>
-              </tr>
-              <tr>
-                <td>
-                  Mutations <strong>invalidate rather than orchestrate</strong>: tags and
-                  <code>mutate()</code>, not callbacks and refetchAll.
-                </td>
-                <td><span class="chip chip-next">Next.js</span></td>
-                <td><span class="chip chip-critical">Critical</span></td>
-              </tr>
-            </tbody>
-          </table>
+<h2 id="rules">The rules</h2>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th>Rule</th>
+      <th>Scope</th>
+      <th>Importance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        All server data access lives in
+        <strong>a dedicated data layer, wrapped in <code>cache()</code></strong>, marked <code>server-only</code>.
+      </td>
+      <td><span class="chip chip-next">Next.js</span></td>
+      <td><span class="chip chip-critical">Critical</span></td>
+    </tr>
+    <tr>
+      <td>
+        Shared, non-personalized data is
+        <strong>cached cross-request with <code>"use cache"</code></strong> and tagged for
+        invalidation.
+      </td>
+      <td><span class="chip chip-next">Next.js</span></td>
+      <td><span class="chip chip-very">Very important</span></td>
+    </tr>
+    <tr>
+      <td>
+        Client fetching goes through
+        <strong>shared SWR/React Query hooks with canonical keys</strong>; never raw fetch
+        in components or effects.
+      </td>
+      <td><span class="chip chip-react">React</span></td>
+      <td><span class="chip chip-critical">Critical</span></td>
+    </tr>
+    <tr>
+      <td>
+        Mutations <strong>invalidate rather than orchestrate</strong>: tags and
+        <code>mutate()</code>, not callbacks and refetchAll.
+      </td>
+      <td><span class="chip chip-next">Next.js</span></td>
+      <td><span class="chip chip-critical">Critical</span></td>
+    </tr>
+  </tbody>
+</table>
 
-          <div class="callout callout-info">
-            <div class="callout-title">Where to go deeper</div>
-            <p>
-              <a href="https://react.dev/reference/react/cache" target="_blank" rel="noopener"
-                >React: <code>cache()</code></a
-              >
-              ·
-              <a
-                href="https://nextjs.org/docs/app/getting-started/caching"
-                target="_blank"
-                rel="noopener"
-                >Next.js: Caching</a
-              >
-              ·
-              <a
-                href="https://nextjs.org/docs/app/guides/migrating-to-cache-components"
-                target="_blank"
-                rel="noopener"
-                >Next.js: Migrating to Cache Components</a
-              >
-              · <a href="https://swr.vercel.app" target="_blank" rel="noopener">SWR docs</a>. Full
-              list in <a href="19-references.html">§19</a>.
-            </p>
-          </div>
+<div class="callout callout-info">
+  <div class="callout-title">Where to go deeper</div>
+  
+  <p>
+    <a href="https://react.dev/reference/react/cache" target="_blank" rel="noopener">React: <code>cache()</code></a>
+    ·
+    <a href="https://nextjs.org/docs/app/getting-started/caching" target="_blank" rel="noopener">Next.js: Caching</a>
+    ·
+    <a href="https://nextjs.org/docs/app/guides/migrating-to-cache-components" target="_blank" rel="noopener">Next.js: Migrating to Cache Components</a>
+    · <a href="https://swr.vercel.app" target="_blank" rel="noopener">SWR docs</a>. Full
+    list in <a href="19-references.html">§19</a>.
+  </p>
+
+</div>
+
 
           <div id="pager"></div>
         </div>

@@ -33,7 +33,7 @@ def text_width(s, fs):
 
 def parse(svg):
     rects, texts, lines = [], [], []
-    for m in re.finditer(r'<rect ([^>]*)/>', svg):
+    for m in re.finditer(r'<rect ([^>]*?)\s*/?>', svg):
         a = dict(re.findall(r'([\w-]+)="([^"]*)"', m.group(1)))
         try:
             rects.append(dict(x=float(a['x']), y=float(a['y']), w=float(a['width']),
@@ -52,7 +52,7 @@ def parse(svg):
         top = y - fs/2 if central else y - fs*0.72
         bot = y + fs/2 if central else y + fs*0.2
         texts.append(dict(x0=x0, x1=x0+w, y0=top, y1=bot, s=content[:38], fs=fs))
-    for m in re.finditer(r'<line ([^>]*)/>', svg):
+    for m in re.finditer(r'<line ([^>]*?)\s*/?>', svg):
         a = dict(re.findall(r'([\w-]+)="([^"]*)"', m.group(1)))
         try:
             lines.append(dict(x1=float(a['x1']), y1=float(a['y1']), x2=float(a['x2']),
@@ -153,7 +153,7 @@ def lint_svg(svg, where):
           [min(l['y1'], l['y2']) for l in lines]
     ys1 = [r['y']+r['h'] for r in rects] + [t['y1'] for t in texts] + \
           [max(l['y1'], l['y2']) for l in lines]
-    for m in re.finditer(r'<circle ([^>]*)/>', svg):
+    for m in re.finditer(r'<circle ([^>]*?)\s*/?>', svg):
         a = dict(re.findall(r'([\w-]+)="([^"]*)"', m.group(1)))
         if 'cy' in a:
             ys0.append(float(a['cy'])-float(a.get('r', 0)))

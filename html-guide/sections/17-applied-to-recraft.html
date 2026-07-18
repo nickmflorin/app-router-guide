@@ -1,715 +1,548 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Applied to recraft - App Router Guide</title>
-    <link rel="stylesheet" href="../assets/style.css" />
-    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml">
   </head>
   <body>
     <div class="shell">
       <nav class="sidebar" id="sidebar"></nav>
       <main class="content">
         <div class="content-inner">
-          <div class="kicker">Chapter 17 · Part D: Applied</div>
-          <h1>Applied to recraft</h1>
-          <p class="lede">
-            Everything before this chapter was the model. This chapter is the mirror: a July 2026
-            audit of all six Next.js UIs in the recraft monorepo, what it found, and where in this
-            guide each fix lives.
-          </p>
+          
+<div class="kicker">Chapter 17 · Part D: Applied</div>
+<h1>Applied to recraft</h1>
+<p class="lede">
+  Everything before this chapter was the model. This chapter is the mirror: a July 2026
+  audit of all six Next.js UIs in the recraft monorepo, what it found, and where in this
+  guide each fix lives.
+</p>
 
-          <h2 id="why">17.1 Why we audited our own code</h2>
-          <p>
-            The audit exists to answer one question: how far does our actual usage of the App Router
-            diverge from the model this guide describes? Before asking the team to adopt
-            server-first patterns, we needed a specific, cited picture of where we stand today, so
-            that the guide's recommendations map to real code rather than hypotheticals, and so the
-            fixes can be prioritized by impact instead of by vibes. Every finding below points at
-            concrete files; every fix points back at the chapter that covers the pattern.
-          </p>
+<h2 id="why">17.1 Why we audited our own code</h2>
+<p>
+  The audit exists to answer one question: how far does our actual usage of the App Router
+  diverge from the model this guide describes? Before asking the team to adopt
+  server-first patterns, we needed a specific, cited picture of where we stand today, so
+  that the guide's recommendations map to real code rather than hypotheticals, and so the
+  fixes can be prioritized by impact instead of by vibes. Every finding below points at
+  concrete files; every fix points back at the chapter that covers the pattern.
+</p>
 
-          <div class="callout callout-voice">
-            <div class="callout-title">Read this in the spirit it's written</div>
-            <p>
-              This chapter is deliberately not bashful, and it is just as deliberately not a
-              critique of anyone's work. Every pattern it documents was the industry-default way
-              React was written for a decade, and all of it "works" today: pages render, demos pass,
-              sprints close. The reason to write it down anyway is that these problems do not stay
-              the same size. Every new page copies the patterns of the page before it, and every
-              hook built around a client-side fetch becomes a dependency of the next feature. The
-              gaps below will compound and get worse the longer they go unaddressed, and the cost of
-              fixing them is the cheapest it will ever be right now. The focus is on the gaps
-              because the gaps are the work.
-            </p>
-          </div>
+<div class="callout callout-voice">
+  <div class="callout-title">Read this in the spirit it&#39;s written</div>
+  
+  <p>
+    This chapter is deliberately not bashful, and it is just as deliberately not a
+    critique of anyone's work. Every pattern it documents was the industry-default way
+    React was written for a decade, and all of it "works" today: pages render, demos pass,
+    sprints close. The reason to write it down anyway is that these problems do not stay
+    the same size. Every new page copies the patterns of the page before it, and every
+    hook built around a client-side fetch becomes a dependency of the next feature. The
+    gaps below will compound and get worse the longer they go unaddressed, and the cost of
+    fixing them is the cheapest it will ever be right now. The focus is on the gaps
+    because the gaps are the work.
+  </p>
 
-          <h2 id="verdict">17.2 The verdict</h2>
-          <p>
-            <strong>Our apps are SPAs wearing an App Router costume.</strong> The Next server is
-            used almost exclusively to serve an empty shell and proxy API calls; nearly all data
-            fetching, authorization, and loading-state management happens client-side, after
-            hydration. In the vocabulary of <a href="02-goals.html">§2</a>: almost nothing is
-            treated as knowable at first render, so nearly everything a page shows is delivered as
-            the unknown, with all the machinery (spinners, effects, hand-rolled loading flags) that
-            <a href="03-mental-model.html">§3</a> describes as the old model's tax.
-          </p>
+</div>
 
-          <figure class="diagram">
-            <svg
-              viewBox="0 0 720 430"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
-            >
-              <defs>
-                <marker
-                  id="a16am"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path
-                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-                    fill="none"
-                    stroke="#b45309"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </marker>
-                <marker
-                  id="a16bl"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path
-                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-                    fill="none"
-                    stroke="#0070f3"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </marker>
-              </defs>
+<h2 id="verdict">17.2 The verdict</h2>
+<p>
+  <strong>Our apps are SPAs wearing an App Router costume.</strong> The Next server is
+  used almost exclusively to serve an empty shell and proxy API calls; nearly all data
+  fetching, authorization, and loading-state management happens client-side, after
+  hydration. In the vocabulary of <a href="02-goals.html">§2</a>: almost nothing is
+  treated as knowable at first render, so nearly everything a page shows is delivered as
+  the unknown, with all the machinery (spinners, effects, hand-rolled loading flags) that
+  <a href="03-mental-model.html">§3</a> describes as the old model's tax.
+</p>
 
-              <text
-                x="180"
-                y="12"
-                font-size="12"
-                fill="#8a5a00"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                Today: the browser assembles the page
-              </text>
-              <text
-                x="540"
-                y="12"
-                font-size="12"
-                fill="#0757ba"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                The model: the server sends the page
-              </text>
-              <line x1="360" y1="2" x2="360" y2="426" stroke="#e0e0e0" />
+<figure class="diagram">
+  
+  <svg viewBox="0 0 720 430" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+    <defs>
+      <marker id="a16am" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 2.5 1.5 L 8 5 L 2.5 8.5" fill="none" stroke="#b45309" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      </marker>
+      <marker id="a16bl" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 2.5 1.5 L 8 5 L 2.5 8.5" fill="none" stroke="#0070f3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      </marker>
+    </defs>
 
-              <!-- LEFT: current architecture -->
-              <rect x="60" y="28" width="240" height="44" rx="8" fill="#ffffff" stroke="#c9c9c9" />
-              <text x="180" y="46" font-size="11" fill="#171717" text-anchor="middle">
-                Browser requests /programs/42
-              </text>
-              <text x="180" y="61" font-size="9.5" fill="#737373" text-anchor="middle">
-                the user is waiting from here
-              </text>
+    <text x="180" y="12" font-size="12" fill="#8a5a00" text-anchor="middle" font-weight="500">
+      Today: the browser assembles the page
+    </text>
+    <text x="540" y="12" font-size="12" fill="#0757ba" text-anchor="middle" font-weight="500">
+      The model: the server sends the page
+    </text>
+    <line x1="360" y1="2" x2="360" y2="426" stroke="#e0e0e0"></line>
 
-              <line
-                x1="180"
-                y1="72"
-                x2="180"
-                y2="106"
-                stroke="#b45309"
-                stroke-width="1.5"
-                marker-end="url(#a16am)"
-              />
-              <text x="192" y="92" font-size="9.5" fill="#737373">round trip 1</text>
+    <!-- LEFT: current architecture -->
+    <rect x="60" y="28" width="240" height="44" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <text x="180" y="46" font-size="11" fill="#171717" text-anchor="middle">
+      Browser requests /programs/42
+    </text>
+    <text x="180" y="61" font-size="9.5" fill="#737373" text-anchor="middle">
+      the user is waiting from here
+    </text>
 
-              <rect x="60" y="110" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309" />
-              <text x="180" y="128" font-size="11" fill="#8a5a00" text-anchor="middle">
-                Server returns an empty shell
-              </text>
-              <text x="180" y="143" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
-                no content in the HTML, just a bundle
-              </text>
+    <line x1="180" y1="72" x2="180" y2="106" stroke="#b45309" stroke-width="1.5" marker-end="url(#a16am)"></line>
+    <text x="192" y="92" font-size="9.5" fill="#737373">round trip 1</text>
 
-              <line
-                x1="180"
-                y1="154"
-                x2="180"
-                y2="188"
-                stroke="#b45309"
-                stroke-width="1.5"
-                marker-end="url(#a16am)"
-              />
-              <text x="192" y="174" font-size="9.5" fill="#737373">bundle + hydration</text>
+    <rect x="60" y="110" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309"></rect>
+    <text x="180" y="128" font-size="11" fill="#8a5a00" text-anchor="middle">
+      Server returns an empty shell
+    </text>
+    <text x="180" y="143" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
+      no content in the HTML, just a bundle
+    </text>
 
-              <rect x="60" y="192" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309" />
-              <text x="180" y="210" font-size="11" fill="#8a5a00" text-anchor="middle">
-                Bundle downloads, React hydrates
-              </text>
-              <text x="180" y="225" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
-                effects fire only after mount
-              </text>
+    <line x1="180" y1="154" x2="180" y2="188" stroke="#b45309" stroke-width="1.5" marker-end="url(#a16am)"></line>
+    <text x="192" y="174" font-size="9.5" fill="#737373">bundle + hydration</text>
 
-              <line
-                x1="180"
-                y1="236"
-                x2="180"
-                y2="270"
-                stroke="#b45309"
-                stroke-width="1.5"
-                marker-end="url(#a16am)"
-              />
-              <text x="192" y="256" font-size="9.5" fill="#737373">effects fire</text>
+    <rect x="60" y="192" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309"></rect>
+    <text x="180" y="210" font-size="11" fill="#8a5a00" text-anchor="middle">
+      Bundle downloads, React hydrates
+    </text>
+    <text x="180" y="225" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
+      effects fire only after mount
+    </text>
 
-              <rect x="60" y="274" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309" />
-              <text x="180" y="292" font-size="11" fill="#8a5a00" text-anchor="middle">
-                fetch("/api/proxy/programs/42")
-              </text>
-              <text x="180" y="307" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
-                route handler adds a hop upstream
-              </text>
+    <line x1="180" y1="236" x2="180" y2="270" stroke="#b45309" stroke-width="1.5" marker-end="url(#a16am)"></line>
+    <text x="192" y="256" font-size="9.5" fill="#737373">effects fire</text>
 
-              <line
-                x1="180"
-                y1="318"
-                x2="180"
-                y2="352"
-                stroke="#b45309"
-                stroke-width="1.5"
-                marker-end="url(#a16am)"
-              />
-              <text x="192" y="338" font-size="9.5" fill="#737373">
-                round trips 2 + 3 (proxy hop)
-              </text>
+    <rect x="60" y="274" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309"></rect>
+    <text x="180" y="292" font-size="11" fill="#8a5a00" text-anchor="middle">
+      fetch("/api/proxy/programs/42")
+    </text>
+    <text x="180" y="307" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
+      route handler adds a hop upstream
+    </text>
 
-              <rect x="60" y="356" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309" />
-              <text x="180" y="374" font-size="11" fill="#8a5a00" text-anchor="middle">
-                Data arrives, content renders
-              </text>
-              <text x="180" y="389" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
-                skeletons and spinners until now
-              </text>
+    <line x1="180" y1="318" x2="180" y2="352" stroke="#b45309" stroke-width="1.5" marker-end="url(#a16am)"></line>
+    <text x="192" y="338" font-size="9.5" fill="#737373">
+      round trips 2 + 3 (proxy hop)
+    </text>
 
-              <text
-                x="180"
-                y="424"
-                font-size="11"
-                fill="#d93025"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                First content: after 3 round trips + hydration
-              </text>
+    <rect x="60" y="356" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309"></rect>
+    <text x="180" y="374" font-size="11" fill="#8a5a00" text-anchor="middle">
+      Data arrives, content renders
+    </text>
+    <text x="180" y="389" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
+      skeletons and spinners until now
+    </text>
 
-              <!-- RIGHT: the server-first model -->
-              <rect x="420" y="28" width="240" height="44" rx="8" fill="#ffffff" stroke="#c9c9c9" />
-              <text x="540" y="46" font-size="11" fill="#171717" text-anchor="middle">
-                Browser requests /programs/42
-              </text>
-              <text x="540" y="61" font-size="9.5" fill="#737373" text-anchor="middle">
-                the user is waiting from here
-              </text>
+    <text x="180" y="424" font-size="11" fill="#d93025" text-anchor="middle" font-weight="500">
+      First content: after 3 round trips + hydration
+    </text>
 
-              <line
-                x1="540"
-                y1="72"
-                x2="540"
-                y2="188"
-                stroke="#0070f3"
-                stroke-width="1.5"
-                marker-end="url(#a16bl)"
-              />
-              <text x="552" y="134" font-size="9.5" fill="#737373">one round trip, one hop</text>
+    <!-- RIGHT: the server-first model -->
+    <rect x="420" y="28" width="240" height="44" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <text x="540" y="46" font-size="11" fill="#171717" text-anchor="middle">
+      Browser requests /programs/42
+    </text>
+    <text x="540" y="61" font-size="9.5" fill="#737373" text-anchor="middle">
+      the user is waiting from here
+    </text>
 
-              <rect
-                x="420"
-                y="192"
-                width="240"
-                height="44"
-                rx="8"
-                fill="#eaf3fe"
-                stroke="#0070f3"
-              />
-              <text x="540" y="210" font-size="11" fill="#0757ba" text-anchor="middle">
-                Async server component runs
-              </text>
-              <text x="540" y="225" font-size="9.5" fill="#527dad" text-anchor="middle">
-                calls the upstream API directly
-              </text>
+    <line x1="540" y1="72" x2="540" y2="188" stroke="#0070f3" stroke-width="1.5" marker-end="url(#a16bl)"></line>
+    <text x="552" y="134" font-size="9.5" fill="#737373">one round trip, one hop</text>
 
-              <line
-                x1="540"
-                y1="236"
-                x2="540"
-                y2="352"
-                stroke="#0070f3"
-                stroke-width="1.5"
-                marker-end="url(#a16bl)"
-              />
-              <text x="552" y="298" font-size="9.5" fill="#737373">streamed as it resolves</text>
+    <rect x="420" y="192" width="240" height="44" rx="8" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="540" y="210" font-size="11" fill="#0757ba" text-anchor="middle">
+      Async server component runs
+    </text>
+    <text x="540" y="225" font-size="9.5" fill="#527dad" text-anchor="middle">
+      calls the upstream API directly
+    </text>
 
-              <rect
-                x="420"
-                y="356"
-                width="240"
-                height="44"
-                rx="8"
-                fill="#e7f5ee"
-                stroke="#0f7b48"
-              />
-              <text x="540" y="374" font-size="11" fill="#0f7b48" text-anchor="middle">
-                HTML streams, content included
-              </text>
-              <text x="540" y="389" font-size="9.5" fill="#3e7d5c" text-anchor="middle">
-                client JS only for interactive leaves
-              </text>
+    <line x1="540" y1="236" x2="540" y2="352" stroke="#0070f3" stroke-width="1.5" marker-end="url(#a16bl)"></line>
+    <text x="552" y="298" font-size="9.5" fill="#737373">streamed as it resolves</text>
 
-              <text
-                x="540"
-                y="424"
-                font-size="11"
-                fill="#0f7b48"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                First content: in the first response
-              </text>
-            </svg>
-            <figcaption>
-              The representative trace from the audit
-              (<code>ojl-ui/src/app/(participant)/my/home/page.tsx</code>): a 5-line server shell
-              hands off to a <code>"use client"</code> page whose children fetch through the proxy
-              after hydration. The same request, made by an async server component (<a
-                href="04-ssr.html"
-                >§4</a
-              >), is one hop and arrives as HTML.
-            </figcaption>
-          </figure>
+    <rect x="420" y="356" width="240" height="44" rx="8" fill="#e7f5ee" stroke="#0f7b48"></rect>
+    <text x="540" y="374" font-size="11" fill="#0f7b48" text-anchor="middle">
+      HTML streams, content included
+    </text>
+    <text x="540" y="389" font-size="9.5" fill="#3e7d5c" text-anchor="middle">
+      client JS only for interactive leaves
+    </text>
 
-          <p>
-            Importantly, none of this is imposed by our infrastructure. The proxy's cookie-to-Bearer
-            logic works identically inside a server component, and one app in the repo already reads
-            the profile API directly from an async server page with the same auth setup. The
-            client-fetch architecture is <strong>a choice, not a constraint</strong>, which is
-            exactly why it is fixable.
-          </p>
+    <text x="540" y="424" font-size="11" fill="#0f7b48" text-anchor="middle" font-weight="500">
+      First content: in the first response
+    </text>
+  </svg>
+  
 
-          <h2 id="numbers">17.3 The numbers</h2>
-          <p>
-            Counted across the monorepo on 2026-07-08, all six apps, Next.js 16. The
-            <code>"use client"</code> column reads "directive files / total source files".
-          </p>
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th>App</th>
-                <th>Pages</th>
-                <th>Client pages</th>
-                <th>Async server pages</th>
-                <th>"use client" files</th>
-                <th>useEffect</th>
-                <th>loading.tsx</th>
-                <th>error.tsx</th>
-                <th>Suspense</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>ojl-ui</strong></td>
-                <td>32</td>
-                <td>8</td>
-                <td>1*</td>
-                <td>454 / 760</td>
-                <td>141</td>
-                <td>8</td>
-                <td>8</td>
-                <td>5</td>
-              </tr>
-              <tr>
-                <td><strong>craft-profile-ui</strong></td>
-                <td>11</td>
-                <td>9</td>
-                <td>0</td>
-                <td>55 / 74</td>
-                <td>49</td>
-                <td>0</td>
-                <td>0</td>
-                <td>6</td>
-              </tr>
-              <tr>
-                <td><strong>forms-ui</strong></td>
-                <td>8</td>
-                <td>5</td>
-                <td>1</td>
-                <td>19 / 29</td>
-                <td>12</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td><strong>iam-ui</strong></td>
-                <td>7</td>
-                <td>6</td>
-                <td>0</td>
-                <td>9 / 14</td>
-                <td>6</td>
-                <td>0</td>
-                <td>0</td>
-                <td>4</td>
-              </tr>
-              <tr>
-                <td><strong>portal-ui</strong></td>
-                <td>1</td>
-                <td>0</td>
-                <td>1</td>
-                <td>8 / 19</td>
-                <td>3</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td><strong>compliance-ui</strong></td>
-                <td>1</td>
-                <td>0</td>
-                <td>0</td>
-                <td>2 / 4</td>
-                <td>2</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-            </tbody>
-          </table>
-          <p>
-            * The one async page in ojl-ui only awaits <code>params</code>, then hands off to an
-            862-line client component.
-          </p>
 
-          <div class="callout callout-warn">
-            <div class="callout-title">The zeroes are the headline</div>
-            <p>
-              Across the entire repo: <strong>zero server actions</strong> (<code>"use server"</code
-              >), <strong>zero caching primitives</strong> (<code>"use cache"</code>,
-              <code>revalidate</code>, <code>React.cache()</code>), and <strong>zero SWR</strong>.
-              Every <code>&lt;Suspense&gt;</code> that exists is there to silence the
-              <code>useSearchParams</code> build error (<a
-                href="05-client-server-boundaries.html#searchparams-boundary"
-                >§5.6</a
-              >), not to stream. Roughly 60% of all source files carry <code>"use client"</code>.
-              The server side of this stack, Part A and Part B of this guide in their entirety, is
-              essentially unused.
-            </p>
-          </div>
+  <figcaption>
+    
+The representative trace from the audit
+    (<code>ojl-ui/src/app/(participant)/my/home/page.tsx</code>): a 5-line server shell
+    hands off to a <code>"use client"</code> page whose children fetch through the proxy
+    after hydration. The same request, made by an async server component (<a href="04-ssr.html">§4</a>), is one hop and arrives as HTML.
 
-          <h2 id="findings">17.4 The findings</h2>
-          <p>
-            Eight findings, each with representative evidence and a pointer to the chapter that
-            covers the correct pattern. File paths and counts are from the full audit; this is the
-            condensed version.
-          </p>
+  </figcaption>
+</figure>
 
-          <h3 id="finding-1">
-            Finding 1: All data fetching is client-side, through a self-hosted proxy
-          </h3>
-          <p>
-            ojl-ui has <strong>73 route handlers</strong> under <code>src/app/api/</code>, all
-            pass-through proxies that forward to the upstream API, converting the auth cookie to a
-            Bearer header. Every service call in the app points at <code>/api/proxy</code>, so every
-            read travels browser to Next server to upstream API: an extra network hop per request,
-            and the server never uses any of that data to render. craft-profile-ui is the same
-            pattern hand-rolled: 13 hooks, each duplicating <code>useState</code> +
-            <code>useEffect</code> + manual
-            <code>isLoading</code>/<code>error</code>/<code>refetch</code>, with no dedupe layer, so
-            remounting any page refetches everything.
-          </p>
-          <p>
-            <strong>Where the fix lives:</strong> page-level reads become async server components
-            calling the upstream API directly (<a href="04-ssr.html">§4</a>), backed by a
-            <code>cache()</code>-wrapped server data layer (<a href="13-dedupe-caching.html#server"
-              >§13.2</a
-            >).
-          </p>
+<p>
+  Importantly, none of this is imposed by our infrastructure. The proxy's cookie-to-Bearer
+  logic works identically inside a server component, and one app in the repo already reads
+  the profile API directly from an async server page with the same auth setup. The
+  client-fetch architecture is <strong>a choice, not a constraint</strong>, which is
+  exactly why it is fixable.
+</p>
 
-          <h3 id="finding-2">Finding 2: "use client" poisons whole subtrees instead of leaves</h3>
-          <p>
-            The directive sits at page and layout level, usually just to call
-            <code>useParams</code>/<code>useSearchParams</code>/<code>useRouter</code>: values a
-            server page receives as props (<a href="08-server-resolvable-state.html#url-state"
-              >§8.2</a
-            >). The worst cases are <strong>client layouts</strong> on the participant and
-            onboarding segments, which force everything below them client-side; one fetches
-            <code>/users/me</code> after hydration just to render a first name the server already
-            has via the auth cookie. Read-mostly views of 600 to 860 lines ship as client JS end to
-            end, when only their filter strips and buttons need interactivity.
-          </p>
-          <p>
-            <strong>Where the fix lives:</strong> pages and layouts stay server, interactivity is
-            isolated into leaf client components (<a href="05-client-server-boundaries.html">§5</a
-            >), and treating every <code>"use client"</code> as a cost to justify is the habit that
-            keeps it that way (<a href="01-introduction.html#stakes">§1</a>).
-          </p>
+<h2 id="numbers">17.3 The numbers</h2>
+<p>
+  Counted across the monorepo on 2026-07-08, all six apps, Next.js 16. The
+  <code>"use client"</code> column reads "directive files / total source files".
+</p>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th>App</th>
+      <th>Pages</th>
+      <th>Client pages</th>
+      <th>Async server pages</th>
+      <th>"use client" files</th>
+      <th>useEffect</th>
+      <th>loading.tsx</th>
+      <th>error.tsx</th>
+      <th>Suspense</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>ojl-ui</strong></td>
+      <td>32</td>
+      <td>8</td>
+      <td>1*</td>
+      <td>454 / 760</td>
+      <td>141</td>
+      <td>8</td>
+      <td>8</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td><strong>craft-profile-ui</strong></td>
+      <td>11</td>
+      <td>9</td>
+      <td>0</td>
+      <td>55 / 74</td>
+      <td>49</td>
+      <td>0</td>
+      <td>0</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td><strong>forms-ui</strong></td>
+      <td>8</td>
+      <td>5</td>
+      <td>1</td>
+      <td>19 / 29</td>
+      <td>12</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td><strong>iam-ui</strong></td>
+      <td>7</td>
+      <td>6</td>
+      <td>0</td>
+      <td>9 / 14</td>
+      <td>6</td>
+      <td>0</td>
+      <td>0</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td><strong>portal-ui</strong></td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>8 / 19</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td><strong>compliance-ui</strong></td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2 / 4</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>
+  * The one async page in ojl-ui only awaits <code>params</code>, then hands off to an
+  862-line client component.
+</p>
 
-          <h3 id="finding-3">
-            Finding 3: useEffect used for fetching, mutations, and prop-syncing
-          </h3>
-          <p>
-            The audit found fetch-in-effect with hand-rolled state
-            <em>next to an installed React Query</em>; a hand-written React Query (a
-            <code>useState</code>+<code>useEffect</code> fetch with a module-level in-flight-promise
-            dedup hack); a <strong>mutation fired from an effect</strong> (verify-email POST, with a
-            <code>useRef</code> guard against StrictMode double-invoke, for a token that should be
-            verified server-side and rendered as plain HTML); and prop-to-state sync effects across
-            sibling dialogs, one carrying an eslint-disable to permit it. The reset-key pattern
-            appears in exactly one file: the team knows the right tool and applies it
-            inconsistently.
-          </p>
-          <p>
-            <strong>Where the fix lives:</strong> initial data moves to server components (<a
-              href="04-ssr.html"
-              >§4</a
-            >), client-side needs go through one shared data layer (<a
-              href="13-dedupe-caching.html#client"
-              >§13.3</a
-            >), mutations become server actions (<a
-              href="05-client-server-boundaries.html#self-contained"
-              >§5.7</a
-            >), and React's own
-            <a
-              href="https://react.dev/learn/you-might-not-need-an-effect"
-              target="_blank"
-              rel="noopener"
-              >You Might Not Need an Effect</a
-            >
-            is the canon for everything else.
-          </p>
+<div class="callout callout-warn">
+  <div class="callout-title">The zeroes are the headline</div>
+  
+  <p>
+    Across the entire repo: <strong>zero server actions</strong> (<code>"use server"</code>), <strong>zero caching primitives</strong> (<code>"use cache"</code>,
+    <code>revalidate</code>, <code>React.cache()</code>), and <strong>zero SWR</strong>.
+    Every <code>&lt;Suspense&gt;</code> that exists is there to silence the
+    <code>useSearchParams</code> build error (<a href="05-client-server-boundaries.html#searchparams-boundary">§5.6</a>), not to stream. Roughly 60% of all source files carry <code>"use client"</code>.
+    The server side of this stack, Part A and Part B of this guide in their entirety, is
+    essentially unused.
+  </p>
 
-          <h3 id="finding-4">Finding 4: Authorization decided in the browser</h3>
-          <p>
-            An admin subtree is gated by a client component that fetches
-            <code>/users/me/status</code> in an effect and toggles state, showing a spinner while
-            deciding, per mount, with a round trip. ojl-ui has no <code>middleware.ts</code>; auth
-            lives in the proxy handlers, so unauthenticated users get a full page render before any
-            401. Authorization is server-resolvable state in the purest sense: the request carries
-            the cookie, so the server can decide before anything renders.
-          </p>
-          <p>
-            <strong>Where the fix lives:</strong> server layout checks with
-            <code>redirect()</code>/<code>notFound()</code> plus middleware for coarse auth (<a
-              href="08-server-resolvable-state.html#cookies"
-              >§8.4</a
-            >); one layout in the repo already does the cookie-presence version of this correctly.
-          </p>
+</div>
 
-          <h3 id="finding-5">
-            Finding 5: No streaming, no route-level loading or error boundaries
-          </h3>
-          <p>
-            24 of 32 ojl-ui routes, including all 15 participant and reviewer pages (the
-            highest-traffic surfaces), have <strong>no loading.tsx or error.tsx</strong>. The other
-            four apps have zero, total. Every loading state is a hand-rolled
-            <code>isLoading</code> conditional; every error path falls through to
-            <code>global-error.tsx</code> or a blank crash. No <code>&lt;Suspense&gt;</code> streams
-            server data anywhere; one page even renders <code>&lt;Suspense&gt;</code> with no
-            fallback.
-          </p>
-          <p>
-            <strong>Where the fix lives:</strong> containers reserve the space (<a
-              href="09-containers-content-shifting.html"
-              >§9</a
-            >), Suspense boundaries and route-level <code>loading</code>/<code>error</code> files
-            own every loading state (<a href="10-suspense-streaming.html">§10</a>).
-          </p>
+<h2 id="findings">17.4 The findings</h2>
+<p>
+  Eight findings, each with representative evidence and a pointer to the chapter that
+  covers the correct pattern. File paths and counts are from the full audit; this is the
+  condensed version.
+</p>
 
-          <h3 id="finding-6">Finding 6: Structural waterfalls</h3>
-          <p>
-            Dependency chains are serialized on the client: fetch the profile, read an organization
-            id out of it, then enable the dashboard query. There are
-            <strong>53 <code>enabled:</code>-gated dependent queries</strong> in ojl-ui, each one a
-            client round-trip that a server component would resolve in a single pass with
-            <code>Promise.all</code>. A <code>consistencyToken</code> search-param hack exists to
-            get read-your-writes after create: a problem <code>revalidatePath</code> plus server
-            actions solve natively.
-          </p>
-          <p>
-            <strong>Where the fix lives:</strong> parallel fetching and minimized fetch dependencies
-            (<a href="11-blocking-requests.html#parallel">§11.2</a>); invalidate-don't-orchestrate
-            for the post-mutation refresh (<a href="13-dedupe-caching.html#server">§13.2</a>).
-          </p>
+<h3 id="finding-1">
+  Finding 1: All data fetching is client-side, through a self-hosted proxy
+</h3>
+<p>
+  ojl-ui has <strong>73 route handlers</strong> under <code>src/app/api/</code>, all
+  pass-through proxies that forward to the upstream API, converting the auth cookie to a
+  Bearer header. Every service call in the app points at <code>/api/proxy</code>, so every
+  read travels browser to Next server to upstream API: an extra network hop per request,
+  and the server never uses any of that data to render. craft-profile-ui is the same
+  pattern hand-rolled: 13 hooks, each duplicating <code>useState</code> +
+  <code>useEffect</code> + manual
+  <code>isLoading</code>/<code>error</code>/<code>refetch</code>, with no dedupe layer, so
+  remounting any page refetches everything.
+</p>
+<p>
+  <strong>Where the fix lives:</strong> page-level reads become async server components
+  calling the upstream API directly (<a href="04-ssr.html">§4</a>), backed by a
+  <code>cache()</code>-wrapped server data layer (<a href="13-dedupe-caching.html#server">§13.2</a>).
+</p>
 
-          <h3 id="finding-7">Finding 7: Caching opted out globally, then never replaced</h3>
-          <p>
-            Two apps set <code>export const dynamic = "force-dynamic"</code> on the
-            <strong>root layout</strong> (to read boot-time env), and every fetch is
-            <code>no-store</code>. That opts the apps out of static rendering, partial prerendering,
-            and the data cache, while the server also fetches nothing. The only cache anywhere is
-            React Query's in-memory 60-second <code>staleTime</code>, which evaporates on every full
-            page load.
-          </p>
-          <p>
-            <strong>Where the fix lives:</strong> scope <code>force-dynamic</code> to what needs it
-            and restore the layers deliberately: <code>cache()</code> per request,
-            <code>"use cache"</code> across requests (<a href="13-dedupe-caching.html">§13</a>).
-          </p>
+<h3 id="finding-2">Finding 2: "use client" poisons whole subtrees instead of leaves</h3>
+<p>
+  The directive sits at page and layout level, usually just to call
+  <code>useParams</code>/<code>useSearchParams</code>/<code>useRouter</code>: values a
+  server page receives as props (<a href="08-server-resolvable-state.html#url-state">§8.2</a>). The worst cases are <strong>client layouts</strong> on the participant and
+  onboarding segments, which force everything below them client-side; one fetches
+  <code>/users/me</code> after hydration just to render a first name the server already
+  has via the auth cookie. Read-mostly views of 600 to 860 lines ship as client JS end to
+  end, when only their filter strips and buttons need interactivity.
+</p>
+<p>
+  <strong>Where the fix lives:</strong> pages and layouts stay server, interactivity is
+  isolated into leaf client components (<a href="05-client-server-boundaries.html">§5</a>), and treating every <code>"use client"</code> as a cost to justify is the habit that
+  keeps it that way (<a href="01-introduction.html#stakes">§1</a>).
+</p>
 
-          <h3 id="finding-8">Finding 8: App Router features missing entirely</h3>
-          <p>
-            No parallel routes, no intercepting routes, anywhere, despite many drawer and sheet
-            flows that are pure client state and not URL-addressable (<a
-              href="08-server-resolvable-state.html#tabs"
-              >§8.3</a
-            >). No server actions despite dozens of form mutations. No
-            <code>not-found.tsx</code> outside the roots. These are not exotic extras; they are the
-            primitives Part B and <a href="18-new-primitives.html">§18</a> are about, and their
-            absence is why the apps re-implement what the framework provides.
-          </p>
-          <p>
-            <strong>Where the fix lives:</strong> parallel routes and <code>default.tsx</code> (<a
-              href="11-blocking-requests.html#parallel-routes"
-              >§11.3</a
-            >), server actions (<a href="05-client-server-boundaries.html#self-contained">§5.7</a>,
-            <a href="18-new-primitives.html">§18</a>).
-          </p>
+<h3 id="finding-3">
+  Finding 3: useEffect used for fetching, mutations, and prop-syncing
+</h3>
+<p>
+  The audit found fetch-in-effect with hand-rolled state
+  <em>next to an installed React Query</em>; a hand-written React Query (a
+  <code>useState</code>+<code>useEffect</code> fetch with a module-level in-flight-promise
+  dedup hack); a <strong>mutation fired from an effect</strong> (verify-email POST, with a
+  <code>useRef</code> guard against StrictMode double-invoke, for a token that should be
+  verified server-side and rendered as plain HTML); and prop-to-state sync effects across
+  sibling dialogs, one carrying an eslint-disable to permit it. The reset-key pattern
+  appears in exactly one file: the team knows the right tool and applies it
+  inconsistently.
+</p>
+<p>
+  <strong>Where the fix lives:</strong> initial data moves to server components (<a href="04-ssr.html">§4</a>), client-side needs go through one shared data layer (<a href="13-dedupe-caching.html#client">§13.3</a>), mutations become server actions (<a href="05-client-server-boundaries.html#self-contained">§5.7</a>), and React's own
+  <a href="https://react.dev/learn/you-might-not-need-an-effect" target="_blank" rel="noopener">You Might Not Need an Effect</a>
+  is the canon for everything else.
+</p>
 
-          <h2 id="path">17.5 The path out</h2>
-          <p>
-            The fixes are ordered so that each one makes the next cheaper: server reads make leaf
-            boundaries natural, leaf boundaries make streaming possible, streaming makes the
-            hand-rolled state deletable.
-          </p>
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th style="width: 4%">#</th>
-                <th>Fix</th>
-                <th style="width: 26%">Chapter</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>
-                  <strong>Convert page-level reads to async server components</strong>, starting
-                  with the program/participant detail pages, the dashboard, and the people and
-                  organizations pages. Fetch upstream APIs directly with the cookie,
-                  <code>Promise.all</code> for parallel loads.
-                </td>
-                <td><a href="04-ssr.html">§4</a>, <a href="11-blocking-requests.html">§11</a></td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>
-                  <strong>Push "use client" to the leaves.</strong> Pages and layouts server by
-                  default; params and searchParams via props, not hooks. De-clientify the
-                  participant and onboarding layouts first: they poison everything below them.
-                </td>
-                <td>
-                  <a href="05-client-server-boundaries.html">§5</a>,
-                  <a href="08-server-resolvable-state.html">§8</a>
-                </td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>
-                  <strong>Add loading.tsx and error.tsx per segment</strong> and stream with
-                  <code>&lt;Suspense&gt;</code>, then delete the hand-rolled
-                  <code>isLoading</code>/<code>error</code> state they replace.
-                </td>
-                <td>
-                  <a href="09-containers-content-shifting.html">§9</a>,
-                  <a href="10-suspense-streaming.html">§10</a>
-                </td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>
-                  <strong>Move authorization server-side:</strong> guard components become server
-                  layout <code>redirect()</code> checks, plus middleware for coarse auth.
-                </td>
-                <td><a href="08-server-resolvable-state.html#cookies">§8.4</a></td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>
-                  <strong>Kill fetch-in-useEffect.</strong> Server components for initial data; one
-                  client data paradigm (not three) for what genuinely loads client-side; the
-                  <code>key</code> prop instead of prop-sync effects; server actions plus
-                  <code>revalidatePath</code> instead of the <code>consistencyToken</code> hack.
-                </td>
-                <td>
-                  <a href="05-client-server-boundaries.html#self-contained">§5.7</a>,
-                  <a href="13-dedupe-caching.html#client">§13.3</a>
-                </td>
-              </tr>
-              <tr>
-                <td>6</td>
-                <td>
-                  <strong>Restore caching deliberately:</strong> scope <code>force-dynamic</code> to
-                  what needs it, <code>cache()</code> for per-request dedupe,
-                  <code>"use cache"</code> with tags for shared reference data.
-                </td>
-                <td><a href="13-dedupe-caching.html">§13</a></td>
-              </tr>
-            </tbody>
-          </table>
-          <p>
-            One more time, because it is the audit's most useful fact: the repo already contains an
-            async server page reading the upstream API directly with the exact same auth setup as
-            every other app. Nothing on this list requires new infrastructure. It requires the
-            mental-model shift this guide exists to make, applied one page at a time, starting with
-            the pages users feel the most.
-          </p>
+<h3 id="finding-4">Finding 4: Authorization decided in the browser</h3>
+<p>
+  An admin subtree is gated by a client component that fetches
+  <code>/users/me/status</code> in an effect and toggles state, showing a spinner while
+  deciding, per mount, with a round trip. ojl-ui has no <code>middleware.ts</code>; auth
+  lives in the proxy handlers, so unauthenticated users get a full page render before any
+  401. Authorization is server-resolvable state in the purest sense: the request carries
+  the cookie, so the server can decide before anything renders.
+</p>
+<p>
+  <strong>Where the fix lives:</strong> server layout checks with
+  <code>redirect()</code>/<code>notFound()</code> plus middleware for coarse auth (<a href="08-server-resolvable-state.html#cookies">§8.4</a>); one layout in the repo already does the cookie-presence version of this correctly.
+</p>
 
-          <div class="callout callout-info">
-            <div class="callout-title">Where to go deeper</div>
-            <p>
-              <a
-                href="https://nextjs.org/docs/app/getting-started/server-and-client-components"
-                target="_blank"
-                rel="noopener"
-                >Next.js: Server and Client Components</a
-              >
-              ·
-              <a
-                href="https://nextjs.org/docs/app/getting-started/fetching-data"
-                target="_blank"
-                rel="noopener"
-                >Next.js: Fetching Data</a
-              >
-              ·
-              <a
-                href="https://react.dev/learn/you-might-not-need-an-effect"
-                target="_blank"
-                rel="noopener"
-                >React: You Might Not Need an Effect</a
-              >
-              ·
-              <a href="https://react.dev/reference/rsc/use-client" target="_blank" rel="noopener"
-                >React: "use client"</a
-              >. Full list in <a href="19-references.html">§19</a>.
-            </p>
-          </div>
+<h3 id="finding-5">
+  Finding 5: No streaming, no route-level loading or error boundaries
+</h3>
+<p>
+  24 of 32 ojl-ui routes, including all 15 participant and reviewer pages (the
+  highest-traffic surfaces), have <strong>no loading.tsx or error.tsx</strong>. The other
+  four apps have zero, total. Every loading state is a hand-rolled
+  <code>isLoading</code> conditional; every error path falls through to
+  <code>global-error.tsx</code> or a blank crash. No <code>&lt;Suspense&gt;</code> streams
+  server data anywhere; one page even renders <code>&lt;Suspense&gt;</code> with no
+  fallback.
+</p>
+<p>
+  <strong>Where the fix lives:</strong> containers reserve the space (<a href="09-containers-content-shifting.html">§9</a>), Suspense boundaries and route-level <code>loading</code>/<code>error</code> files
+  own every loading state (<a href="10-suspense-streaming.html">§10</a>).
+</p>
+
+<h3 id="finding-6">Finding 6: Structural waterfalls</h3>
+<p>
+  Dependency chains are serialized on the client: fetch the profile, read an organization
+  id out of it, then enable the dashboard query. There are
+  <strong>53 <code>enabled:</code>-gated dependent queries</strong> in ojl-ui, each one a
+  client round-trip that a server component would resolve in a single pass with
+  <code>Promise.all</code>. A <code>consistencyToken</code> search-param hack exists to
+  get read-your-writes after create: a problem <code>revalidatePath</code> plus server
+  actions solve natively.
+</p>
+<p>
+  <strong>Where the fix lives:</strong> parallel fetching and minimized fetch dependencies
+  (<a href="11-blocking-requests.html#parallel">§11.2</a>); invalidate-don't-orchestrate
+  for the post-mutation refresh (<a href="13-dedupe-caching.html#server">§13.2</a>).
+</p>
+
+<h3 id="finding-7">Finding 7: Caching opted out globally, then never replaced</h3>
+<p>
+  Two apps set <code>export const dynamic = "force-dynamic"</code> on the
+  <strong>root layout</strong> (to read boot-time env), and every fetch is
+  <code>no-store</code>. That opts the apps out of static rendering, partial prerendering,
+  and the data cache, while the server also fetches nothing. The only cache anywhere is
+  React Query's in-memory 60-second <code>staleTime</code>, which evaporates on every full
+  page load.
+</p>
+<p>
+  <strong>Where the fix lives:</strong> scope <code>force-dynamic</code> to what needs it
+  and restore the layers deliberately: <code>cache()</code> per request,
+  <code>"use cache"</code> across requests (<a href="13-dedupe-caching.html">§13</a>).
+</p>
+
+<h3 id="finding-8">Finding 8: App Router features missing entirely</h3>
+<p>
+  No parallel routes, no intercepting routes, anywhere, despite many drawer and sheet
+  flows that are pure client state and not URL-addressable (<a href="08-server-resolvable-state.html#tabs">§8.3</a>). No server actions despite dozens of form mutations. No
+  <code>not-found.tsx</code> outside the roots. These are not exotic extras; they are the
+  primitives Part B and <a href="18-new-primitives.html">§18</a> are about, and their
+  absence is why the apps re-implement what the framework provides.
+</p>
+<p>
+  <strong>Where the fix lives:</strong> parallel routes and <code>default.tsx</code> (<a href="11-blocking-requests.html#parallel-routes">§11.3</a>), server actions (<a href="05-client-server-boundaries.html#self-contained">§5.7</a>,
+  <a href="18-new-primitives.html">§18</a>).
+</p>
+
+<h2 id="path">17.5 The path out</h2>
+<p>
+  The fixes are ordered so that each one makes the next cheaper: server reads make leaf
+  boundaries natural, leaf boundaries make streaming possible, streaming makes the
+  hand-rolled state deletable.
+</p>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th style="width: 4%">#</th>
+      <th>Fix</th>
+      <th style="width: 26%">Chapter</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>
+        <strong>Convert page-level reads to async server components</strong>, starting
+        with the program/participant detail pages, the dashboard, and the people and
+        organizations pages. Fetch upstream APIs directly with the cookie,
+        <code>Promise.all</code> for parallel loads.
+      </td>
+      <td><a href="04-ssr.html">§4</a>, <a href="11-blocking-requests.html">§11</a></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>
+        <strong>Push "use client" to the leaves.</strong> Pages and layouts server by
+        default; params and searchParams via props, not hooks. De-clientify the
+        participant and onboarding layouts first: they poison everything below them.
+      </td>
+      <td>
+        <a href="05-client-server-boundaries.html">§5</a>,
+        <a href="08-server-resolvable-state.html">§8</a>
+      </td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>
+        <strong>Add loading.tsx and error.tsx per segment</strong> and stream with
+        <code>&lt;Suspense&gt;</code>, then delete the hand-rolled
+        <code>isLoading</code>/<code>error</code> state they replace.
+      </td>
+      <td>
+        <a href="09-containers-content-shifting.html">§9</a>,
+        <a href="10-suspense-streaming.html">§10</a>
+      </td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>
+        <strong>Move authorization server-side:</strong> guard components become server
+        layout <code>redirect()</code> checks, plus middleware for coarse auth.
+      </td>
+      <td><a href="08-server-resolvable-state.html#cookies">§8.4</a></td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>
+        <strong>Kill fetch-in-useEffect.</strong> Server components for initial data; one
+        client data paradigm (not three) for what genuinely loads client-side; the
+        <code>key</code> prop instead of prop-sync effects; server actions plus
+        <code>revalidatePath</code> instead of the <code>consistencyToken</code> hack.
+      </td>
+      <td>
+        <a href="05-client-server-boundaries.html#self-contained">§5.7</a>,
+        <a href="13-dedupe-caching.html#client">§13.3</a>
+      </td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>
+        <strong>Restore caching deliberately:</strong> scope <code>force-dynamic</code> to
+        what needs it, <code>cache()</code> for per-request dedupe,
+        <code>"use cache"</code> with tags for shared reference data.
+      </td>
+      <td><a href="13-dedupe-caching.html">§13</a></td>
+    </tr>
+  </tbody>
+</table>
+<p>
+  One more time, because it is the audit's most useful fact: the repo already contains an
+  async server page reading the upstream API directly with the exact same auth setup as
+  every other app. Nothing on this list requires new infrastructure. It requires the
+  mental-model shift this guide exists to make, applied one page at a time, starting with
+  the pages users feel the most.
+</p>
+
+<div class="callout callout-info">
+  <div class="callout-title">Where to go deeper</div>
+  
+  <p>
+    <a href="https://nextjs.org/docs/app/getting-started/server-and-client-components" target="_blank" rel="noopener">Next.js: Server and Client Components</a>
+    ·
+    <a href="https://nextjs.org/docs/app/getting-started/fetching-data" target="_blank" rel="noopener">Next.js: Fetching Data</a>
+    ·
+    <a href="https://react.dev/learn/you-might-not-need-an-effect" target="_blank" rel="noopener">React: You Might Not Need an Effect</a>
+    ·
+    <a href="https://react.dev/reference/rsc/use-client" target="_blank" rel="noopener">React: "use client"</a>. Full list in <a href="19-references.html">§19</a>.
+  </p>
+
+</div>
+
 
           <div id="pager"></div>
         </div>

@@ -1,219 +1,210 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Primitives - App Router Guide</title>
-    <link rel="stylesheet" href="../assets/style.css" />
-    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml">
   </head>
   <body>
     <div class="shell">
       <nav class="sidebar" id="sidebar"></nav>
       <main class="content">
         <div class="content-inner">
-          <div class="kicker">Chapter 18 · Appendix</div>
-          <h1>New Primitives</h1>
-          <p class="lede">
-            The reference catalog behind <a href="01-introduction.html#direction">§1</a>'s direction
-            of travel: the primitives React 19 and Next.js 16 ship, what each one is for, and a
-            working example of each. Skim the map, then read the entries you need.
-          </p>
+          
+  <div class="kicker">Chapter 18 · Appendix</div>
+  <h1>New Primitives</h1>
+  <p class="lede">
+    The reference catalog behind <a href="01-introduction.html#direction">§1</a>'s direction of
+    travel: the primitives React 19 and Next.js 16 ship, what each one is for, and a working example
+    of each. Skim the map, then read the entries you need.
+  </p>
 
-          <p>
-            Before the catalog, a nudge: a lot of this is genuinely new, and a fair amount of it is
-            easy to miss. The platform ships APIs faster than most of us read the changelogs, and
-            many of them exist precisely to <strong>delete work we're still doing by hand</strong>:
-            a hook that replaces a whole <code>isLoading</code>/<code>errors</code> state pair (<a
-              href="#use-action-state"
-              >useActionState</a
-            >), a value that replaces a debounce (<a href="#use-deferred-value">useDeferredValue</a
-            >), a component that replaces a mount/unmount dance (<a href="#activity">Activity</a>),
-            a compiler that replaces a wall of <code>useMemo</code> (<a href="#compiler"
-              >the React Compiler</a
-            >). Half the reason this appendix exists is discovery: to put the current server-first
-            toolkit in one place, so the next time you're about to reach for a manual workaround,
-            you can check here first and find that the framework already ships the thing. If an
-            entry below is new to you, that is exactly the point; skim the map for the names you
-            don't recognize.
-          </p>
+  <p>
+    Before the catalog, a nudge: a lot of this is genuinely new, and a fair amount of it is easy to
+    miss. The platform ships APIs faster than most of us read the changelogs, and many of them exist
+    precisely to <strong>delete work we're still doing by hand</strong>: a hook that replaces a
+    whole <code>isLoading</code>/<code>errors</code> state pair (<a href="#use-action-state">useActionState</a>), a value that replaces a debounce (<a href="#use-deferred-value">useDeferredValue</a>), a
+    component that replaces a mount/unmount dance (<a href="#activity">Activity</a>), a compiler
+    that replaces a wall of <code>useMemo</code> (<a href="#compiler">the React Compiler</a>). Half
+    the reason this appendix exists is discovery: to put the current server-first toolkit in one
+    place, so the next time you're about to reach for a manual workaround, you can check here first
+    and find that the framework already ships the thing. If an entry below is new to you, that is
+    exactly the point; skim the map for the names you don't recognize.
+  </p>
 
-          <p>
-            Two things to notice as you read. First,
-            <strong>almost every primitive here assumes the server-first architecture</strong> the
-            rest of this guide describes: actions assume mutations live on the server,
-            <code>use()</code> assumes promises are created on the server and read under Suspense,
-            the caching primitives assume the server renders something worth caching. They are the
-            payoff of the model, not add-ons to it. Second, these are <em>primitives</em>, not
-            goals: the chapters own the patterns, and this appendix owns the API surface. Where a
-            primitive already has a home in a chapter, the entry links there instead of repeating
-            the doctrine.
-          </p>
+  <p>
+    Two things to notice as you read. First,
+    <strong>almost every primitive here assumes the server-first architecture</strong> the rest of this
+    guide describes: actions assume mutations live on the server,
+    <code>use()</code> assumes promises are created on the server and read under Suspense, the caching
+    primitives assume the server renders something worth caching. They are the payoff of the model, not
+    add-ons to it. Second, these are <em>primitives</em>, not goals: the chapters own the patterns,
+    and this appendix owns the API surface. Where a primitive already has a home in a chapter, the
+    entry links there instead of repeating the doctrine.
+  </p>
 
-          <h2 id="map">18.1 The map</h2>
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th>Primitive</th>
-                <th>Ships in</th>
-                <th>What it does</th>
-                <th>Reach for it when</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><a href="#use-server">Server Functions</a></td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Mutations callable from the client</strong>, no API route.</td>
-                <td>Any create/update/delete triggered by UI.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#form"><code>&lt;Form&gt;</code></a>
-                </td>
-                <td><span class="chip chip-next">Next.js</span></td>
-                <td><strong>Forms that navigate or mutate</strong> with prefetching.</td>
-                <td>Search inputs writing the URL; action-backed forms.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#use-action-state"><code>useActionState</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Form state from an action's result</strong>, plus pending.</td>
-                <td>Validation errors and results rendered from a mutation.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#use-form-status"><code>useFormStatus</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Pending state of the nearest form</strong>, from any child.</td>
-                <td>Submit buttons that disable themselves.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#use-optimistic"><code>useOptimistic</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td>
-                  <strong>Paints the expected result immediately</strong>, reverts on failure.
-                </td>
-                <td>Likes, toggles, counts: cheap, likely-to-succeed writes.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#use"><code>use()</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Reads a promise under Suspense</strong> in a client component.</td>
-                <td>Server-created promises handed across the boundary.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#use-transition"><code>useTransition</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Non-blocking updates with a pending flag</strong>.</td>
-                <td>Self-contained mutation buttons; router-state writes.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#use-deferred-value"><code>useDeferredValue</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Lets urgent updates outrun expensive ones</strong>.</td>
-                <td>Type-to-filter over a heavy table or list.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#activity"><code>&lt;Activity&gt;</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Hides UI without unmounting it</strong>; state survives.</td>
-                <td>Genuinely-client panels that toggle often.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#view-transition"><code>&lt;ViewTransition&gt;</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Browser-native animated transitions</strong> (experimental).</td>
-                <td>Not yet: canary-only. Watch, don't adopt.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#use-effect-event"><code>useEffectEvent</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Reads fresh values from an effect</strong> without re-running it.</td>
-                <td>Effects that over-fire because of a logging/config dep.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#use-id"><code>useId</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Hydration-safe unique ids</strong>.</td>
-                <td>Label/input pairs, aria wiring. Never hand-write ids.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#use-sync-external-store"><code>useSyncExternalStore</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Subscribes to non-React stores</strong>, SSR-safe.</td>
-                <td>Browser APIs (online status, media queries), ext. stores.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#cache"><code>cache()</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Per-request memo for server functions</strong>.</td>
-                <td>Every function in the server data layer.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#use-link-status"><code>useLinkStatus</code></a>
-                </td>
-                <td><span class="chip chip-next">Next.js</span></td>
-                <td><strong>Pending state of the enclosing Link</strong>.</td>
-                <td>Slow navigations with prefetching off; inline hints.</td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="#profiler"><code>&lt;Profiler&gt;</code></a>
-                </td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Measures render cost programmatically</strong>.</td>
-                <td>Chasing a slow tree you can't explain.</td>
-              </tr>
-              <tr>
-                <td><a href="#compiler">React Compiler</a></td>
-                <td><span class="chip chip-react">React</span></td>
-                <td><strong>Automatic memoization at build time</strong>.</td>
-                <td>Everywhere, once enabled; ends memo busywork.</td>
-              </tr>
-            </tbody>
-          </table>
+  <h2 id="map">18.1 The map</h2>
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Primitive</th>
+        <th>Ships in</th>
+        <th>What it does</th>
+        <th>Reach for it when</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="#use-server">Server Functions</a></td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Mutations callable from the client</strong>, no API route.</td>
+        <td>Any create/update/delete triggered by UI.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#form"><code>&lt;Form&gt;</code></a>
+        </td>
+        <td><span class="chip chip-next">Next.js</span></td>
+        <td><strong>Forms that navigate or mutate</strong> with prefetching.</td>
+        <td>Search inputs writing the URL; action-backed forms.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#use-action-state"><code>useActionState</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Form state from an action's result</strong>, plus pending.</td>
+        <td>Validation errors and results rendered from a mutation.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#use-form-status"><code>useFormStatus</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Pending state of the nearest form</strong>, from any child.</td>
+        <td>Submit buttons that disable themselves.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#use-optimistic"><code>useOptimistic</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td>
+          <strong>Paints the expected result immediately</strong>, reverts on failure.
+        </td>
+        <td>Likes, toggles, counts: cheap, likely-to-succeed writes.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#use"><code>use()</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Reads a promise under Suspense</strong> in a client component.</td>
+        <td>Server-created promises handed across the boundary.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#use-transition"><code>useTransition</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Non-blocking updates with a pending flag</strong>.</td>
+        <td>Self-contained mutation buttons; router-state writes.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#use-deferred-value"><code>useDeferredValue</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Lets urgent updates outrun expensive ones</strong>.</td>
+        <td>Type-to-filter over a heavy table or list.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#activity"><code>&lt;Activity&gt;</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Hides UI without unmounting it</strong>; state survives.</td>
+        <td>Genuinely-client panels that toggle often.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#view-transition"><code>&lt;ViewTransition&gt;</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Browser-native animated transitions</strong> (experimental).</td>
+        <td>Not yet: canary-only. Watch, don't adopt.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#use-effect-event"><code>useEffectEvent</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Reads fresh values from an effect</strong> without re-running it.</td>
+        <td>Effects that over-fire because of a logging/config dep.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#use-id"><code>useId</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Hydration-safe unique ids</strong>.</td>
+        <td>Label/input pairs, aria wiring. Never hand-write ids.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#use-sync-external-store"><code>useSyncExternalStore</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Subscribes to non-React stores</strong>, SSR-safe.</td>
+        <td>Browser APIs (online status, media queries), ext. stores.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#cache"><code>cache()</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Per-request memo for server functions</strong>.</td>
+        <td>Every function in the server data layer.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#use-link-status"><code>useLinkStatus</code></a>
+        </td>
+        <td><span class="chip chip-next">Next.js</span></td>
+        <td><strong>Pending state of the enclosing Link</strong>.</td>
+        <td>Slow navigations with prefetching off; inline hints.</td>
+      </tr>
+      <tr>
+        <td>
+          <a href="#profiler"><code>&lt;Profiler&gt;</code></a>
+        </td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Measures render cost programmatically</strong>.</td>
+        <td>Chasing a slow tree you can't explain.</td>
+      </tr>
+      <tr>
+        <td><a href="#compiler">React Compiler</a></td>
+        <td><span class="chip chip-react">React</span></td>
+        <td><strong>Automatic memoization at build time</strong>.</td>
+        <td>Everywhere, once enabled; ends memo busywork.</td>
+      </tr>
+    </tbody>
+  </table>
 
-          <h2 id="actions">18.2 Actions and mutations</h2>
+  <h2 id="actions">18.2 Actions and mutations</h2>
 
-          <h3 id="use-server">Server Functions (<code>"use server"</code>)</h3>
-          <p>
-            A server function is an async function that runs on the server but is
-            <strong>callable from client code as if it were local</strong>. React serializes the
-            call across the network; Next.js wires it to an endpoint automatically. This is the
-            primitive that makes our 73 pass-through proxy handlers (<a
-              href="17-applied-to-recraft.html#finding-1"
-              >§17</a
-            >) unnecessary for mutations: no route handler, no manual fetch, and end-to-end type
-            safety, because the function's signature <em>is</em> the contract.
-          </p>
-          <pre
-            class="code"
-          ><span class="filename">actions/programs.ts</span><span class="tok-dir">"use server"</span>;
+  <h3 id="use-server">Server Functions (<code>"use server"</code>)</h3>
+  <p>
+    A server function is an async function that runs on the server but is
+    <strong>callable from client code as if it were local</strong>. React serializes the call across
+    the network; Next.js wires it to an endpoint automatically. This is the primitive that makes our
+    73 pass-through proxy handlers (<a href="17-applied-to-recraft.html#finding-1">§17</a>)
+    unnecessary for mutations: no route handler, no manual fetch, and end-to-end type safety,
+    because the function's signature <em>is</em> the contract.
+  </p>
+  <pre class="code"><span class="filename">actions/programs.ts</span><span class="tok-dir">"use server"</span>;
 <span class="tok-kw">import</span> { revalidateTag } <span class="tok-kw">from</span> <span class="tok-str">"next/cache"</span>;
 
 <span class="tok-kw">export async function</span> <span class="tok-fn">archiveProgram</span>(id: <span class="tok-fn">string</span>) {
@@ -221,37 +212,25 @@
   <span class="tok-com">// Every reader of this tag refreshes; no callbacks up the tree.</span>
   <span class="tok-fn">revalidateTag</span>(<span class="tok-str">`program-${id}`</span>);
 }</pre>
-          <p>
-            The calling side, with its pending state, is the self-contained button pattern that
-            <a href="05-client-server-boundaries.html#self-contained">§5.7</a> owns; the
-            post-mutation refresh channel is <a href="13-dedupe-caching.html#server">§13.2</a>'s
-            invalidation story; the architecture, and why to prefer actions over proxy routes, is
-            the focus of <a href="05-client-server-boundaries.html#server-actions">§5.10</a>. Docs:
-            <a href="https://react.dev/reference/rsc/use-server" target="_blank" rel="noopener"
-              >React: "use server"</a
-            >
-            ·
-            <a
-              href="https://nextjs.org/docs/app/getting-started/updating-data"
-              target="_blank"
-              rel="noopener"
-              >Next.js: Updating Data</a
-            >.
-          </p>
+  <p>
+    The calling side, with its pending state, is the self-contained button pattern that
+    <a href="05-client-server-boundaries.html#self-contained">§5.7</a> owns; the post-mutation refresh
+    channel is <a href="13-dedupe-caching.html#server">§13.2</a>'s invalidation story; the
+    architecture, and why to prefer actions over proxy routes, is the focus of <a href="05-client-server-boundaries.html#server-actions">§5.10</a>. Docs:
+    <a href="https://react.dev/reference/rsc/use-server" target="_blank" rel="noopener">React: "use server"</a>
+    ·
+    <a href="https://nextjs.org/docs/app/getting-started/updating-data" target="_blank" rel="noopener">Next.js: Updating Data</a>.
+  </p>
 
-          <h3 id="form"><code>&lt;Form&gt;</code> (next/form)</h3>
-          <p>
-            Next's <code>&lt;Form&gt;</code> extends the HTML form with
-            <strong>prefetching, client-side navigation, and progressive enhancement</strong>. Its
-            behavior depends on the <code>action</code> prop: a <em>string</em> makes submission a
-            GET navigation with the fields serialized into search params (the URL-writing search
-            input of <a href="08-server-resolvable-state.html#url-state">§8.2</a>, with the
-            destination's <code>loading.tsx</code> prefetched); a <em>function</em> makes it an
-            action-backed mutation form.
-          </p>
-          <pre
-            class="code"
-          ><span class="filename">components/programs/ProgramSearch.tsx</span><span class="tok-kw">import</span> <span class="tok-fn">Form</span> <span class="tok-kw">from</span> <span class="tok-str">"next/form"</span>;
+  <h3 id="form"><code>&lt;Form&gt;</code> (next/form)</h3>
+  <p>
+    Next's <code>&lt;Form&gt;</code> extends the HTML form with
+    <strong>prefetching, client-side navigation, and progressive enhancement</strong>. Its behavior
+    depends on the <code>action</code> prop: a <em>string</em> makes submission a GET navigation with
+    the fields serialized into search params (the URL-writing search input of <a href="08-server-resolvable-state.html#url-state">§8.2</a>, with the destination's <code>loading.tsx</code> prefetched); a <em>function</em> makes it an action-backed
+    mutation form.
+  </p>
+  <pre class="code"><span class="filename">components/programs/ProgramSearch.tsx</span><span class="tok-kw">import</span> <span class="tok-fn">Form</span> <span class="tok-kw">from</span> <span class="tok-str">"next/form"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramSearch</span>() {
   <span class="tok-com">/* A string action means: navigate to /programs?q=… on submit,
@@ -263,37 +242,23 @@
     &lt;/<span class="tok-fn">Form</span>&gt;
   );
 }</pre>
-          <p>
-            Note the page rendering this is still a server component: no directive, no hooks. Docs:
-            <a
-              href="https://nextjs.org/docs/app/api-reference/components/form"
-              target="_blank"
-              rel="noopener"
-              >Next.js: Form</a
-            >
-            ·
-            <a
-              href="https://react.dev/reference/react-dom/components/form"
-              target="_blank"
-              rel="noopener"
-              >React: &lt;form&gt;</a
-            >.
-          </p>
+  <p>
+    Note the page rendering this is still a server component: no directive, no hooks. Docs:
+    <a href="https://nextjs.org/docs/app/api-reference/components/form" target="_blank" rel="noopener">Next.js: Form</a>
+    ·
+    <a href="https://react.dev/reference/react-dom/components/form" target="_blank" rel="noopener">React: &lt;form&gt;</a>.
+  </p>
 
-          <h3 id="use-action-state"><code>useActionState</code></h3>
-          <p>
-            Binds a form to an action and gives you back
-            <strong>the action's last result as state</strong>, plus the dispatch function and a
-            pending flag. This is where validation errors live in the actions world: the action
-            returns them, React renders them, and nobody hand-rolls an <code>errors</code>/<code
-              >isSubmitting</code
-            >
-            state pair. (If you're searching the docs: this hook replaced the earlier
-            <code>useFormState</code> from react-dom.)
-          </p>
-          <pre
-            class="code"
-          ><span class="filename">components/programs/CreateProgramForm.tsx</span><span class="tok-dir">"use client"</span>;
+  <h3 id="use-action-state"><code>useActionState</code></h3>
+  <p>
+    Binds a form to an action and gives you back
+    <strong>the action's last result as state</strong>, plus the dispatch function and a pending
+    flag. This is where validation errors live in the actions world: the action returns them, React
+    renders them, and nobody hand-rolls an <code>errors</code>/<code>isSubmitting</code>
+    state pair. (If you're searching the docs: this hook replaced the earlier
+    <code>useFormState</code> from react-dom.)
+  </p>
+  <pre class="code"><span class="filename">components/programs/CreateProgramForm.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useActionState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 <span class="tok-kw">import</span> { createProgram } <span class="tok-kw">from</span> <span class="tok-str">"@/actions/programs"</span>;
 
@@ -309,26 +274,19 @@
     &lt;/form&gt;
   );
 }</pre>
-          <p>
-            Docs:
-            <a
-              href="https://react.dev/reference/react/useActionState"
-              target="_blank"
-              rel="noopener"
-              >React: useActionState</a
-            >.
-          </p>
+  <p>
+    Docs:
+    <a href="https://react.dev/reference/react/useActionState" target="_blank" rel="noopener">React: useActionState</a>.
+  </p>
 
-          <h3 id="use-form-status"><code>useFormStatus</code></h3>
-          <p>
-            Reads <strong>the pending state of the nearest ancestor form</strong> from anywhere
-            inside it. Its point is composition: a shared submit button can disable itself in any
-            form it's dropped into, without a single prop being threaded to it (the
-            <a href="12-minimize-the-wires.html">§12</a> spirit, applied to forms).
-          </p>
-          <pre
-            class="code"
-          ><span class="filename">components/forms/SearchButton.tsx</span><span class="tok-dir">"use client"</span>;
+  <h3 id="use-form-status"><code>useFormStatus</code></h3>
+  <p>
+    Reads <strong>the pending state of the nearest ancestor form</strong> from anywhere inside it. Its
+    point is composition: a shared submit button can disable itself in any form it's dropped into, without
+    a single prop being threaded to it (the
+    <a href="12-minimize-the-wires.html">§12</a> spirit, applied to forms).
+  </p>
+  <pre class="code"><span class="filename">components/forms/SearchButton.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useFormStatus } <span class="tok-kw">from</span> <span class="tok-str">"react-dom"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">SearchButton</span>() {
@@ -340,28 +298,21 @@
     &lt;/<span class="tok-fn">Button</span>&gt;
   );
 }</pre>
-          <p>
-            Docs:
-            <a
-              href="https://react.dev/reference/react-dom/hooks/useFormStatus"
-              target="_blank"
-              rel="noopener"
-              >React: useFormStatus</a
-            >.
-          </p>
+  <p>
+    Docs:
+    <a href="https://react.dev/reference/react-dom/hooks/useFormStatus" target="_blank" rel="noopener">React: useFormStatus</a>.
+  </p>
 
-          <h3 id="use-optimistic"><code>useOptimistic</code></h3>
-          <p>
-            Shows <strong>the expected result of an action immediately</strong>, while the real
-            mutation runs. If the action fails, React reverts to the true value automatically; when
-            revalidated data arrives, it confirms. Use it for cheap, likely-to-succeed writes where
-            waiting even 300ms feels broken. Note how it fits the loading doctrine of
-            <a href="10-suspense-streaming.html#refetch">§10</a>: the existing content is never
-            replaced by a spinner; it just updates.
-          </p>
-          <pre
-            class="code"
-          ><span class="filename">components/programs/LikeButton.tsx</span><span class="tok-dir">"use client"</span>;
+  <h3 id="use-optimistic"><code>useOptimistic</code></h3>
+  <p>
+    Shows <strong>the expected result of an action immediately</strong>, while the real mutation
+    runs. If the action fails, React reverts to the true value automatically; when revalidated data
+    arrives, it confirms. Use it for cheap, likely-to-succeed writes where waiting even 300ms feels
+    broken. Note how it fits the loading doctrine of
+    <a href="10-suspense-streaming.html#refetch">§10</a>: the existing content is never replaced by
+    a spinner; it just updates.
+  </p>
+  <pre class="code"><span class="filename">components/programs/LikeButton.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useOptimistic } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 <span class="tok-kw">import</span> { likeProgram } <span class="tok-kw">from</span> <span class="tok-str">"@/actions/programs"</span>;
 
@@ -380,28 +331,23 @@
     &lt;/form&gt;
   );
 }</pre>
-          <p>
-            Docs:
-            <a href="https://react.dev/reference/react/useOptimistic" target="_blank" rel="noopener"
-              >React: useOptimistic</a
-            >.
-          </p>
+  <p>
+    Docs:
+    <a href="https://react.dev/reference/react/useOptimistic" target="_blank" rel="noopener">React: useOptimistic</a>.
+  </p>
 
-          <h2 id="async">18.3 Async UI and transitions</h2>
+  <h2 id="async">18.3 Async UI and transitions</h2>
 
-          <h3 id="use"><code>use()</code></h3>
-          <p>
-            Reads a promise (or a context) during render,
-            <strong>suspending until it resolves</strong>. Its headline pattern: a server component
-            <em>starts</em> a fetch without awaiting it, hands the promise across the boundary as a
-            prop, and a client component reads it with <code>use()</code> under the Suspense
-            boundary the server already rendered (<a href="10-suspense-streaming.html">§10</a>). The
-            request begins on the server, the HTML streams, and the client never runs a
-            fetch-in-effect.
-          </p>
-          <pre
-            class="code"
-          ><span class="filename">app/programs/[programId]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramPage</span>({ params }: <span class="tok-fn">PageProps</span>) {
+  <h3 id="use"><code>use()</code></h3>
+  <p>
+    Reads a promise (or a context) during render,
+    <strong>suspending until it resolves</strong>. Its headline pattern: a server component
+    <em>starts</em> a fetch without awaiting it, hands the promise across the boundary as a prop, and
+    a client component reads it with <code>use()</code> under the Suspense boundary the server already
+    rendered (<a href="10-suspense-streaming.html">§10</a>). The request begins on the server, the
+    HTML streams, and the client never runs a fetch-in-effect.
+  </p>
+  <pre class="code"><span class="filename">app/programs/[programId]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramPage</span>({ params }: <span class="tok-fn">PageProps</span>) {
   <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
   <span class="tok-com">// Deliberately not awaited: the promise itself crosses the boundary.</span>
   <span class="tok-kw">const</span> notesPromise = <span class="tok-fn">getProgramNotes</span>(programId);
@@ -411,9 +357,7 @@
     &lt;/<span class="tok-fn">Suspense</span>&gt;
   );
 }</pre>
-          <pre
-            class="code"
-          ><span class="filename">components/programs/ProgramNotes.tsx</span><span class="tok-dir">"use client"</span>;
+  <pre class="code"><span class="filename">components/programs/ProgramNotes.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { use } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramNotes</span>({ notesPromise }: { notesPromise: <span class="tok-fn">Promise</span>&lt;<span class="tok-fn">Note</span>[]&gt; }) {
@@ -421,36 +365,23 @@
   <span class="tok-kw">const</span> notes = <span class="tok-fn">use</span>(notesPromise);
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">NotesList</span> <span class="tok-prop">notes</span>={notes} /&gt;;
 }</pre>
-          <p>
-            Docs:
-            <a href="https://react.dev/reference/react/use" target="_blank" rel="noopener"
-              >React: use</a
-            >
-            ·
-            <a
-              href="https://nextjs.org/docs/app/getting-started/fetching-data"
-              target="_blank"
-              rel="noopener"
-              >Next.js: Fetching Data</a
-            >.
-          </p>
+  <p>
+    Docs:
+    <a href="https://react.dev/reference/react/use" target="_blank" rel="noopener">React: use</a>
+    ·
+    <a href="https://nextjs.org/docs/app/getting-started/fetching-data" target="_blank" rel="noopener">Next.js: Fetching Data</a>.
+  </p>
 
-          <h3 id="use-transition"><code>useTransition</code></h3>
-          <p>
-            Marks an update as <strong>non-blocking and gives you its pending flag</strong>. In this
-            stack it is the engine of the self-contained mutation button (<a
-              href="05-client-server-boundaries.html#self-contained"
-              >§5.7</a
-            >) and of no-fallback refinements (<a href="10-suspense-streaming.html#orthogonal"
-              >§10</a
-            >): the old UI stays interactive while the new state, or the server action, resolves.
-            When to reach for it, and the three canonical uses, are covered in
-            <a href="10-suspense-streaming.html#transitions">§10.7</a>.
-          </p>
+  <h3 id="use-transition"><code>useTransition</code></h3>
+  <p>
+    Marks an update as <strong>non-blocking and gives you its pending flag</strong>. In this stack
+    it is the engine of the self-contained mutation button (<a href="05-client-server-boundaries.html#self-contained">§5.7</a>) and of no-fallback refinements (<a href="10-suspense-streaming.html#orthogonal">§10</a>): the
+    old UI stays interactive while the new state, or the server action, resolves. When to reach for
+    it, and the three canonical uses, are covered in
+    <a href="10-suspense-streaming.html#transitions">§10.7</a>.
+  </p>
 
-          <pre
-            class="code"
-          ><span class="filename">components/programs/ArchiveButton.tsx</span><span class="tok-dir">"use client"</span>;
+  <pre class="code"><span class="filename">components/programs/ArchiveButton.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useTransition } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 <span class="tok-kw">import</span> { archiveProgram } <span class="tok-kw">from</span> <span class="tok-str">"@/actions/programs"</span>;
 
@@ -465,23 +396,19 @@
     &lt;/<span class="tok-fn">Button</span>&gt;
   );
 }</pre>
-          <p>
-            Docs:
-            <a href="https://react.dev/reference/react/useTransition" target="_blank" rel="noopener"
-              >React: useTransition</a
-            >.
-          </p>
+  <p>
+    Docs:
+    <a href="https://react.dev/reference/react/useTransition" target="_blank" rel="noopener">React: useTransition</a>.
+  </p>
 
-          <h3 id="use-deferred-value"><code>useDeferredValue</code></h3>
-          <p>
-            Returns a copy of a value that <strong>lags behind on purpose</strong>, so urgent
-            updates (the keystroke) outrun expensive ones (re-filtering a thousand-row table). This
-            is the fix for the table problem in <a href="10-suspense-streaming.html">§10</a>: the
-            input stays crisp, the table catches up when it can, and nothing flashes a spinner.
-          </p>
-          <pre
-            class="code"
-          ><span class="filename">components/programs/ProgramFilter.tsx</span><span class="tok-dir">"use client"</span>;
+  <h3 id="use-deferred-value"><code>useDeferredValue</code></h3>
+  <p>
+    Returns a copy of a value that <strong>lags behind on purpose</strong>, so urgent updates (the
+    keystroke) outrun expensive ones (re-filtering a thousand-row table). This is the fix for the
+    table problem in <a href="10-suspense-streaming.html">§10</a>: the input stays crisp, the table
+    catches up when it can, and nothing flashes a spinner.
+  </p>
+  <pre class="code"><span class="filename">components/programs/ProgramFilter.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useDeferredValue, useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramFilter</span>({ programs }: { programs: <span class="tok-fn">Program</span>[] }) {
@@ -495,27 +422,20 @@
     &lt;/&gt;
   );
 }</pre>
-          <p>
-            Docs:
-            <a
-              href="https://react.dev/reference/react/useDeferredValue"
-              target="_blank"
-              rel="noopener"
-              >React: useDeferredValue</a
-            >.
-          </p>
+  <p>
+    Docs:
+    <a href="https://react.dev/reference/react/useDeferredValue" target="_blank" rel="noopener">React: useDeferredValue</a>.
+  </p>
 
-          <h3 id="activity"><code>&lt;Activity&gt;</code></h3>
-          <p>
-            Hides a subtree <strong>without unmounting it</strong>: state, scroll position, and DOM
-            survive, and hidden trees render at low priority. Before reaching for it, apply the
-            <a href="08-server-resolvable-state.html#tabs">§8.3</a> ladder: tabs that represent
-            <em>where the user is</em> belong in the URL. Activity is for the panels that genuinely
-            remain client state (interaction, not identity) and are expensive to remount.
-          </p>
-          <pre
-            class="code"
-          ><span class="filename">components/editor/EditorPanels.tsx</span><span class="tok-dir">"use client"</span>;
+  <h3 id="activity"><code>&lt;Activity&gt;</code></h3>
+  <p>
+    Hides a subtree <strong>without unmounting it</strong>: state, scroll position, and DOM survive,
+    and hidden trees render at low priority. Before reaching for it, apply the
+    <a href="08-server-resolvable-state.html#tabs">§8.3</a> ladder: tabs that represent
+    <em>where the user is</em> belong in the URL. Activity is for the panels that genuinely remain client
+    state (interaction, not identity) and are expensive to remount.
+  </p>
+  <pre class="code"><span class="filename">components/editor/EditorPanels.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { Activity } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">EditorPanels</span>({ active }: { active: <span class="tok-str">"editor"</span> | <span class="tok-str">"preview"</span> }) {
@@ -531,51 +451,42 @@
     &lt;/&gt;
   );
 }</pre>
-          <p>
-            Docs:
-            <a href="https://react.dev/reference/react/Activity" target="_blank" rel="noopener"
-              >React: Activity</a
-            >.
-          </p>
+  <p>
+    Docs:
+    <a href="https://react.dev/reference/react/Activity" target="_blank" rel="noopener">React: Activity</a>.
+  </p>
 
-          <h3 id="view-transition"><code>&lt;ViewTransition&gt;</code></h3>
-          <p>
-            Animates enter/exit/update/shared-element transitions using the browser's native View
-            Transition API, coordinated with Transitions and Suspense, declared in JSX instead of
-            hand-rolled animation state.
-          </p>
-          <div class="callout callout-warn">
-            <div class="callout-title">Experimental: do not adopt yet</div>
-            <p>
-              As of this writing, <code>&lt;ViewTransition&gt;</code> is available
-              <strong>only in React's canary and experimental channels</strong>, not in stable React
-              19.2. It's in this catalog because it shows where the platform is going (animation as
-              a tree concern, like loading states in <a href="10-suspense-streaming.html">§10</a>),
-              not because we should ship it. Watch the
-              <a
-                href="https://react.dev/reference/react/ViewTransition"
-                target="_blank"
-                rel="noopener"
-                >React: ViewTransition</a
-              >
-              page for stabilization.
-            </p>
-          </div>
+  <h3 id="view-transition"><code>&lt;ViewTransition&gt;</code></h3>
+  <p>
+    Animates enter/exit/update/shared-element transitions using the browser's native View Transition
+    API, coordinated with Transitions and Suspense, declared in JSX instead of hand-rolled animation
+    state.
+  </p>
+  <div class="callout callout-warn">
+  <div class="callout-title">Experimental: do not adopt yet</div>
+  
+    <p>
+      As of this writing, <code>&lt;ViewTransition&gt;</code> is available
+      <strong>only in React's canary and experimental channels</strong>, not in stable React 19.2.
+      It's in this catalog because it shows where the platform is going (animation as a tree
+      concern, like loading states in <a href="10-suspense-streaming.html">§10</a>), not because we
+      should ship it. Watch the
+      <a href="https://react.dev/reference/react/ViewTransition" target="_blank" rel="noopener">React: ViewTransition</a>
+      page for stabilization.
+    </p>
+  
+</div>
 
-          <h2 id="utilities">18.4 Utilities</h2>
+  <h2 id="utilities">18.4 Utilities</h2>
 
-          <h3 id="use-effect-event"><code>useEffectEvent</code></h3>
-          <p>
-            Extracts the <strong>non-reactive part of an effect</strong>: the returned function
-            always sees the latest props and state, but is not a dependency, so the effect stops
-            re-running (and re-connecting, re-subscribing, re-firing) when those values change.
-            Stable as of React 19.2. It is a scalpel for the few legitimate effects that remain
-            after <a href="17-applied-to-recraft.html#finding-3">§17's Finding 3</a> is fixed; it is
-            not a license to write more effects.
-          </p>
-          <pre
-            class="code"
-          ><span class="filename">components/jobs/JobStatusToast.tsx</span><span class="tok-dir">"use client"</span>;
+  <h3 id="use-effect-event"><code>useEffectEvent</code></h3>
+  <p>
+    Extracts the <strong>non-reactive part of an effect</strong>: the returned function always sees
+    the latest props and state, but is not a dependency, so the effect stops re-running (and
+    re-connecting, re-subscribing, re-firing) when those values change. Stable as of React 19.2. It
+    is a scalpel for the few legitimate effects that remain after <a href="17-applied-to-recraft.html#finding-3">§17's Finding 3</a> is fixed; it is not a license to write more effects.
+  </p>
+  <pre class="code"><span class="filename">components/jobs/JobStatusToast.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useEffect, useEffectEvent } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">JobStatusToast</span>({ jobId, theme }: { jobId: <span class="tok-fn">string</span>; theme: <span class="tok-fn">Theme</span> }) {
@@ -588,25 +499,18 @@
   }, [jobId]);
   <span class="tok-kw">return null</span>;
 }</pre>
-          <p>
-            Docs:
-            <a
-              href="https://react.dev/reference/react/useEffectEvent"
-              target="_blank"
-              rel="noopener"
-              >React: useEffectEvent</a
-            >.
-          </p>
+  <p>
+    Docs:
+    <a href="https://react.dev/reference/react/useEffectEvent" target="_blank" rel="noopener">React: useEffectEvent</a>.
+  </p>
 
-          <h3 id="use-id"><code>useId</code></h3>
-          <p>
-            Generates ids that are <strong>stable across server render and hydration</strong>.
-            Hand-written or randomly generated element ids are a hydration-mismatch factory in an
-            SSR world; this is the sanctioned replacement, chiefly for accessibility wiring.
-          </p>
-          <pre
-            class="code"
-          ><span class="filename">components/forms/EmailField.tsx</span><span class="tok-dir">"use client"</span>;
+  <h3 id="use-id"><code>useId</code></h3>
+  <p>
+    Generates ids that are <strong>stable across server render and hydration</strong>. Hand-written
+    or randomly generated element ids are a hydration-mismatch factory in an SSR world; this is the
+    sanctioned replacement, chiefly for accessibility wiring.
+  </p>
+  <pre class="code"><span class="filename">components/forms/EmailField.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useId } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">EmailField</span>() {
@@ -619,24 +523,19 @@
     &lt;/&gt;
   );
 }</pre>
-          <p>
-            Docs:
-            <a href="https://react.dev/reference/react/useId" target="_blank" rel="noopener"
-              >React: useId</a
-            >.
-          </p>
+  <p>
+    Docs:
+    <a href="https://react.dev/reference/react/useId" target="_blank" rel="noopener">React: useId</a>.
+  </p>
 
-          <h3 id="use-sync-external-store"><code>useSyncExternalStore</code></h3>
-          <p>
-            The correct way to <strong>subscribe to anything that lives outside React</strong>:
-            browser APIs, third-party stores, singletons. It takes a subscribe function, a snapshot
-            reader, and a <em>server</em> snapshot so SSR and hydration render consistently, which
-            is exactly the failure mode of doing this with <code>useEffect</code> +
-            <code>useState</code>.
-          </p>
-          <pre
-            class="code"
-          ><span class="filename">hooks/useOnlineStatus.ts</span><span class="tok-dir">"use client"</span>;
+  <h3 id="use-sync-external-store"><code>useSyncExternalStore</code></h3>
+  <p>
+    The correct way to <strong>subscribe to anything that lives outside React</strong>: browser
+    APIs, third-party stores, singletons. It takes a subscribe function, a snapshot reader, and a <em>server</em> snapshot so SSR and hydration render consistently, which is exactly the failure mode of doing this
+    with <code>useEffect</code> +
+    <code>useState</code>.
+  </p>
+  <pre class="code"><span class="filename">hooks/useOnlineStatus.ts</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useSyncExternalStore } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
 <span class="tok-kw">function</span> <span class="tok-fn">subscribe</span>(onStoreChange: () =&gt; <span class="tok-kw">void</span>) {
@@ -653,39 +552,28 @@
      so the SSR pass and hydration agree. */</span>
   <span class="tok-kw">return</span> <span class="tok-fn">useSyncExternalStore</span>(subscribe, () =&gt; navigator.onLine, () =&gt; <span class="tok-kw">true</span>);
 }</pre>
-          <p>
-            Docs:
-            <a
-              href="https://react.dev/reference/react/useSyncExternalStore"
-              target="_blank"
-              rel="noopener"
-              >React: useSyncExternalStore</a
-            >.
-          </p>
+  <p>
+    Docs:
+    <a href="https://react.dev/reference/react/useSyncExternalStore" target="_blank" rel="noopener">React: useSyncExternalStore</a>.
+  </p>
 
-          <h3 id="cache"><code>cache()</code></h3>
-          <p>
-            Per-request memoization for server functions:
-            <strong>same arguments, one execution, per request</strong>. It is the foundation of the
-            server data layer, and it already has a full treatment in
-            <a href="13-dedupe-caching.html#server">§13.2</a>; it appears here only so the catalog
-            is complete. Docs:
-            <a href="https://react.dev/reference/react/cache" target="_blank" rel="noopener"
-              >React: cache</a
-            >.
-          </p>
+  <h3 id="cache"><code>cache()</code></h3>
+  <p>
+    Per-request memoization for server functions:
+    <strong>same arguments, one execution, per request</strong>. It is the foundation of the server
+    data layer, and it already has a full treatment in
+    <a href="13-dedupe-caching.html#server">§13.2</a>; it appears here only so the catalog is
+    complete. Docs:
+    <a href="https://react.dev/reference/react/cache" target="_blank" rel="noopener">React: cache</a>.
+  </p>
 
-          <h3 id="use-link-status"><code>useLinkStatus</code></h3>
-          <p>
-            Reads <strong>the pending state of the enclosing <code>&lt;Link&gt;</code></strong> from
-            a descendant component: an inline hint for navigations that can't be instant
-            (prefetching disabled, or a dynamic route without a <code>loading.tsx</code>). Prefer
-            route-level fallbacks and prefetching first (<a href="04-ssr.html#prefetching">§4.5</a
-            >); reach for this when a specific slow transition needs feedback <em>at the link</em>.
-          </p>
-          <pre
-            class="code"
-          ><span class="filename">components/nav/LinkPendingDot.tsx</span><span class="tok-dir">"use client"</span>;
+  <h3 id="use-link-status"><code>useLinkStatus</code></h3>
+  <p>
+    Reads <strong>the pending state of the enclosing <code>&lt;Link&gt;</code></strong> from a descendant
+    component: an inline hint for navigations that can't be instant (prefetching disabled, or a dynamic
+    route without a <code>loading.tsx</code>). Prefer route-level fallbacks and prefetching first (<a href="04-ssr.html#prefetching">§4.5</a>); reach for this when a specific slow transition needs feedback <em>at the link</em>.
+  </p>
+  <pre class="code"><span class="filename">components/nav/LinkPendingDot.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useLinkStatus } <span class="tok-kw">from</span> <span class="tok-str">"next/link"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">LinkPendingDot</span>() {
@@ -695,77 +583,50 @@
      (the §9 container rule, at the scale of a dot). */</span>
   <span class="tok-kw">return</span> &lt;span <span class="tok-prop">aria-hidden</span> <span class="tok-prop">className</span>={pending ? <span class="tok-str">"dot dot-pending"</span> : <span class="tok-str">"dot"</span>} /&gt;;
 }</pre>
-          <p>
-            Docs:
-            <a
-              href="https://nextjs.org/docs/app/api-reference/functions/use-link-status"
-              target="_blank"
-              rel="noopener"
-              >Next.js: useLinkStatus</a
-            >.
-          </p>
+  <p>
+    Docs:
+    <a href="https://nextjs.org/docs/app/api-reference/functions/use-link-status" target="_blank" rel="noopener">Next.js: useLinkStatus</a>.
+  </p>
 
-          <h3 id="profiler"><code>&lt;Profiler&gt;</code></h3>
-          <p>
-            Wraps a subtree and reports <strong>what rendering it actually cost</strong>, per
-            commit, to an <code>onRender</code> callback. Use it to turn "this page feels slow" into
-            a named component and a number before optimizing anything; pair it with the React
-            DevTools performance tracks. Docs:
-            <a href="https://react.dev/reference/react/Profiler" target="_blank" rel="noopener"
-              >React: Profiler</a
-            >.
-          </p>
+  <h3 id="profiler"><code>&lt;Profiler&gt;</code></h3>
+  <p>
+    Wraps a subtree and reports <strong>what rendering it actually cost</strong>, per commit, to an <code>onRender</code> callback. Use it to turn "this page feels slow" into a named component and a number before optimizing
+    anything; pair it with the React DevTools performance tracks. Docs:
+    <a href="https://react.dev/reference/react/Profiler" target="_blank" rel="noopener">React: Profiler</a>.
+  </p>
 
-          <h2 id="compiler">18.5 The React Compiler</h2>
-          <p>
-            The compiler (1.0, October 2025) memoizes automatically at build time: it analyzes
-            component code and skips re-renders that provably change nothing, which is the work
-            <code>useMemo</code>, <code>useCallback</code>, and <code>React.memo</code> asked humans
-            to do by hand. Two consequences for us. First,
-            <strong>new code should not hand-roll memoization</strong>; write plain idiomatic
-            components and let the compiler prove what's stable. Second, the compiler rewards the
-            exact discipline this guide teaches: small, decoupled components with narrow props (<a
-              href="12-minimize-the-wires.html"
-              >§12</a
-            >, <a href="14-component-breakdown.html">§14</a>) give it clean units to optimize, while
-            God components (<a href="05-client-server-boundaries.html#god-components">§5.9</a>) give
-            it one giant opaque one. It changes none of the architecture in this guide; it removes
-            the busywork that made bad architecture feel cheap. Docs:
-            <a href="https://react.dev/learn/react-compiler" target="_blank" rel="noopener"
-              >React: React Compiler</a
-            >
-            ·
-            <a
-              href="https://nextjs.org/docs/app/api-reference/config/next-config-js/reactCompiler"
-              target="_blank"
-              rel="noopener"
-              >Next.js: reactCompiler</a
-            >.
-          </p>
+  <h2 id="compiler">18.5 The React Compiler</h2>
+  <p>
+    The compiler (1.0, October 2025) memoizes automatically at build time: it analyzes component
+    code and skips re-renders that provably change nothing, which is the work
+    <code>useMemo</code>, <code>useCallback</code>, and <code>React.memo</code> asked humans to do by
+    hand. Two consequences for us. First,
+    <strong>new code should not hand-roll memoization</strong>; write plain idiomatic components and
+    let the compiler prove what's stable. Second, the compiler rewards the exact discipline this
+    guide teaches: small, decoupled components with narrow props (<a href="12-minimize-the-wires.html">§12</a>, <a href="14-component-breakdown.html">§14</a>) give it clean units to optimize, while God
+    components (<a href="05-client-server-boundaries.html#god-components">§5.9</a>) give it one
+    giant opaque one. It changes none of the architecture in this guide; it removes the busywork
+    that made bad architecture feel cheap. Docs:
+    <a href="https://react.dev/learn/react-compiler" target="_blank" rel="noopener">React: React Compiler</a>
+    ·
+    <a href="https://nextjs.org/docs/app/api-reference/config/next-config-js/reactCompiler" target="_blank" rel="noopener">Next.js: reactCompiler</a>.
+  </p>
 
-          <div class="callout callout-info">
-            <div class="callout-title">Where to go deeper</div>
-            <p>
-              <a href="https://react.dev/reference/react" target="_blank" rel="noopener"
-                >React: API reference</a
-              >
-              ·
-              <a href="https://react.dev/blog/2024/12/05/react-19" target="_blank" rel="noopener"
-                >React 19 release post</a
-              >
-              ·
-              <a href="https://react.dev/blog/2025/10/01/react-19-2" target="_blank" rel="noopener"
-                >React 19.2 release post</a
-              >
-              ·
-              <a
-                href="https://nextjs.org/docs/app/api-reference/functions"
-                target="_blank"
-                rel="noopener"
-                >Next.js: API reference</a
-              >. Full list in <a href="19-references.html">§19</a>.
-            </p>
-          </div>
+  <div class="callout callout-info">
+  <div class="callout-title">Where to go deeper</div>
+  
+    <p>
+      <a href="https://react.dev/reference/react" target="_blank" rel="noopener">React: API reference</a>
+      ·
+      <a href="https://react.dev/blog/2024/12/05/react-19" target="_blank" rel="noopener">React 19 release post</a>
+      ·
+      <a href="https://react.dev/blog/2025/10/01/react-19-2" target="_blank" rel="noopener">React 19.2 release post</a>
+      ·
+      <a href="https://nextjs.org/docs/app/api-reference/functions" target="_blank" rel="noopener">Next.js: API reference</a>. Full list in <a href="19-references.html">§19</a>.
+    </p>
+  
+</div>
+
 
           <div id="pager"></div>
         </div>
