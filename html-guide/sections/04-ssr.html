@@ -229,6 +229,83 @@ The spinner tower. Client-side, each DOM layer is blocked by the client-side req
   <span class="chip chip-very">Very important</span>
 </p>
 
+<h3 id="output-not-machinery">The output crosses the wire, not the machinery</h3>
+<p>
+  Two rows of the benefits table deserve to be read together, because they are one fact
+  seen from two sides: <strong>the only thing that ever crosses the network boundary is
+  the rendered output.</strong> Think about what it takes to produce a reports table: the
+  component code that lays it out, the data-layer function that queries for rows, the
+  connection string and API tokens that query needs, the formatting and charting libraries
+  that turn numbers into markup. In a client-rendered architecture, most of that ships to
+  the browser, because the browser is where the rendering happens. In a server-rendered
+  one, none of it does. The client receives what those things <em>produced</em>: finished
+  markup.
+</p>
+
+<figure class="diagram">
+  
+  <svg viewBox="0 0 720 226" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+    <defs>
+      <marker id="aWire" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 2.5 1.5 L 8 5 L 2.5 8.5" fill="none" stroke="#0f7b48" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      </marker>
+    </defs>
+    <text x="174" y="12" font-size="10.5" fill="#0757ba" text-anchor="middle" font-weight="500">Stays on the server</text>
+    <text x="572" y="12" font-size="10.5" fill="#157a4c" text-anchor="middle" font-weight="500">What the client receives</text>
+
+    <rect x="14" y="24" width="320" height="180" rx="8" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"></rect>
+    <rect x="30" y="40" width="288" height="30" rx="5" fill="#ffffff" stroke="#a9cdf5"></rect>
+    <text x="42" y="59" font-size="10" fill="#0757ba">page.tsx, components, layouts</text>
+    <rect x="30" y="78" width="288" height="30" rx="5" fill="#ffffff" stroke="#a9cdf5"></rect>
+    <text x="42" y="97" font-size="10" fill="#0757ba">getReports(): the data layer</text>
+    <rect x="30" y="116" width="288" height="30" rx="5" fill="#ffffff" stroke="#a9cdf5"></rect>
+    <text x="42" y="135" font-size="10" fill="#0757ba">DATABASE_URL, API tokens, secrets</text>
+    <rect x="30" y="154" width="288" height="30" rx="5" fill="#ffffff" stroke="#a9cdf5"></rect>
+    <text x="42" y="173" font-size="10" fill="#0757ba">markdown + charting libraries</text>
+
+    <line x1="386" y1="24" x2="386" y2="204" stroke="#c9c9c9" stroke-dasharray="6 4"></line>
+    <text x="386" y="220" font-size="9.5" fill="#737373" text-anchor="middle">the network boundary</text>
+
+    <text x="386" y="100" font-size="9.5" fill="#157a4c" text-anchor="middle">rendered HTML</text>
+    <line x1="334" y1="114" x2="434" y2="114" stroke="#0f7b48" stroke-width="1.5" marker-end="url(#aWire)"></line>
+    <text x="386" y="132" font-size="9" fill="#737373" text-anchor="middle">nothing else</text>
+
+    <rect x="438" y="24" width="268" height="180" rx="8" fill="#ffffff" stroke="#2ea06d" stroke-width="1.5"></rect>
+    <rect x="454" y="44" width="236" height="26" rx="5" fill="#e7f5ee" stroke="#2ea06d"></rect>
+    <text x="572" y="61" font-size="10" fill="#157a4c" text-anchor="middle">Reports: finished markup</text>
+    <rect x="454" y="80" width="236" height="8" rx="3" fill="#cfe9dd"></rect>
+    <rect x="454" y="96" width="236" height="8" rx="3" fill="#cfe9dd"></rect>
+    <rect x="454" y="112" width="236" height="8" rx="3" fill="#cfe9dd"></rect>
+    <rect x="454" y="128" width="236" height="8" rx="3" fill="#cfe9dd"></rect>
+    <rect x="454" y="144" width="236" height="8" rx="3" fill="#cfe9dd"></rect>
+    <rect x="454" y="160" width="236" height="8" rx="3" fill="#cfe9dd"></rect>
+    <rect x="454" y="176" width="236" height="8" rx="3" fill="#cfe9dd"></rect>
+  </svg>
+
+
+  <figcaption>
+    
+  Everything needed to produce the page stays behind the boundary; only what it produced
+  crosses. Exactly like the diagrams in this guide: the browser receives the SVG, not the
+  code that generated it.
+
+  </figcaption>
+</figure>
+
+<p>
+  This is why "security by locality" and "less JavaScript shipped" are the same row twice.
+  Security: the credentials, the privileged queries, and the internal API shapes cannot
+  leak to the browser because they were never sent, and
+  <code>server-only</code> (<a href="05-client-server-boundaries.html#third-party">§5.5</a>)
+  turns any accidental attempt into a build error. Performance: those rendering libraries
+  are precisely the heavyweight imports of
+  <a href="07-bundle-size-code-splitting.html">§7</a>, and keeping them on the server is
+  the single cheapest bundle-size win available, because the client downloads a few
+  kilobytes of markup instead of megabytes of machinery (<a href="06-first-render-js.html">§6</a>).
+  One architectural fact, two benefits: expose the output, never the means of producing
+  it.
+</p>
+
 <h2 id="perceived">4.3 Perceived performance, and where streaming fits</h2>
 <p>
   <strong>Perceived performance</strong> is how fast a page <em>feels</em>, which is not
@@ -258,6 +335,7 @@ The spinner tower. Client-side, each DOM layer is blocked by the client-side req
   the first moments on a page <em>reading</em>, not clicking; SSR uses that window to be
   useful while the JavaScript catches up.
 </p>
+<h3 id="streaming-principle">Streaming: the same principle, inside one response</h3>
 <p>
   <strong>Streaming is the same principle applied within a single response.</strong> Plain
   SSR has a weakness: if the server waits for <em>all</em> data before sending anything,
@@ -268,6 +346,49 @@ The spinner tower. Client-side, each DOM layer is blocked by the client-side req
   slowest query, and containers (<a href="09-containers-content-shifting.html">§9</a>)
   guarantee the second. That is the whole Part B playbook in one sentence, powered by the
   fact that rendering happens on a server that can flush incrementally.
+</p>
+
+<h3 id="tti">Time-to-interactive is a dead metric</h3>
+<p>
+  A question worth asking a room of engineers: how many of you actually interact with a
+  page within 500ms of it loading? Nobody does. You land, you orient, you read; the first
+  click comes seconds later, after the content has told you what is worth clicking on.
+  Optimizing for the earliest possible moment of interactivity is optimizing a moment that
+  nobody uses.
+</p>
+<p>
+  That is why TTI is, for practical purposes, a dead metric. Everything in this
+  architecture is about optimizing what the user can <em>see</em> and <em>read</em>:
+  getting real content onto the page as fast as humanly possible. The interactive leaves
+  hydrate some time later, and that is fine, because interactivity is not needed
+  immediately and hydration is invisible. A button whose click handler attaches 800ms
+  after first paint looks identical to one that was interactive from the first frame; the
+  user cannot tell the difference, because they were reading. What they absolutely can
+  tell is whether the content was there. Pages built this way <em>feel</em> faster for a
+  simple reason: the part the user knows about (the content) arrives first, and the parts
+  they never needed to know about (handlers attaching, client state hydrating) become
+  hidden work that finishes quietly in the background.
+</p>
+
+<h3 id="cls-feel">Layout shift is perceived slowness</h3>
+<p>
+  The third leg of perceived performance is stillness. A page where loading indicators
+  flash in and out while regions shift around as each response lands just looks terrible:
+  busy, unprofessional, and, crucially, <em>slower</em>, even when the wall-clock time is
+  identical. Every spinner and every reflow gives the user a blatant look into the
+  intermediate machinery: here is what we have not fetched yet, here is the empty space we
+  are holding with fallback content, here is everything arriving one request at a time, in
+  whatever order the network chose. The user is made to watch the kitchen.
+</p>
+<p>
+  All of that can simply be swooped up onto the server. Resolve the data there and the
+  intermediate steps stop existing on the client: the user sees the full page, ready to
+  go, just not yet hydrated, and none of the scaffolding that produced it. Fewer visible
+  steps always reads as faster. The mechanics of holding still (containers, honest space
+  reservation, CLS as a field metric) get a full chapter in
+  <a href="09-containers-content-shifting.html">§9</a>; what belongs here is the
+  perceptual claim: a page that appears at once and never moves feels faster than one that
+  assembles itself in front of the user, regardless of what the network tab says.
 </p>
 
 <h2 id="page-cache">

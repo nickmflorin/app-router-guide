@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-18T15:28:11.948102+00:00",
+  "updatedAt": "2026-07-18T15:48:52.017983+00:00",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -131,6 +131,54 @@
         "snippet": "every component, separately\"use client\";const [program, setProgram] = useState(null);const"
       },
       "resolution": "New code-caption concept: CodeCaption component + .code-caption styling (mirrors diagram figcaptions). The 13.3 compare now has separate formal captions under each column, replacing the in-code summary comments. Convention recorded in PROJECT.md."
+    },
+    {
+      "id": "nmrqisko2",
+      "page": "04-ssr.html",
+      "ts": "2026-07-18T15:27:00.002Z",
+      "status": "resolved",
+      "text": "I want to break this into more concrete sub sections.  The first pargraph and everything up until the Streaming is the same principle statement is directly underneath the main section 4.3.  Then, the pargraph that starts with Streaming is the same principle applied ... should be a sub-section with a sub-section header.  Then after that, I want to elaborate on this perceived performance concept further, with an additional TTI sub-section.  That section should lead off by asking \"How many of you interact with a page within 500ms after it loads\"?  It should discuss why TTI is a dead metric because everything is about optimizing what the user SEES and can READ by getting it on the page as fast as humanly possible.  Then, interactive leaves hydrate some time later - because interactivity is not necessarily needed immediately.  It should discuss how this makes page loads feel faster, because what the user knows is there faster and the things they don't need to know about are hidden and done aftewards (i.e. a button's click handler or state hydrating).  There should then be a third sub-section about cumulative layout shift, discussing how cumulative layout shift and constant loading indicators flashing in and out with the page shifting around just looks terrible, unprofessional and makes it feel like the page is loading slower.  It gives the users a blatant look into everything that can be just swooped up onto the server, so all they see is the full page ready to go - just not hydrated - they don't see the intermediate steps that make it feel like its loading slower because the need to show fallback content or loading indicators in empty space when the content isn't there yet.",
+      "target": {
+        "anchor": "perceived",
+        "path": [
+          20
+        ],
+        "tag": "p",
+        "snippet": "Perceived performance is how fast a page feels, which is not the same thing as how long it"
+      },
+      "resolution": "4.3 restructured: intro + docs quote stay at top; \"Streaming: the same principle, inside one response\" is its own subsection; new \"Time-to-interactive is a dead metric\" subsection (opens with the 500ms question; see-and-read optimization, leaves hydrate later invisibly); new \"Layout shift is perceived slowness\" subsection (flashing indicators expose the machinery, the server swoops it up, cross-linked to section 9)."
+    },
+    {
+      "id": "nmrqj0f8p",
+      "page": "04-ssr.html",
+      "ts": "2026-07-18T15:33:06.217Z",
+      "status": "resolved",
+      "text": "In this section, I would like to have a subsection that elaborates on security more, and how it's not necessary to expose the code and values that are needed to render the page we just need to expose the actual output - the rendered page.  It should include a diagram or something that shows how an HTML file like diagram svg is setn to the client across the boundary rather than all the code that is necessary to generate it.  It should discuss how this also relates to bundle size and performance briefly as well.  As well as the less javascripted shipped item.  So maybe a sub-section that is not directly called \"security blah\" but something that can be used to elaborate on both the security by locality and less javascript shipped items.",
+      "target": {
+        "anchor": "what",
+        "path": [
+          6
+        ],
+        "tag": "h2",
+        "snippet": "4.2 What you get for it"
+      },
+      "resolution": "New 4.2 subsection \"The output crosses the wire, not the machinery\" unifying security-by-locality + less-JS-shipped, with a boundary diagram (code/data-layer/secrets/libraries stay left; only rendered HTML crosses; caption notes the guide's own SVGs work the same way) and ties to sections 5.5, 6, 7."
+    },
+    {
+      "id": "nmrqj3he7",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T15:35:28.975Z",
+      "status": "resolved",
+      "text": "In this section, I want to elaborate in subsections with diagrams and code snippets the difference between use client directives usage in the application's components and a monorepo isolated ui library for components.  in the case of a dedicated ui library in the monorepo, it affects how we build those components.  Components that have interactive parts should try to expose both the structure/containers and outer parts that are non interactive along with the interactive smaller parts.  So a sidebar component should not be an all or nothing sidebar where we provide items={[...]} as an array of JS objects with properties like icon and onclick, it should be a container ocmponent Sidebar and also expose things like SidebarItem or SidebarLinkItem, or SidebarButtonItem so that the interactivity can be isolated to just the smaller parts that need \"use client\".  This allows the overall usage in the consuming application to have the flexibility to not be forced into treating the entire sidebar it renders (using the ui library sidebar) into a client component because the sidebar itself can be rendered without interactivity, and the interactive leaves which represent the individual items in the sidebar can be isolated in separate files with on click handlers (if it needs on click) with \"use client\" but if it's a link item and can use an href then the onclick handler is not needed at all and it doesn't need the directive.  This is the general idea there.  I also want to show code snippets/examples of how to \"internalize\" third party components, so that we use a single file that wraps the third-party component and adds \"use client\" so that the third-party component itself is just the leaf, rather than every composite component that imports and uses the third party component directly being forced into \"use client\" usage.",
+      "target": {
+        "anchor": "children-pattern",
+        "path": [
+          22
+        ],
+        "tag": "h2",
+        "snippet": "5.5 Third-party components and boundary hygiene"
+      },
+      "resolution": "Two new 5.5 subsections: \"Design-system components: ship the structure and the leaves separately\" (fused items-array sidebar vs composed Sidebar + SidebarLinkItem + SidebarButtonItem, with the functions-cannot-cross-the-boundary point, library file examples, and the app-level client leaf nuance) and \"Internalize third-party components: one wrapper file, one leaf\" (direct react-select import converting composites vs internalized ui/Select wrapper; code captions used throughout)."
     }
   ]
 }

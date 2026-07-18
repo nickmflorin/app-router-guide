@@ -12,22 +12,26 @@ this document, you should do so - and then follow back up by marking those items
 this document. If you are unsure about whether or not to tackle an item, please ask me for
 clarification before proceeding.
 
+## Repo
+
+- [ ] Converting CSS to SCSS
+
 ## Design & Style
 
 - [ ] Reducing dead whitespace, particularly in diagrams.
 - [ ] less spacing under page header description
-- [ ] Sub sections for examples probably, better use of subsections maybe
+- [x] Sub sections for examples probably, better use of subsections maybe (**Partially done**)
 - [ ] Summary rules at the top for each page (i.e. a TL;DR section that says DOs and Donts) Can use
       a dropdown/accordion style thing.
 - [ ] The how to read this document section should use alignment for pills and text.
 - [ ] Trying to use horizontal divider lines for tables and/or a light gray thin border around the
       table area.
-- [ ] TODO-style widgets that I can embed directly in the HTML to mark things that need to be done
+- [x] TODO-style widgets that I can embed directly in the HTML to mark things that need to be done
       or inserted in place.
 - [ ] Any code snippet that shows a bad pattern should have a red x in the top right corner or left
       corner whichever makes more sense, next to or in line with the file name. Same thing with good
       patterns but with green check marks.
-- [ ] JSX in code blocks not always indented. Has additional space after { ...}
+- [x] JSX in code blocks not always indented. Has additional space after { ...}
 - [ ] What earns a dynamic import, and what doesn't - section table should have horizontal lines
       similar to other tables. All table should be consistently displayed. header styling, font,
       colors, should all be consistent.
@@ -38,8 +42,9 @@ clarification before proceeding.
       possible. It is not a preference, it is a requirement for using React 19 and the App Router,
       and deviation from that will make things very difficult. Treating everything that cannot be
       rendered fully on the server as a COST that must be justified, not the other way around.
-- [ ] Benefits of SSR as a separate page where we also discuss HTTP middleman problem.
-- [ ] Use the table web app diagram for illustrating how to reserve space in the header/data table
+- [x] Benefits of SSR as a separate page where we also discuss HTTP middleman problem. (**Partially
+      done** - **ELABORATE**)
+- [x] Use the table web app diagram for illustrating how to reserve space in the header/data table
       view example.
 - [ ] Client side rendering seems simpler when we're not worried about the details. We're not
       worried about janky/shifty loading experiences, fallback values that show skeletons that are
@@ -53,14 +58,14 @@ clarification before proceeding.
 - [ ] diagram for callbacks are wires too section
 - [ ] How server first means that you sometimes have to break your components apart in a different
       seemingly-awkward-at-first way. It means you have to separate the server from client parts.
-- [ ] Wholesale grid: the whole table waits - the left and right views should be aligned so that the
+- [x] Wholesale grid: the whole table waits - the left and right views should be aligned so that the
       content area is the same height as the sub parts. same thing with the Wholesale: one fused
       client component.
 - [ ] Containers live in the scaffold - section needs a diagram that shows the content inside the
       layout changing when route changes but not the layout.
-- [ ] Consider moving explanation of perceived performance up, tie it together with cumulative
-      layout shift. Tie together with TTI and why its a dead metric.
-- [ ] Rename Tracker references to Tracker
+- [x] Consider moving explanation of perceived performance up, tie it together with cumulative
+      layout shift. Tie together with TTI and why its a dead metric. (**Partially done**)
+- [x] Rename Tracker references to Tracker
 
 ## Page Content to Add or Modify
 
@@ -160,8 +165,8 @@ folded into the existing "Server-first is not optional" alert.)
 
 ### SSR
 
-- [ ] Elaborate on security and why it is better to ship HTML and not the JS that is used to
-      generate the HTML.
+- [x] Elaborate on security and why it is better to ship HTML and not the JS that is used to
+      generate the HTML. (**Partially done**)
 - [ ] Elaborate on how with NextJS, the API is your HTML. The server returns HTML not the data that
       is used to generate HTML.
 
@@ -176,20 +181,22 @@ folded into the existing "Server-first is not optional" alert.)
 
 ### Client Boundaries
 
-- [ ] Dealing with third-party UI libraries or internal UI packages. Internalization (ojl-tracker
-      concept).
-- [ ] Diagram or diagrams that show what it's like to ship just the HTML output of a lot of JS
+- [x] Dealing with third-party UI libraries or internal UI packages. Internalization (ojl-tracker
+      concept). (**Partially done**)
+- [x] Diagram or diagrams that show what it's like to ship just the HTML output of a lot of JS
       files/dependencies vs shipping the dependencies themselves. How it relates to security.
+      (**Partially done**)
 
 ### Content Shifting
 
-- [ ] Diagram showing the flex and min height approach on a page, maybe with table and header.
-- [ ] Awaits pushed down - adding containers in the diagram showing the flex grow and reserved space
-      approach.
+- [x] Diagram showing the flex and min height approach on a page, maybe with table and header.
+      (**Partially done**)
+- [x] Awaits pushed down - adding containers in the diagram showing the flex grow and reserved space
+      approach. (**Partially done**)
 - [ ] This is also a UX consideration - design should be aware of how things look different when
       they are in an unknown state vs a known state vs a streaming state. It affects how pages and
       views are laid out and structured. Engineers job to communicate these things with Design. Goal
-      is to minimize content shifting.
+      is to minimize content shifting. **IMPORTANT**
 - [ ] Examples of difficult patterns - two stacked tables.
 - [x] Loading, data and empty states as three different questions
   - [ ] Talk about empty state flickering and use a diagram.
@@ -241,7 +248,7 @@ refreshInterval/dedupingInterval, revalidation triggers, mutate, stale-while-rev
 "When client fetching is the right tool" (interaction-born data, dialogs/drawers, polling, with a
 load-on-open drawer example). The React-cache + SWR code both live in §13.2/§13.3/§13.6.)
 
-- [ ] Diagram for client vs server side routing in nextjs
+- [x] Diagram for client vs server side routing in nextjs (**Partially done**)
 - [x] Should probably discuss use transitions at some point
 - [ ] General note about how client side stuff is always more complicated than backend because you
       have user interactions and timing to worry about. Additional variables from user's network
@@ -257,13 +264,13 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
 - [ ] Simplicity
   - [ ] Backend vs. Client Side - backend is serial, you know what things are each step of the way.
         You're not worried about user events, timing, network requests, latency, ad blockers, etc.
-- [ ] Benefits of SSR and how that relates to the various goals here.
-  - [ ] CONTENT SHIFTING **ELABORATE**
-  - [ ] Simplicity: Difficulty with timing and render blocking requests, nested spinners down
+- [x] Benefits of SSR and how that relates to the various goals here.
+  - [x] CONTENT SHIFTING **ELABORATE**
+  - [x] Simplicity: Difficulty with timing and render blocking requests, nested spinners down
         through the dom tree, spinners showing on top of spinners, etc. etc **Elaborate**
-  - [ ] Server should be source of truth - everything should point back to the server as much as it
+  - [x] Server should be source of truth - everything should point back to the server as much as it
         can. **Elaborate**
-- [ ] Diagrams on portability
+- [ ] **Diagrams on portability**
 - [x] How all of these things affect how we break components down. How components that are not pure
       should be in dedicated files. Inclusion of things like code splitting and bundle size.
 - [x] Bundle Size & Code Splitting Dedicated Section?
@@ -274,7 +281,7 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
       the text content. Maybe videos
 - [x] How NextJS manipulates `fetch`. This should likely be part of the discussion on deduplication
       and caching.
-- [ ] Client components rendering server components.
+- [x] Client components rendering server components. (**Partially done**)
 - [x] We need to talk about React's Transition API and how it's used, when to use it.
 - [x] SWR and `useSWR` discussed in way more depth. Might want to do this alongside of the dedupe
       and caching content but also the content on when client side fetching is appropriate.
@@ -319,7 +326,7 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
       avoid waterfalls and how to avoid them when they are unavoidable. Diagrams should show how to
       avoid waterfalls when you have a lot of client components that are all trying to load data at
       the same time.
-- [ ] Diagrams for Reserving space honestly similar to the web app diagram view (the diagram on the
+- [x] Diagrams for Reserving space honestly similar to the web app diagram view (the diagram on the
       goals page thesis section that shows the URL bar). Diagrams use arrows to show how content
       expands to fill space and how it is reserved. Diagrams show how to reserve space for content
       that is not known on first render. Diagrams show how to reserve space for content that is not

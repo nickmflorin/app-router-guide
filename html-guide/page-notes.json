@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-07-18T15:22:47.587Z",
+  "updatedAt": "2026-07-18T15:42:26.851Z",
   "notes": [
     {
       "id": "nmrpnee5v",
       "page": "07-bundle-size-code-splitting.html",
       "ts": "2026-07-18T00:48:10.291Z",
-      "status": "open",
+      "status": "resolved",
       "text": "In diagrams like this, the content should try to be aligned when it is showing things that are larger subsets of others, or replacements of others.  Here, the spacing between page header, toolbar, column headers, all of that should be the same - and the text should be vertically aligned for the single row tiles (column headers looks like its shoved down in the blue tile a pixel or two).  But, the sum of Page header + mui data grid on the left should have the same heiht as all the small pieces on the right (if that makes sense).  Keep things aligned - the footer's bottom point should matc hthe bottom point on the left of mui data grid",
       "target": {
         "anchor": "wholesale",
@@ -14,13 +14,14 @@
         ],
         "tag": "figure",
         "snippet": "Wholesale grid: the whole table waits Composed: only the rows wait app.craft.com/reports/h"
-      }
+      },
+      "resolution": "Browser-frame diagram re-gridded: uniform 26px tiles/8px gaps, texts vertically centered, left and right columns bottom-align at y=294. (Committed a7540b5.)"
     },
     {
       "id": "nmrpnfyss",
       "page": "07-bundle-size-code-splitting.html",
       "ts": "2026-07-18T00:49:23.692Z",
-      "status": "open",
+      "status": "resolved",
       "text": "same alignment comment as the comment on the diagram below.  Also - lets shrink the text of the top line of diagrams like Composed: ... or Wholesale... across all diagrams in the app.  Not much, maybe 1 pixel less",
       "target": {
         "anchor": "wholesale",
@@ -29,13 +30,14 @@
         ],
         "tag": "figure",
         "snippet": "Wholesale: one fused client component Composed: known frame, unknown rows MUI DataGrid (on"
-      }
+      },
+      "resolution": "Stack diagram aligned (uniform tiles/gaps, columns end together); panel titles shrunk 1px guide-wide (34 titles). (Committed a7540b5.)"
     },
     {
       "id": "nmrqhvkzs",
       "page": "10-suspense-streaming.html",
       "ts": "2026-07-18T15:01:20.776Z",
-      "status": "open",
+      "status": "resolved",
       "text": "For these examples, I would also like to show an example with the useDeferredValue (i.e. client rendered third bullet).  Is it possible to create two sub-sections of this section, each named Example: ... and Example: ..., and the code snippets live under each sub section?  This helps the user understand which bullet point the example is referring to.  Note that we do not need to use an example for client fetched data, just the first and third bullets",
       "target": {
         "anchor": "refetch",
@@ -44,13 +46,14 @@
         ],
         "tag": "pre",
         "snippet": "app/reports/page.tsx - server: the URL is the inputexport default async function Page({ se"
-      }
+      },
+      "resolution": "Split into \"Example: URL-driven server UI...\" and \"Example: client-rendered results of a fast-changing value\" (new useDeferredValue example); bullets link to examples. (Committed a7540b5.)"
     },
     {
       "id": "nmrqhy3wg",
       "page": "10-suspense-streaming.html",
       "ts": "2026-07-18T15:03:18.592Z",
-      "status": "open",
+      "status": "resolved",
       "text": "One thing I've been noticing a lot is that the treatment of '{' characters seems to be causing weird spacing issues in the diagrams.  Here, the fallback definition reads like this \"fallback={      <Loading /> }>\" (note all the extra spaces before the <).  Additionally, the lines are not properly indented on any of the panels in this diagram.  Suspense should be indented 2 spaces from the previous lines start, Page should not be indented as far inwards as it is, Error Boundary should be indented 2 spaces since it is inside of Layout, etc.  On the left, the return statements should be indented two spaces.",
       "target": {
         "anchor": "streaming",
@@ -59,13 +62,14 @@
         ],
         "tag": "figure",
         "snippet": "loading.tsx export default function Loading() { return <PageScaffoldSkeleton />; } error.t"
-      }
+      },
+      "resolution": "Boundary tree rebuilt: 2-space nesting ladder, pills tightened against braces, file-card returns indented, arrows extended. (Committed a7540b5.)"
     },
     {
       "id": "nmrqhzng8",
       "page": "10-suspense-streaming.html",
       "ts": "2026-07-18T15:04:30.584Z",
-      "status": "open",
+      "status": "resolved",
       "text": "that owns its own spinner or skeleton - or just please generalize it as \"owns its own loading indicator\"",
       "target": {
         "anchor": "no-own-loading",
@@ -74,13 +78,14 @@
         ],
         "tag": "p",
         "snippet": "React Critical A component that renders its own spinner has made three decisions it has no"
-      }
+      },
+      "resolution": "Generalized to \"owns its own loading indicator, whether a spinner, skeleton, or any other placeholder\". (Committed a7540b5.)"
     },
     {
       "id": "nmrqi0xfo",
       "page": "10-suspense-streaming.html",
       "ts": "2026-07-18T15:05:30.180Z",
-      "status": "open",
+      "status": "resolved",
       "text": "For each of these bullet points, can we include a short, nested code snippet underneath the bullet that shows what it means?  The code snippets should be left aligned with the text after hte bullet, not the bullet itself.",
       "target": {
         "anchor": "triggers",
@@ -90,13 +95,14 @@
         ],
         "tag": "li",
         "snippet": "An async server component awaiting inside the boundary: the canonical App Router case. The"
-      }
+      },
+      "resolution": "Five trigger bullets each carry a nested snippet aligned with bullet text. (Committed a7540b5.)"
     },
     {
       "id": "nmrqicvnl",
       "page": "13-dedupe-caching.html",
       "ts": "2026-07-18T15:14:47.745Z",
-      "status": "open",
+      "status": "resolved",
       "text": "The curved arrows in this diagram have heads that extend too close to the tile they are referencing or pointing at causing the head to get partially clipped.  Can we instead use arrows that are segmented so the lines are always at intervals of 90 degrees, and the segmented arrows can - for instance - go down a tad, then right a tad, then back down pointing at the tile without a curve?  I would also like to try to do this in a way that would allow us to prevent the text from appearing on top of the arrows - \"each independently calls...\" for instance is hard to read because it appears on top of/under neath arrows that makes the text not legible when they intersect.",
       "target": {
         "anchor": "layers",
@@ -105,13 +111,14 @@
         ],
         "tag": "figure",
         "snippet": "Server: during one request Client: during one session Header Stats Breadcrumbs each indepe"
-      }
+      },
+      "resolution": "Layers-diagram arrows are now segmented 90-degree elbows (down, across, short drop) ending 4px above the cache boxes so heads never clip; the \"each independently calls...\" labels moved off the arrow field into the cache-box sublines (getProgram(42) x3 in / useProgram(42) x2 in)."
     },
     {
       "id": "nmrqieebr",
       "page": "13-dedupe-caching.html",
       "ts": "2026-07-18T15:15:58.599Z",
-      "status": "open",
+      "status": "resolved",
       "text": "For this diagram the diagram on the right, can we start using a concept of \"captions\" for code snippets?  Similar to captions on diagrams?  And take the comments that are in the code snippet and move it to a caption that is more formally written and clearer?  The caption should be separate for left and right snippets not 1 caption for both.",
       "target": {
         "anchor": "client",
@@ -122,6 +129,52 @@
         ],
         "tag": "pre",
         "snippet": "every component, separately\"use client\";const [program, setProgram] = useState(null);const"
+      },
+      "resolution": "New code-caption concept: CodeCaption component + .code-caption styling (mirrors diagram figcaptions). The 13.3 compare now has separate formal captions under each column, replacing the in-code summary comments. Convention recorded in PROJECT.md."
+    },
+    {
+      "id": "nmrqisko2",
+      "page": "04-ssr.html",
+      "ts": "2026-07-18T15:27:00.002Z",
+      "status": "open",
+      "text": "I want to break this into more concrete sub sections.  The first pargraph and everything up until the Streaming is the same principle statement is directly underneath the main section 4.3.  Then, the pargraph that starts with Streaming is the same principle applied ... should be a sub-section with a sub-section header.  Then after that, I want to elaborate on this perceived performance concept further, with an additional TTI sub-section.  That section should lead off by asking \"How many of you interact with a page within 500ms after it loads\"?  It should discuss why TTI is a dead metric because everything is about optimizing what the user SEES and can READ by getting it on the page as fast as humanly possible.  Then, interactive leaves hydrate some time later - because interactivity is not necessarily needed immediately.  It should discuss how this makes page loads feel faster, because what the user knows is there faster and the things they don't need to know about are hidden and done aftewards (i.e. a button's click handler or state hydrating).  There should then be a third sub-section about cumulative layout shift, discussing how cumulative layout shift and constant loading indicators flashing in and out with the page shifting around just looks terrible, unprofessional and makes it feel like the page is loading slower.  It gives the users a blatant look into everything that can be just swooped up onto the server, so all they see is the full page ready to go - just not hydrated - they don't see the intermediate steps that make it feel like its loading slower because the need to show fallback content or loading indicators in empty space when the content isn't there yet.",
+      "target": {
+        "anchor": "perceived",
+        "path": [
+          20
+        ],
+        "tag": "p",
+        "snippet": "Perceived performance is how fast a page feels, which is not the same thing as how long it"
+      }
+    },
+    {
+      "id": "nmrqj0f8p",
+      "page": "04-ssr.html",
+      "ts": "2026-07-18T15:33:06.217Z",
+      "status": "open",
+      "text": "In this section, I would like to have a subsection that elaborates on security more, and how it's not necessary to expose the code and values that are needed to render the page we just need to expose the actual output - the rendered page.  It should include a diagram or something that shows how an HTML file like diagram svg is setn to the client across the boundary rather than all the code that is necessary to generate it.  It should discuss how this also relates to bundle size and performance briefly as well.  As well as the less javascripted shipped item.  So maybe a sub-section that is not directly called \"security blah\" but something that can be used to elaborate on both the security by locality and less javascript shipped items.",
+      "target": {
+        "anchor": "what",
+        "path": [
+          6
+        ],
+        "tag": "h2",
+        "snippet": "4.2 What you get for it"
+      }
+    },
+    {
+      "id": "nmrqj3he7",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T15:35:28.975Z",
+      "status": "open",
+      "text": "In this section, I want to elaborate in subsections with diagrams and code snippets the difference between use client directives usage in the application's components and a monorepo isolated ui library for components.  in the case of a dedicated ui library in the monorepo, it affects how we build those components.  Components that have interactive parts should try to expose both the structure/containers and outer parts that are non interactive along with the interactive smaller parts.  So a sidebar component should not be an all or nothing sidebar where we provide items={[...]} as an array of JS objects with properties like icon and onclick, it should be a container ocmponent Sidebar and also expose things like SidebarItem or SidebarLinkItem, or SidebarButtonItem so that the interactivity can be isolated to just the smaller parts that need \"use client\".  This allows the overall usage in the consuming application to have the flexibility to not be forced into treating the entire sidebar it renders (using the ui library sidebar) into a client component because the sidebar itself can be rendered without interactivity, and the interactive leaves which represent the individual items in the sidebar can be isolated in separate files with on click handlers (if it needs on click) with \"use client\" but if it's a link item and can use an href then the onclick handler is not needed at all and it doesn't need the directive.  This is the general idea there.  I also want to show code snippets/examples of how to \"internalize\" third party components, so that we use a single file that wraps the third-party component and adds \"use client\" so that the third-party component itself is just the leaf, rather than every composite component that imports and uses the third party component directly being forced into \"use client\" usage.",
+      "target": {
+        "anchor": "children-pattern",
+        "path": [
+          22
+        ],
+        "tag": "h2",
+        "snippet": "5.5 Third-party components and boundary hygiene"
       }
     }
   ]

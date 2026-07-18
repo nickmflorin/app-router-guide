@@ -3,3 +3,4 @@ _to_delete/
 build/
 node_modules/
 .astro/
+__pycache__/

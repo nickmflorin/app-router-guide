@@ -6,6 +6,7 @@ import GoDeeper from '../../components/GoDeeper.astro';
 import Diagram from '../../components/Diagram.astro';
 import Compare from '../../components/Compare.astro';
 import CompareCol from '../../components/CompareCol.astro';
+import CodeCaption from '../../components/CodeCaption.astro';
 ---
 
 <GuidePage title="Client/Server Boundaries - App Router Guide" root="..">
@@ -759,7 +760,8 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
     starts. Bonus: the wrapper is your seam for swapping the library later (<a
       href="14-component-breakdown.html"
       >§14</a
-    >).
+    >). Worked through with examples in
+    <a href="#internalize-third-party">the subsection below</a>.
   </li>
   <li>
     <strong>Poison-pill your server-only modules.</strong>
@@ -797,6 +799,175 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
     <Chip k="critical" />
   </li>
 </ul>
+
+<h3 id="library-leaves">Design-system components: ship the structure and the leaves separately</h3>
+<p>
+  Everything this chapter says about applications applies with extra force to our
+  <strong>monorepo UI library</strong>, because a library component's boundary decision is
+  made once and inherited by every consumer. The rule:
+  <strong>a library component with interactive parts exposes its non-interactive structure
+  and its interactive leaves as separate components</strong>, so the consuming application
+  gets to place the boundary, not the library.
+  <Chip k="react" />
+  <Chip k="critical" />
+</p>
+<p>
+  The canonical mistake is the all-or-nothing component configured through data. A sidebar
+  that takes <code>items=&#123;[&#123; icon, label, onClick &#125;]&#125;</code> is one fused component:
+  it must carry <code>"use client"</code> (it wires handlers), and because
+  <strong>functions cannot cross the server-client boundary as props</strong>, the page
+  that renders it is forced client too, just to be able to define those
+  <code>onClick</code>s. One prop signature has converted two trees.
+</p>
+
+<Compare>
+<CompareCol kind="bad" label="✕ Fused: configured with data + functions">
+    <pre class="code" is:raw><span class="filename">app layout (forced client)</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-com">/* onClick is a function, and functions
+   cannot cross the server-client boundary,
+   so this layout must be a client component
+   just to describe its sidebar. */</span>
+&lt;<span class="tok-fn">Sidebar</span>
+  <span class="tok-prop">items</span>={[
+    {
+      <span class="tok-prop">icon</span>: &lt;<span class="tok-fn">HomeIcon</span> /&gt;,
+      <span class="tok-prop">label</span>: <span class="tok-str">"Home"</span>,
+      <span class="tok-prop">onClick</span>: () =&gt; router.<span class="tok-fn">push</span>(<span class="tok-str">"/home"</span>),
+    },
+  ]}
+/&gt;</pre>
+<CodeCaption>
+  The whole sidebar is client, and so is every layout that renders it. The library made
+  the boundary decision for everyone.
+</CodeCaption>
+</CompareCol>
+<CompareCol kind="good" label="✓ Composed: structure + leaf items">
+    <pre class="code" is:raw><span class="filename">app layout (stays server)</span><span class="tok-com">/* No directive anywhere in this file. The
+   container and the link items are server-
+   safe; navigation is an href, not a click
+   handler. */</span>
+&lt;<span class="tok-fn">Sidebar</span>&gt;
+  &lt;<span class="tok-fn">SidebarLinkItem</span> <span class="tok-prop">href</span>=<span class="tok-str">"/home"</span> <span class="tok-prop">icon</span>={&lt;<span class="tok-fn">HomeIcon</span> /&gt;}&gt;
+    Home
+  &lt;/<span class="tok-fn">SidebarLinkItem</span>&gt;
+  &lt;<span class="tok-fn">SidebarLinkItem</span> <span class="tok-prop">href</span>=<span class="tok-str">"/reports"</span> <span class="tok-prop">icon</span>={&lt;<span class="tok-fn">BarIcon</span> /&gt;}&gt;
+    Reports
+  &lt;/<span class="tok-fn">SidebarLinkItem</span>&gt;
+
+  <span class="tok-com">{/* The one interactive item is an app-level
+      client leaf that owns its handler (§5.7). */}</span>
+  &lt;<span class="tok-fn">SignOutItem</span> /&gt;
+&lt;/<span class="tok-fn">Sidebar</span>&gt;</pre>
+<CodeCaption>
+  The layout stays a server component. Only the sign-out leaf ships JavaScript, and it
+  owns its own click.
+</CodeCaption>
+</CompareCol>
+</Compare>
+
+<p>
+  Inside the library, that means three small files instead of one big one. Note which of
+  them carries the directive, and which do not need it at all:
+</p>
+
+<pre class="code" is:raw><span class="filename">packages/ui/sidebar/Sidebar.tsx + SidebarLinkItem.tsx: structure, no directive</span><span class="tok-com">/* Pure structure: renders anywhere, server included, and ships nothing. */</span>
+<span class="tok-kw">export function</span> <span class="tok-fn">Sidebar</span>({ children }: { children: React.ReactNode }) {
+  <span class="tok-kw">return</span> &lt;nav <span class="tok-prop">className</span>=<span class="tok-str">"sidebar"</span>&gt;{children}&lt;/nav&gt;;
+}
+
+<span class="tok-com">/* Navigation is a link. An href is serializable, so no directive here either;
+   prefetching comes free with the Link (§4.5). */</span>
+<span class="tok-kw">export function</span> <span class="tok-fn">SidebarLinkItem</span>({ href, icon, children }: <span class="tok-fn">SidebarLinkItemProps</span>) {
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Link</span> <span class="tok-prop">href</span>={href} <span class="tok-prop">className</span>=<span class="tok-str">"sidebar-item"</span>&gt;
+      {icon}
+      {children}
+    &lt;/<span class="tok-fn">Link</span>&gt;
+  );
+}</pre>
+
+<pre class="code" is:raw><span class="filename">packages/ui/sidebar/SidebarButtonItem.tsx: the interactive leaf, own file</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-com">/* The one part that genuinely needs an event handler, isolated in its own
+   file so importing the container never drags it across the boundary. */</span>
+<span class="tok-kw">export function</span> <span class="tok-fn">SidebarButtonItem</span>({ icon, onClick, children }: <span class="tok-fn">SidebarButtonItemProps</span>) {
+  <span class="tok-kw">return</span> (
+    &lt;button <span class="tok-prop">className</span>=<span class="tok-str">"sidebar-item"</span> <span class="tok-prop">onClick</span>={onClick}&gt;
+      {icon}
+      {children}
+    &lt;/button&gt;
+  );
+}</pre>
+
+<p>
+  One nuance closes the loop: a server layout still cannot pass <code>onClick</code> to
+  <code>SidebarButtonItem</code> (functions don't cross the boundary), and that is by
+  design. Button-style items get consumed by small app-level client leaves, like the
+  <code>SignOutItem</code> above, that render <code>SidebarButtonItem</code> and own the
+  handler themselves, exactly the self-contained-leaf pattern of
+  <a href="#self-contained">§5.7</a>. The library provides the pieces; the application
+  decides where the client zone starts.
+</p>
+
+<h3 id="internalize-third-party">Internalize third-party components: one wrapper file, one leaf</h3>
+<p>
+  The first bullet above deserves its worked example, because the failure mode is subtle:
+  it is not just that an undeclared third-party component breaks under a server import.
+  It is that importing it <em>directly</em> from your own components makes
+  <strong>every composite that touches it</strong> a client component, layout, labels,
+  help text and all, and every component composing <em>those</em> composites after it.
+</p>
+
+<Compare>
+<CompareCol kind="bad" label="✕ Imported directly: the composite goes client">
+    <pre class="code" is:raw><span class="filename">ProgramPicker.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-com">/* react-select is interactive, so this
+   entire composite is now client: the
+   layout, the label, the help text. And
+   everything that embeds ProgramPicker
+   inherits the same fate. */</span>
+<span class="tok-kw">import</span> Select <span class="tok-kw">from</span> <span class="tok-str">"react-select"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramPicker</span>({ programs }) {
+  <span class="tok-kw">return</span> (
+    &lt;div&gt;
+      &lt;<span class="tok-fn">Label</span>&gt;Program&lt;/<span class="tok-fn">Label</span>&gt;
+      &lt;<span class="tok-fn">Select</span> <span class="tok-prop">options</span>={<span class="tok-fn">toOptions</span>(programs)} /&gt;
+      &lt;<span class="tok-fn">HelpText</span>&gt;Pick one to continue.&lt;/<span class="tok-fn">HelpText</span>&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+<CodeCaption>
+  One third-party import converts the whole composite, and its consumers, to client
+  components.
+</CodeCaption>
+</CompareCol>
+<CompareCol kind="good" label="✓ Internalized: the third-party part is the leaf">
+    <pre class="code" is:raw><span class="filename">ui/Select.tsx, then ProgramPicker.tsx</span><span class="tok-com">/* The third-party component is internalized
+   once, behind our own client file. THIS is
+   the leaf; nothing else needs the directive. */</span>
+<span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export</span> { <span class="tok-kw">default as</span> Select } <span class="tok-kw">from</span> <span class="tok-str">"react-select"</span>;</pre>
+    <pre class="code" is:raw><span class="filename">ProgramPicker.tsx: no directive</span><span class="tok-kw">import</span> { Select } <span class="tok-kw">from</span> <span class="tok-str">"@/ui/Select"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramPicker</span>({ programs }) {
+  <span class="tok-kw">return</span> (
+    &lt;div&gt;
+      &lt;<span class="tok-fn">Label</span>&gt;Program&lt;/<span class="tok-fn">Label</span>&gt;
+      &lt;<span class="tok-fn">Select</span> <span class="tok-prop">options</span>={<span class="tok-fn">toOptions</span>(programs)} /&gt;
+      &lt;<span class="tok-fn">HelpText</span>&gt;Pick one to continue.&lt;/<span class="tok-fn">HelpText</span>&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+<CodeCaption>
+  The composite stays a server component; only the internalized Select ships JavaScript.
+  The wrapper is also the single seam for theming or replacing the library later.
+</CodeCaption>
+</CompareCol>
+</Compare>
 
 <h2 id="searchparams-boundary">
   5.6 Client components that read the URL get their own Suspense boundary
