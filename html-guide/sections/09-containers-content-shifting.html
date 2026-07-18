@@ -645,11 +645,11 @@
                 width="676"
                 height="30"
                 rx="6"
-                fill="#eaf3fe"
-                stroke="#0070f3"
+                fill="#f7f7f7"
+                stroke="#c9c9c9"
                 stroke-width="1.5"
               />
-              <text x="32" y="59" font-size="10.5" fill="#0757ba">App header (app layout)</text>
+              <text x="32" y="59" font-size="10.5" fill="#666666">App header (app layout)</text>
 
               <!-- sidebar: app layout -->
               <rect
@@ -659,15 +659,15 @@
                 width="118"
                 height="252"
                 rx="6"
-                fill="#eaf3fe"
-                stroke="#0070f3"
+                fill="#f7f7f7"
+                stroke="#c9c9c9"
                 stroke-width="1.5"
               />
-              <text x="32" y="100" font-size="10.5" fill="#0757ba">Sidebar</text>
-              <text x="32" y="114" font-size="9" fill="#56789e">app layout</text>
-              <rect x="32" y="126" width="94" height="8" rx="4" fill="#c4dbf7" />
-              <rect x="32" y="140" width="94" height="8" rx="4" fill="#c4dbf7" />
-              <rect x="32" y="154" width="94" height="8" rx="4" fill="#c4dbf7" />
+              <text x="32" y="100" font-size="10.5" fill="#666666">Sidebar</text>
+              <text x="32" y="114" font-size="9" fill="#8b8b8b">app layout</text>
+              <rect x="32" y="126" width="94" height="8" rx="4" fill="#e0e0e0" />
+              <rect x="32" y="140" width="94" height="8" rx="4" fill="#e0e0e0" />
+              <rect x="32" y="154" width="94" height="8" rx="4" fill="#e0e0e0" />
 
               <!-- ReportsLayout boundary: beside the sidebar, beneath the app header -->
               <rect
@@ -727,15 +727,26 @@
                 marker-start="url(#a9v)"
                 marker-end="url(#a9v)"
               />
-              <rect x="196" y="176" width="440" height="12" rx="3" fill="#dbe7f5" />
-              <rect x="196" y="194" width="440" height="12" rx="3" fill="#dbe7f5" />
-              <rect x="196" y="212" width="440" height="12" rx="3" fill="#dbe7f5" />
-              <rect x="196" y="230" width="440" height="12" rx="3" fill="#dbe7f5" />
-              <rect x="196" y="248" width="440" height="12" rx="3" fill="#dbe7f5" />
-              <rect x="196" y="266" width="440" height="12" rx="3" fill="#dbe7f5" />
-              <rect x="196" y="284" width="440" height="12" rx="3" fill="#dbe7f5" />
-              <rect x="648" y="176" width="6" height="120" rx="3" fill="#eef0f2" />
-              <rect x="648" y="176" width="6" height="44" rx="3" fill="#bcc4cc" />
+              <rect
+                x="188"
+                y="168"
+                width="458"
+                height="136"
+                rx="5"
+                fill="#fdf3e3"
+                stroke="#b45309"
+                stroke-width="1.5"
+                stroke-dasharray="5 4"
+              />
+              <rect x="196" y="176" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="196" y="194" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="196" y="212" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="196" y="230" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="196" y="248" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="196" y="266" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="196" y="284" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="652" y="176" width="6" height="120" rx="3" fill="#eef0f2" />
+              <rect x="652" y="176" width="6" height="44" rx="3" fill="#bcc4cc" />
             </svg>
             <figcaption>
               The flex-grow-and-scroll frame from the snippet above, on the page. The app layout
@@ -746,7 +757,10 @@
               header), sized by its content; the main region takes <code>grow</code> and
               <code>overflow-y-auto</code>, stretching to fill everything beneath the reports header
               and scrolling its rows internally when they overflow. The chrome, the frame, and both
-              headers stay put no matter how much data lands.
+              headers stay put no matter how much data lands. Color coding: gray is app chrome
+              (context, not this chapter's subject), blue is the known frame that
+              <code>ReportsLayout</code> owns and reserves, and amber is the unknown: the rows that
+              stream into the scroll region later, landing inside space that never moves.
             </figcaption>
           </figure>
 

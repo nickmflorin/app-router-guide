@@ -1,0 +1,21 @@
+{
+  "updatedAt": "2026-07-18T00:21:33.543367+00:00",
+  "notes": [
+    {
+      "id": "nmrpmbwke",
+      "page": "09-containers-content-shifting.html",
+      "ts": "2026-07-18T00:18:14.558Z",
+      "status": "resolved",
+      "text": "In this diagram, the content is good but can we use better color coding or different colors to represent different meaning better?  like maybe the yellow for the unknown content area or something, different color for the app chrome layout header and sidebar",
+      "target": {
+        "anchor": "reserving",
+        "path": [
+          17
+        ],
+        "tag": "figure",
+        "snippet": "app.craft.com/reports/hours App header (app layout) Sidebar app layout ReportsLayout <Repo"
+      },
+      "resolution": "Recolored: app chrome (header bar + sidebar) is now neutral gray, the ReportsLayout frame/headers stay blue (the known), and the scroll region interior is an amber dashed area with amber row bars (the unknown streaming in). Figcaption now explains the color key."
+    }
+  ]
+}
