@@ -39,13 +39,13 @@
   
   <svg viewBox="0 0 720 239" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
     <!-- three-phase storyboard -->
-    <text x="125" y="10.28" font-size="11.5" fill="#171717" text-anchor="middle" font-weight="500">
+    <text x="125" y="10.28" font-size="10.5" fill="#171717" text-anchor="middle" font-weight="500">
       t₀: shell paints
     </text>
-    <text x="360" y="10.28" font-size="11.5" fill="#171717" text-anchor="middle" font-weight="500">
+    <text x="360" y="10.28" font-size="10.5" fill="#171717" text-anchor="middle" font-weight="500">
       t₁: data resolves
     </text>
-    <text x="595" y="10.28" font-size="11.5" fill="#171717" text-anchor="middle" font-weight="500">
+    <text x="595" y="10.28" font-size="10.5" fill="#171717" text-anchor="middle" font-weight="500">
       t₂: swap in place
     </text>
 
@@ -140,25 +140,61 @@ The lifecycle of one suspended region. The boundary lives inside a known contain
     <strong>An async server component awaiting</strong> inside the boundary: the canonical
     App Router case. The server streams the fallback, keeps working, and streams the
     content when the await resolves.
+    <pre class="code"><span class="tok-com">{/* The await inside ReportRows suspends this boundary. */}</span>
+&lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">RowsSkeleton</span> /&gt;}&gt;
+  &lt;<span class="tok-fn">ReportRows</span> <span class="tok-prop">programId</span>={id} /&gt;
+&lt;/<span class="tok-fn">Suspense</span>&gt;
+
+<span class="tok-kw">async function</span> <span class="tok-fn">ReportRows</span>({ programId }) {
+  <span class="tok-kw">const</span> rows = <span class="tok-kw">await</span> <span class="tok-fn">getRows</span>(programId);
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">TableBody</span> <span class="tok-prop">rows</span>={rows} /&gt;;
+}</pre>
   </li>
   <li>
     <strong><code>use(promise)</code></strong> in a client component: React 19's way to
     read a promise (often one passed down from a server component) with Suspense
     semantics.
+    <pre class="code"><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">function</span> <span class="tok-fn">Comments</span>({ commentsPromise }) {
+  <span class="tok-com">/* Suspends until the promise (started on the server) resolves. */</span>
+  <span class="tok-kw">const</span> comments = <span class="tok-fn">use</span>(commentsPromise);
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">CommentList</span> <span class="tok-prop">comments</span>={comments} /&gt;;
+}</pre>
   </li>
   <li>
     <strong>Suspense-enabled data hooks</strong>: SWR with
     <code>suspense:&nbsp;true</code>, React Query's <code>useSuspenseQuery</code>.
+    <pre class="code"><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">function</span> <span class="tok-fn">ProgramStats</span>({ programId }) {
+  <span class="tok-com">/* No isLoading flag: the hook suspends, the boundary shows the fallback. */</span>
+  <span class="tok-kw">const</span> { data } = <span class="tok-fn">useSWR</span>([<span class="tok-str">"stats"</span>, programId], fetcher, { <span class="tok-prop">suspense</span>: <span class="tok-kw">true</span> });
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">StatsRow</span> <span class="tok-prop">stats</span>={data} /&gt;;
+}</pre>
   </li>
   <li>
     <strong><code>lazy()</code> components</strong> and dynamic imports while their code
     loads (<a href="06-first-render-js.html">§6</a>).
+    <pre class="code"><span class="tok-kw">const</span> EnrollmentChart = <span class="tok-fn">dynamic</span>(() =&gt; <span class="tok-kw">import</span>(<span class="tok-str">"./EnrollmentChart"</span>));
+
+<span class="tok-com">{/* While the chunk downloads, the boundary shows the fallback. */}</span>
+&lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">ChartSkeleton</span> /&gt;}&gt;
+  &lt;<span class="tok-fn">EnrollmentChart</span> /&gt;
+&lt;/<span class="tok-fn">Suspense</span>&gt;</pre>
   </li>
   <li>
     <strong><code>useSearchParams()</code></strong> in a client component requires a
     boundary above it during prerendering: a mandatory, mechanical case with its own
     dedicated pattern in
     <a href="05-client-server-boundaries.html#searchparams-boundary">§5.6</a>.
+    <pre class="code"><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">function</span> <span class="tok-fn">SearchInputInner</span>() {
+  <span class="tok-com">/* Must render under a Suspense boundary; §5.6 bakes it into the component. */</span>
+  <span class="tok-kw">const</span> params = <span class="tok-fn">useSearchParams</span>();
+  <span class="tok-com">// …</span>
+}</pre>
   </li>
 </ul>
 <div class="callout callout-info">
@@ -213,7 +249,7 @@ The lifecycle of one suspended region. The boundary lives inside a known contain
 <figure class="diagram">
   
   <svg viewBox="0 0 720 261" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
-    <text x="14" y="10.28" font-size="11.5" fill="#b3261e" font-weight="500">
+    <text x="14" y="10.28" font-size="10.5" fill="#b3261e" font-weight="500">
       Blocking SSR: response waits for the slowest fetch
     </text>
     <!-- lane 1 -->
@@ -342,7 +378,7 @@ Recreated from the Next.js docs' streaming illustration: same fetches, same dura
     <text x="30" y="44" font-size="9.5" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
       export default function Loading() &#123;
     </text>
-    <text x="30" y="58" font-size="9.5" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
+    <text x="42" y="58" font-size="9.5" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
       return &lt;PageScaffoldSkeleton /&gt;;
     </text>
     <text x="30" y="72" font-size="9.5" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
@@ -358,7 +394,7 @@ Recreated from the Next.js docs' streaming illustration: same fetches, same dura
     <text x="30" y="158" font-size="9.5" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
       export default function Error(props) &#123;
     </text>
-    <text x="30" y="172" font-size="9.5" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
+    <text x="42" y="172" font-size="9.5" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
       return &lt;RegionError &#123;...props&#125; /&gt;;
     </text>
     <text x="30" y="186" font-size="9.5" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
@@ -378,44 +414,43 @@ Recreated from the Next.js docs' streaming illustration: same fetches, same dura
     <text x="692" y="50" font-size="8.5" fill="#527dad" text-anchor="end">
       the known scaffold (§9)
     </text>
-    <rect x="478" y="57" width="60" height="16" rx="4" fill="#fdecea" stroke="#b3261e"></rect>
-    <text x="316" y="69" font-size="10" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
+    <rect x="482" y="57" width="60" height="16" rx="4" fill="#fdecea" stroke="#b3261e"></rect>
+    <text x="328" y="69" font-size="10" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
       &lt;ErrorBoundary fallback=&#123;
     </text>
-    <text x="482" y="69" font-size="10" fill="#b3261e" font-family="Geist Mono, ui-monospace, monospace">
+    <text x="486" y="69" font-size="10" fill="#b3261e" font-family="Geist Mono, ui-monospace, monospace">
       &lt;Error /&gt;
     </text>
-    <text x="542" y="69" font-size="10" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
+    <text x="546" y="69" font-size="10" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
       &#125;&gt;
     </text>
     <text x="692" y="69" font-size="8.5" fill="#b0483e" text-anchor="end">
       failure, contained
     </text>
-    <rect x="462" y="76" width="72" height="16" rx="4" fill="#fdf3e3" stroke="#b45309"></rect>
-    <text x="316" y="88" font-size="10" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
+    <rect x="464" y="76" width="72" height="16" rx="4" fill="#fdf3e3" stroke="#b45309"></rect>
+    <text x="340" y="88" font-size="10" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
       &lt;Suspense fallback=&#123;
     </text>
-    <text x="466" y="88" font-size="10" fill="#8a5a00" font-family="Geist Mono, ui-monospace, monospace">
+    <text x="468" y="88" font-size="10" fill="#8a5a00" font-family="Geist Mono, ui-monospace, monospace">
       &lt;Loading /&gt;
     </text>
-    <text x="538" y="88" font-size="10" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
+    <text x="540" y="88" font-size="10" fill="#171717" font-family="Geist Mono, ui-monospace, monospace">
       &#125;&gt;
     </text>
     <text x="692" y="88" font-size="8.5" fill="#8a5a00" text-anchor="end">
       the unknown, contained (§10)
     </text>
-    <rect x="350" y="95" width="58" height="16" rx="4" fill="#e7f5ee" stroke="#2ea06d"></rect>
-    <text x="316" y="107" font-size="10" fill="#171717" font-family="Geist Mono, ui-monospace, monospace"></text>
-    <text x="354" y="107" font-size="10" fill="#157a4c" font-family="Geist Mono, ui-monospace, monospace">
+    <rect x="352" y="95" width="58" height="16" rx="4" fill="#e7f5ee" stroke="#2ea06d"></rect>
+    <text x="356" y="107" font-size="10" fill="#157a4c" font-family="Geist Mono, ui-monospace, monospace">
       &lt;Page /&gt;
     </text>
     <text x="692" y="107" font-size="8.5" fill="#2e7d5b" text-anchor="end">
       your content, aware of neither
     </text>
-    <text x="316" y="126" font-size="10" fill="#666666" font-family="Geist Mono, ui-monospace, monospace">
+    <text x="340" y="126" font-size="10" fill="#666666" font-family="Geist Mono, ui-monospace, monospace">
       &lt;/Suspense&gt;
     </text>
-    <text x="316" y="145" font-size="10" fill="#666666" font-family="Geist Mono, ui-monospace, monospace">
+    <text x="328" y="145" font-size="10" fill="#666666" font-family="Geist Mono, ui-monospace, monospace">
       &lt;/ErrorBoundary&gt;
     </text>
     <text x="316" y="164" font-size="10" fill="#0757ba" font-family="Geist Mono, ui-monospace, monospace">
@@ -423,8 +458,8 @@ Recreated from the Next.js docs' streaming illustration: same fetches, same dura
     </text>
 
     <!-- file → pill wiring -->
-    <path d="M 258 42 L 272 42 L 272 84 L 296 84" fill="none" stroke="#b45309" stroke-width="1.5" marker-end="url(#aW)"></path>
-    <path d="M 258 156 L 284 156 L 284 65 L 296 65" fill="none" stroke="#b3261e" stroke-width="1.5" marker-end="url(#aX)"></path>
+    <path d="M 258 42 L 272 42 L 272 84 L 332 84" fill="none" stroke="#b45309" stroke-width="1.5" marker-end="url(#aW)"></path>
+    <path d="M 258 156 L 284 156 L 284 65 L 320 65" fill="none" stroke="#b3261e" stroke-width="1.5" marker-end="url(#aX)"></path>
   </svg>
   
 
@@ -442,8 +477,9 @@ loading.tsx and error.tsx are sugar for boundaries Next.js wraps around your pag
 <h2 id="no-own-loading">10.3 Components must not define their own loading states</h2>
 <p>
   <span class="chip chip-react">React</span>
-  <span class="chip chip-critical">Critical</span> A component that renders its own
-  spinner has made three decisions it has no business making: <em>that</em> it is worth
+  <span class="chip chip-critical">Critical</span> A component that owns its own
+  loading indicator, whether that's a spinner, a skeleton, or any other placeholder, has
+  made three decisions it has no business making: <em>that</em> it is worth
   waiting for (its parent's composition decides that), <em>where</em> the waiting UI
   appears (the boundary above decides that), and
   <em>what the rest of the page does meanwhile</em> (it can't know). The costs show up
@@ -553,7 +589,7 @@ loading.tsx and error.tsx are sugar for boundaries Next.js wraps around your pag
 <figure class="diagram">
   
   <svg viewBox="0 0 720 187" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
-    <text x="14" y="10.28" font-size="11.5" fill="#171717" font-weight="500">
+    <text x="14" y="10.28" font-size="10.5" fill="#171717" font-weight="500">
       First load: the only time a fallback appears
     </text>
     <rect x="90" y="22.28" width="180" height="30" rx="6" fill="#fdf3e3" stroke="#b45309" stroke-dasharray="5 4"></rect>
@@ -606,7 +642,8 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
     changes the URL, the already-revealed table stays on screen while the server
     re-renders with the new <code>searchParams</code>; the Suspense boundary does
     <em>not</em> revert to its fallback. Wrap the <code>router.replace()</code> in your
-    own <code>useTransition</code> and <code>isPending</code> is your indicator.
+    own <code>useTransition</code> and <code>isPending</code> is your indicator. Assembled
+    end to end in <a href="#example-url-transition">the first example below</a>.
   </li>
   <li>
     <strong>Client-fetched data</strong>: SWR / React Query already behave this way:
@@ -619,13 +656,15 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
     <code>useDeferredValue</code>. When the value drives client-side rendering or
     client-fetched queries (an autocomplete, search-as-you-type against the client cache),
     render against the deferred value; <code>value !== deferredValue</code> drives the
-    dimmed opacity. Same presentation rule, client-side mechanism.
+    dimmed opacity. Same presentation rule, client-side mechanism. Shown in
+    <a href="#example-deferred">the second example below</a>.
   </li>
 </ul>
 
+<h3 id="example-url-transition">Example: URL-driven server UI, kept stale through a transition</h3>
 <p>
-  Here is the default case assembled end to end, and notice it's the whole guide in one
-  example: the URL is the state (<a href="08-server-resolvable-state.html">§8</a>), the
+  The first bullet, the default case, assembled end to end. Notice it's the whole guide in
+  one example: the URL is the state (<a href="08-server-resolvable-state.html">§8</a>), the
   input and the dim-wrapper are client leaves (<a href="05-client-server-boundaries.html">§5</a>), the rows are a server component fetching by <code>searchParams</code>, and the
   fallback appears exactly once:
 </p>
@@ -746,6 +785,53 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
   "new content" and <em>will</em> re-show its fallback.
 </p>
 
+<h3 id="example-deferred">Example: client-rendered results of a fast-changing value</h3>
+<p>
+  The third bullet. Here nothing touches the server or the URL: the data is already on the
+  client, and the fast-changing value is each keystroke. <code>useDeferredValue</code>
+  gives the same stale-content behavior with a purely client mechanism: the input re-renders
+  instantly with the fresh value, while the expensive results below are allowed to lag one
+  render behind and dim until they catch up:
+</p>
+
+<pre class="code"><span class="filename">ProgramFilter.tsx - client: search-as-you-type over client data</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramFilter</span>({ programs }) {
+  <span class="tok-kw">const</span> [query, setQuery] = <span class="tok-fn">useState</span>(<span class="tok-str">""</span>);
+
+  <span class="tok-com">/* deferredQuery lags behind query while React re-renders the heavy list.
+     The input stays instantly responsive; the results are allowed to be one
+     keystroke stale. */</span>
+  <span class="tok-kw">const</span> deferredQuery = <span class="tok-fn">useDeferredValue</span>(query);
+  <span class="tok-kw">const</span> isStale = query !== deferredQuery;
+
+  <span class="tok-kw">const</span> matches = <span class="tok-fn">useMemo</span>(
+    () =&gt; programs.<span class="tok-fn">filter</span>((p) =&gt; p.name.<span class="tok-fn">toLowerCase</span>().<span class="tok-fn">includes</span>(deferredQuery.<span class="tok-fn">toLowerCase</span>())),
+    [programs, deferredQuery]
+  );
+
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">Input</span> <span class="tok-prop">value</span>={query} <span class="tok-prop">onValueChange</span>={setQuery} /&gt;
+
+      <span class="tok-com">{/* Same presentation rule as the server case: stale results stay
+          visible and dim; they are never swapped for a spinner. */}</span>
+      &lt;div <span class="tok-prop">style</span>={{ opacity: isStale ? <span class="tok-str">0.6</span> : <span class="tok-str">1</span> }}&gt;
+        &lt;<span class="tok-fn">ProgramList</span> <span class="tok-prop">programs</span>={matches} /&gt;
+      &lt;/div&gt;
+    &lt;/&gt;
+  );
+}</pre>
+
+<p>
+  Two mechanisms, one rule. The transition example indicates with
+  <code>isPending</code>; this one indicates with <code>query !== deferredQuery</code>.
+  In both, the existing results never leave the screen, and nothing below the input ever
+  collapses into a spinner. (The middle bullet, client-fetched data, needs no example of
+  its own: SWR and React Query give you this behavior out of the box; just bind your
+  indicator to <code>isValidating</code> and never gate content on it.)
+</p>
+
 <h2 id="orthogonal">10.6 Loading, data, and empty are three separate questions</h2>
 <p>
   The deepest of the loading-state mistakes is structural: the
@@ -791,7 +877,7 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
     </defs>
 
     <!-- LANE 1: data defaulted to [] -->
-    <text x="360" y="10.28" font-size="11.5" fill="#b3261e" text-anchor="middle" font-weight="500">
+    <text x="360" y="10.28" font-size="10.5" fill="#b3261e" text-anchor="middle" font-weight="500">
       const &#123; data = [] &#125;: unknown and empty collapse into one value
     </text>
     <rect x="120" y="24.28" width="180" height="104" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>

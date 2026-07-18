@@ -252,7 +252,7 @@ home per technique + cross-references).
   links to its file + subsection anchor; same-page subsection refs use #anchor. Not linked: refs
   inside code blocks, SVG texts, or headings. Subsection anchor map lives in the cross-linking
   script in session history; when writing new sections, author refs as links directly.
-- **Diagram type conventions:** bold = font-weight 500 (never 600), titles 12/11.5px; pointer
+- **Diagram type conventions:** bold = font-weight 500 (never 600), panel titles 11/10.5px (shrunk 1px guide-wide per Nick 2026-07-18); pointer
   annotations use drawn <line> arrows with markers — glyph arrows (⟵ ↓ →) are banned in small
   annotation text.
 - **A marker's color must match its line's stroke** — markers don't inherit stroke, so each arrow

@@ -62,29 +62,29 @@
 <figure class="diagram">
   
   <svg viewBox="0 0 720 274" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
-    <text x="180" y="12" font-size="12" fill="#8a5a00" text-anchor="middle" font-weight="500">
+    <text x="180" y="12" font-size="11" fill="#8a5a00" text-anchor="middle" font-weight="500">
       Wholesale: one fused client component
     </text>
-    <text x="540" y="12" font-size="12" fill="#0757ba" text-anchor="middle" font-weight="500">
+    <text x="540" y="12" font-size="11" fill="#0757ba" text-anchor="middle" font-weight="500">
       Composed: known frame, unknown rows
     </text>
     <line x1="360" y1="2" x2="360" y2="270" stroke="#e0e0e0"></line>
 
     <!-- LEFT: fused grid -->
     <rect x="40" y="34" width="280" height="210" rx="8" fill="#fdf3e3" stroke="#b45309"></rect>
-    <text x="180" y="52" font-size="11" fill="#8a5a00" text-anchor="middle" font-weight="500">
+    <text x="180" y="49" font-size="11" fill="#8a5a00" text-anchor="middle" font-weight="500" dominant-baseline="central">
       MUI DataGrid (one client component)
     </text>
     <line x1="40" y1="64" x2="320" y2="64" stroke="#e0c48f"></line>
-    <text x="180" y="97" font-size="10.5" fill="#8a5a00" text-anchor="middle">
+    <text x="180" y="94" font-size="10.5" fill="#8a5a00" text-anchor="middle" dominant-baseline="central">
       Header + toolbar
     </text>
     <line x1="40" y1="124" x2="320" y2="124" stroke="#e0c48f"></line>
-    <text x="180" y="157" font-size="10.5" fill="#8a5a00" text-anchor="middle">
+    <text x="180" y="154" font-size="10.5" fill="#8a5a00" text-anchor="middle" dominant-baseline="central">
       Body rows: the only real unknown
     </text>
     <line x1="40" y1="184" x2="320" y2="184" stroke="#e0c48f"></line>
-    <text x="180" y="217" font-size="10.5" fill="#8a5a00" text-anchor="middle">
+    <text x="180" y="214" font-size="10.5" fill="#8a5a00" text-anchor="middle" dominant-baseline="central">
       Footer + pagination
     </text>
     <text x="180" y="262" font-size="9.5" fill="#b45309" text-anchor="middle" font-weight="500">
@@ -92,23 +92,23 @@
     </text>
 
     <!-- RIGHT: composed -->
-    <rect x="400" y="34" width="280" height="40" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
-    <text x="540" y="58" font-size="10.5" fill="#0757ba" text-anchor="middle">
+    <rect x="400" y="34" width="280" height="32" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="540" y="50" font-size="10.5" fill="#0757ba" text-anchor="middle" dominant-baseline="central">
       Toolbar + title (server, instant)
     </text>
-    <rect x="400" y="80" width="280" height="32" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
-    <text x="540" y="100" font-size="10.5" fill="#0757ba" text-anchor="middle">
+    <rect x="400" y="72" width="280" height="32" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="540" y="88" font-size="10.5" fill="#0757ba" text-anchor="middle" dominant-baseline="central">
       Column headers (server, instant)
     </text>
-    <rect x="400" y="118" width="280" height="74" rx="6" fill="#fdf3e3" stroke="#b45309" stroke-dasharray="6 4"></rect>
-    <text x="540" y="140" font-size="10.5" fill="#8a5a00" text-anchor="middle" font-weight="500">
+    <rect x="400" y="110" width="280" height="96" rx="6" fill="#fdf3e3" stroke="#b45309" stroke-dasharray="6 4"></rect>
+    <text x="540" y="150" font-size="10.5" fill="#8a5a00" text-anchor="middle" font-weight="500" dominant-baseline="central">
       &lt;Suspense&gt;: body rows
     </text>
-    <text x="540" y="156" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
+    <text x="540" y="166" font-size="9.5" fill="#8f6b2e" text-anchor="middle" dominant-baseline="central">
       streams when the data resolves
     </text>
-    <rect x="400" y="198" width="280" height="36" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
-    <text x="540" y="220" font-size="10.5" fill="#0757ba" text-anchor="middle">
+    <rect x="400" y="212" width="280" height="32" rx="6" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="540" y="228" font-size="10.5" fill="#0757ba" text-anchor="middle" dominant-baseline="central">
       Footer + pagination (server)
     </text>
     <text x="540" y="262" font-size="9.5" fill="#0f7b48" text-anchor="middle" font-weight="500">
@@ -168,10 +168,10 @@ The same table, two architectures. On the left, a wholesale grid fuses the knowa
 <figure class="diagram">
   
   <svg viewBox="0 0 720 334" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
-    <text x="180" y="12" font-size="11.5" fill="#b45309" text-anchor="middle" font-weight="500">
+    <text x="180" y="12" font-size="10.5" fill="#b45309" text-anchor="middle" font-weight="500">
       Wholesale grid: the whole table waits
     </text>
-    <text x="540" y="12" font-size="11.5" fill="#0757ba" text-anchor="middle" font-weight="500">
+    <text x="540" y="12" font-size="10.5" fill="#0757ba" text-anchor="middle" font-weight="500">
       Composed: only the rows wait
     </text>
 
@@ -183,20 +183,20 @@ The same table, two architectures. On the left, a wholesale grid fuses the knowa
     <rect x="72" y="34" width="190" height="16" rx="8" fill="#f2f2f2" stroke="#e0e0e0"></rect>
     <text x="82" y="46" font-size="9.5" fill="#737373">app.craft.com/reports/hours</text>
     <rect x="24" y="60" width="312" height="28" rx="6" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"></rect>
-    <text x="36" y="78" font-size="10.5" fill="#0757ba">
+    <text x="36" y="74" font-size="10.5" fill="#0757ba" dominant-baseline="central">
       Page header (server, instant)
     </text>
-    <rect x="24" y="96" width="312" height="190" rx="6" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"></rect>
-    <text x="180" y="150" font-size="11" fill="#8a5a00" text-anchor="middle" font-weight="500">
+    <rect x="24" y="96" width="312" height="198" rx="6" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"></rect>
+    <text x="180" y="164" font-size="11" fill="#8a5a00" text-anchor="middle" font-weight="500">
       MUI DataGrid (one client component)
     </text>
-    <text x="180" y="170" font-size="10" fill="#8f6b2e" text-anchor="middle">
+    <text x="180" y="184" font-size="10" fill="#8f6b2e" text-anchor="middle">
       toolbar, columns, rows, footer, fused
     </text>
-    <text x="180" y="188" font-size="10" fill="#8f6b2e" text-anchor="middle">
+    <text x="180" y="202" font-size="10" fill="#8f6b2e" text-anchor="middle">
       nothing renders until bundle + data
     </text>
-    <text x="180" y="252" font-size="10" fill="#b45309" text-anchor="middle" font-weight="500">
+    <text x="180" y="262" font-size="10" fill="#b45309" text-anchor="middle" font-weight="500">
       The whole table is the unknown
     </text>
 
@@ -208,23 +208,23 @@ The same table, two architectures. On the left, a wholesale grid fuses the knowa
     <rect x="432" y="34" width="190" height="16" rx="8" fill="#f2f2f2" stroke="#e0e0e0"></rect>
     <text x="442" y="46" font-size="9.5" fill="#737373">app.craft.com/reports/hours</text>
     <rect x="384" y="60" width="312" height="28" rx="6" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"></rect>
-    <text x="396" y="78" font-size="10.5" fill="#0757ba">
+    <text x="396" y="74" font-size="10.5" fill="#0757ba" dominant-baseline="central">
       Page header (server, instant)
     </text>
-    <rect x="384" y="96" width="312" height="24" rx="5" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"></rect>
-    <text x="396" y="112" font-size="10" fill="#0757ba">Toolbar (server)</text>
-    <rect x="384" y="124" width="312" height="22" rx="5" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"></rect>
-    <text x="396" y="139" font-size="10" fill="#0757ba">Column headers (server)</text>
+    <rect x="384" y="96" width="312" height="26" rx="5" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"></rect>
+    <text x="396" y="109" font-size="10" fill="#0757ba" dominant-baseline="central">Toolbar (server)</text>
+    <rect x="384" y="130" width="312" height="26" rx="5" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"></rect>
+    <text x="396" y="143" font-size="10" fill="#0757ba" dominant-baseline="central">Column headers (server)</text>
     <!-- data-lint-ignore: rows region reserves space; skeletons sit at the top -->
-    <rect data-lint-ignore="scene" x="384" y="150" width="312" height="116" rx="5" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"></rect>
-    <text x="396" y="170" font-size="10.5" fill="#8a5a00" font-weight="500">
+    <rect data-lint-ignore="scene" x="384" y="164" width="312" height="96" rx="5" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"></rect>
+    <text x="396" y="194" font-size="10.5" fill="#8a5a00" font-weight="500">
       Body rows: &lt;Suspense&gt;
     </text>
     <rect x="396" y="182" width="288" height="7" rx="3" fill="#f3e2c0"></rect>
-    <rect x="396" y="196" width="288" height="7" rx="3" fill="#f3e2c0"></rect>
-    <rect x="396" y="210" width="288" height="7" rx="3" fill="#f3e2c0"></rect>
-    <rect x="384" y="270" width="312" height="26" rx="5" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"></rect>
-    <text x="396" y="287" font-size="10" fill="#0757ba">
+    <rect x="396" y="208" width="288" height="7" rx="3" fill="#f3e2c0"></rect>
+    <rect x="396" y="222" width="288" height="7" rx="3" fill="#f3e2c0"></rect>
+    <rect x="384" y="268" width="312" height="26" rx="5" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"></rect>
+    <text x="396" y="281" font-size="10" fill="#0757ba" dominant-baseline="central">
       Footer + pagination (server)
     </text>
 

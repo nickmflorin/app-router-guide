@@ -912,3 +912,10 @@ a.toc-row .soon {
     padding: 0;
   }
 }
+
+/* Nested snippets inside list items (e.g. the Suspense-trigger bullets):
+   align with the bullet TEXT (the li content box), not the marker, and sit
+   tighter than a top-level code block. */
+li > pre.code {
+  margin: 10px 0 4px;
+}
