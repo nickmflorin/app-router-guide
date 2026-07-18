@@ -6,6 +6,7 @@ import GoDeeper from '../../components/GoDeeper.astro';
 import Diagram from '../../components/Diagram.astro';
 import Compare from '../../components/Compare.astro';
 import CompareCol from '../../components/CompareCol.astro';
+import CodeCaption from '../../components/CodeCaption.astro';
 ---
 
 <GuidePage title="Containers &amp; Content Shifting - App Router Guide" root="..">
@@ -509,32 +510,29 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
 &lt;/<span class="tok-fn">Suspense</span>&gt;</pre>
     <pre
                 class="code" is:raw
-              ><span class="filename">StatsSkeleton.tsx</span><span class="tok-com">/* The fallback brings its own card:
-   chrome that will be torn down and
-   rebuilt when the content arrives. */</span>
-<span class="tok-kw">export function</span> <span class="tok-fn">StatsSkeleton</span>() {
+              ><span class="filename">StatsSkeleton.tsx</span><span class="tok-kw">export function</span> <span class="tok-fn">StatsSkeleton</span>() {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Card</span> <span class="tok-prop">title</span>=<span class="tok-str">"Stats"</span>&gt;
       &lt;<span class="tok-fn">Bars</span> <span class="tok-prop">count</span>={<span class="tok-str">3</span>} /&gt;
     &lt;/<span class="tok-fn">Card</span>&gt;
   );
-}
-<span class="tok-com">/* ProgramStats renders another Card.
-   Neither declares a height, so the
-   swap reflows the page anyway. */</span></pre>
+}</pre>
+<CodeCaption>
+  The fallback brings its own card: chrome that is torn down and rebuilt when the content arrives. ProgramStats renders another Card, and since neither declares a height, the swap reflows the page anyway.
+</CodeCaption>
   
 </CompareCol>
 <CompareCol kind="good" label="✓ Container owns chrome and size; occupants fill it">
     <pre
                 class="code" is:raw
-              ><span class="filename">page.tsx</span><span class="tok-com">/* The container is server markup in the
-   scaffold: chrome + reserved height,
-   painted with the shell. */</span>
-&lt;<span class="tok-fn">StatsCard</span>&gt;
+              ><span class="filename">page.tsx</span>&lt;<span class="tok-fn">StatsCard</span>&gt;
   &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
     &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={id} /&gt;
   &lt;/<span class="tok-fn">Suspense</span>&gt;
 &lt;/<span class="tok-fn">StatsCard</span>&gt;</pre>
+<CodeCaption>
+  The container is server markup in the scaffold: chrome plus reserved height, painted with the shell.
+</CodeCaption>
     <pre
                 class="code" is:raw
               ><span class="filename">StatsCard.tsx - server, known, immediate</span><span class="tok-kw">export function</span> <span class="tok-fn">StatsCard</span>({ children }) {

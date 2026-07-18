@@ -149,7 +149,8 @@ home per technique + cross-references).
   to leaves, "use client", wrapping 3rd party, children pattern) · §6 First-render JS (dynamic
   imports) · §7 Bundle Size & Code Splitting (wholesale-component/MUI-datagrid trap; heavyweight
   imports + light fallbacks; barrel files; cost of bloat; NEW dedicated chapter 2026-07-17) · §8
-  Server-resolvable state (URL, params, cookies; tabs-in-state smell)
+  Server-resolvable state (URL, params, cookies; tabs-in-state smell; 8.4 URL writes w/
+  transitions + useOptimistic tabs, added 2026-07-18)
 - Part B — Contain the Unknown: §9 Containers & content shifting (containers known/reserve space;
   loading belongs to boundaries) · §10 Suspense & streaming (triggers, placement diagram,
   loading/error files, useDeferredValue + table problem) · §11 Blocking requests (parallel fetching,
@@ -200,6 +201,13 @@ home per technique + cross-references).
   showing locally, unknown notes are imported. file:// cannot fetch, so the manual Load button
   remains the fallback there. Claude resolves by setting status + resolution in the ledger; no
   rebuild needed for resolutions to reach the browser.
+- **One component per example file (per Nick, 2026-07-18):** snippets that represent files
+  never show two exported components in one file; split into separate pres with their own
+  filename labels (matches the guide's own one-component-per-file rule in §14).
+- **Whole-snippet comments are captions (per Nick, 2026-07-18):** any comment describing the
+  snippet as a whole (not a specific line) lives in a <CodeCaption>, not in the code; swept
+  guide-wide 2026-07-18. Compare columns: only the LAST pre in a column flexes (CSS), so
+  stacked snippets stay natural-size and final snippet bottoms align across columns.
 - **Code captions (per Nick, 2026-07-18):** summary-style commentary moves OUT of code snippets
   into a <CodeCaption> right under the pre (styled like diagram figcaptions, .code-caption).
   In-code comments stay for line-level explanation only. Applied first in §13.3; adopt gradually
@@ -271,7 +279,8 @@ home per technique + cross-references).
   `<marker id="X" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 2.5 1.5 L 8 5 L 2.5 8.5" fill="none" stroke="COLOR" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>`.
 - **ViewBox is flush to content** (~2px guard each side) — the figure's 14px CSS padding is the only
   padding; linter V1 enforces. Normalization script pattern in session history.
-- **Code line-length budgets:** ≤54 chars in compare columns, ≤110 in full-width blocks (verify with
+- **Code line-length budgets:** ≤54 chars in compare columns (COMMENT lines may run to ≤62,
+  per Nick 2026-07-18), ≤110 in full-width blocks (verify with
   the measuring script pattern in session history). nav.js provides IDE-style soft-wrap (VS Code
   "same" + comment-text alignment) as a safety net only — authored lines should never wrap at normal
   widths.

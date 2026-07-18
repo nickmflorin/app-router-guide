@@ -209,9 +209,12 @@ The same three components, wired two ways. Left: the parent fetches once and dri
         <span class="tok-prop">completed</span>={program.completedCount} /&gt;
     &lt;/&gt;
   );
-}
-<span class="tok-com">/* The Header needs one more field? Edit Header, Page,
-   and getProgram: three files, every time. */</span></pre>
+}</pre>
+<div class="code-caption">
+  
+  The Header needs one more field? Edit Header, Page, and getProgram: three files, every time.
+
+</div>
   
 
 </div>
@@ -376,12 +379,7 @@ Boundary placement follows the data. Drilled props force one big boundary above 
 <div class="bad">
   <div class="col-label">✕ Reports up through a wire</div>
   
-    <pre class="code"><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
-
-<span class="tok-com">/* The button must be handed a wire:
-   someone above must exist, must care,
-   and must never change shape. */</span>
-<span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({
+    <pre class="code"><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({
   programId,
   onSuccess,
 }: <span class="tok-fn">Props</span>) {
@@ -396,18 +394,18 @@ Boundary placement follows the data. Drilled props force one big boundary above 
     &lt;/<span class="tok-fn">Button</span>&gt;
   );
 }</pre>
+<div class="code-caption">
+  
+  The button must be handed a wire: someone above must exist, must care, and must never change shape.
+
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ Invalidates the data&#39;s name</div>
   
-    <pre class="code"><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
-
-<span class="tok-com">/* No wire: the mutation invalidates the
-   name the data lives under, and every
-   reader refires on its own. */</span>
-<span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({ programId }: <span class="tok-fn">Props</span>) {
+    <pre class="code"><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({ programId }: <span class="tok-fn">Props</span>) {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Button</span>
       <span class="tok-prop">onClick</span>={() =&gt;
@@ -426,6 +424,11 @@ Boundary placement follows the data. Drilled props force one big boundary above 
     &lt;/<span class="tok-fn">Button</span>&gt;
   );
 }</pre>
+<div class="code-caption">
+  
+  No wire: the mutation invalidates the name the data lives under, and every reader refires on its own.
+
+</div>
   
 
 </div>

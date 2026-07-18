@@ -6,6 +6,7 @@ import GoDeeper from '../../components/GoDeeper.astro';
 import Diagram from '../../components/Diagram.astro';
 import Compare from '../../components/Compare.astro';
 import CompareCol from '../../components/CompareCol.astro';
+import CodeCaption from '../../components/CodeCaption.astro';
 ---
 
 <GuidePage title="Bundle Size &amp; Code Splitting - App Router Guide" root="..">
@@ -369,12 +370,12 @@ The same table, two architectures. On the left, a wholesale grid fuses the knowa
       stroke-width="1.5"
       stroke-dasharray="5 4"
     />
-    <text x="396" y="194" font-size="10.5" fill="#8a5a00" font-weight="500">
+    <text x="396" y="180" font-size="10.5" fill="#8a5a00" font-weight="500">
       Body rows: &lt;Suspense&gt;
     </text>
-    <rect x="396" y="182" width="288" height="7" rx="3" fill="#f3e2c0" />
-    <rect x="396" y="208" width="288" height="7" rx="3" fill="#f3e2c0" />
-    <rect x="396" y="222" width="288" height="7" rx="3" fill="#f3e2c0" />
+    <rect x="396" y="196" width="288" height="7" rx="3" fill="#f3e2c0" />
+    <rect x="396" y="210" width="288" height="7" rx="3" fill="#f3e2c0" />
+    <rect x="396" y="224" width="288" height="7" rx="3" fill="#f3e2c0" />
     <rect
       x="384"
       y="268"
@@ -493,23 +494,19 @@ The reports page, laid out both ways. On the left, the wholesale grid makes the 
 <CompareCol kind="bad" label="✕ Barrel: one name pulls the whole package">
     <pre
                 class="code" is:raw
-              ><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;
-
-<span class="tok-com">/* Pulls the entire @/ui barrel into this route's
-   graph: Button drags in Modal, DatePicker,
-   RichTextEditor, Chart, and everything else the
-   index re-exports. */</span>
-<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui"</span>;</pre>
+              ><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui"</span>;</pre>
+<CodeCaption>
+  Pulling from the @/ui barrel adds the whole library to this route's graph: Button drags in Modal, DatePicker, RichTextEditor, and everything else the barrel re-exports.
+</CodeCaption>
   
 </CompareCol>
 <CompareCol kind="good" label="✓ Direct: one name pulls one module">
     <pre
                 class="code" is:raw
-              ><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;
-
-<span class="tok-com">/* Imports only Button's module. Nothing else in
-   @/ui is added to this route's bundle. */</span>
-<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui/button"</span>;</pre>
+              ><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui/button"</span>;</pre>
+<CodeCaption>
+  Imports only Button's module; nothing else in @/ui joins this route's bundle.
+</CodeCaption>
   
 </CompareCol>
 </Compare>

@@ -953,9 +953,7 @@ The empty-state flash, frame by frame. Same request, same 12 rows; the only diff
 <div class="bad">
   <div class="col-label">✕ One chain, three welded questions</div>
   
-    <pre class="code"><span class="filename">the classic: every branch misbehaves</span><span class="tok-com">/* Defaulting data to [] makes unknown and
-   empty identical. */</span>
-<span class="tok-kw">const</span> { data = [], isLoading } = <span class="tok-fn">useReportRows</span>(q);
+    <pre class="code"><span class="filename">the classic: every branch misbehaves</span><span class="tok-kw">const</span> { data = [], isLoading } = <span class="tok-fn">useReportRows</span>(q);
 
 <span class="tok-com">/* On every refetch, real content is replaced
    by a skeleton. */</span>
@@ -967,15 +965,18 @@ The empty-state flash, frame by frame. Same request, same 12 rows; the only diff
 <span class="tok-kw">if</span> (data.length === <span class="tok-str">0</span>) <span class="tok-kw">return</span> &lt;<span class="tok-fn">EmptyState</span> /&gt;;
 
 <span class="tok-kw">return</span> &lt;<span class="tok-fn">Rows</span> <span class="tok-prop">rows</span>={data} /&gt;;</pre>
+<div class="code-caption">
+  
+  Defaulting data to [] makes unknown and known-empty identical.
+
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ Three independent decisions</div>
   
-    <pre class="code"><span class="filename">status decorates; knowledge decides</span><span class="tok-com">/* The data is Row[] | undefined, and is
-   never defaulted. */</span>
-<span class="tok-kw">const</span> { data, isValidating } = <span class="tok-fn">useReportRows</span>(q);
+    <pre class="code"><span class="filename">status decorates; knowledge decides</span><span class="tok-kw">const</span> { data, isValidating } = <span class="tok-fn">useReportRows</span>(q);
 <span class="tok-kw">const</span> hasData = data !== <span class="tok-kw">undefined</span>;
 
 <span class="tok-com">/* Loading is indicated independently of what
@@ -997,6 +998,11 @@ The empty-state flash, frame by frame. Same request, same 12 rows; the only diff
     )}
   &lt;/<span class="tok-fn">TableContainer</span>&gt;
 );</pre>
+<div class="code-caption">
+  
+  The data stays Row[] | undefined and is never defaulted.
+
+</div>
   
 
 </div>

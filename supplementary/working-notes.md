@@ -66,6 +66,7 @@ clarification before proceeding.
 - [x] Consider moving explanation of perceived performance up, tie it together with cumulative
       layout shift. Tie together with TTI and why its a dead metric. (**Partially done**)
 - [x] Rename Tracker references to Tracker
+- [ ] Importance of 1 component per file.
 
 ## Page Content to Add or Modify
 

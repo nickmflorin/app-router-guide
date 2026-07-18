@@ -6,6 +6,7 @@ import GoDeeper from '../../components/GoDeeper.astro';
 import Diagram from '../../components/Diagram.astro';
 import Compare from '../../components/Compare.astro';
 import CompareCol from '../../components/CompareCol.astro';
+import CodeCaption from '../../components/CodeCaption.astro';
 ---
 
 <GuidePage title="Blocking Requests - App Router Guide" root="..">
@@ -228,12 +229,13 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
 }</pre>
     <pre
                 class="code" is:raw
-              ><span class="filename">when one component needs several answers</span><span class="tok-com">/* Inside a single component, start all
-   requests first, then await together. */</span>
-<span class="tok-kw">const</span> [program, stats] = <span class="tok-kw">await</span> <span class="tok-fn">Promise.all</span>([
+              ><span class="filename">when one component needs several answers</span><span class="tok-kw">const</span> [program, stats] = <span class="tok-kw">await</span> <span class="tok-fn">Promise.all</span>([
   <span class="tok-fn">getProgram</span>(id),
   <span class="tok-fn">getStats</span>(id),
 ]);</pre>
+<CodeCaption>
+  Inside a single component: start all the requests first, then await them together.
+</CodeCaption>
   
 </CompareCol>
 </Compare>

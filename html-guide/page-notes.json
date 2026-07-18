@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-18T15:42:26.851Z",
+  "updatedAt": "2026-07-18T16:00:29.429Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -136,7 +136,7 @@
       "id": "nmrqisko2",
       "page": "04-ssr.html",
       "ts": "2026-07-18T15:27:00.002Z",
-      "status": "open",
+      "status": "resolved",
       "text": "I want to break this into more concrete sub sections.  The first pargraph and everything up until the Streaming is the same principle statement is directly underneath the main section 4.3.  Then, the pargraph that starts with Streaming is the same principle applied ... should be a sub-section with a sub-section header.  Then after that, I want to elaborate on this perceived performance concept further, with an additional TTI sub-section.  That section should lead off by asking \"How many of you interact with a page within 500ms after it loads\"?  It should discuss why TTI is a dead metric because everything is about optimizing what the user SEES and can READ by getting it on the page as fast as humanly possible.  Then, interactive leaves hydrate some time later - because interactivity is not necessarily needed immediately.  It should discuss how this makes page loads feel faster, because what the user knows is there faster and the things they don't need to know about are hidden and done aftewards (i.e. a button's click handler or state hydrating).  There should then be a third sub-section about cumulative layout shift, discussing how cumulative layout shift and constant loading indicators flashing in and out with the page shifting around just looks terrible, unprofessional and makes it feel like the page is loading slower.  It gives the users a blatant look into everything that can be just swooped up onto the server, so all they see is the full page ready to go - just not hydrated - they don't see the intermediate steps that make it feel like its loading slower because the need to show fallback content or loading indicators in empty space when the content isn't there yet.",
       "target": {
         "anchor": "perceived",
@@ -145,13 +145,14 @@
         ],
         "tag": "p",
         "snippet": "Perceived performance is how fast a page feels, which is not the same thing as how long it"
-      }
+      },
+      "resolution": "4.3 restructured: intro + docs quote stay at top; \"Streaming: the same principle, inside one response\" is its own subsection; new \"Time-to-interactive is a dead metric\" subsection (opens with the 500ms question; see-and-read optimization, leaves hydrate later invisibly); new \"Layout shift is perceived slowness\" subsection (flashing indicators expose the machinery, the server swoops it up, cross-linked to section 9)."
     },
     {
       "id": "nmrqj0f8p",
       "page": "04-ssr.html",
       "ts": "2026-07-18T15:33:06.217Z",
-      "status": "open",
+      "status": "resolved",
       "text": "In this section, I would like to have a subsection that elaborates on security more, and how it's not necessary to expose the code and values that are needed to render the page we just need to expose the actual output - the rendered page.  It should include a diagram or something that shows how an HTML file like diagram svg is setn to the client across the boundary rather than all the code that is necessary to generate it.  It should discuss how this also relates to bundle size and performance briefly as well.  As well as the less javascripted shipped item.  So maybe a sub-section that is not directly called \"security blah\" but something that can be used to elaborate on both the security by locality and less javascript shipped items.",
       "target": {
         "anchor": "what",
@@ -160,13 +161,14 @@
         ],
         "tag": "h2",
         "snippet": "4.2 What you get for it"
-      }
+      },
+      "resolution": "New 4.2 subsection \"The output crosses the wire, not the machinery\" unifying security-by-locality + less-JS-shipped, with a boundary diagram (code/data-layer/secrets/libraries stay left; only rendered HTML crosses; caption notes the guide's own SVGs work the same way) and ties to sections 5.5, 6, 7."
     },
     {
       "id": "nmrqj3he7",
       "page": "05-client-server-boundaries.html",
       "ts": "2026-07-18T15:35:28.975Z",
-      "status": "open",
+      "status": "resolved",
       "text": "In this section, I want to elaborate in subsections with diagrams and code snippets the difference between use client directives usage in the application's components and a monorepo isolated ui library for components.  in the case of a dedicated ui library in the monorepo, it affects how we build those components.  Components that have interactive parts should try to expose both the structure/containers and outer parts that are non interactive along with the interactive smaller parts.  So a sidebar component should not be an all or nothing sidebar where we provide items={[...]} as an array of JS objects with properties like icon and onclick, it should be a container ocmponent Sidebar and also expose things like SidebarItem or SidebarLinkItem, or SidebarButtonItem so that the interactivity can be isolated to just the smaller parts that need \"use client\".  This allows the overall usage in the consuming application to have the flexibility to not be forced into treating the entire sidebar it renders (using the ui library sidebar) into a client component because the sidebar itself can be rendered without interactivity, and the interactive leaves which represent the individual items in the sidebar can be isolated in separate files with on click handlers (if it needs on click) with \"use client\" but if it's a link item and can use an href then the onclick handler is not needed at all and it doesn't need the directive.  This is the general idea there.  I also want to show code snippets/examples of how to \"internalize\" third party components, so that we use a single file that wraps the third-party component and adds \"use client\" so that the third-party component itself is just the leaf, rather than every composite component that imports and uses the third party component directly being forced into \"use client\" usage.",
       "target": {
         "anchor": "children-pattern",
@@ -175,6 +177,118 @@
         ],
         "tag": "h2",
         "snippet": "5.5 Third-party components and boundary hygiene"
+      },
+      "resolution": "Two new 5.5 subsections: \"Design-system components: ship the structure and the leaves separately\" (fused items-array sidebar vs composed Sidebar + SidebarLinkItem + SidebarButtonItem, with the functions-cannot-cross-the-boundary point, library file examples, and the app-level client leaf nuance) and \"Internalize third-party components: one wrapper file, one leaf\" (direct react-select import converting composites vs internalized ui/Select wrapper; code captions used throughout)."
+    },
+    {
+      "id": "nmrqjl8ui",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T15:49:17.706Z",
+      "status": "open",
+      "text": "please do not treat this as 1 component file - every file should only ever export 1 component.",
+      "target": {
+        "anchor": "library-leaves",
+        "path": [
+          30
+        ],
+        "tag": "pre",
+        "snippet": "packages/ui/sidebar/Sidebar.tsx + SidebarLinkItem.tsx: structure, no directive/* Pure stru"
+      }
+    },
+    {
+      "id": "nmrqjlxx1",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T15:49:50.197Z",
+      "status": "open",
+      "text": "remember - this applies to all column views.  The bottom of the second snippet in this panel should be aligned with the bottom of the overall panel on the left - it should always be aligned across columns.  The left column panel can also be shorter, so instead of expanding the second right column panel we can shrink the left column panel.",
+      "target": {
+        "anchor": "internalize-third-party",
+        "path": [
+          35,
+          1,
+          2
+        ],
+        "tag": "pre",
+        "snippet": "ProgramPicker.tsx: no directiveimport { Select } from \"@/ui/Select\";export function Progra"
+      }
+    },
+    {
+      "id": "nmrqjos23",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T15:52:02.571Z",
+      "status": "open",
+      "text": "for code comments of code that is in a column, can we maybe bump up the allowed character limit/wrap length of the comments a tad so they don't wrap as early?  Maybe just like 8 chars or something?",
+      "target": {
+        "anchor": "internalize-third-party",
+        "path": [
+          35,
+          0,
+          1
+        ],
+        "tag": "pre",
+        "snippet": "ProgramPicker.tsx\"use client\";/* react-select is interactive, so this entire composite is "
+      }
+    },
+    {
+      "id": "nmrqjr2hs",
+      "page": "08-server-resolvable-state.html",
+      "ts": "2026-07-18T15:53:49.408Z",
+      "status": "open",
+      "text": "In cases where we are adding code comments like this code snippet has that describe the overall snippet or component that the snippet contains, and not a specific sub-part of the snippet where the comment's locality next to the specific thing it references is important, we should treat it as a caption.  Please go through the entire document and anywhere we have comments that reference the snippet as a whole - replace them with captions",
+      "target": {
+        "anchor": "tabs",
+        "path": [
+          17
+        ],
+        "tag": "pre",
+        "snippet": "components/program/ProgramTabs.tsx\"use client\";import { usePathname } from \"next/navigatio"
+      }
+    },
+    {
+      "id": "nmrqjt0k1",
+      "page": "07-bundle-size-code-splitting.html",
+      "ts": "2026-07-18T15:55:20.209Z",
+      "status": "open",
+      "text": "In this diagram, the body rows: <Suspense> text is clipped by the skeleton yellow row bar above it.  I think the skeleton bar has to be underneath the body rows suspense text so that it is with the other 2 skeleton rows and not above the text",
+      "target": {
+        "anchor": "wholesale",
+        "path": [
+          13
+        ],
+        "tag": "figure",
+        "snippet": "Wholesale grid: the whole table waits Composed: only the rows wait app.craft.com/reports/h"
+      }
+    },
+    {
+      "id": "nmrqjuq6u",
+      "page": "08-server-resolvable-state.html",
+      "ts": "2026-07-18T15:56:40.086Z",
+      "status": "open",
+      "text": "can we show this as some sort of like file tree?  where it shows the directory structure starting at app and just showing the programs -> programId -> layout.tsx, roster/page.tsx, settings/page.tsx, reports/page.tsx segments?  Then each segment can have a loading.tsx and an error.tsx as well?",
+      "target": {
+        "anchor": "tabs",
+        "path": [
+          15,
+          1,
+          1
+        ],
+        "tag": "pre",
+        "snippet": "app/programs/[programId]/layout.tsx /* Header + tab bar render once and persist across tab"
+      }
+    },
+    {
+      "id": "nmrqjwfrz",
+      "page": "08-server-resolvable-state.html",
+      "ts": "2026-07-18T15:57:59.903Z",
+      "status": "open",
+      "text": "I would like to add a section here that shows how to add query params to the URL to force the SSR rerender of that component.  The example should likely use a useTransition logic and use transitions in the appropriate places, and it should show how to show the stale conent as the new content is loading in (i.e. maybe use deferred value etc.). It should also talk about optimistic updates for things like tabs that should be set as active somehow in state immediately but then reconcile with hte URL too.  that way it feels more interactive and isn't blocked by the page render/load.  This article has some concepts that would be helpful to explain in it: https://www.jonfk.ca/blog/nextjs-14-server-components-update/ - however, keep in mind that the article is very out of date and uses next 14 so we should make sure that anything we take from that article is in the context of the latest app router versions on the latest next fersion with react 19",
+      "target": {
+        "anchor": null,
+        "path": [
+          1
+        ],
+        "tag": "h1",
+        "snippet": "Server-Resolvable State"
       }
     }
   ]

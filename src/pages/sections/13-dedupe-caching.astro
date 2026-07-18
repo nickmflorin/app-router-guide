@@ -541,9 +541,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
 
 <pre
             class="code" is:raw
-          ><span class="filename">data/stats.ts</span><span class="tok-com">/* Next reads the options off fetch itself: this response is cached
-   across requests and tagged, so a mutation can invalidate it by tag. */</span>
-<span class="tok-kw">export async function</span> <span class="tok-fn">getPublicStats</span>() {
+          ><span class="filename">data/stats.ts</span><span class="tok-kw">export async function</span> <span class="tok-fn">getPublicStats</span>() {
   <span class="tok-kw">const</span> res = <span class="tok-kw">await</span> <span class="tok-fn">fetch</span>(<span class="tok-str">`${API_URL}/stats`</span>, {
     <span class="tok-com">// Cache the result and treat it as fresh for an hour.</span>
     next: { revalidate: 3600, tags: [<span class="tok-str">"stats"</span>] },
@@ -556,6 +554,9 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   <span class="tok-kw">const</span> res = <span class="tok-kw">await</span> <span class="tok-fn">fetch</span>(<span class="tok-str">`${API_URL}/queue`</span>, { cache: <span class="tok-str">"no-store"</span> });
   <span class="tok-kw">return</span> res.json();
 }</pre>
+<CodeCaption>
+  Next reads the options off fetch itself: this response is cached across requests and tagged, so a mutation can invalidate exactly this data later.
+</CodeCaption>
 
 <p>
   This is why the audit's blanket <code>export const dynamic = "force-dynamic"</code> plus

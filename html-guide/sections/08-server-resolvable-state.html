@@ -184,13 +184,7 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
 <div class="bad">
   <div class="col-label">✕ Tabs in state: the smell</div>
   
-    <pre class="code"><span class="filename">ProgramView.tsx</span><span class="tok-dir">"use client"</span>;
-
-<span class="tok-com">/* View identity held in memory: not
-   shareable, not refresh-proof, invisible
-   to the server, and every panel ships
-   to the client whether shown or not. */</span>
-<span class="tok-kw">export function</span> <span class="tok-fn">ProgramView</span>() {
+    <pre class="code"><span class="filename">ProgramView.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">export function</span> <span class="tok-fn">ProgramView</span>() {
   <span class="tok-kw">const</span> [tab, setTab] = <span class="tok-fn">useState</span>(<span class="tok-str">"reports"</span>);
 
   <span class="tok-kw">return</span> (
@@ -206,23 +200,42 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
     &lt;/&gt;
   );
 }</pre>
+<div class="code-caption">
+  
+  View identity held in memory: not shareable, not refresh-proof, invisible to the server, and every panel ships to the client whether shown or not.
+
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ Tabs as route segments</div>
   
-    <pre class="code"><span class="filename">app/programs/[programId]/</span>layout.tsx
-  <span class="tok-com">/* Header + tab bar render once and
-     persist across tab changes (§3.1). */</span>
-
-reports/page.tsx
-  <span class="tok-com">/* The Reports panel: server-rendered,
-     streamed, prefetched by its Link. */</span>
-
-roster/page.tsx
-settings/page.tsx</pre>
+    <pre class="code"><span class="filename">the route structure</span>app/
+└── programs/
+    └── [programId]/
+        ├── <span class="tok-fn">layout.tsx</span>
+        ├── reports/
+        │   ├── <span class="tok-fn">page.tsx</span>
+        │   ├── loading.tsx
+        │   └── error.tsx
+        ├── roster/
+        │   ├── <span class="tok-fn">page.tsx</span>
+        │   ├── loading.tsx
+        │   └── error.tsx
+        └── settings/
+            ├── <span class="tok-fn">page.tsx</span>
+            ├── loading.tsx
+            └── error.tsx</pre>
+<div class="code-caption">
   
+  The header and tab bar render once in <code>layout.tsx</code> and persist across tab
+  changes (<a href="03-mental-model.html#rendering-model">§3.1</a>). Each tab is a segment
+  whose <code>page.tsx</code> is server-rendered, streamed, and prefetched by its Link,
+  and each brings its own <code>loading.tsx</code> and <code>error.tsx</code> boundaries
+  (<a href="10-suspense-streaming.html#streaming">§10.2</a>).
+
+</div>
 
 </div>
 
@@ -272,7 +285,91 @@ settings/page.tsx</pre>
   <span class="chip chip-very">Very important</span>
 </p>
 
-<h2 id="cookies">8.4 Cookies: preferences that follow the user, not the URL</h2>
+<h2 id="url-writes">8.4 Writing the URL: transitions, stale content, and optimistic tabs</h2>
+<p>
+  Reading the URL is half the contract; the other half is writing it, because
+  <strong>writing the URL is how a client leaf forces the server to re-render.</strong>
+  <span class="chip chip-next">Next.js</span>
+  <span class="chip chip-critical">Critical</span> When a leaf calls
+  <code>router.replace()</code> with a new query string, the router performs a client-side
+  transition to the same route: the server re-renders the page with the new
+  <code>searchParams</code>, and the fresh RSC payload merges into the tree in place
+  (<a href="04-ssr.html#routing">§4.5</a>). Watch the network tab while it happens: no
+  document reload, just a small RSC request carrying the re-rendered segments. The URL
+  write <em>is</em> the refetch.
+</p>
+<p>
+  Three refinements turn that mechanic into UI that feels instant. First,
+  <strong>wrap the write in a transition</strong>: the App Router treats navigations as
+  transitions, so an already-revealed Suspense boundary keeps its current content instead
+  of re-showing a fallback (<a href="10-suspense-streaming.html#refetch">§10.5</a>), and
+  your own <code>useTransition</code> gives you <code>isPending</code> as the loading
+  indicator. Second, <strong>show the stale content while the new render is in
+  flight</strong>: dim it against <code>isPending</code>, or reach for
+  <code>useDeferredValue</code> when the results are client-rendered; both worked examples
+  live in <a href="10-suspense-streaming.html#refetch">§10.5</a>. Third, and this is the
+  one that makes tabs feel native: <strong>update the selection optimistically.</strong>
+</p>
+<p>
+  The problem with URL-derived tab state alone: the active highlight comes from
+  <code>searchParams</code>, which only changes when the server render lands. Click a tab
+  and the highlight lags behind by the length of the render. React 19's
+  <code>useOptimistic</code> closes that gap: set the optimistic value immediately inside
+  the transition, and React reconciles it with the URL-derived value automatically when
+  the new payload arrives (or reverts it if the navigation fails):
+</p>
+
+<pre class="code"><span class="filename">ViewTabs.tsx (inner; the baked-in Suspense wrapper of §5.6 is omitted)</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ViewTabsInner</span>() {
+  <span class="tok-kw">const</span> searchParams = <span class="tok-fn">useSearchParams</span>();
+  <span class="tok-kw">const</span> router = <span class="tok-fn">useRouter</span>();
+  <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
+
+  <span class="tok-com">/* The URL is the source of truth; the optimistic value fronts for it
+     while the server render is in flight. */</span>
+  <span class="tok-kw">const</span> urlView = searchParams.<span class="tok-fn">get</span>(<span class="tok-str">"view"</span>) ?? <span class="tok-str">"reports"</span>;
+  <span class="tok-kw">const</span> [view, setOptimisticView] = <span class="tok-fn">useOptimistic</span>(urlView);
+
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">TabList</span> <span class="tok-prop">data-pending</span>={isPending}&gt;
+      {TABS.map((tab) =&gt; (
+        &lt;<span class="tok-fn">TabButton</span>
+          <span class="tok-prop">key</span>={tab.value}
+          <span class="tok-prop">active</span>={view === tab.value}
+          <span class="tok-prop">onClick</span>={() =&gt;
+            <span class="tok-fn">startTransition</span>(() =&gt; {
+              <span class="tok-fn">setOptimisticView</span>(tab.value);
+              <span class="tok-kw">const</span> params = <span class="tok-kw">new</span> <span class="tok-fn">URLSearchParams</span>(searchParams);
+              params.<span class="tok-fn">set</span>(<span class="tok-str">"view"</span>, tab.value);
+              router.<span class="tok-fn">replace</span>(<span class="tok-str">`?${params.toString()}`</span>);
+            })
+          }
+        &gt;
+          {tab.label}
+        &lt;/<span class="tok-fn">TabButton</span>&gt;
+      ))}
+    &lt;/<span class="tok-fn">TabList</span>&gt;
+  );
+}</pre>
+<div class="code-caption">
+  
+  The clicked tab highlights instantly: <code>setOptimisticView</code> applies before the
+  server render starts, the transition carries the URL write, and when the fresh payload
+  lands the optimistic value reconciles with the URL-derived one automatically. If the
+  navigation fails, React reverts the highlight for free. The interaction is never blocked
+  by the page render; only the panel content waits, dimmed, per
+  <a href="10-suspense-streaming.html#refetch">§10.5</a>.
+
+</div>
+<p>
+  The result is the best of both worlds from <a href="#tabs">§8.3</a>'s ladder: the URL
+  stays the source of truth (shareable, refresh-proof, server-rendered), and the
+  interaction feels as immediate as any <code>useState</code> tab bar. The same recipe
+  applies to any URL-backed control: filters, sort toggles, pagination, view switches.
+</p>
+
+<h2 id="cookies">8.5 Cookies: preferences that follow the user, not the URL</h2>
 <p>
   Some state should survive across pages and sessions but has no business in a link: the
   collapsed sidebar, a table-density preference, the dismissed-announcement flag, theme.
@@ -304,7 +401,7 @@ settings/page.tsx</pre>
   would be bizarre in a shared link.
 </p>
 
-<h2 id="client-state">8.5 What genuinely stays client state</h2>
+<h2 id="client-state">8.6 What genuinely stays client state</h2>
 <p>
   The point is not that <code>useState</code> is bad; it's that it should hold
   <strong>interaction</strong>, not <strong>identity</strong>. Ephemeral, mid-gesture,

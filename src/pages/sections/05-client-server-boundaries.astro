@@ -822,13 +822,7 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 
 <Compare>
 <CompareCol kind="bad" label="✕ Fused: configured with data + functions">
-    <pre class="code" is:raw><span class="filename">app layout (forced client)</span><span class="tok-dir">"use client"</span>;
-
-<span class="tok-com">/* onClick is a function, and functions
-   cannot cross the server-client boundary,
-   so this layout must be a client component
-   just to describe its sidebar. */</span>
-&lt;<span class="tok-fn">Sidebar</span>
+    <pre class="code" is:raw><span class="filename">app layout (forced client)</span><span class="tok-dir">"use client"</span>;&lt;<span class="tok-fn">Sidebar</span>
   <span class="tok-prop">items</span>={[
     {
       <span class="tok-prop">icon</span>: &lt;<span class="tok-fn">HomeIcon</span> /&gt;,
@@ -838,16 +832,11 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   ]}
 /&gt;</pre>
 <CodeCaption>
-  The whole sidebar is client, and so is every layout that renders it. The library made
-  the boundary decision for everyone.
+  onClick is a function, and functions cannot cross the server-client boundary, so this layout must be a client component just to describe its sidebar. The library made the boundary decision for every consumer.
 </CodeCaption>
 </CompareCol>
 <CompareCol kind="good" label="✓ Composed: structure + leaf items">
-    <pre class="code" is:raw><span class="filename">app layout (stays server)</span><span class="tok-com">/* No directive anywhere in this file. The
-   container and the link items are server-
-   safe; navigation is an href, not a click
-   handler. */</span>
-&lt;<span class="tok-fn">Sidebar</span>&gt;
+    <pre class="code" is:raw><span class="filename">app layout (stays server)</span>&lt;<span class="tok-fn">Sidebar</span>&gt;
   &lt;<span class="tok-fn">SidebarLinkItem</span> <span class="tok-prop">href</span>=<span class="tok-str">"/home"</span> <span class="tok-prop">icon</span>={&lt;<span class="tok-fn">HomeIcon</span> /&gt;}&gt;
     Home
   &lt;/<span class="tok-fn">SidebarLinkItem</span>&gt;
@@ -860,8 +849,7 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   &lt;<span class="tok-fn">SignOutItem</span> /&gt;
 &lt;/<span class="tok-fn">Sidebar</span>&gt;</pre>
 <CodeCaption>
-  The layout stays a server component. Only the sign-out leaf ships JavaScript, and it
-  owns its own click.
+  No directive anywhere in this file: the container and link items are server-safe because navigation is an href, not a click handler. Only the sign-out leaf ships JavaScript, and it owns its own click.
 </CodeCaption>
 </CompareCol>
 </Compare>
@@ -871,14 +859,14 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   them carries the directive, and which do not need it at all:
 </p>
 
-<pre class="code" is:raw><span class="filename">packages/ui/sidebar/Sidebar.tsx + SidebarLinkItem.tsx: structure, no directive</span><span class="tok-com">/* Pure structure: renders anywhere, server included, and ships nothing. */</span>
-<span class="tok-kw">export function</span> <span class="tok-fn">Sidebar</span>({ children }: { children: React.ReactNode }) {
+<pre class="code" is:raw><span class="filename">packages/ui/sidebar/Sidebar.tsx: structure, no directive</span><span class="tok-kw">export function</span> <span class="tok-fn">Sidebar</span>({ children }: { children: React.ReactNode }) {
   <span class="tok-kw">return</span> &lt;nav <span class="tok-prop">className</span>=<span class="tok-str">"sidebar"</span>&gt;{children}&lt;/nav&gt;;
-}
+}</pre>
+<CodeCaption>
+  Pure structure: renders anywhere, server included, and ships nothing.
+</CodeCaption>
 
-<span class="tok-com">/* Navigation is a link. An href is serializable, so no directive here either;
-   prefetching comes free with the Link (§4.5). */</span>
-<span class="tok-kw">export function</span> <span class="tok-fn">SidebarLinkItem</span>({ href, icon, children }: <span class="tok-fn">SidebarLinkItemProps</span>) {
+<pre class="code" is:raw><span class="filename">packages/ui/sidebar/SidebarLinkItem.tsx: navigation, no directive</span><span class="tok-kw">export function</span> <span class="tok-fn">SidebarLinkItem</span>({ href, icon, children }: <span class="tok-fn">SidebarLinkItemProps</span>) {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Link</span> <span class="tok-prop">href</span>={href} <span class="tok-prop">className</span>=<span class="tok-str">"sidebar-item"</span>&gt;
       {icon}
@@ -886,12 +874,12 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
     &lt;/<span class="tok-fn">Link</span>&gt;
   );
 }</pre>
+<CodeCaption>
+  Navigation is a link. An href is serializable, so this needs no directive either, and
+  prefetching comes free with the Link (<a href="04-ssr.html#prefetching">§4.5</a>).
+</CodeCaption>
 
-<pre class="code" is:raw><span class="filename">packages/ui/sidebar/SidebarButtonItem.tsx: the interactive leaf, own file</span><span class="tok-dir">"use client"</span>;
-
-<span class="tok-com">/* The one part that genuinely needs an event handler, isolated in its own
-   file so importing the container never drags it across the boundary. */</span>
-<span class="tok-kw">export function</span> <span class="tok-fn">SidebarButtonItem</span>({ icon, onClick, children }: <span class="tok-fn">SidebarButtonItemProps</span>) {
+<pre class="code" is:raw><span class="filename">packages/ui/sidebar/SidebarButtonItem.tsx: the interactive leaf, own file</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">export function</span> <span class="tok-fn">SidebarButtonItem</span>({ icon, onClick, children }: <span class="tok-fn">SidebarButtonItemProps</span>) {
   <span class="tok-kw">return</span> (
     &lt;button <span class="tok-prop">className</span>=<span class="tok-str">"sidebar-item"</span> <span class="tok-prop">onClick</span>={onClick}&gt;
       {icon}
@@ -899,6 +887,9 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
     &lt;/button&gt;
   );
 }</pre>
+<CodeCaption>
+  The one part that genuinely needs an event handler, isolated in its own file so that importing the container never drags it across the boundary.
+</CodeCaption>
 
 <p>
   One nuance closes the loop: a server layout still cannot pass <code>onClick</code> to
@@ -921,14 +912,7 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 
 <Compare>
 <CompareCol kind="bad" label="✕ Imported directly: the composite goes client">
-    <pre class="code" is:raw><span class="filename">ProgramPicker.tsx</span><span class="tok-dir">"use client"</span>;
-
-<span class="tok-com">/* react-select is interactive, so this
-   entire composite is now client: the
-   layout, the label, the help text. And
-   everything that embeds ProgramPicker
-   inherits the same fate. */</span>
-<span class="tok-kw">import</span> Select <span class="tok-kw">from</span> <span class="tok-str">"react-select"</span>;
+    <pre class="code" is:raw><span class="filename">ProgramPicker.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">import</span> Select <span class="tok-kw">from</span> <span class="tok-str">"react-select"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramPicker</span>({ programs }) {
   <span class="tok-kw">return</span> (
@@ -940,17 +924,16 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   );
 }</pre>
 <CodeCaption>
-  One third-party import converts the whole composite, and its consumers, to client
-  components.
+  react-select is interactive, so this entire composite goes client: the layout, the label, the help text. Every component that embeds ProgramPicker inherits the same fate.
 </CodeCaption>
 </CompareCol>
 <CompareCol kind="good" label="✓ Internalized: the third-party part is the leaf">
-    <pre class="code" is:raw><span class="filename">ui/Select.tsx, then ProgramPicker.tsx</span><span class="tok-com">/* The third-party component is internalized
-   once, behind our own client file. THIS is
-   the leaf; nothing else needs the directive. */</span>
-<span class="tok-dir">"use client"</span>;
+    <pre class="code" is:raw><span class="filename">ui/Select.tsx, then ProgramPicker.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">export</span> { <span class="tok-kw">default as</span> Select } <span class="tok-kw">from</span> <span class="tok-str">"react-select"</span>;</pre>
+<CodeCaption>
+  The third-party component is internalized once, behind our own client file: this wrapper is the leaf, and nothing else needs the directive.
+</CodeCaption>
     <pre class="code" is:raw><span class="filename">ProgramPicker.tsx: no directive</span><span class="tok-kw">import</span> { Select } <span class="tok-kw">from</span> <span class="tok-str">"@/ui/Select"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramPicker</span>({ programs }) {
@@ -1010,12 +993,7 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 </p>
 <pre
             class="code" is:raw
-          ><span class="filename">SearchInput.tsx: the boundary is part of the component's public shape</span><span class="tok-dir">"use client"</span>;
-
-<span class="tok-com">/* The exported component bakes its own Suspense boundary in, so no call site
-   can forget it. The fallback mirrors the input's geometry: same reserved
-   space (§9), no shift when it resolves. */</span>
-<span class="tok-kw">export function</span> <span class="tok-fn">SearchInput</span>(props: <span class="tok-fn">SearchInputProps</span>) {
+          ><span class="filename">SearchInput.tsx: the boundary is part of the component's public shape</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">export function</span> <span class="tok-fn">SearchInput</span>(props: <span class="tok-fn">SearchInputProps</span>) {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">SearchInputSkeleton</span> /&gt;}&gt;
       &lt;<span class="tok-fn">SearchInputInner</span> {...props} /&gt;
@@ -1028,6 +1006,9 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   <span class="tok-kw">const</span> params = <span class="tok-fn">useSearchParams</span>();
   <span class="tok-com">// …</span>
 }</pre>
+<CodeCaption>
+  The exported component bakes its own Suspense boundary in, so no call site can forget it. The fallback mirrors the input's geometry (same reserved space, <a href="09-containers-content-shifting.html">§9</a>), so nothing shifts when it resolves.
+</CodeCaption>
 <p>
   Two clarifications to keep the pattern honest. First, this applies to the
   <em>client</em> read: a server page reading <code>searchParams</code> from its props
@@ -1230,10 +1211,7 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 
 <pre
             class="code" is:raw
-          ><span class="filename">The context approach: workable, but note what it costs</span><span class="tok-dir">"use client"</span>;
-
-<span class="tok-com">/* Inside the button: no prop threading, no knowledge of the parent. */</span>
-<span class="tok-kw">const</span> { refetch } = <span class="tok-fn">useRefetch</span>();
+          ><span class="filename">The context approach: workable, but note what it costs</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">const</span> { refetch } = <span class="tok-fn">useRefetch</span>();
 
 <span class="tok-kw">return</span> (
   &lt;<span class="tok-fn">Button</span>
@@ -1248,6 +1226,9 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
     Publish
   &lt;/<span class="tok-fn">Button</span>&gt;
 );</pre>
+<CodeCaption>
+  Inside the button: no prop threading, and no knowledge of who the parent is.
+</CodeCaption>
 
 <p>
   This is genuinely better than drilling an <code>onSuccess</code> callback through three
@@ -1596,12 +1577,7 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
 
 <pre
             class="code" is:raw
-          ><span class="filename">The shape to fear: three jobs in one hook</span><span class="tok-dir">"use client"</span>;
-
-<span class="tok-com">/* Job 1: it fetches. Job 2: it owns everyone's UI state. Job 3: it defines
-   everyone's callbacks. Every consumer below is now a client component,
-   wired to this one object's shape. */</span>
-<span class="tok-kw">export function</span> <span class="tok-fn">useProgramsManager</span>() {
+          ><span class="filename">The shape to fear: three jobs in one hook</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">export function</span> <span class="tok-fn">useProgramsManager</span>() {
   <span class="tok-kw">const</span> [programs, setPrograms] = <span class="tok-fn">useState</span>&lt;<span class="tok-fn">Program</span>[]&gt;();
   <span class="tok-kw">const</span> [isLoading, setIsLoading] = <span class="tok-fn">useState</span>(<span class="tok-kw">true</span>);
   <span class="tok-kw">const</span> [filters, setFilters] = <span class="tok-fn">useState</span>&lt;<span class="tok-fn">Filters</span>&gt;(DEFAULT_FILTERS);
@@ -1626,6 +1602,9 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
     isSaving, saveProgram, deleteProgram,
   };
 }</pre>
+<CodeCaption>
+  Three jobs in one hook: it fetches, it owns everyone's UI state, and it defines everyone's callbacks. Every consumer below becomes a client component wired to this one object's shape.
+</CodeCaption>
 
 <p>
   That's the hook spelling. The same disease wears a component costume just as often: a

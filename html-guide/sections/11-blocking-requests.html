@@ -171,12 +171,15 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
     &lt;/&gt;
   );
 }</pre>
-    <pre class="code"><span class="filename">when one component needs several answers</span><span class="tok-com">/* Inside a single component, start all
-   requests first, then await together. */</span>
-<span class="tok-kw">const</span> [program, stats] = <span class="tok-kw">await</span> <span class="tok-fn">Promise.all</span>([
+    <pre class="code"><span class="filename">when one component needs several answers</span><span class="tok-kw">const</span> [program, stats] = <span class="tok-kw">await</span> <span class="tok-fn">Promise.all</span>([
   <span class="tok-fn">getProgram</span>(id),
   <span class="tok-fn">getStats</span>(id),
 ]);</pre>
+<div class="code-caption">
+  
+  Inside a single component: start all the requests first, then await them together.
+
+</div>
   
 
 </div>

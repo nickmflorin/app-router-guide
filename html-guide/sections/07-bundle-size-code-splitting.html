@@ -217,12 +217,12 @@ The same table, two architectures. On the left, a wholesale grid fuses the knowa
     <text x="396" y="143" font-size="10" fill="#0757ba" dominant-baseline="central">Column headers (server)</text>
     <!-- data-lint-ignore: rows region reserves space; skeletons sit at the top -->
     <rect data-lint-ignore="scene" x="384" y="164" width="312" height="96" rx="5" fill="#fdf3e3" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"></rect>
-    <text x="396" y="194" font-size="10.5" fill="#8a5a00" font-weight="500">
+    <text x="396" y="180" font-size="10.5" fill="#8a5a00" font-weight="500">
       Body rows: &lt;Suspense&gt;
     </text>
-    <rect x="396" y="182" width="288" height="7" rx="3" fill="#f3e2c0"></rect>
-    <rect x="396" y="208" width="288" height="7" rx="3" fill="#f3e2c0"></rect>
-    <rect x="396" y="222" width="288" height="7" rx="3" fill="#f3e2c0"></rect>
+    <rect x="396" y="196" width="288" height="7" rx="3" fill="#f3e2c0"></rect>
+    <rect x="396" y="210" width="288" height="7" rx="3" fill="#f3e2c0"></rect>
+    <rect x="396" y="224" width="288" height="7" rx="3" fill="#f3e2c0"></rect>
     <rect x="384" y="268" width="312" height="26" rx="5" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"></rect>
     <text x="396" y="281" font-size="10" fill="#0757ba" dominant-baseline="central">
       Footer + pagination (server)
@@ -319,24 +319,24 @@ The reports page, laid out both ways. On the left, the wholesale grid makes the 
 <div class="bad">
   <div class="col-label">✕ Barrel: one name pulls the whole package</div>
   
-    <pre class="code"><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;
+    <pre class="code"><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui"</span>;</pre>
+<div class="code-caption">
+  
+  Pulling from the @/ui barrel adds the whole library to this route's graph: Button drags in Modal, DatePicker, RichTextEditor, and everything else the barrel re-exports.
 
-<span class="tok-com">/* Pulls the entire @/ui barrel into this route's
-   graph: Button drags in Modal, DatePicker,
-   RichTextEditor, Chart, and everything else the
-   index re-exports. */</span>
-<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui"</span>;</pre>
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ Direct: one name pulls one module</div>
   
-    <pre class="code"><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;
+    <pre class="code"><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui/button"</span>;</pre>
+<div class="code-caption">
+  
+  Imports only Button's module; nothing else in @/ui joins this route's bundle.
 
-<span class="tok-com">/* Imports only Button's module. Nothing else in
-   @/ui is added to this route's bundle. */</span>
-<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui/button"</span>;</pre>
+</div>
   
 
 </div>

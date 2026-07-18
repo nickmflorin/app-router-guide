@@ -229,33 +229,34 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
     <pre class="code"><span class="filename">page.tsx</span>&lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
   &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={id} /&gt;
 &lt;/<span class="tok-fn">Suspense</span>&gt;</pre>
-    <pre class="code"><span class="filename">StatsSkeleton.tsx</span><span class="tok-com">/* The fallback brings its own card:
-   chrome that will be torn down and
-   rebuilt when the content arrives. */</span>
-<span class="tok-kw">export function</span> <span class="tok-fn">StatsSkeleton</span>() {
+    <pre class="code"><span class="filename">StatsSkeleton.tsx</span><span class="tok-kw">export function</span> <span class="tok-fn">StatsSkeleton</span>() {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Card</span> <span class="tok-prop">title</span>=<span class="tok-str">"Stats"</span>&gt;
       &lt;<span class="tok-fn">Bars</span> <span class="tok-prop">count</span>={<span class="tok-str">3</span>} /&gt;
     &lt;/<span class="tok-fn">Card</span>&gt;
   );
-}
-<span class="tok-com">/* ProgramStats renders another Card.
-   Neither declares a height, so the
-   swap reflows the page anyway. */</span></pre>
+}</pre>
+<div class="code-caption">
+  
+  The fallback brings its own card: chrome that is torn down and rebuilt when the content arrives. ProgramStats renders another Card, and since neither declares a height, the swap reflows the page anyway.
+
+</div>
   
 
 </div>
 <div class="good">
   <div class="col-label">✓ Container owns chrome and size; occupants fill it</div>
   
-    <pre class="code"><span class="filename">page.tsx</span><span class="tok-com">/* The container is server markup in the
-   scaffold: chrome + reserved height,
-   painted with the shell. */</span>
-&lt;<span class="tok-fn">StatsCard</span>&gt;
+    <pre class="code"><span class="filename">page.tsx</span>&lt;<span class="tok-fn">StatsCard</span>&gt;
   &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
     &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={id} /&gt;
   &lt;/<span class="tok-fn">Suspense</span>&gt;
 &lt;/<span class="tok-fn">StatsCard</span>&gt;</pre>
+<div class="code-caption">
+  
+  The container is server markup in the scaffold: chrome plus reserved height, painted with the shell.
+
+</div>
     <pre class="code"><span class="filename">StatsCard.tsx - server, known, immediate</span><span class="tok-kw">export function</span> <span class="tok-fn">StatsCard</span>({ children }) {
   <span class="tok-kw">return</span> (
     &lt;section <span class="tok-prop">className</span>=<span class="tok-str">"card"</span>&gt;
