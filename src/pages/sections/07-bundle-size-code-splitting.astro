@@ -494,7 +494,9 @@ The reports page, laid out both ways. On the left, the wholesale grid makes the 
 <CompareCol kind="bad" label="✕ Barrel: one name pulls the whole package">
     <pre
                 class="code" is:raw
-              ><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui"</span>;</pre>
+              ><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui"</span>;</pre>
 <CodeCaption>
   Pulling from the @/ui barrel adds the whole library to this route's graph: Button drags in Modal, DatePicker, RichTextEditor, and everything else the barrel re-exports.
 </CodeCaption>
@@ -503,7 +505,9 @@ The reports page, laid out both ways. On the left, the wholesale grid makes the 
 <CompareCol kind="good" label="✓ Direct: one name pulls one module">
     <pre
                 class="code" is:raw
-              ><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui/button"</span>;</pre>
+              ><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui/button"</span>;</pre>
 <CodeCaption>
   Imports only Button's module; nothing else in @/ui joins this route's bundle.
 </CodeCaption>

@@ -204,6 +204,9 @@ home per technique + cross-references).
 - **One component per example file (per Nick, 2026-07-18):** snippets that represent files
   never show two exported components in one file; split into separate pres with their own
   filename labels (matches the guide's own one-component-per-file rule in §14).
+- **Code references in prose/captions are ALWAYS <code>-wrapped (monospace), and a sentence
+  never STARTS with a code reference** (lead with a plain English word: "Here onClick..." not
+  "onClick..."). Per Nick, 2026-07-18.
 - **Whole-snippet comments are captions (per Nick, 2026-07-18):** any comment describing the
   snippet as a whole (not a specific line) lives in a <CodeCaption>, not in the code; swept
   guide-wide 2026-07-18. Compare columns: only the LAST pre in a column flexes (CSS), so

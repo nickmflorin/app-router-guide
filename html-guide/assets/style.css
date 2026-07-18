@@ -933,9 +933,11 @@ li > pre.code {
   color: var(--muted);
   font-size: 13px;
   line-height: 1.5;
-  margin: -6px 2px 16px;
+  /* Hug the snippet above; slight left pad so text clears the border radius. */
+  margin: -12px 2px 16px;
+  padding-left: 3px;
 }
 .compare .code-caption {
-  margin-top: 8px;
+  margin-top: 4px;
   margin-bottom: 4px;
 }

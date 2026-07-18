@@ -20,7 +20,11 @@ import CompareCol from '../../components/CompareCol.astro';
 <h2 id="why">17.1 Why we audited our own code</h2>
 <p>
   The audit exists to answer one question: how far does our actual usage of the App Router
-  diverge from the model this guide describes? Before asking the team to adopt
+  diverge from the model React 19 and the App Router require in order to work well? Not
+  the model this guide prefers; the model the platform is built on. Deviating from it does
+  not produce a different-but-valid architecture, it produces an application the framework
+  cannot help: no streaming, no caching, no stability, with the costs compounding page by
+  page (<a href="01-introduction.html#direction">§1</a>). Before asking the team to adopt
   server-first patterns, we needed a specific, cited picture of where we stand today, so
   that the guide's recommendations map to real code rather than hypotheticals, and so the
   fixes can be prioritized by impact instead of by vibes. Every finding below points at

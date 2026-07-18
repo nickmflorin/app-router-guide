@@ -512,7 +512,9 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 <div class="bad">
   <div class="col-label">✕ Fused: configured with data + functions</div>
   
-    <pre class="code"><span class="filename">app layout (forced client)</span><span class="tok-dir">"use client"</span>;&lt;<span class="tok-fn">Sidebar</span>
+    <pre class="code"><span class="filename">app layout (forced client)</span><span class="tok-dir">"use client"</span>;
+
+&lt;<span class="tok-fn">Sidebar</span>
   <span class="tok-prop">items</span>={[
     {
       <span class="tok-prop">icon</span>: &lt;<span class="tok-fn">HomeIcon</span> /&gt;,
@@ -523,7 +525,7 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 /&gt;</pre>
 <div class="code-caption">
   
-  onClick is a function, and functions cannot cross the server-client boundary, so this layout must be a client component just to describe its sidebar. The library made the boundary decision for every consumer.
+  Here <code>onClick</code> is a function, and functions cannot cross the server-client boundary, so this layout must be a client component just to describe its sidebar. The library made the boundary decision for every consumer.
 
 </div>
 
@@ -582,7 +584,9 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 
 </div>
 
-<pre class="code"><span class="filename">packages/ui/sidebar/SidebarButtonItem.tsx: the interactive leaf, own file</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">export function</span> <span class="tok-fn">SidebarButtonItem</span>({ icon, onClick, children }: <span class="tok-fn">SidebarButtonItemProps</span>) {
+<pre class="code"><span class="filename">packages/ui/sidebar/SidebarButtonItem.tsx: the interactive leaf, own file</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">SidebarButtonItem</span>({ icon, onClick, children }: <span class="tok-fn">SidebarButtonItemProps</span>) {
   <span class="tok-kw">return</span> (
     &lt;button <span class="tok-prop">className</span>=<span class="tok-str">"sidebar-item"</span> <span class="tok-prop">onClick</span>={onClick}&gt;
       {icon}
@@ -620,7 +624,9 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 <div class="bad">
   <div class="col-label">✕ Imported directly: the composite goes client</div>
   
-    <pre class="code"><span class="filename">ProgramPicker.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">import</span> Select <span class="tok-kw">from</span> <span class="tok-str">"react-select"</span>;
+    <pre class="code"><span class="filename">ProgramPicker.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">import</span> Select <span class="tok-kw">from</span> <span class="tok-str">"react-select"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramPicker</span>({ programs }) {
   <span class="tok-kw">return</span> (
@@ -633,7 +639,7 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 }</pre>
 <div class="code-caption">
   
-  react-select is interactive, so this entire composite goes client: the layout, the label, the help text. Every component that embeds ProgramPicker inherits the same fate.
+  Because <code>react-select</code> is interactive, this entire composite goes client: the layout, the label, the help text. Every component that embeds <code>ProgramPicker</code> inherits the same fate.
 
 </div>
 
@@ -710,7 +716,9 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   Because forgetting the wrapper is easy and the failure is confusing, make the boundary
   part of the component itself; consumers should never need to remember it:
 </p>
-<pre class="code"><span class="filename">SearchInput.tsx: the boundary is part of the component's public shape</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">export function</span> <span class="tok-fn">SearchInput</span>(props: <span class="tok-fn">SearchInputProps</span>) {
+<pre class="code"><span class="filename">SearchInput.tsx: the boundary is part of the component's public shape</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">SearchInput</span>(props: <span class="tok-fn">SearchInputProps</span>) {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">SearchInputSkeleton</span> /&gt;}&gt;
       &lt;<span class="tok-fn">SearchInputInner</span> {...props} /&gt;
@@ -725,7 +733,7 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 }</pre>
 <div class="code-caption">
   
-  The exported component bakes its own Suspense boundary in, so no call site can forget it. The fallback mirrors the input's geometry (same reserved space, <a href="09-containers-content-shifting.html">§9</a>), so nothing shifts when it resolves.
+  The exported component bakes its own <code>Suspense</code> boundary in, so no call site can forget it. The fallback mirrors the input's geometry (same reserved space, <a href="09-containers-content-shifting.html">§9</a>), so nothing shifts when it resolves.
 
 </div>
 <p>
@@ -832,7 +840,14 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Button</span>
       <span class="tok-prop">loading</span>={isPending}
-      <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">startTransition</span>(() =&gt; <span class="tok-fn">publishProgram</span>(programId))}
+      <span class="tok-prop">onClick</span>={() =&gt;
+        <span class="tok-fn">startTransition</span>(<span class="tok-kw">async</span> () =&gt; {
+          <span class="tok-com">/* Actions return results rather than throwing across the network:
+             respond to the failure right where the interaction lives. */</span>
+          <span class="tok-kw">const</span> { error } = <span class="tok-kw">await</span> <span class="tok-fn">publishProgram</span>(programId);
+          <span class="tok-kw">if</span> (error) toast.<span class="tok-fn">error</span>(error);
+        })
+      }
     &gt;
       Publish
     &lt;/<span class="tok-fn">Button</span>&gt;
@@ -918,7 +933,9 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
   <code>useRefetch()</code> and stays ignorant of who actually refires:
 </p>
 
-<pre class="code"><span class="filename">The context approach: workable, but note what it costs</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">const</span> { refetch } = <span class="tok-fn">useRefetch</span>();
+<pre class="code"><span class="filename">The context approach: workable, but note what it costs</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">const</span> { refetch } = <span class="tok-fn">useRefetch</span>();
 
 <span class="tok-kw">return</span> (
   &lt;<span class="tok-fn">Button</span>
@@ -963,13 +980,20 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 <span class="tok-kw">import</span> { revalidateTag } <span class="tok-kw">from</span> <span class="tok-str">"next/cache"</span>;
 
 <span class="tok-kw">export async function</span> <span class="tok-fn">publishProgram</span>(id: <span class="tok-kw">string</span>) {
-  <span class="tok-kw">await</span> db.program.<span class="tok-fn">update</span>({ <span class="tok-prop">where</span>: { id }, <span class="tok-prop">data</span>: { <span class="tok-prop">status</span>: <span class="tok-str">"published"</span> } });
+  <span class="tok-kw">try</span> {
+    <span class="tok-kw">await</span> db.program.<span class="tok-fn">update</span>({ <span class="tok-prop">where</span>: { id }, <span class="tok-prop">data</span>: { <span class="tok-prop">status</span>: <span class="tok-str">"published"</span> } });
+  } <span class="tok-kw">catch</span> (e) {
+    <span class="tok-com">/* Returned, not thrown: the client handler decides how to surface it
+       (the toast in §5.7). */</span>
+    <span class="tok-kw">return</span> { <span class="tok-prop">error</span>: <span class="tok-str">"Could not publish the program. Please try again."</span> };
+  }
 
   <span class="tok-com">/* The server is the source of truth. Invalidating the tag re-renders every
      server component whose data carried it; the parent page updates without
      ever being told to. revalidatePath() is the coarser equivalent, and
      router.refresh() covers mutations that didn't go through an action. */</span>
   <span class="tok-fn">revalidateTag</span>(<span class="tok-str">`program-${id}`</span>);
+  <span class="tok-kw">return</span> {};
 }</pre>
 
 <figure class="diagram">
@@ -1104,14 +1128,10 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
   <span class="chip chip-very">Very important</span>
 </p>
 
-<pre class="code"><span class="filename">The SWR variant: same shape, different cache</span><span class="tok-dir">"use client"</span>;
+<pre class="code"><span class="filename">components/program/ProgramDrawer.tsx</span><span class="tok-dir">"use client"</span>;
 
-<span class="tok-kw">import</span> useSWR, { mutate } <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
+<span class="tok-kw">import</span> useSWR <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
 
-<span class="tok-com">/* This component is legitimately client: it opens after an interaction, so
-   the server's first render never contains it, and its data is necessarily
-   fetched after mount. It fetches by key, and passes the button an id
-   (identity, nothing else) exactly as the server version did. */</span>
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramDrawer</span>({ programId, onClose }: <span class="tok-fn">ProgramDrawerProps</span>) {
   <span class="tok-kw">const</span> { data: program, isLoading } = <span class="tok-fn">useSWR</span>(
     [<span class="tok-str">"program"</span>, programId],
@@ -1125,12 +1145,20 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
       &lt;<span class="tok-fn">PublishButton</span> <span class="tok-prop">programId</span>={programId} /&gt;
     &lt;/<span class="tok-fn">Drawer</span>&gt;
   );
-}
+}</pre>
+<div class="code-caption">
+  
+  This component is legitimately client: it opens after an interaction, so the server's
+  first render never contains it, and its data is necessarily fetched after mount. It
+  fetches by key, and passes the button an id (identity, nothing else), exactly as the
+  server version did.
 
-<span class="tok-com">/* The button revalidates the key when its mutation lands. Every subscriber
-   of that key refires on its own; the button holds no reference to the
-   parent, receives no refetch callback, and works under any parent that
-   uses the same key. */</span>
+</div>
+
+<pre class="code"><span class="filename">components/program/PublishButton.tsx (SWR flavor)</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">import</span> { mutate } <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
+
 <span class="tok-kw">export function</span> <span class="tok-fn">PublishButton</span>({ programId }: { programId: <span class="tok-kw">string</span> }) {
   <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
 
@@ -1148,6 +1176,13 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
     &lt;/<span class="tok-fn">Button</span>&gt;
   );
 }</pre>
+<div class="code-caption">
+  
+  The button revalidates the key when its mutation lands. Every subscriber of that key
+  refires on its own; the button holds no reference to the parent, receives no refetch
+  callback, and works under any parent that uses the same key.
+
+</div>
 
 <p>
   Server tag, URL param, SWR key: three spellings of one idea. The leaf and the parent
@@ -1166,7 +1201,9 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
   all of it down through props and context:
 </p>
 
-<pre class="code"><span class="filename">The shape to fear: three jobs in one hook</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">export function</span> <span class="tok-fn">useProgramsManager</span>() {
+<pre class="code"><span class="filename">The shape to fear: three jobs in one hook</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">useProgramsManager</span>() {
   <span class="tok-kw">const</span> [programs, setPrograms] = <span class="tok-fn">useState</span>&lt;<span class="tok-fn">Program</span>[]&gt;();
   <span class="tok-kw">const</span> [isLoading, setIsLoading] = <span class="tok-fn">useState</span>(<span class="tok-kw">true</span>);
   <span class="tok-kw">const</span> [filters, setFilters] = <span class="tok-fn">useState</span>&lt;<span class="tok-fn">Filters</span>&gt;(DEFAULT_FILTERS);

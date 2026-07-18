@@ -466,7 +466,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
 }</pre>
 <CodeCaption>
   Any number of components can call this hook with the same id: one cache
-  entry, one request, revalidated on focus and updated by mutate().
+  entry, one request, revalidated on focus and updated by <code>mutate()</code>.
 </CodeCaption>
 </CompareCol>
 </Compare>
@@ -555,7 +555,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   <span class="tok-kw">return</span> res.json();
 }</pre>
 <CodeCaption>
-  Next reads the options off fetch itself: this response is cached across requests and tagged, so a mutation can invalidate exactly this data later.
+  Next reads the options off <code>fetch</code> itself: this response is cached across requests and tagged, so a mutation can invalidate exactly this data later.
 </CodeCaption>
 
 <p>

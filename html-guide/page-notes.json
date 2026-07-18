@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-18T16:00:29.429Z",
+  "updatedAt": "2026-07-18T16:14:16.784Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -184,7 +184,7 @@
       "id": "nmrqjl8ui",
       "page": "05-client-server-boundaries.html",
       "ts": "2026-07-18T15:49:17.706Z",
-      "status": "open",
+      "status": "resolved",
       "text": "please do not treat this as 1 component file - every file should only ever export 1 component.",
       "target": {
         "anchor": "library-leaves",
@@ -193,13 +193,14 @@
         ],
         "tag": "pre",
         "snippet": "packages/ui/sidebar/Sidebar.tsx + SidebarLinkItem.tsx: structure, no directive/* Pure stru"
-      }
+      },
+      "resolution": "Split into two snippets, one component per file (Sidebar.tsx, SidebarLinkItem.tsx), each with its own filename label and caption. Convention recorded: example files never show two exported components."
     },
     {
       "id": "nmrqjlxx1",
       "page": "05-client-server-boundaries.html",
       "ts": "2026-07-18T15:49:50.197Z",
-      "status": "open",
+      "status": "resolved",
       "text": "remember - this applies to all column views.  The bottom of the second snippet in this panel should be aligned with the bottom of the overall panel on the left - it should always be aligned across columns.  The left column panel can also be shorter, so instead of expanding the second right column panel we can shrink the left column panel.",
       "target": {
         "anchor": "internalize-third-party",
@@ -210,13 +211,14 @@
         ],
         "tag": "pre",
         "snippet": "ProgramPicker.tsx: no directiveimport { Select } from \"@/ui/Select\";export function Progra"
-      }
+      },
+      "resolution": "New compare rule (CSS): only the LAST snippet in a column absorbs leftover height, so stacked snippets keep natural size and the final snippet bottom stays flush across columns; the left column shrank via the comment rewrap. Applies to all compares."
     },
     {
       "id": "nmrqjos23",
       "page": "05-client-server-boundaries.html",
       "ts": "2026-07-18T15:52:02.571Z",
-      "status": "open",
+      "status": "resolved",
       "text": "for code comments of code that is in a column, can we maybe bump up the allowed character limit/wrap length of the comments a tad so they don't wrap as early?  Maybe just like 8 chars or something?",
       "target": {
         "anchor": "internalize-third-party",
@@ -227,13 +229,14 @@
         ],
         "tag": "pre",
         "snippet": "ProgramPicker.tsx\"use client\";/* react-select is interactive, so this entire composite is "
-      }
+      },
+      "resolution": "Comment budget in compare columns raised 54 -> 62 chars (convention in PROJECT.md); the 5.5 compare comments were rewrapped, then superseded by the caption sweep which moved most of them out of the code entirely."
     },
     {
       "id": "nmrqjr2hs",
       "page": "08-server-resolvable-state.html",
       "ts": "2026-07-18T15:53:49.408Z",
-      "status": "open",
+      "status": "resolved",
       "text": "In cases where we are adding code comments like this code snippet has that describe the overall snippet or component that the snippet contains, and not a specific sub-part of the snippet where the comment's locality next to the specific thing it references is important, we should treat it as a caption.  Please go through the entire document and anywhere we have comments that reference the snippet as a whole - replace them with captions",
       "target": {
         "anchor": "tabs",
@@ -242,13 +245,14 @@
         ],
         "tag": "pre",
         "snippet": "components/program/ProgramTabs.tsx\"use client\";import { usePathname } from \"next/navigatio"
-      }
+      },
+      "resolution": "Guide-wide sweep done: 20 whole-snippet comments across 8 chapters converted to CodeCaptions (line-level comments left in place). Convention recorded in PROJECT.md."
     },
     {
       "id": "nmrqjt0k1",
       "page": "07-bundle-size-code-splitting.html",
       "ts": "2026-07-18T15:55:20.209Z",
-      "status": "open",
+      "status": "resolved",
       "text": "In this diagram, the body rows: <Suspense> text is clipped by the skeleton yellow row bar above it.  I think the skeleton bar has to be underneath the body rows suspense text so that it is with the other 2 skeleton rows and not above the text",
       "target": {
         "anchor": "wholesale",
@@ -257,13 +261,14 @@
         ],
         "tag": "figure",
         "snippet": "Wholesale grid: the whole table waits Composed: only the rows wait app.craft.com/reports/h"
-      }
+      },
+      "resolution": "Fixed: the row-region title now sits above all three skeleton bars (text y=180, bars 196/210/224); nothing overlaps."
     },
     {
       "id": "nmrqjuq6u",
       "page": "08-server-resolvable-state.html",
       "ts": "2026-07-18T15:56:40.086Z",
-      "status": "open",
+      "status": "resolved",
       "text": "can we show this as some sort of like file tree?  where it shows the directory structure starting at app and just showing the programs -> programId -> layout.tsx, roster/page.tsx, settings/page.tsx, reports/page.tsx segments?  Then each segment can have a loading.tsx and an error.tsx as well?",
       "target": {
         "anchor": "tabs",
@@ -274,13 +279,14 @@
         ],
         "tag": "pre",
         "snippet": "app/programs/[programId]/layout.tsx /* Header + tab bar render once and persist across tab"
-      }
+      },
+      "resolution": "The good column is now a real file tree from app/ down: programs/[programId]/ with layout.tsx and reports/roster/settings segments, each carrying page.tsx + loading.tsx + error.tsx; explanation moved to a caption."
     },
     {
       "id": "nmrqjwfrz",
       "page": "08-server-resolvable-state.html",
       "ts": "2026-07-18T15:57:59.903Z",
-      "status": "open",
+      "status": "resolved",
       "text": "I would like to add a section here that shows how to add query params to the URL to force the SSR rerender of that component.  The example should likely use a useTransition logic and use transitions in the appropriate places, and it should show how to show the stale conent as the new content is loading in (i.e. maybe use deferred value etc.). It should also talk about optimistic updates for things like tabs that should be set as active somehow in state immediately but then reconcile with hte URL too.  that way it feels more interactive and isn't blocked by the page render/load.  This article has some concepts that would be helpful to explain in it: https://www.jonfk.ca/blog/nextjs-14-server-components-update/ - however, keep in mind that the article is very out of date and uses next 14 so we should make sure that anything we take from that article is in the context of the latest app router versions on the latest next fersion with react 19",
       "target": {
         "anchor": null,
@@ -289,6 +295,114 @@
         ],
         "tag": "h1",
         "snippet": "Server-Resolvable State"
+      },
+      "resolution": "New section 8.4 \"Writing the URL: transitions, stale content, and optimistic tabs\" (8.4/8.5 renumbered to 8.5/8.6 with cross-refs updated): URL write = the refetch (RSC payload, no reload), useTransition + isPending, stale content per 10.5, and a useOptimistic ViewTabs example whose selection updates instantly and reconciles with the URL. The jonfk article informed the network-level explanation; its keyed-Suspense pattern was deliberately NOT adopted (conflicts with the stale-content doctrine) and its Next 14 searchParams shape was updated to the Next 16 Promise form."
+    },
+    {
+      "id": "nmrqk4ovq",
+      "page": "17-applied-to-tracker.html",
+      "ts": "2026-07-18T16:04:24.950Z",
+      "status": "open",
+      "text": "Change text to not refer to \"model this guide describes\" but be more stern about the model that is necessary for react 19 and next app router to properly work.  It shouldn't be an opinion thing - don't say that literally but phrase it as a hardlined \"this is the model you must follow because if you don't it won't work well\"",
+      "target": {
+        "anchor": "why",
+        "path": [
+          4
+        ],
+        "tag": "p",
+        "snippet": "The audit exists to answer one question: how far does our actual usage of the App Router d"
+      }
+    },
+    {
+      "id": "nmrqk656q",
+      "page": "03-mental-model.html",
+      "ts": "2026-07-18T16:05:32.738Z",
+      "status": "open",
+      "text": "Somewhere on this page it should discuss how NextJS's app router and React 19 are very opinionated (more so with the app router).  They're not opinioated for the sake of being opinionated, they're opinionated because they are complex systems and for it to work properly they have to make certain expectations about how you are using it.  The more you do things in a way that deviate from how the platform wants you to do them, the less effective it will be - and in many cases, the more destructive it will be.",
+      "target": {
+        "anchor": null,
+        "path": [
+          1
+        ],
+        "tag": "h1",
+        "snippet": "The Mental Model"
+      }
+    },
+    {
+      "id": "nmrqk871m",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T16:07:08.458Z",
+      "status": "open",
+      "text": "the captions under code snippets are too far underneath the bottom border of the snippet.  There should be less spacing there.  The captions should also likely be padded maybe like 2px on the left to make it easier on the eyes due to hte bordere radii of the snippets.",
+      "target": {
+        "anchor": "library-leaves",
+        "path": [
+          28
+        ],
+        "tag": "div",
+        "snippet": "✕ Fused: configured with data + functions app layout (forced client)\"use client\";/* onClic"
+      }
+    },
+    {
+      "id": "nmrqk9ijk",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T16:08:10.016Z",
+      "status": "open",
+      "text": "it would be helpful to show in this example how the publishProgram action can return an { error, response } result type and then the handler can actually respond to the error if it is not undefined by issuing a toast message or something",
+      "target": {
+        "anchor": "self-contained",
+        "path": [
+          50
+        ],
+        "tag": "pre",
+        "snippet": "components/program/PublishButton.tsx\"use client\";import { useTransition } from \"react\";/* "
+      }
+    },
+    {
+      "id": "nmrqkb9yr",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T16:09:32.211Z",
+      "status": "open",
+      "text": "please split into two separate snippets at two separate files showing the import.  move the component comments to captions under each snippet",
+      "target": {
+        "anchor": "swr-refresh",
+        "path": [
+          69
+        ],
+        "tag": "pre",
+        "snippet": "The SWR variant: same shape, different cache\"use client\";import useSWR, { mutate } from \"s"
+      }
+    },
+    {
+      "id": "nmrqke80p",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T16:11:49.657Z",
+      "status": "open",
+      "text": "indent is missing before <sidebar here",
+      "target": {
+        "anchor": "library-leaves",
+        "path": [
+          28,
+          0,
+          1
+        ],
+        "tag": "pre",
+        "snippet": "app layout (forced client)\"use client\";<Sidebar items={[ { icon: <HomeIcon />, label: \"Hom"
+      }
+    },
+    {
+      "id": "nmrqkehf4",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T16:12:01.840Z",
+      "status": "open",
+      "text": "please make sure code snippet references across the document always have the monospace font with backtick-style formatting.  A sentence should never start with a code reference - it should always have a plain english word first.",
+      "target": {
+        "anchor": "library-leaves",
+        "path": [
+          28
+        ],
+        "tag": "div",
+        "snippet": "✕ Fused: configured with data + functions app layout (forced client)\"use client\";<Sidebar "
       }
     }
   ]

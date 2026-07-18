@@ -300,7 +300,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
 <div class="code-caption">
   
   Any number of components can call this hook with the same id: one cache
-  entry, one request, revalidated on focus and updated by mutate().
+  entry, one request, revalidated on focus and updated by <code>mutate()</code>.
 
 </div>
 
@@ -392,7 +392,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
 }</pre>
 <div class="code-caption">
   
-  Next reads the options off fetch itself: this response is cached across requests and tagged, so a mutation can invalidate exactly this data later.
+  Next reads the options off <code>fetch</code> itself: this response is cached across requests and tagged, so a mutation can invalidate exactly this data later.
 
 </div>
 

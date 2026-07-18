@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-18T16:13:24.820443+00:00",
+  "updatedAt": "2026-07-18T16:19:55.990118+00:00",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -297,6 +297,120 @@
         "snippet": "Server-Resolvable State"
       },
       "resolution": "New section 8.4 \"Writing the URL: transitions, stale content, and optimistic tabs\" (8.4/8.5 renumbered to 8.5/8.6 with cross-refs updated): URL write = the refetch (RSC payload, no reload), useTransition + isPending, stale content per 10.5, and a useOptimistic ViewTabs example whose selection updates instantly and reconciles with the URL. The jonfk article informed the network-level explanation; its keyed-Suspense pattern was deliberately NOT adopted (conflicts with the stale-content doctrine) and its Next 14 searchParams shape was updated to the Next 16 Promise form."
+    },
+    {
+      "id": "nmrqk4ovq",
+      "page": "17-applied-to-tracker.html",
+      "ts": "2026-07-18T16:04:24.950Z",
+      "status": "resolved",
+      "text": "Change text to not refer to \"model this guide describes\" but be more stern about the model that is necessary for react 19 and next app router to properly work.  It shouldn't be an opinion thing - don't say that literally but phrase it as a hardlined \"this is the model you must follow because if you don't it won't work well\"",
+      "target": {
+        "anchor": "why",
+        "path": [
+          4
+        ],
+        "tag": "p",
+        "snippet": "The audit exists to answer one question: how far does our actual usage of the App Router d"
+      },
+      "resolution": "Rewritten hardline: the audit now measures divergence from \"the model React 19 and the App Router require in order to work well. Not the model this guide prefers; the model the platform is built on,\" with the consequence spelled out (an application the framework cannot help) and a link back to section 1."
+    },
+    {
+      "id": "nmrqk656q",
+      "page": "03-mental-model.html",
+      "ts": "2026-07-18T16:05:32.738Z",
+      "status": "resolved",
+      "text": "Somewhere on this page it should discuss how NextJS's app router and React 19 are very opinionated (more so with the app router).  They're not opinioated for the sake of being opinionated, they're opinionated because they are complex systems and for it to work properly they have to make certain expectations about how you are using it.  The more you do things in a way that deviate from how the platform wants you to do them, the less effective it will be - and in many cases, the more destructive it will be.",
+      "target": {
+        "anchor": null,
+        "path": [
+          1
+        ],
+        "tag": "h1",
+        "snippet": "The Mental Model"
+      },
+      "resolution": "New passage at the top of section 3: React 19 and the App Router are deeply opinionated because complex systems only deliver their guarantees when they can make assumptions about usage; every deviation makes the machinery less effective and past a point actively destructive (re-fetching what it would have cached, blocking what it would have streamed). \"The opinions are the price of the guarantees.\""
+    },
+    {
+      "id": "nmrqk871m",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T16:07:08.458Z",
+      "status": "resolved",
+      "text": "the captions under code snippets are too far underneath the bottom border of the snippet.  There should be less spacing there.  The captions should also likely be padded maybe like 2px on the left to make it easier on the eyes due to hte bordere radii of the snippets.",
+      "target": {
+        "anchor": "library-leaves",
+        "path": [
+          28
+        ],
+        "tag": "div",
+        "snippet": "\u2715 Fused: configured with data + functions app layout (forced client)\"use client\";/* onClic"
+      },
+      "resolution": "Caption styling tightened: margin-top pulled up (hugs the snippet bottom) and 3px left padding added so text clears the border radius; compare-column captions tightened to 4px."
+    },
+    {
+      "id": "nmrqk9ijk",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T16:08:10.016Z",
+      "status": "resolved",
+      "text": "it would be helpful to show in this example how the publishProgram action can return an { error, response } result type and then the handler can actually respond to the error if it is not undefined by issuing a toast message or something",
+      "target": {
+        "anchor": "self-contained",
+        "path": [
+          50
+        ],
+        "tag": "pre",
+        "snippet": "components/program/PublishButton.tsx\"use client\";import { useTransition } from \"react\";/* "
+      },
+      "resolution": "The 5.7 PublishButton now awaits the action result and surfaces failures where the interaction lives ({ error } -> toast.error), and the 5.8 publishProgram action returns { error } on failure / {} on success (returned, not thrown) with a comment noting the client decides how to surface it."
+    },
+    {
+      "id": "nmrqkb9yr",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T16:09:32.211Z",
+      "status": "resolved",
+      "text": "please split into two separate snippets at two separate files showing the import.  move the component comments to captions under each snippet",
+      "target": {
+        "anchor": "swr-refresh",
+        "path": [
+          69
+        ],
+        "tag": "pre",
+        "snippet": "The SWR variant: same shape, different cache\"use client\";import useSWR, { mutate } from \"s"
+      },
+      "resolution": "The SWR variant is now two file snippets, ProgramDrawer.tsx (imports useSWR) and PublishButton.tsx SWR flavor (imports mutate), each with its own filename and caption; the whole-snippet comments moved into those captions."
+    },
+    {
+      "id": "nmrqke80p",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T16:11:49.657Z",
+      "status": "resolved",
+      "text": "indent is missing before <sidebar here",
+      "target": {
+        "anchor": "library-leaves",
+        "path": [
+          28,
+          0,
+          1
+        ],
+        "tag": "pre",
+        "snippet": "app layout (forced client)\"use client\";<Sidebar items={[ { icon: <HomeIcon />, label: \"Hom"
+      },
+      "resolution": "The missing newline was a bug from the caption sweep that glued the directive to the JSX; found and fixed 11 such glue points across four chapters (directive now followed by a blank line everywhere)."
+    },
+    {
+      "id": "nmrqkehf4",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T16:12:01.840Z",
+      "status": "resolved",
+      "text": "please make sure code snippet references across the document always have the monospace font with backtick-style formatting.  A sentence should never start with a code reference - it should always have a plain english word first.",
+      "target": {
+        "anchor": "library-leaves",
+        "path": [
+          28
+        ],
+        "tag": "div",
+        "snippet": "\u2715 Fused: configured with data + functions app layout (forced client)\"use client\";<Sidebar "
+      },
+      "resolution": "Convention recorded and swept: code references in prose/captions are always <code>-wrapped, and sentences never start with a code reference (e.g. \"Here onClick is a function...\", \"Because react-select is interactive...\"); 8 captions fixed across five chapters."
     }
   ]
 }

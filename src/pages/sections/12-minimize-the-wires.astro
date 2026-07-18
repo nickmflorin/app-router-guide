@@ -411,7 +411,7 @@ The same three components, wired two ways. Left: the parent fetches once and dri
   );
 }</pre>
 <CodeCaption>
-  The Header needs one more field? Edit Header, Page, and getProgram: three files, every time.
+  The Header needs one more field? Edit Header, Page, and <code>getProgram</code>: three files, every time.
 </CodeCaption>
   
 </CompareCol>
@@ -634,7 +634,9 @@ Boundary placement follows the data. Drilled props force one big boundary above 
 <CompareCol kind="bad" label="✕ Reports up through a wire">
     <pre
                 class="code" is:raw
-              ><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({
+              ><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({
   programId,
   onSuccess,
 }: <span class="tok-fn">Props</span>) {
@@ -657,7 +659,9 @@ Boundary placement follows the data. Drilled props force one big boundary above 
 <CompareCol kind="good" label="✓ Invalidates the data's name">
     <pre
                 class="code" is:raw
-              ><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;<span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({ programId }: <span class="tok-fn">Props</span>) {
+              ><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({ programId }: <span class="tok-fn">Props</span>) {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Button</span>
       <span class="tok-prop">onClick</span>={() =&gt;
