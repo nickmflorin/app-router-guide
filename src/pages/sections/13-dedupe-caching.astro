@@ -564,7 +564,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
 
 <p>
   This is why the audit's blanket <code>export const dynamic = "force-dynamic"</code> plus
-  <code>no-store</code> everywhere (<a href="17-applied-to-recraft.html#finding-7">§17</a
+  <code>no-store</code> everywhere (<a href="17-applied-to-tracker.html#finding-7">§17</a
   >) is so costly: it tells this extended <code>fetch</code> to skip the Data Cache on
   every call, throwing away a layer the framework hands you for free. The habit to build
   is the inverse: cache by default with a declared <code>revalidate</code> and

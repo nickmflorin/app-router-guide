@@ -198,7 +198,7 @@ import CompareCol from '../../components/CompareCol.astro';
     A server function is an async function that runs on the server but is
     <strong>callable from client code as if it were local</strong>. React serializes the call across
     the network; Next.js wires it to an endpoint automatically. This is the primitive that makes our
-    73 pass-through proxy handlers (<a href='17-applied-to-recraft.html#finding-1'>§17</a>)
+    73 pass-through proxy handlers (<a href='17-applied-to-tracker.html#finding-1'>§17</a>)
     unnecessary for mutations: no route handler, no manual fetch, and end-to-end type safety,
     because the function's signature <em>is</em> the contract.
   </p>
@@ -538,7 +538,7 @@ import CompareCol from '../../components/CompareCol.astro';
     the latest props and state, but is not a dependency, so the effect stops re-running (and
     re-connecting, re-subscribing, re-firing) when those values change. Stable as of React 19.2. It
     is a scalpel for the few legitimate effects that remain after <a
-      href='17-applied-to-recraft.html#finding-3'>§17's Finding 3</a
+      href='17-applied-to-tracker.html#finding-3'>§17's Finding 3</a
     > is fixed; it is not a license to write more effects.
   </p>
   <pre

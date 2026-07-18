@@ -40,7 +40,7 @@ export const TOC = [
     items: [
       { n: '15', title: 'Worked Example', file: '15-worked-example.html' },
       { n: '16', title: "Signs You're Doing It Wrong", file: '16-signs-doing-it-wrong.html' },
-      { n: '17', title: 'Applied to recraft', file: '17-applied-to-recraft.html' },
+      { n: '17', title: 'Applied to Tracker', file: '17-applied-to-tracker.html' },
     ],
   },
   {

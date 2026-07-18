@@ -6,7 +6,7 @@
     <title>Client/Server Boundaries - App Router Guide</title>
     <link rel="stylesheet" href="../assets/style.css">
     <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../_astro/GuidePage.CPsrv8uf.css"></head>
+  <link rel="stylesheet" href="../_astro/GuidePage.BiZVXkLz.css"></head>
   <body>
     <div class="shell">
       <nav class="sidebar" id="sidebar"></nav>
@@ -1235,7 +1235,7 @@ The same four components, two architectures. Left: one <code>"use client"</code>
   <a href="#self-contained">§5.7</a>'s button called a server action and moved on. It is
   worth stopping on what that server action actually is, because it is the single biggest
   lever for pulling mutations back across the boundary, and the reason the 73 pass-through
-  proxy handlers the audit found (<a href="17-applied-to-recraft.html#finding-1">§17</a>)
+  proxy handlers the audit found (<a href="17-applied-to-tracker.html#finding-1">§17</a>)
   are unnecessary.
 </p>
 <p>
@@ -1352,8 +1352,8 @@ The same mutation, two architectures. A server action is one typed boundary from
   failure is a typed value you handle precisely: the record does not exist, the user is
   not allowed, a constraint failed, each one distinct and catchable at the call site.
   Route that same mutation through a Next.js API route that proxies to another HTTP
-  service (the recraft pattern from
-  <a href="17-applied-to-recraft.html#finding-1">§17</a>) and every one of those distinct
+  service (the Tracker pattern from
+  <a href="17-applied-to-tracker.html#finding-1">§17</a>) and every one of those distinct
   failures is flattened into a status code on the way out and reconstituted on the way
   back. You also inherit a second set of failure modes that have nothing to do with your
   domain: network errors, timeouts, retries, serialization mismatches. Each middleman is

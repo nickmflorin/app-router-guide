@@ -6,7 +6,7 @@
     <title>Dedupe &amp; Caching - App Router Guide</title>
     <link rel="stylesheet" href="../assets/style.css">
     <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../_astro/GuidePage.CPsrv8uf.css"></head>
+  <link rel="stylesheet" href="../_astro/GuidePage.BiZVXkLz.css"></head>
   <body>
     <div class="shell">
       <nav class="sidebar" id="sidebar"></nav>
@@ -397,7 +397,7 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
 
 <p>
   This is why the audit's blanket <code>export const dynamic = "force-dynamic"</code> plus
-  <code>no-store</code> everywhere (<a href="17-applied-to-recraft.html#finding-7">§17</a>) is so costly: it tells this extended <code>fetch</code> to skip the Data Cache on
+  <code>no-store</code> everywhere (<a href="17-applied-to-tracker.html#finding-7">§17</a>) is so costly: it tells this extended <code>fetch</code> to skip the Data Cache on
   every call, throwing away a layer the framework hands you for free. The habit to build
   is the inverse: cache by default with a declared <code>revalidate</code> and
   <code>tags</code>, and reach for <code>no-store</code> only where the data is genuinely

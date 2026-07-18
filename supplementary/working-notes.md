@@ -58,6 +58,9 @@ clarification before proceeding.
       client component.
 - [ ] Containers live in the scaffold - section needs a diagram that shows the content inside the
       layout changing when route changes but not the layout.
+- [ ] Consider moving explanation of perceived performance up, tie it together with cumulative
+      layout shift. Tie together with TTI and why its a dead metric.
+- [ ] Rename Tracker references to Tracker
 
 ## Page Content to Add or Modify
 
@@ -289,7 +292,7 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
         allowed to access it, etc. separately and distinctly. When we add HTTP middlemen, we now
         have to standardize and communicate those errors through the HTTP layer but also we have to
         now account for things like network errors, timeouts, etc. The discussion should use the
-        direct Prisma access as an example, but also mention how the recraft pattern of funneling
+        direct Prisma access as an example, but also mention how the Tracker pattern of funneling
         through an API layer on the same app UI is not good because it adds a second HTTP layer that
         things have to be handled through. The less middlemen the better - we should be using server
         actions that talk to the APIs we have setup as separate services directly, rather than
@@ -330,7 +333,7 @@ Client Waterfalls -> §11.4, a three-shapes timeline diagram (serial vs server-r
 parallel-client). Reserving-space diagrams -> §9.3, a before/after reserved-box diagram (fallback
 and content share one box, zero shift). The Server Actions cluster -> new §18.6 "Server actions and
 the HTTP middleman": how they work under the hood as typed RPC, a direct-vs-proxy diagram
-(Prisma-direct vs the recraft API-proxy antipattern, §17 finding 1), the
+(Prisma-direct vs the Tracker API-proxy antipattern, §17 finding 1), the
 type-safety/latency/error-surface cost, and the "fewer middlemen" principle; the form primitives
 useActionState/useFormStatus/Form stay in §18.2.) (Corrected 2026-07-17: the Server Actions /
 HTTP-middleman and Transitions deep discussions were first mis-placed inside §18 New Primitives; per

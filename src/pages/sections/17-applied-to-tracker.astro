@@ -1,23 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Applied to recraft - App Router Guide</title>
-    <link rel="stylesheet" href="../assets/style.css">
-    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../_astro/GuidePage.CPsrv8uf.css"></head>
-  <body>
-    <div class="shell">
-      <nav class="sidebar" id="sidebar"></nav>
-      <main class="content">
-        <div class="content-inner">
-          
+---
+import GuidePage from '../../layouts/GuidePage.astro';
+import Chip from '../../components/Chip.astro';
+import Callout from '../../components/Callout.astro';
+import GoDeeper from '../../components/GoDeeper.astro';
+import Diagram from '../../components/Diagram.astro';
+import Compare from '../../components/Compare.astro';
+import CompareCol from '../../components/CompareCol.astro';
+---
+
+<GuidePage title="Applied to Tracker - App Router Guide" root="..">
 <div class="kicker">Chapter 17 · Part D: Applied</div>
-<h1>Applied to recraft</h1>
+<h1>Applied to Tracker</h1>
 <p class="lede">
   Everything before this chapter was the model. This chapter is the mirror: a July 2026
-  audit of all six Next.js UIs in the recraft monorepo, what it found, and where in this
+  audit of all six Next.js UIs in the Tracker monorepo, what it found, and where in this
   guide each fix lives.
 </p>
 
@@ -31,9 +27,7 @@
   concrete files; every fix points back at the chapter that covers the pattern.
 </p>
 
-<div class="callout callout-voice">
-  <div class="callout-title">Read this in the spirit it&#39;s written</div>
-  
+<Callout kind="voice" title="Read this in the spirit it's written">
   <p>
     This chapter is deliberately not bashful, and it is just as deliberately not a
     critique of anyone's work. Every pattern it documents was the industry-default way
@@ -45,8 +39,7 @@
     fixing them is the cheapest it will ever be right now. The focus is on the gaps
     because the gaps are the work.
   </p>
-
-</div>
+</Callout>
 
 <h2 id="verdict">17.2 The verdict</h2>
 <p>
@@ -59,28 +52,75 @@
   <a href="03-mental-model.html">§3</a> describes as the old model's tax.
 </p>
 
-<figure class="diagram">
-  
-  <svg viewBox="0 0 720 430" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+<Diagram>
+  <svg
+    viewBox="0 0 720 430"
+    xmlns="http://www.w3.org/2000/svg"
+    font-family="Inter, system-ui, sans-serif"
+  >
     <defs>
-      <marker id="a16am" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 2.5 1.5 L 8 5 L 2.5 8.5" fill="none" stroke="#b45309" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      <marker
+        id="a16am"
+        viewBox="0 0 10 10"
+        refX="8"
+        refY="5"
+        markerWidth="6"
+        markerHeight="6"
+        orient="auto-start-reverse"
+      >
+        <path
+          d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+          fill="none"
+          stroke="#b45309"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
       </marker>
-      <marker id="a16bl" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 2.5 1.5 L 8 5 L 2.5 8.5" fill="none" stroke="#0070f3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      <marker
+        id="a16bl"
+        viewBox="0 0 10 10"
+        refX="8"
+        refY="5"
+        markerWidth="6"
+        markerHeight="6"
+        orient="auto-start-reverse"
+      >
+        <path
+          d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+          fill="none"
+          stroke="#0070f3"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
       </marker>
     </defs>
 
-    <text x="180" y="12" font-size="12" fill="#8a5a00" text-anchor="middle" font-weight="500">
+    <text
+      x="180"
+      y="12"
+      font-size="12"
+      fill="#8a5a00"
+      text-anchor="middle"
+      font-weight="500"
+    >
       Today: the browser assembles the page
     </text>
-    <text x="540" y="12" font-size="12" fill="#0757ba" text-anchor="middle" font-weight="500">
+    <text
+      x="540"
+      y="12"
+      font-size="12"
+      fill="#0757ba"
+      text-anchor="middle"
+      font-weight="500"
+    >
       The model: the server sends the page
     </text>
-    <line x1="360" y1="2" x2="360" y2="426" stroke="#e0e0e0"></line>
+    <line x1="360" y1="2" x2="360" y2="426" stroke="#e0e0e0" />
 
     <!-- LEFT: current architecture -->
-    <rect x="60" y="28" width="240" height="44" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <rect x="60" y="28" width="240" height="44" rx="8" fill="#ffffff" stroke="#c9c9c9" />
     <text x="180" y="46" font-size="11" fill="#171717" text-anchor="middle">
       Browser requests /programs/42
     </text>
@@ -88,10 +128,18 @@
       the user is waiting from here
     </text>
 
-    <line x1="180" y1="72" x2="180" y2="106" stroke="#b45309" stroke-width="1.5" marker-end="url(#a16am)"></line>
+    <line
+      x1="180"
+      y1="72"
+      x2="180"
+      y2="106"
+      stroke="#b45309"
+      stroke-width="1.5"
+      marker-end="url(#a16am)"
+    />
     <text x="192" y="92" font-size="9.5" fill="#737373">round trip 1</text>
 
-    <rect x="60" y="110" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309"></rect>
+    <rect x="60" y="110" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309" />
     <text x="180" y="128" font-size="11" fill="#8a5a00" text-anchor="middle">
       Server returns an empty shell
     </text>
@@ -99,10 +147,18 @@
       no content in the HTML, just a bundle
     </text>
 
-    <line x1="180" y1="154" x2="180" y2="188" stroke="#b45309" stroke-width="1.5" marker-end="url(#a16am)"></line>
+    <line
+      x1="180"
+      y1="154"
+      x2="180"
+      y2="188"
+      stroke="#b45309"
+      stroke-width="1.5"
+      marker-end="url(#a16am)"
+    />
     <text x="192" y="174" font-size="9.5" fill="#737373">bundle + hydration</text>
 
-    <rect x="60" y="192" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309"></rect>
+    <rect x="60" y="192" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309" />
     <text x="180" y="210" font-size="11" fill="#8a5a00" text-anchor="middle">
       Bundle downloads, React hydrates
     </text>
@@ -110,10 +166,18 @@
       effects fire only after mount
     </text>
 
-    <line x1="180" y1="236" x2="180" y2="270" stroke="#b45309" stroke-width="1.5" marker-end="url(#a16am)"></line>
+    <line
+      x1="180"
+      y1="236"
+      x2="180"
+      y2="270"
+      stroke="#b45309"
+      stroke-width="1.5"
+      marker-end="url(#a16am)"
+    />
     <text x="192" y="256" font-size="9.5" fill="#737373">effects fire</text>
 
-    <rect x="60" y="274" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309"></rect>
+    <rect x="60" y="274" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309" />
     <text x="180" y="292" font-size="11" fill="#8a5a00" text-anchor="middle">
       fetch("/api/proxy/programs/42")
     </text>
@@ -121,12 +185,20 @@
       route handler adds a hop upstream
     </text>
 
-    <line x1="180" y1="318" x2="180" y2="352" stroke="#b45309" stroke-width="1.5" marker-end="url(#a16am)"></line>
+    <line
+      x1="180"
+      y1="318"
+      x2="180"
+      y2="352"
+      stroke="#b45309"
+      stroke-width="1.5"
+      marker-end="url(#a16am)"
+    />
     <text x="192" y="338" font-size="9.5" fill="#737373">
       round trips 2 + 3 (proxy hop)
     </text>
 
-    <rect x="60" y="356" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309"></rect>
+    <rect x="60" y="356" width="240" height="44" rx="8" fill="#fdf3e3" stroke="#b45309" />
     <text x="180" y="374" font-size="11" fill="#8a5a00" text-anchor="middle">
       Data arrives, content renders
     </text>
@@ -134,12 +206,19 @@
       skeletons and spinners until now
     </text>
 
-    <text x="180" y="424" font-size="11" fill="#d93025" text-anchor="middle" font-weight="500">
+    <text
+      x="180"
+      y="424"
+      font-size="11"
+      fill="#d93025"
+      text-anchor="middle"
+      font-weight="500"
+    >
       First content: after 3 round trips + hydration
     </text>
 
     <!-- RIGHT: the server-first model -->
-    <rect x="420" y="28" width="240" height="44" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <rect x="420" y="28" width="240" height="44" rx="8" fill="#ffffff" stroke="#c9c9c9" />
     <text x="540" y="46" font-size="11" fill="#171717" text-anchor="middle">
       Browser requests /programs/42
     </text>
@@ -147,10 +226,26 @@
       the user is waiting from here
     </text>
 
-    <line x1="540" y1="72" x2="540" y2="188" stroke="#0070f3" stroke-width="1.5" marker-end="url(#a16bl)"></line>
+    <line
+      x1="540"
+      y1="72"
+      x2="540"
+      y2="188"
+      stroke="#0070f3"
+      stroke-width="1.5"
+      marker-end="url(#a16bl)"
+    />
     <text x="552" y="134" font-size="9.5" fill="#737373">one round trip, one hop</text>
 
-    <rect x="420" y="192" width="240" height="44" rx="8" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <rect
+      x="420"
+      y="192"
+      width="240"
+      height="44"
+      rx="8"
+      fill="#eaf3fe"
+      stroke="#0070f3"
+    />
     <text x="540" y="210" font-size="11" fill="#0757ba" text-anchor="middle">
       Async server component runs
     </text>
@@ -158,10 +253,26 @@
       calls the upstream API directly
     </text>
 
-    <line x1="540" y1="236" x2="540" y2="352" stroke="#0070f3" stroke-width="1.5" marker-end="url(#a16bl)"></line>
+    <line
+      x1="540"
+      y1="236"
+      x2="540"
+      y2="352"
+      stroke="#0070f3"
+      stroke-width="1.5"
+      marker-end="url(#a16bl)"
+    />
     <text x="552" y="298" font-size="9.5" fill="#737373">streamed as it resolves</text>
 
-    <rect x="420" y="356" width="240" height="44" rx="8" fill="#e7f5ee" stroke="#0f7b48"></rect>
+    <rect
+      x="420"
+      y="356"
+      width="240"
+      height="44"
+      rx="8"
+      fill="#e7f5ee"
+      stroke="#0f7b48"
+    />
     <text x="540" y="374" font-size="11" fill="#0f7b48" text-anchor="middle">
       HTML streams, content included
     </text>
@@ -169,22 +280,28 @@
       client JS only for interactive leaves
     </text>
 
-    <text x="540" y="424" font-size="11" fill="#0f7b48" text-anchor="middle" font-weight="500">
+    <text
+      x="540"
+      y="424"
+      font-size="11"
+      fill="#0f7b48"
+      text-anchor="middle"
+      font-weight="500"
+    >
       First content: in the first response
     </text>
   </svg>
   
-
-
-  <figcaption>
-    
+<Fragment slot="caption">
 The representative trace from the audit
     (<code>ojl-ui/src/app/(participant)/my/home/page.tsx</code>): a 5-line server shell
     hands off to a <code>"use client"</code> page whose children fetch through the proxy
-    after hydration. The same request, made by an async server component (<a href="04-ssr.html">§4</a>), is one hop and arrives as HTML.
-
-  </figcaption>
-</figure>
+    after hydration. The same request, made by an async server component (<a
+      href="04-ssr.html"
+      >§4</a
+    >), is one hop and arrives as HTML.
+</Fragment>
+</Diagram>
 
 <p>
   Importantly, none of this is imposed by our infrastructure. The proxy's cookie-to-Bearer
@@ -287,19 +404,20 @@ The representative trace from the audit
   862-line client component.
 </p>
 
-<div class="callout callout-warn">
-  <div class="callout-title">The zeroes are the headline</div>
-  
+<Callout kind="warn" title="The zeroes are the headline">
   <p>
-    Across the entire repo: <strong>zero server actions</strong> (<code>"use server"</code>), <strong>zero caching primitives</strong> (<code>"use cache"</code>,
+    Across the entire repo: <strong>zero server actions</strong> (<code>"use server"</code
+    >), <strong>zero caching primitives</strong> (<code>"use cache"</code>,
     <code>revalidate</code>, <code>React.cache()</code>), and <strong>zero SWR</strong>.
     Every <code>&lt;Suspense&gt;</code> that exists is there to silence the
-    <code>useSearchParams</code> build error (<a href="05-client-server-boundaries.html#searchparams-boundary">§5.6</a>), not to stream. Roughly 60% of all source files carry <code>"use client"</code>.
+    <code>useSearchParams</code> build error (<a
+      href="05-client-server-boundaries.html#searchparams-boundary"
+      >§5.6</a
+    >), not to stream. Roughly 60% of all source files carry <code>"use client"</code>.
     The server side of this stack, Part A and Part B of this guide in their entirety, is
     essentially unused.
   </p>
-
-</div>
+</Callout>
 
 <h2 id="findings">17.4 The findings</h2>
 <p>
@@ -325,14 +443,18 @@ The representative trace from the audit
 <p>
   <strong>Where the fix lives:</strong> page-level reads become async server components
   calling the upstream API directly (<a href="04-ssr.html">§4</a>), backed by a
-  <code>cache()</code>-wrapped server data layer (<a href="13-dedupe-caching.html#server">§13.2</a>).
+  <code>cache()</code>-wrapped server data layer (<a href="13-dedupe-caching.html#server"
+    >§13.2</a
+  >).
 </p>
 
 <h3 id="finding-2">Finding 2: "use client" poisons whole subtrees instead of leaves</h3>
 <p>
   The directive sits at page and layout level, usually just to call
   <code>useParams</code>/<code>useSearchParams</code>/<code>useRouter</code>: values a
-  server page receives as props (<a href="08-server-resolvable-state.html#url-state">§8.2</a>). The worst cases are <strong>client layouts</strong> on the participant and
+  server page receives as props (<a href="08-server-resolvable-state.html#url-state"
+    >§8.2</a
+  >). The worst cases are <strong>client layouts</strong> on the participant and
   onboarding segments, which force everything below them client-side; one fetches
   <code>/users/me</code> after hydration just to render a first name the server already
   has via the auth cookie. Read-mostly views of 600 to 860 lines ship as client JS end to
@@ -340,7 +462,8 @@ The representative trace from the audit
 </p>
 <p>
   <strong>Where the fix lives:</strong> pages and layouts stay server, interactivity is
-  isolated into leaf client components (<a href="05-client-server-boundaries.html">§5</a>), and treating every <code>"use client"</code> as a cost to justify is the habit that
+  isolated into leaf client components (<a href="05-client-server-boundaries.html">§5</a
+  >), and treating every <code>"use client"</code> as a cost to justify is the habit that
   keeps it that way (<a href="01-introduction.html#stakes">§1</a>).
 </p>
 
@@ -359,8 +482,22 @@ The representative trace from the audit
   inconsistently.
 </p>
 <p>
-  <strong>Where the fix lives:</strong> initial data moves to server components (<a href="04-ssr.html">§4</a>), client-side needs go through one shared data layer (<a href="13-dedupe-caching.html#client">§13.3</a>), mutations become server actions (<a href="05-client-server-boundaries.html#self-contained">§5.7</a>), and React's own
-  <a href="https://react.dev/learn/you-might-not-need-an-effect" target="_blank" rel="noopener">You Might Not Need an Effect</a>
+  <strong>Where the fix lives:</strong> initial data moves to server components (<a
+    href="04-ssr.html"
+    >§4</a
+  >), client-side needs go through one shared data layer (<a
+    href="13-dedupe-caching.html#client"
+    >§13.3</a
+  >), mutations become server actions (<a
+    href="05-client-server-boundaries.html#self-contained"
+    >§5.7</a
+  >), and React's own
+  <a
+    href="https://react.dev/learn/you-might-not-need-an-effect"
+    target="_blank"
+    rel="noopener"
+    >You Might Not Need an Effect</a
+  >
   is the canon for everything else.
 </p>
 
@@ -375,7 +512,10 @@ The representative trace from the audit
 </p>
 <p>
   <strong>Where the fix lives:</strong> server layout checks with
-  <code>redirect()</code>/<code>notFound()</code> plus middleware for coarse auth (<a href="08-server-resolvable-state.html#cookies">§8.4</a>); one layout in the repo already does the cookie-presence version of this correctly.
+  <code>redirect()</code>/<code>notFound()</code> plus middleware for coarse auth (<a
+    href="08-server-resolvable-state.html#cookies"
+    >§8.4</a
+  >); one layout in the repo already does the cookie-presence version of this correctly.
 </p>
 
 <h3 id="finding-5">
@@ -391,7 +531,10 @@ The representative trace from the audit
   fallback.
 </p>
 <p>
-  <strong>Where the fix lives:</strong> containers reserve the space (<a href="09-containers-content-shifting.html">§9</a>), Suspense boundaries and route-level <code>loading</code>/<code>error</code> files
+  <strong>Where the fix lives:</strong> containers reserve the space (<a
+    href="09-containers-content-shifting.html"
+    >§9</a
+  >), Suspense boundaries and route-level <code>loading</code>/<code>error</code> files
   own every loading state (<a href="10-suspense-streaming.html">§10</a>).
 </p>
 
@@ -429,13 +572,19 @@ The representative trace from the audit
 <h3 id="finding-8">Finding 8: App Router features missing entirely</h3>
 <p>
   No parallel routes, no intercepting routes, anywhere, despite many drawer and sheet
-  flows that are pure client state and not URL-addressable (<a href="08-server-resolvable-state.html#tabs">§8.3</a>). No server actions despite dozens of form mutations. No
+  flows that are pure client state and not URL-addressable (<a
+    href="08-server-resolvable-state.html#tabs"
+    >§8.3</a
+  >). No server actions despite dozens of form mutations. No
   <code>not-found.tsx</code> outside the roots. These are not exotic extras; they are the
   primitives Part B and <a href="18-new-primitives.html">§18</a> are about, and their
   absence is why the apps re-implement what the framework provides.
 </p>
 <p>
-  <strong>Where the fix lives:</strong> parallel routes and <code>default.tsx</code> (<a href="11-blocking-requests.html#parallel-routes">§11.3</a>), server actions (<a href="05-client-server-boundaries.html#self-contained">§5.7</a>,
+  <strong>Where the fix lives:</strong> parallel routes and <code>default.tsx</code> (<a
+    href="11-blocking-requests.html#parallel-routes"
+    >§11.3</a
+  >), server actions (<a href="05-client-server-boundaries.html#self-contained">§5.7</a>,
   <a href="18-new-primitives.html">§18</a>).
 </p>
 
@@ -528,26 +677,32 @@ The representative trace from the audit
   the pages users feel the most.
 </p>
 
-<div class="callout callout-info">
-  <div class="callout-title">Where to go deeper</div>
-  
+<GoDeeper>
   <p>
-    <a href="https://nextjs.org/docs/app/getting-started/server-and-client-components" target="_blank" rel="noopener">Next.js: Server and Client Components</a>
+    <a
+      href="https://nextjs.org/docs/app/getting-started/server-and-client-components"
+      target="_blank"
+      rel="noopener"
+      >Next.js: Server and Client Components</a
+    >
     ·
-    <a href="https://nextjs.org/docs/app/getting-started/fetching-data" target="_blank" rel="noopener">Next.js: Fetching Data</a>
+    <a
+      href="https://nextjs.org/docs/app/getting-started/fetching-data"
+      target="_blank"
+      rel="noopener"
+      >Next.js: Fetching Data</a
+    >
     ·
-    <a href="https://react.dev/learn/you-might-not-need-an-effect" target="_blank" rel="noopener">React: You Might Not Need an Effect</a>
+    <a
+      href="https://react.dev/learn/you-might-not-need-an-effect"
+      target="_blank"
+      rel="noopener"
+      >React: You Might Not Need an Effect</a
+    >
     ·
-    <a href="https://react.dev/reference/rsc/use-client" target="_blank" rel="noopener">React: "use client"</a>. Full list in <a href="19-references.html">§19</a>.
+    <a href="https://react.dev/reference/rsc/use-client" target="_blank" rel="noopener"
+      >React: "use client"</a
+    >. Full list in <a href="19-references.html">§19</a>.
   </p>
-
-</div>
-
-
-          <div id="pager"></div>
-        </div>
-      </main>
-    </div>
-    <script src="../assets/nav.js"></script>
-  </body>
-</html>
+</GoDeeper>
+</GuidePage>

@@ -157,12 +157,18 @@ home per technique + cross-references).
 - Part C — Decouple the Parts: §12 Minimize the wires · §13 Dedupe & caching (fetch dedupe, React
   cache, "use cache"/cacheComponents, SWR) · §14 Component breakdown (one per file, portability)
 - Part D — Applied: §15 Worked example (page header + data table) · §16 Signs You're Doing It Wrong
-  (checklist, links back) · §17 Applied to recraft (before/after from audit)
+  (checklist, links back) · §17 Applied to Tracker (before/after from audit)
 - §18 New Primitives (lower priority; details of Server Actions, form hooks, ViewTransition,
   Activity, useEffectEvent, compiler)
 - §19 References
 
 ## Working agreements (remember across sessions)
+
+- **NAMING (per Nick, 2026-07-18): the product is called "Tracker" everywhere a reader can
+  see it** (sidebar, titles, prose: formal "Tracker"; filenames/slugs: lowercase "tracker",
+  e.g. 17-applied-to-tracker.html). The string "recraft" must NOT appear in guide content.
+  "recraft" remains ONLY as the actual repo/clone/PR name in internal notes: the local clone
+  is still `~/ai/recraft`, and PR references (e.g. #1617) keep the real repo name.
 
 - **"Ready" items in working-notes are `[N]` markers (per Nick, 2026-07-17).** In
   `supplementary/working-notes.md`, `[ ]` is an untouched to-do, `[x]` is done, and `[N]` means
