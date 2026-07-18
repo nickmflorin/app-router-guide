@@ -546,6 +546,19 @@ The stable version of the same page. The panes' geometry is identical before and
   by whichever response happens to arrive.</strong> That is what "contain the unknown"
   means at the design layer.
 </p>
+<p>
+  And be clear about what the partitioned version is: <em>a compromise, not the
+  ideal</em>. It makes the stacked composition survivable (nothing moves), but the user
+  still pays for it: a pane that is mostly dead space when its table is sparse, an
+  internal scrollbar working hard when it is busy, two regions forever negotiating one
+  axis. The genuinely better outcome is the one further upstream, where the composition
+  never puts two unbounded regions on top of each other in the first place: tabs, a
+  capped secondary list, a master-detail split. Engineering cannot get there alone,
+  because "don't stack these" is a design decision; this is
+  <a href="#shared-goal">§11.1's channel</a> paying for itself. When the conversation
+  happens at mock time, the answer is a better composition; when it happens at build
+  time, the answer is a partition.
+</p>
 
 <h2 id="hard-patterns">11.4 Other patterns that fight containment</h2>
 <p>

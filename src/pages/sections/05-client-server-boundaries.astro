@@ -2414,6 +2414,97 @@ The same mutation, two architectures. A server action is one typed boundary from
   one more place the types are lost and one more surface of errors the caller has to
   account for.
 </p>
+
+<h3 id="actions-orm">The direct version: the ORM inside the action</h3>
+<p>
+  Server actions are built for this. The ordinary Prisma pattern (and it works the same
+  with any ORM or query builder) is to use the client <em>directly inside the action</em>:
+  no API between the interaction and the data at all. That buys latency (one process, no
+  serialization hops), flexibility (select exactly the fields this action needs, nothing
+  more), and above all a <strong>private error surface</strong>: the failure cases are
+  enumerated and handled here, in context, for this one interaction, instead of being
+  designed to satisfy a hundred other callers of a shared endpoint.
+</p>
+
+<Snippet>
+<pre class="code" is:raw><span class="filename">app/programs/actions.ts - Prisma, no API in between</span><span class="tok-dir">"use server"</span>;
+<span class="tok-kw">import</span> { prisma } <span class="tok-kw">from</span> <span class="tok-str">"@/lib/db"</span>;
+
+<span class="tok-kw">export async function</span> <span class="tok-fn">archiveProgram</span>(id: number) {
+  <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> prisma.program.<span class="tok-fn">findUnique</span>({
+    <span class="tok-prop">where</span>: { id },
+    <span class="tok-com">// Just the fields THIS action needs to decide.</span>
+    <span class="tok-prop">select</span>: { id: <span class="tok-kw">true</span>, status: <span class="tok-kw">true</span> },
+  });
+
+  <span class="tok-com">/* null is a domain answer, not a status code: the row
+     does not exist. Name the failure for this interaction
+     and return it in the type. */</span>
+  <span class="tok-kw">if</span> (!program) <span class="tok-kw">return</span> { error: <span class="tok-str">"This program no longer exists."</span> };
+  <span class="tok-kw">if</span> (program.status === <span class="tok-str">"archived"</span>) <span class="tok-kw">return</span> {};
+
+  <span class="tok-kw">await</span> prisma.program.<span class="tok-fn">update</span>({
+    <span class="tok-prop">where</span>: { id },
+    <span class="tok-prop">data</span>: { status: <span class="tok-str">"archived"</span> },
+  });
+  <span class="tok-fn">revalidateTag</span>(<span class="tok-str">`program-${id}`</span>);
+  <span class="tok-kw">return</span> {};
+}</pre>
+<CodeCaption>
+  The return type is inferred, so <code>&#123; error &#125;</code> flows to the button in
+  <a href="#self-contained">§5.7</a> with no schema to maintain. A <code>null</code> from
+  <code>findUnique</code> can mean exactly one thing, and the action decides what this
+  interaction should do about it.
+</CodeCaption>
+</Snippet>
+
+<h3 id="actions-central-api">The centralized API, called directly: still fine</h3>
+<p>
+  None of this outlaws a dedicated backend. If a centralized API layer exists (other
+  consumers, another team, another runtime), calling it <em>directly from the action</em>
+  is a perfectly good architecture; the action becomes the adapter that narrows generic
+  HTTP semantics into this interaction's domain answers. What you give up, and should
+  give up knowingly, is precision. Compare the error surface:
+</p>
+
+<Snippet>
+<pre class="code" is:raw><span class="filename">app/programs/actions.ts - centralized API, called directly</span><span class="tok-dir">"use server"</span>;
+
+<span class="tok-kw">export async function</span> <span class="tok-fn">archiveProgram</span>(id: number) {
+  <span class="tok-kw">const</span> res = <span class="tok-kw">await</span> <span class="tok-fn">fetch</span>(<span class="tok-str">`${API_URL}/programs/${id}/archive`</span>, {
+    <span class="tok-prop">method</span>: <span class="tok-str">"POST"</span>,
+    <span class="tok-prop">headers</span>: <span class="tok-fn">authHeaders</span>(),
+  });
+
+  <span class="tok-com">/* One status code, several possible truths. 404: the
+     program is gone? the route moved in the last deploy?
+     the resource was renamed? The action has to guess,
+     and the response body's type is whatever we assert. */</span>
+  <span class="tok-kw">if</span> (res.status === <span class="tok-str">404</span>) <span class="tok-kw">return</span> { error: <span class="tok-str">"This program no longer exists."</span> };
+  <span class="tok-kw">if</span> (!res.ok) <span class="tok-kw">return</span> { error: <span class="tok-str">"Could not archive the program."</span> };
+
+  <span class="tok-fn">revalidateTag</span>(<span class="tok-str">`program-${id}`</span>);
+  <span class="tok-kw">return</span> {};
+}</pre>
+<CodeCaption>
+  Same interaction through a shared endpoint. The endpoint's shape and error conventions
+  serve every caller it has, so they can never be tailored to this one; a
+  <code>404</code> is ambiguous in ways <code>findUnique</code> returning
+  <code>null</code> never is, and type safety ends at the HTTP boundary.
+</CodeCaption>
+</Snippet>
+
+<p>
+  So the ranking is a gradient, not a binary. The ORM inside the action is the optimum:
+  fastest, most flexible, typed end to end, and free of an API whose shape is coupled to
+  a UI. A centralized API called directly from the action is a legitimate step down,
+  taken for organizational reasons, and the action's job becomes translating its generic
+  responses into per-interaction answers. The proxy (your own API route forwarding to the
+  real backend) is the only indefensible rung: server actions make it structurally
+  unnecessary, and it costs a hop of latency, a layer of error ambiguity, and the types,
+  while providing nothing the direct call doesn't.
+</p>
+
 <Callout kind="voice" title="Fewer middlemen">
   <p>
     The principle is blunt. Use server actions that talk to your real backend services

@@ -38,6 +38,10 @@ clarification before proceeding.
 
 ## Random Tidbits
 
+- [ ] Suspense arrives (React 16.6) async UI becomes the framework's problem: the first crack in
+      "every component fends for itself" - I don't understand what this means on the timeline
+      elaborate.
+
 - [ ] Further elaboration on how "use client" is a "last resort" and should be avoided as much as
       possible. It is not a preference, it is a requirement for using React 19 and the App Router,
       and deviation from that will make things very difficult. Treating everything that cannot be
@@ -217,11 +221,11 @@ folded into the existing "Server-first is not optional" alert.)
       (**Partially done**)
 - [x] Awaits pushed down - adding containers in the diagram showing the flex grow and reserved space
       approach. (**Partially done**)
-- [ ] This is also a UX consideration - design should be aware of how things look different when
+- [x] This is also a UX consideration - design should be aware of how things look different when
       they are in an unknown state vs a known state vs a streaming state. It affects how pages and
       views are laid out and structured. Engineers job to communicate these things with Design. Goal
       is to minimize content shifting. **IMPORTANT**
-- [ ] Examples of difficult patterns - two stacked tables.
+- [x] Examples of difficult patterns - two stacked tables.
 - [x] Loading, data and empty states as three different questions
   - [ ] Talk about empty state flickering and use a diagram.
 - [x] Diagrams for Reserving space honestly similar to the web app diagram view (the diagram on the

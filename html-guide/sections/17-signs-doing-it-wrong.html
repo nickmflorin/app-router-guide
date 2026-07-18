@@ -6,7 +6,7 @@
     <title>Signs You&#39;re Doing It Wrong - App Router Guide</title>
     <link rel="stylesheet" href="../assets/style.css">
     <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../_astro/GuidePage.BiZVXkLz.css"></head>
+  <link rel="stylesheet" href="../_astro/GuidePage.Cvfmudak.css"></head>
   <body>
     <div class="shell">
       <nav class="sidebar" id="sidebar"></nav>
@@ -332,6 +332,19 @@ The whole chapter in three boxes. The client component is the bottom of the ladd
         fallback and the real content, the page shifts when data lands. Reserve the space
         up front. Fixed in
         <a href="09-containers-content-shifting.html#reserving">§9</a>.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>A skeleton is standing in for content that was knowable.</strong></td>
+      <td>
+        Skeletons exist to hold space for the <em>unknown</em>. A skeleton over the whole
+        page, or over inputs, selects, buttons, toolbars, headings, and other structure
+        that required no data, means the boundary swallowed content that could have
+        painted finished on the first byte; the user is watching placeholders for things
+        nobody had to wait for. Wholesale page skeletons need an exceptional reason to
+        exist. Draw the boundary around the data, not around the region it happens to sit
+        in. Fixed in <a href="10-suspense-streaming.html#skeletons">§10</a> and
+        <a href="04-ssr.html">§4</a>.
       </td>
     </tr>
   </tbody>

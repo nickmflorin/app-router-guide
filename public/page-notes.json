@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-18T22:29:57.193528+00:00",
+  "updatedAt": "2026-07-18T23:19:09.915733+00:00",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -817,6 +817,102 @@
         "snippet": "Rule Scope Importance Translate the goal for design: \"the page must not move under the use"
       },
       "resolution": "First rule rewritten from the \"translate for design\" instruction to the channel rule: \"Keep the engineering/UX channel open, in both directions: containment concerns surface while a design is still a design, not after the layout is built\" (Critical, UI/UX scope)."
+    },
+    {
+      "id": "nmrqywn7d",
+      "page": "11-designing-for-the-unknown.html",
+      "ts": "2026-07-18T22:58:03.769Z",
+      "status": "resolved",
+      "text": "we should make it clear that this is not an ideal situation and the better solution is to have a structure/UX/design where we don't have two tables on top of one another to begin with - feeding back into the fact that this thing requires engineering/UX coordination",
+      "target": {
+        "anchor": "stacked-tables-resolution",
+        "path": [
+          21
+        ],
+        "tag": "figure",
+        "snippet": "The partitioned resolution: panes are fixed by design; content changes inside them Assignm"
+      },
+      "resolution": "Added a paragraph after the partitioned-resolution diagram naming it a compromise, not the ideal: the stacked composition survives but the user still pays (dead space, hard-working internal scrollbars, two regions negotiating one axis). The genuinely better outcome is upstream, a composition that never stacks two unbounded regions, and engineering cannot get there alone because \"don't stack these\" is a design decision: 11.1's channel paying for itself. \"When the conversation happens at mock time, the answer is a better composition; when it happens at build time, the answer is a partition.\""
+    },
+    {
+      "id": "nmrqyyc1b",
+      "page": "15-component-breakdown.html",
+      "ts": "2026-07-18T22:59:22.607Z",
+      "status": "resolved",
+      "text": "I want to get started on this page.  This page should sort of discuss how a server first mentality changes how we break apart components, kind of pulling together the conversations from every other page earlier in this doc.  Also - please do some online research if you can, for patterns and things like that.  I want to also touch on the importance of 1 component per file and how that affects things.  The goal here is to be more of a document reference for component design patterns, kind of pulling together everything we'ce learned thus far.",
+      "target": {
+        "anchor": null,
+        "path": [
+          0
+        ],
+        "tag": "h1",
+        "snippet": "Component Breakdown"
+      },
+      "resolution": "Chapter 15 authored as the pull-it-together reference: 15.1 the axes of a split (boundary, data, containment demote visual/reuse instincts), 15.2 a worked decomposition (old-world ProgramCard vs the four-file capability split, each snippet captioned with what it buys), 15.3 the pattern catalog table indexing every recurring shape back to its home chapter, 15.4 a decomposition-sequence flow diagram (frame -> data -> containment -> interactivity -> one file), 15.5 one-component-per-file as structural law. Researched against the Next.js Server and Client Components composition-patterns docs and the React server-components/use-client references; both linked in Go Deeper."
+    },
+    {
+      "id": "nmrqz0qvg",
+      "page": "13-minimize-the-wires.html",
+      "ts": "2026-07-18T23:01:15.148Z",
+      "status": "resolved",
+      "text": "I want to talk about portability more on this page.  The importance of portability and how it makes things more malleable. It should use diagrams if possible, and code snippets if applicable.  Slot usages, how you can provide server\n      components to slots in client components. How you can provide client components to slots in\n      server components. Code examples, diagrams, etc.",
+      "target": {
+        "anchor": null,
+        "path": [
+          1
+        ],
+        "tag": "h1",
+        "snippet": "Minimize the Wires"
+      },
+      "resolution": "New section 13.5 \"Portability: components you can pick up and move\": wired components cannot leave without their supply vs key-addressed components that move as one line (diagram: Page A/Page B in both worlds); slots as the mechanism, with both directions spelled out (server can import/render client freely; client receives server content through JSX-valued props) and two snippets: a server page slotting a client leaf AND a server table into a client ResizableSplit shell, then the shell itself, boundary-blind. Closes with what the composition buys: every occupant and the shell replaceable independently."
+    },
+    {
+      "id": "nmrqz20tu",
+      "page": "17-signs-doing-it-wrong.html",
+      "ts": "2026-07-18T23:02:14.706Z",
+      "status": "resolved",
+      "text": "I want to add something about how you're doing it wrong if you are using a skeleton to replace content that is known on first paint, instead of just the content that is not known.  A skeleton sould never wholesale replace pages unless there are very good reasons to do so, it should never replace UI elements that don't need to be replaced, like inputs, selects, things like taht",
+      "target": {
+        "anchor": null,
+        "path": [
+          1
+        ],
+        "tag": "h1",
+        "snippet": "Signs You're Doing It Wrong"
+      },
+      "resolution": "New sign in 17.6: \"A skeleton is standing in for content that was knowable\": skeletons hold space for the unknown only; wholesale page skeletons or placeholders over inputs, selects, buttons, toolbars, and headings mean the boundary swallowed content that could have painted finished on the first byte. Draw the boundary around the data, not the region it sits in."
+    },
+    {
+      "id": "nmrqz562t",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T23:04:41.477Z",
+      "status": "resolved",
+      "text": "I want to expand here and talk more about how traditional prisma usage is built to use prisma directly inside of server actions, eliminating the need for an API.  This applies to other ORMS as well.  But it should say that while that is optimal for latency, flexibility, speed and avoiding an API that is overly copuled to a UI, it is still okay to use a dedicated backend layer or cetnralized API - but it should be direct and not through a proxy in API routes.  I want to include code snippets showing usage with Prisma directly in server actions, but also the HTTP snippets where we go to a centralized API.  It should show prisma examples in the context of error handling surface - and type safety - where we can simply fetch just the data we need in that one action and tialor the way we write the action so that it handles the error cases automatically for that specific action in context - and not 100 other actions that use the same API endpoint (which is where the API coupling gets in).  IT should be like \"if the findUnique is null, then we indicate in the return type that it does not exist with some type of { error } or 'message' or something - but when we go through an HTTP API, a 404 could also mean that the actual endpoint doesn't exist... right?  It could mean that the model doesn't exist too - just as an example for teh error surface and decision making from returns/responses.  But it should say and focus on the fact that even going through a central APi is infinitely better than going through a proxy when we can avoid it - the proxy is not needed for server actions and it widens the error surface and hurts type safety.",
+      "target": {
+        "anchor": "god-components",
+        "path": [
+          81
+        ],
+        "tag": "h2",
+        "snippet": "5.10 Server actions and the HTTP middleman"
+      },
+      "resolution": "Section 5.10 expanded with two subsections and snippets: \"The direct version: the ORM inside the action\" (Prisma findUnique with a per-action select, null as an unambiguous domain answer returned as typed { error }, revalidateTag on success) and \"The centralized API, called directly: still fine\" (fetch to a dedicated backend from the action, with the 404-ambiguity comment: gone? route moved? renamed?; types end at the HTTP boundary; the endpoint's error conventions serve every caller so they fit none). Closes with the gradient: ORM in action optimal (latency, flexibility, end-to-end types, no UI-coupled API), centralized API called directly a legitimate organizational step down, the proxy through your own API routes the only indefensible rung."
+    },
+    {
+      "id": "nmrqza7n4",
+      "page": "15-component-breakdown.html",
+      "ts": "2026-07-18T23:08:36.784Z",
+      "status": "resolved",
+      "text": "How server first means that you sometimes have to break your components apart in a different\n      seemingly-awkward-at-first way. It means you have to separate the server from client parts.",
+      "target": {
+        "anchor": null,
+        "path": [
+          0
+        ],
+        "tag": "h1",
+        "snippet": "Component Breakdown"
+      },
+      "resolution": "Covered by 15.1/15.2: the awkward-at-first framing is explicit (\"cutting along those seams feels like over-fragmenting until you notice each fragment is exactly one capability\"), with the card worked example showing the seemingly-one-component splitting into frame/stats/menu because server and client parts must separate."
     }
   ]
 }

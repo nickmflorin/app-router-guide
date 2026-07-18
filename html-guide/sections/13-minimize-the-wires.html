@@ -6,7 +6,7 @@
     <title>Minimize the Wires - App Router Guide</title>
     <link rel="stylesheet" href="../assets/style.css">
     <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../_astro/GuidePage.BiZVXkLz.css"></head>
+  <link rel="stylesheet" href="../_astro/GuidePage.Cvfmudak.css"></head>
   <body>
     <div class="shell">
       <nav class="sidebar" id="sidebar"></nav>
@@ -483,6 +483,185 @@ Boundary placement follows the data. Drilled props force one big boundary above 
   form it changed, a listbox item telling its listbox it's highlighted. The test is
   whether the two components form <em>one</em> composite widget with one responsibility,
   or whether a callback is smuggling app-level data flow through the component tree.
+</p>
+
+<h2 id="portability">13.5 Portability: components you can pick up and move</h2>
+<p>
+  Everything above argued wires are expensive to <em>maintain</em>. The payoff for
+  cutting them has a name: <strong>portability</strong>. A component whose data arrives
+  through props can never leave its page without the wires coming along: whoever hosts it
+  next must fetch the same data, hold the same state, and pass the same callbacks, so
+  "move the stats card to the dashboard" becomes a plumbing project. A component that
+  addresses its data by name (a fetch keyed by its own props on the server, an SWR key on
+  the client, a search param it reads itself) moves as <strong>one line of JSX</strong>.
+  The dedupe layers of <a href="14-dedupe-caching.html">§14</a> are what make this free:
+  wherever the component lands, its question collapses into the cache with everyone
+  else's.
+</p>
+
+<figure class="diagram">
+  
+  <svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+    <defs>
+      <marker id="a13p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 2.5 1.5 L 8 5 L 2.5 8.5" fill="none" stroke="#737373" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      </marker>
+    </defs>
+
+    <text x="180" y="12" font-size="10.5" fill="#b3261e" text-anchor="middle" font-weight="500">
+      Wired: the wires are part of the component
+    </text>
+    <text x="540" y="12" font-size="10.5" fill="#157a4c" text-anchor="middle" font-weight="500">
+      Self-contained: addressed by key, not delivered
+    </text>
+    <line x1="360" y1="2" x2="360" y2="298" stroke="#e0e0e0"></line>
+
+    <!-- LANE 1: wired -->
+    <rect x="40" y="24" width="280" height="118" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <text x="54" y="42" font-size="9" fill="#737373">Page A</text>
+    <rect x="54" y="50" width="252" height="24" rx="5" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="180" y="66" font-size="9" fill="#0757ba" text-anchor="middle">
+      page fetches, owns state, passes down
+    </text>
+    <line x1="110" y1="74" x2="110" y2="104" stroke="#b0483e" stroke-width="1.2"></line>
+    <line x1="180" y1="74" x2="180" y2="104" stroke="#b0483e" stroke-width="1.2"></line>
+    <line x1="250" y1="74" x2="250" y2="104" stroke="#b0483e" stroke-width="1.2"></line>
+    <text x="118" y="92" font-size="7.5" fill="#b0483e">rows</text>
+    <text x="188" y="92" font-size="7.5" fill="#b0483e">loading</text>
+    <text x="258" y="92" font-size="7.5" fill="#b0483e">onRefresh</text>
+    <rect x="54" y="104" width="252" height="26" rx="5" fill="#ffffff" stroke="#d4d4d4"></rect>
+    <text x="180" y="121" font-size="9.5" fill="#171717" text-anchor="middle">
+      ProgramStats
+    </text>
+
+    <line x1="180" y1="150" x2="180" y2="172" stroke="#737373" stroke-width="1.5" marker-end="url(#a13p)"></line>
+    <text x="192" y="165" font-size="8.5" fill="#737373">move it</text>
+
+    <rect x="40" y="180" width="280" height="88" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <text x="54" y="198" font-size="9" fill="#737373">Page B</text>
+    <rect x="54" y="206" width="252" height="24" rx="5" fill="#fdecea" stroke="#d93025" stroke-dasharray="5 4"></rect>
+    <text x="180" y="222" font-size="9" fill="#b3261e" text-anchor="middle">
+      new page must fetch + re-wire all three
+    </text>
+    <rect x="54" y="234" width="252" height="26" rx="5" fill="#ffffff" stroke="#d4d4d4"></rect>
+    <text x="180" y="251" font-size="9.5" fill="#171717" text-anchor="middle">
+      ProgramStats
+    </text>
+    <text x="180" y="290" font-size="10" fill="#b0483e" text-anchor="middle">
+      moving the component means rebuilding its supply
+    </text>
+
+    <!-- LANE 2: self-contained -->
+    <rect x="400" y="24" width="280" height="118" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <text x="414" y="42" font-size="9" fill="#737373">Page A</text>
+    <rect x="414" y="50" width="252" height="24" rx="5" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="540" y="66" font-size="9" fill="#0757ba" text-anchor="middle">
+      page just places it
+    </text>
+    <rect x="414" y="90" width="252" height="40" rx="5" fill="#e7f5ee" stroke="#2ea06d"></rect>
+    <text x="540" y="106" font-size="9.5" fill="#157a4c" text-anchor="middle">
+      ProgramStats
+    </text>
+    <text x="540" y="121" font-size="8" fill="#3e7d5c" text-anchor="middle">
+      asks for its own data, by key
+    </text>
+
+    <line x1="540" y1="150" x2="540" y2="172" stroke="#737373" stroke-width="1.5" marker-end="url(#a13p)"></line>
+    <text x="552" y="165" font-size="8.5" fill="#737373">move it: one line</text>
+
+    <rect x="400" y="180" width="280" height="88" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <text x="414" y="198" font-size="9" fill="#737373">Page B</text>
+    <rect x="414" y="212" width="252" height="40" rx="5" fill="#e7f5ee" stroke="#2ea06d"></rect>
+    <text x="540" y="228" font-size="9.5" fill="#157a4c" text-anchor="middle">
+      ProgramStats
+    </text>
+    <text x="540" y="243" font-size="8" fill="#3e7d5c" text-anchor="middle">
+      same key, same cache (§14)
+    </text>
+    <text x="540" y="290" font-size="10" fill="#157a4c" text-anchor="middle">
+      the component carries its own supply
+    </text>
+  </svg>
+
+
+
+  <figcaption>
+    
+Why wires cost more than maintenance. The wired component's requirements live in its
+    host, so every move re-plumbs them; the self-contained component names its data and
+    can be placed on any page, in any layout, and the dedupe layers make its repeated
+    question free.
+
+  </figcaption>
+</figure>
+
+<p>
+  Portability is what makes a codebase <em>malleable</em>: pages stop being wiring
+  diagrams and become compositions. The mechanism that keeps compositions flexible across
+  the server/client boundary is the <strong>slot</strong>: any JSX-valued prop
+  (<code>children</code> included). Slots work in <em>both directions</em>, and the two
+  directions have different rules worth keeping straight. A <strong>server component can
+  use client components freely</strong>: import them, render them, pass them into other
+  components' slots; that direction is always allowed. A <strong>client component cannot
+  import a server component</strong>, but it can <em>receive</em> one through a slot
+  (<a href="05-client-server-boundaries.html#children-pattern">§5.4</a>): the server
+  renders the content first, and the client shell places the finished output without ever
+  owning it.
+</p>
+
+<div class="snippet">
+  
+<pre class="code"><span class="filename">app/programs/page.tsx - a server page slots BOTH kinds into a client shell</span><span class="tok-kw">export default function</span> <span class="tok-fn">Page</span>() {
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">ResizableSplit</span>
+      <span class="tok-com">{/* client leaf into a client shell's slot */}</span>
+      <span class="tok-prop">left</span>={&lt;<span class="tok-fn">ProgramFilters</span> /&gt;}
+      <span class="tok-com">{/* SERVER component into the same client shell:
+          rendered on the server, passed through as output */}</span>
+      <span class="tok-prop">right</span>={&lt;<span class="tok-fn">ProgramTable</span> /&gt;}
+    /&gt;
+  );
+}</pre>
+<div class="code-caption">
+  
+  The page is a server component, so it can compose freely: it imports the client shell
+  and the client leaf, renders the server table, and hands all of them to slots.
+
+</div>
+
+</div>
+
+<div class="snippet">
+  
+<pre class="code"><span class="filename">components/layout/ResizableSplit.tsx - client shell with two slots</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ResizableSplit</span>({ left, right }: <span class="tok-fn">ResizableSplitProps</span>) {
+  <span class="tok-kw">const</span> [ratio, setRatio] = <span class="tok-fn">useState</span>(<span class="tok-str">0.3</span>);
+  <span class="tok-kw">return</span> (
+    &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex h-full"</span>&gt;
+      &lt;div <span class="tok-prop">style</span>={{ flexBasis: <span class="tok-str">`${ratio * 100}%`</span> }}&gt;{left}&lt;/div&gt;
+      &lt;<span class="tok-fn">DragHandle</span> <span class="tok-prop">onDrag</span>={setRatio} /&gt;
+      &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"min-w-0 grow"</span>&gt;{right}&lt;/div&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+<div class="code-caption">
+  
+  The shell owns exactly one thing: the divider. It has no idea one of its slots is
+  server-rendered HTML and the other is an interactive client leaf, which is the point:
+  slots make the boundary invisible to the component that hosts them.
+
+</div>
+
+</div>
+
+<p>
+  Now notice what this composition buys. <code>ProgramTable</code> can move to the
+  dashboard, a drawer, or a report page and it brings its data with it.
+  <code>ProgramFilters</code> can be dropped next to any table that reads the same search
+  params. And the shell can be swapped (split panes today, tabs next quarter) without
+  touching either occupant, because neither occupant ever knew about the other. Three
+  components, zero wires among them: every one of them is portable independently.
 </p>
 
 <h2 id="rules">The rules</h2>

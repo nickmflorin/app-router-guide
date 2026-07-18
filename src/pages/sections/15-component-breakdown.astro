@@ -4,11 +4,507 @@ import Chip from '../../components/Chip.astro';
 import Callout from '../../components/Callout.astro';
 import GoDeeper from '../../components/GoDeeper.astro';
 import Diagram from '../../components/Diagram.astro';
-import Compare from '../../components/Compare.astro';
-import CompareCol from '../../components/CompareCol.astro';
+import CodeCaption from '../../components/CodeCaption.astro';
+import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title="Component Breakdown - App Router Guide" root="..">
+<div class="kicker">Chapter 15 · Part C: Decouple the Parts</div>
 <h1>Component Breakdown</h1>
-<p class="lede">Draft pending: this chapter hasn't been written yet.</p>
+<p class="lede">
+  Every chapter so far has quietly been about where to draw component lines. This one
+  makes it the subject: how a server-first mentality changes the way you break a feature
+  into components, why the splits feel awkward at first, the patterns to reach for, and
+  why one component per file is what holds the whole scheme together.
+</p>
+
+<h2 id="axes">15.1 The axes of a split have changed</h2>
+<p>
+  Traditional React taught one decomposition instinct: split by <em>visual shape and
+  reuse</em>. A card here, a toolbar there, extract when you see it twice. Those
+  considerations still exist, but server-first demotes them, because three harder axes
+  now come first:
+</p>
+<ul>
+  <li>
+    <strong>The boundary axis: server or client.</strong> A component either stays on
+    the server (renders to HTML, ships no JS, may be <code>async</code>) or crosses to
+    the client (hydrates, interacts, costs bundle). One component cannot be both, so
+    anything that mixes "renders known content" with "handles interaction" is two
+    components waiting to be separated (<a
+      href="05-client-server-boundaries.html">§5</a>).
+  </li>
+  <li>
+    <strong>The data axis: one component per independent question.</strong> Each
+    independent data need becomes its own <code>async</code> server component, because
+    the component is the unit that can await, suspend, and stream on its own
+    (<a href="12-blocking-requests.html">§12</a>,
+    <a href="13-minimize-the-wires.html">§13</a>). Splitting by data is what makes
+    parallelism and streaming fall out for free.
+  </li>
+  <li>
+    <strong>The containment axis: frame or content.</strong> The known frame renders
+    immediately and reserves space; the unknown content suspends inside it. If one
+    component renders both, the frame is hostage to the content's data
+    (<a href="09-containers-content-shifting.html">§9</a>,
+    <a href="10-suspense-streaming.html">§10</a>).
+  </li>
+</ul>
+<p>
+  This is why server-first decomposition feels <strong>awkward at first</strong>. The old
+  instinct says a program card is obviously one component: it is one visual thing. The
+  new axes say it is at least three: a frame that is known, a stats region that awaits
+  data, and a menu that interacts. Cutting along those seams feels like over-fragmenting
+  until you notice what each fragment is: exactly one capability. One frames, one
+  fetches, one interacts. The seams follow <em>capabilities</em>, not the visual outline,
+  and every capability can then be moved, cached, streamed, or shipped (or not shipped)
+  independently.
+</p>
+
+<Callout kind="voice" title="The instinct to retrain">
+  <p>
+    "Is this one visual thing?" is no longer the question. The questions are: does any
+    part of this wait for data the rest doesn't? Does any part of this interact while the
+    rest just renders? If either answer is yes, the component line goes <em>there</em>,
+    even when the mock shows a single seamless card.
+  </p>
+</Callout>
+
+<h2 id="worked">15.2 The same card, broken both ways</h2>
+<p>
+  Here is the old-world version: one file, one component, visually faithful to the mock,
+  and wrong on all three axes.
+</p>
+
+<Snippet>
+<pre class="code" is:raw><span class="filename">ProgramCard.tsx - one component, three capabilities welded together</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramCard</span>({ programId }: { programId: number }) {
+  <span class="tok-kw">const</span> { data, isLoading } = <span class="tok-fn">useProgramStats</span>(programId);
+  <span class="tok-kw">const</span> [menuOpen, setMenuOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
+
+  <span class="tok-kw">if</span> (isLoading) <span class="tok-kw">return</span> &lt;<span class="tok-fn">CardSkeleton</span> /&gt;;
+
+  <span class="tok-kw">return</span> (
+    &lt;section <span class="tok-prop">className</span>=<span class="tok-str">"card"</span>&gt;
+      &lt;header&gt;
+        &lt;h3&gt;Program&lt;/h3&gt;
+        &lt;<span class="tok-fn">Menu</span> <span class="tok-prop">open</span>={menuOpen} <span class="tok-prop">onToggle</span>={setMenuOpen}&gt;…&lt;/<span class="tok-fn">Menu</span>&gt;
+      &lt;/header&gt;
+      &lt;<span class="tok-fn">StatRow</span> <span class="tok-prop">stats</span>={data} /&gt;
+    &lt;/section&gt;
+  );
+}</pre>
+<CodeCaption>
+  Because the menu needs a click, the whole card is client code; because the stats need
+  data, the whole card (frame included) hides behind <code>isLoading</code>; and because
+  it is one component, none of it can stream, cache, or ship independently. The header
+  that required nothing waits for everything.
+</CodeCaption>
+</Snippet>
+
+<p>
+  Cut along the capability seams instead and the card becomes a small folder:
+</p>
+
+<Snippet>
+<pre class="code" is:raw><span class="filename">components/programs/card/ - one capability per file</span>card/
+├── ProgramCard.tsx               <span class="tok-com">server: the known frame</span>
+├── ProgramCardStats.tsx          <span class="tok-com">server, async: one data question</span>
+├── ProgramCardStatsSkeleton.tsx  <span class="tok-com">the fallback, colocated (§10)</span>
+└── ProgramCardMenu.tsx           <span class="tok-com">client: the only interactivity</span></pre>
+</Snippet>
+
+<Snippet>
+<pre class="code" is:raw><span class="filename">ProgramCard.tsx - server: frame renders immediately, reserves space</span><span class="tok-kw">export function</span> <span class="tok-fn">ProgramCard</span>({ programId }: { programId: number }) {
+  <span class="tok-kw">return</span> (
+    &lt;section <span class="tok-prop">className</span>=<span class="tok-str">"card"</span>&gt;
+      &lt;header <span class="tok-prop">className</span>=<span class="tok-str">"flex items-center justify-between"</span>&gt;
+        &lt;h3&gt;Program&lt;/h3&gt;
+        &lt;<span class="tok-fn">ProgramCardMenu</span> <span class="tok-prop">programId</span>={programId} /&gt;
+      &lt;/header&gt;
+      &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"h-24"</span>&gt;
+        &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">ProgramCardStatsSkeleton</span> /&gt;}&gt;
+          &lt;<span class="tok-fn">ProgramCardStats</span> <span class="tok-prop">programId</span>={programId} /&gt;
+        &lt;/<span class="tok-fn">Suspense</span>&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  );
+}</pre>
+<CodeCaption>
+  The frame is a server component with no data and no state: it paints on the first
+  byte, reserves the stats region's height, and composes the other capabilities without
+  owning them.
+</CodeCaption>
+</Snippet>
+
+<Snippet>
+<pre class="code" is:raw><span class="filename">ProgramCardStats.tsx - server, async: exactly one question</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramCardStats</span>({ programId }: { programId: number }) {
+  <span class="tok-com">// React.cache'd (§14): duplicate askers collapse into one execution.</span>
+  <span class="tok-kw">const</span> stats = <span class="tok-kw">await</span> <span class="tok-fn">getProgramStats</span>(programId);
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">StatRow</span> <span class="tok-prop">stats</span>={stats} /&gt;;
+}</pre>
+<CodeCaption>
+  The whole file is one await and one render. That smallness is not tidiness for its own
+  sake: it is what lets this region suspend and stream alone while the frame and the
+  menu never wait.
+</CodeCaption>
+</Snippet>
+
+<Snippet>
+<pre class="code" is:raw><span class="filename">ProgramCardMenu.tsx - client: the interaction atom</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramCardMenu</span>({ programId }: { programId: number }) {
+  <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Menu</span> <span class="tok-prop">disabled</span>={isPending}&gt;
+      &lt;<span class="tok-fn">MenuItem</span>
+        <span class="tok-prop">onSelect</span>={() =&gt;
+          <span class="tok-fn">startTransition</span>(<span class="tok-kw">async</span> () =&gt; {
+            <span class="tok-kw">const</span> { error } = <span class="tok-kw">await</span> <span class="tok-fn">archiveProgram</span>(programId);
+            <span class="tok-kw">if</span> (error) toast.<span class="tok-fn">error</span>(error);
+          })
+        }
+      &gt;
+        Archive
+      &lt;/<span class="tok-fn">MenuItem</span>&gt;
+    &lt;/<span class="tok-fn">Menu</span>&gt;
+  );
+}</pre>
+<CodeCaption>
+  The only <code>"use client"</code> in the folder, and it is the self-contained leaf of
+  <a href="05-client-server-boundaries.html#self-contained">§5.7</a>: it knows a name
+  (<code>programId</code>), fires an action, and holds zero references to its
+  surroundings. The card's JS cost is this file and nothing else.
+</CodeCaption>
+</Snippet>
+
+<p>
+  Count what the "awkward" split bought: the frame paints immediately
+  (<a href="04-ssr.html">§4</a>), the stats stream into reserved space without moving
+  anything (<a href="09-containers-content-shifting.html">§9</a>,
+  <a href="10-suspense-streaming.html">§10</a>), the menu is the entire bundle cost
+  (<a href="07-bundle-size-code-splitting.html">§7</a>), the data question dedupes with
+  every other asker (<a href="14-dedupe-caching.html">§14</a>), and all four files are
+  independently portable (<a href="13-minimize-the-wires.html#portability">§13.5</a>).
+  None of that is achievable while the card is one component, because every one of those
+  behaviors attaches to a component boundary.
+</p>
+
+<h2 id="catalog">15.3 The pattern catalog</h2>
+<p>
+  The recurring shapes, in one place. Each is defined in depth in its home chapter; this
+  table is the index you skim while decomposing a feature.
+</p>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th>Pattern</th>
+      <th>Job</th>
+      <th>Home</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Known frame</strong></td>
+      <td>
+        Server component that renders chrome and reserves space; contains the unknown,
+        never waits for it.
+      </td>
+      <td><a href="09-containers-content-shifting.html">§9</a></td>
+    </tr>
+    <tr>
+      <td><strong>Async region</strong></td>
+      <td>
+        <code>async</code> server component owning exactly one data question; the unit of
+        suspending and streaming.
+      </td>
+      <td>
+        <a href="10-suspense-streaming.html">§10</a>,
+        <a href="12-blocking-requests.html">§12</a>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Colocated skeleton</strong></td>
+      <td>
+        The async region's fallback, next to the component whose shape it mirrors.
+      </td>
+      <td><a href="10-suspense-streaming.html#skeletons">§10.4</a></td>
+    </tr>
+    <tr>
+      <td><strong>Interaction leaf</strong></td>
+      <td>
+        Smallest client component containing the interaction atom; self-contained via
+        names (key, tag, param), not wires.
+      </td>
+      <td>
+        <a href="05-client-server-boundaries.html#push-down">§5.2</a>,
+        <a href="05-client-server-boundaries.html#self-contained">§5.7</a>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Client shell with slots</strong></td>
+      <td>
+        Client wrapper owning one interaction (open, drag, select); server content passes
+        through JSX-valued props.
+      </td>
+      <td>
+        <a href="05-client-server-boundaries.html#children-pattern">§5.4</a>,
+        <a href="13-minimize-the-wires.html#portability">§13.5</a>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Thin provider</strong></td>
+      <td>
+        Context provider as a client wrapper around <code>&#123;children&#125;</code>,
+        rendered as deep as possible; converts nothing below it.
+      </td>
+      <td><a href="05-client-server-boundaries.html#children-pattern">§5.4</a></td>
+    </tr>
+    <tr>
+      <td><strong>Wrapped third party</strong></td>
+      <td>
+        One-line <code>"use client"</code> re-export that gives an undeclared library a
+        boundary and your import graph a seam.
+      </td>
+      <td><a href="05-client-server-boundaries.html#third-party">§5.5</a></td>
+    </tr>
+    <tr>
+      <td><strong>Lazy heavyweight</strong></td>
+      <td>
+        Client component loaded on interaction via <code>dynamic()</code>; charts,
+        editors, anything that shouldn't tax first render.
+      </td>
+      <td><a href="07-bundle-size-code-splitting.html">§7</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="sequence">15.4 The decomposition sequence</h2>
+<p>
+  Applied in order, the axes become a repeatable procedure for any page or feature:
+</p>
+
+<Diagram>
+  <svg
+    viewBox="0 0 720 300"
+    xmlns="http://www.w3.org/2000/svg"
+    font-family="Inter, system-ui, sans-serif"
+  >
+    <defs>
+      <marker
+        id="a15s"
+        viewBox="0 0 10 10"
+        refX="8"
+        refY="5"
+        markerWidth="6"
+        markerHeight="6"
+        orient="auto-start-reverse"
+      >
+        <path
+          d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+          fill="none"
+          stroke="#737373"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </marker>
+    </defs>
+
+    <rect x="110" y="4" width="390" height="44" rx="7" fill="#eaf3fe" stroke="#0070f3" />
+    <text x="126" y="22" font-size="10.5" fill="#0757ba" font-weight="500">
+      1 · Draw the known frame
+    </text>
+    <text x="126" y="37" font-size="9" fill="#527dad">
+      layout, containers, chrome: renders on the first byte
+    </text>
+    <text x="516" y="30" font-size="9" fill="#737373">§2, §9</text>
+    <line
+      x1="305"
+      y1="48"
+      x2="305"
+      y2="64"
+      stroke="#737373"
+      stroke-width="1.5"
+      marker-end="url(#a15s)"
+    />
+
+    <rect x="110" y="66" width="390" height="44" rx="7" fill="#ffffff" stroke="#c9c9c9" />
+    <text x="126" y="84" font-size="10.5" fill="#171717" font-weight="500">
+      2 · One async component per data question
+    </text>
+    <text x="126" y="99" font-size="9" fill="#737373">
+      independent questions fetch in parallel, never chained
+    </text>
+    <text x="516" y="92" font-size="9" fill="#737373">§12, §13</text>
+    <line
+      x1="305"
+      y1="110"
+      x2="305"
+      y2="126"
+      stroke="#737373"
+      stroke-width="1.5"
+      marker-end="url(#a15s)"
+    />
+
+    <rect x="110" y="128" width="390" height="44" rx="7" fill="#ffffff" stroke="#c9c9c9" />
+    <text x="126" y="146" font-size="10.5" fill="#171717" font-weight="500">
+      3 · Contain each unknown
+    </text>
+    <text x="126" y="161" font-size="9" fill="#737373">
+      reserved container + Suspense + colocated skeleton
+    </text>
+    <text x="516" y="154" font-size="9" fill="#737373">§9, §10</text>
+    <line
+      x1="305"
+      y1="172"
+      x2="305"
+      y2="188"
+      stroke="#737373"
+      stroke-width="1.5"
+      marker-end="url(#a15s)"
+    />
+
+    <rect x="110" y="190" width="390" height="44" rx="7" fill="#ffffff" stroke="#c9c9c9" />
+    <text x="126" y="208" font-size="10.5" fill="#171717" font-weight="500">
+      4 · Push interactivity into leaves
+    </text>
+    <text x="126" y="223" font-size="9" fill="#737373">
+      "use client" on interaction atoms; shells receive slots
+    </text>
+    <text x="516" y="216" font-size="9" fill="#737373">§5, §6</text>
+    <line
+      x1="305"
+      y1="234"
+      x2="305"
+      y2="250"
+      stroke="#737373"
+      stroke-width="1.5"
+      marker-end="url(#a15s)"
+    />
+
+    <rect x="110" y="252" width="390" height="44" rx="7" fill="#e7f5ee" stroke="#2ea06d" />
+    <text x="126" y="270" font-size="10.5" fill="#157a4c" font-weight="500">
+      5 · One component per file, always
+    </text>
+    <text x="126" y="285" font-size="9" fill="#3e7d5c">
+      the file is the unit of the boundary; splits stay cheap
+    </text>
+    <text x="516" y="278" font-size="9" fill="#737373">§7, §15.5</text>
+  </svg>
+
+<Fragment slot="caption">
+The decomposition sequence. Frame first, then data, then containment, then
+    interactivity; the one-component-per-file rule at the end is what keeps every earlier
+    step reversible and every later refactor a file move instead of surgery.
+</Fragment>
+</Diagram>
+
+<h2 id="one-per-file">15.5 One component per file</h2>
+<p>
+  This habit sounds like style guidance. In the App Router it is structural, because
+  <strong>the module, not the component, is the unit that crosses the server/client
+  boundary.</strong> <Chip k="react" />
+  <Chip k="critical" /> <code>"use client"</code> marks a
+  <em>file</em>; every export in it, and everything that file imports, crosses together
+  (<a href="05-client-server-boundaries.html#what-it-means">§5.1</a>). The moment a file
+  holds two components, their fates are welded: a helper component sharing a file with an
+  interactive one becomes client code it never asked to be; a server-able piece of UI
+  stuck in a client file drags its imports into the bundle
+  (<a href="07-bundle-size-code-splitting.html">§7</a>). One component per file means the
+  import graph <em>is</em> the boundary map: you can read where the client zone starts
+  from the filesystem.
+</p>
+<p>
+  It also keeps every decomposition decision cheap to revise. Splitting a stats region
+  out of a card, moving a leaf across the boundary, lazy-loading a heavyweight, swapping
+  a shell: each is a file operation when components live alone, and an untangling when
+  they don't. The awkward-at-first splits of
+  <a href="#axes">§15.1</a> stay painless only under this rule; it is the difference
+  between "decomposition is how we work" and "decomposition is a refactor we schedule."
+  The guide's own examples practice it everywhere: the sidebar split in
+  <a href="05-client-server-boundaries.html#library-leaves">§5.5</a>, the SWR pair in
+  <a href="05-client-server-boundaries.html#swr-refresh">§5.8</a>, the card above.
+</p>
+
+<Callout kind="info" title="Corollaries">
+  <p>
+    Skeletons live in their own files next to the component they mirror (importable by
+    the frame without touching the async region). Barrel files that re-export server and
+    client components together undo the legibility, and a barrel that pulls in a client
+    module can widen what ships (<a href="07-bundle-size-code-splitting.html">§7</a>);
+    import from the file, not the folder. And a file that suddenly wants a second
+    export is usually a component announcing it has grown a second capability: split it.
+  </p>
+</Callout>
+
+<h2 id="rules">The rules</h2>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th>Rule</th>
+      <th>Scope</th>
+      <th>Importance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        Components split along <strong>capability seams</strong> (boundary, data,
+        containment) before visual or reuse instincts get a vote.
+      </td>
+      <td><Chip k="react" /></td>
+      <td><Chip k="critical" /></td>
+    </tr>
+    <tr>
+      <td>
+        Anything that mixes "renders known content" with "waits for data" or "handles
+        interaction" is <strong>two components waiting to be separated</strong>.
+      </td>
+      <td><Chip k="react" /></td>
+      <td><Chip k="critical" /></td>
+    </tr>
+    <tr>
+      <td>
+        <strong>One component per file.</strong> The module is what crosses the boundary;
+        the filesystem should read as the boundary map.
+      </td>
+      <td><Chip k="react" /></td>
+      <td><Chip k="critical" /></td>
+    </tr>
+    <tr>
+      <td>
+        Skeletons are <strong>colocated, separate files</strong>; frames import them
+        without touching the async region they stand in for.
+      </td>
+      <td><Chip k="next" /></td>
+      <td><Chip k="very" /></td>
+    </tr>
+    <tr>
+      <td>
+        Decompose in sequence: <strong>frame → data → containment →
+        interactivity</strong>, then keep every split one file.
+      </td>
+      <td><Chip k="react" /></td>
+      <td><Chip k="very" /></td>
+    </tr>
+  </tbody>
+</table>
+
+<GoDeeper>
+  <p>
+    <a
+      href="https://nextjs.org/docs/app/getting-started/server-and-client-components"
+      target="_blank"
+      rel="noopener">Next.js docs: Server and Client Components</a
+    > - the composition-patterns reference this chapter distills: moving client components
+    down the tree, passing server components through props, provider placement.
+    <a href="https://react.dev/reference/rsc/server-components" target="_blank"
+    rel="noopener">React docs: Server Components</a> and
+    <a href="https://react.dev/reference/rsc/use-client" target="_blank" rel="noopener"
+    >"use client"</a> - the module-graph semantics underneath the one-component-per-file
+    rule.
+  </p>
+</GoDeeper>
 </GuidePage>
