@@ -5,6 +5,8 @@
    guide) so Phase 1 produces byte-equivalent pages; they move to build time
    in a later phase. `root` is the relative path back to the site root:
    '.' for index, '..' for section pages. */
+import '../styles/tailwind.css';
+
 const { title, root = '..', cover = false } = Astro.props;
 /* '' for the index, '../' for section pages, matching the original pages'
    relative URLs exactly. */

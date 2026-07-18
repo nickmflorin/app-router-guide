@@ -493,10 +493,35 @@ const TOC = [
           suggestedName: 'page-notes.json',
           types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }],
         });
+        /* MERGE with what the file already holds instead of overwriting.
+           Under file:// the browser gives every page its own private
+           localStorage, so the notes file is the union of each page's
+           island; saving from one page must never clobber another's notes.
+           A "resolved" status already in the file wins over a stale local
+           "open" (Claude marks notes resolved in the file). */
+        const merged = {};
+        try {
+          const existing = JSON.parse(await (await handle.getFile()).text());
+          (existing.notes || []).forEach(n => {
+            merged[n.id] = n;
+          });
+        } catch (e) {
+          /* New or non-JSON file: nothing to merge. */
+        }
+        data.notes.forEach(n => {
+          const prev = merged[n.id];
+          if (prev && prev.status === 'resolved' && n.status === 'open') return;
+          merged[n.id] = n;
+        });
+        const out = JSON.stringify(
+          { updatedAt: new Date().toISOString(), notes: Object.values(merged) },
+          null,
+          2,
+        );
         const w = await handle.createWritable();
-        await w.write(payload());
+        await w.write(out);
         await w.close();
-        toast('Saved page-notes.json');
+        toast('Merged into page-notes.json');
         return;
       } catch (e) {
         if (e && e.name === 'AbortError') return;

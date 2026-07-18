@@ -40,7 +40,14 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   regenerates it; it stays git-tracked as the distributable). Edit loop: edit src/ → astro
   build → svg_lint + checks against built html-guide → build_artifact.py when pushing.
   pnpm supportedArchitectures(darwin+linux/arm64) keeps node_modules usable from the sandbox.
-  html-guide/ is prettierignored. PHASE 2
+  html-guide/ is prettierignored.
+- **PHASE 2 WIRED (2026-07-17), conversion NOT started (per Nick: wire and stop).**
+  src/styles/tailwind.css imports theme.css layer(theme) + utilities.css (unlayered, NO
+  preflight - preflight would restyle the guide before conversion). Guide palette exposed as
+  @theme tokens (color-accent/-soft, color-amber/-soft, color-react, color-line[-strong],
+  spacing-sidebar/content...). Utilities compile on demand: usable in .astro now. Astro emits
+  root-absolute /_astro/ asset URLs; scripts/postbuild_relativize.py (part of `npm run
+  build`) rewrites them relative so file:// keeps working. Remaining conversion plan: PHASE 2b
   (Tailwind hybrid): import src/styles/tailwind.css, map palette to theme tokens, convert
   design-system classes via @apply, utilities for layout; component-by-component with Nick
   reviewing visually.
@@ -163,6 +170,12 @@ home per technique + cross-references).
   document for every `[N]`, do those tasks, and flip each `[N]` to `[x]` once addressed. A "ready"
   request never touches plain `[ ]` items unless Nick names them. The legend also lives in the
   working-notes.md header.
+- **Annotation notes are ONE global store, but file:// partitions localStorage per page**
+  (each file is its own origin in Chrome), which splits notes into per-page islands when
+  browsing from disk. Mitigations (2026-07-17): "Save to file" now MERGES into the existing
+  page-notes.json (union by note id; a resolved status already in the file beats a stale
+  local open). For the full cross-page experience (pins + one store everywhere), annotate
+  via `pnpm dev` (localhost = one origin).
 - **Page annotation workflow (built 2026-07-17).** nav.js ships a draft annotation layer: "+ Add
   note" in the top-right toolbar arms note mode; clicking any block (paragraph, diagram figure,
   code, table, callout, li, heading) opens a dialog; notes render as numbered amber gutter pins

@@ -4,15 +4,24 @@
   "private": true,
   "pnpm": {
     "supportedArchitectures": {
-      "os": ["current", "linux"],
-      "cpu": ["current", "arm64"],
-      "libc": ["current", "glibc"]
+      "os": [
+        "current",
+        "linux"
+      ],
+      "cpu": [
+        "current",
+        "arm64"
+      ],
+      "libc": [
+        "current",
+        "glibc"
+      ]
     }
   },
   "description": "Craft Education - The App Router Guide (Astro source, html-guide/ is the built output)",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && python3 scripts/postbuild_relativize.py",
     "preview": "astro preview",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
