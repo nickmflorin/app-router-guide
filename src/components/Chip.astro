@@ -1,0 +1,14 @@
+---
+/* Scope and importance chips. <Chip k="next" /> renders the canonical label
+   for each kind; pass `label` only for a deliberate deviation. */
+const LABELS = {
+  react: 'React',
+  next: 'Next.js',
+  critical: 'Critical',
+  very: 'Very important',
+  imp: 'Important',
+};
+const { k, label } = Astro.props;
+---
+
+<span class={`chip chip-${k}`}>{label ?? LABELS[k]}</span>

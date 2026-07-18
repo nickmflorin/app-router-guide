@@ -1,0 +1,183 @@
+---
+import GuidePage from '../layouts/GuidePage.astro';
+import Chip from '../components/Chip.astro';
+import Callout from '../components/Callout.astro';
+import GoDeeper from '../components/GoDeeper.astro';
+import Diagram from '../components/Diagram.astro';
+import Compare from '../components/Compare.astro';
+import CompareCol from '../components/CompareCol.astro';
+---
+
+<GuidePage title="The App Router Guide - Craft Education" root="." cover>
+<div class="kicker">Craft Education · Engineering</div>
+          <h1>The App Router Guide</h1>
+          <p class="lede">
+            How to build with Next.js and React the way they are designed to be used: server-first.
+            Patterns for composition, data fetching, streaming, and the client/server boundary, and
+            the goals behind them.
+          </p>
+
+          <Callout kind="voice" title="Why this document exists">
+            <p>
+              The architecture and approach we use now will set the stage for the rest of the
+              product's life. This guide is the shared mental model: what we optimize for on every
+              page, the patterns that get us there, and the signs we've drifted. Read the docs it
+              links to; this is the map, they are the territory.
+            </p>
+          
+</Callout>
+
+          <h2 style="margin-top: 36px">The thesis</h2>
+          <p>
+            On every page, your job is to
+            <strong>separate what can be known at first render from what cannot</strong>; then
+            <strong>maximize the known</strong>, <strong>contain the unknown</strong>, and
+            <strong>decouple the parts</strong>. Everything in this guide is in service of one of
+            those three goals. Server-side rendering matters because it makes the "known" surface
+            dramatically larger than a browser-only app can ever make it.
+          </p>
+
+          <h2>How to read this document</h2>
+          <p>
+            Every practice in this guide is tagged twice: by <strong>scope</strong> (does it apply
+            to all React, or specifically to Next.js?) and by <strong>importance</strong> (how much
+            it matters that we follow it).
+          </p>
+          <div class="legend">
+            <div class="legend-box">
+              <h4>Scope</h4>
+              <div class="legend-row">
+                <Chip k="react" /><span class="desc"
+                  >Applies to any React application, with or without Next.js.</span
+                >
+              </div>
+              <div class="legend-row">
+                <Chip k="next" /><span class="desc"
+                  >Specific to, or dramatically amplified by, the App Router.</span
+                >
+              </div>
+            </div>
+            <div class="legend-box">
+              <h4>Importance</h4>
+              <div class="legend-row">
+                <Chip k="critical" /><span class="desc"
+                  >Foundational. Getting this wrong undermines the architecture itself; deviate only
+                  with a specific, articulable reason; legitimate exceptions are named where they
+                  exist.</span
+                >
+              </div>
+              <div class="legend-row">
+                <Chip k="very" /><span class="desc"
+                  >Our default on every page. Occasional exceptions expected; use judgment and be
+                  ready to explain the deviation.</span
+                >
+              </div>
+              <div class="legend-row">
+                <Chip k="imp" /><span class="desc"
+                  >A meaningful improvement worth adopting as habit; lowest ceremony to deviate
+                  from.</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <h2>Contents</h2>
+          <div class="toc-grid">
+            <div class="toc-part">
+              <div class="part-name pz">Foundation</div>
+              <a class="toc-row" href="sections/01-introduction.html"
+                ><span class="n">1</span><span class="t">Introduction</span
+                ><span class="d">don't fight the framework</span></a
+              >
+              <a class="toc-row" href="sections/02-goals.html"
+                ><span class="n">2</span><span class="t">The Goals</span
+                ><span class="d">what you're optimizing, on every page</span></a
+              >
+              <a class="toc-row" href="sections/03-mental-model.html"
+                ><span class="n">3</span><span class="t">The Mental Model</span
+                ><span class="d">what a render actually is, and why the old model breaks</span></a
+              >
+            </div>
+            <div class="toc-part">
+              <div class="part-name pa">Part A: Maximize the Known</div>
+              <a class="toc-row" href="sections/04-ssr.html"
+                ><span class="n">4</span><span class="t">Server-Side Rendering</span
+                ><span class="d">what it is, and why the server wins</span></a
+              >
+              <a class="toc-row" href="sections/05-client-server-boundaries.html"
+                ><span class="n">5</span><span class="t">Client/Server Boundaries</span
+                ><span class="d">push interactivity to the leaves</span></a
+              >
+              <a class="toc-row" href="sections/06-first-render-js.html"
+                ><span class="n">6</span><span class="t">First-Render JavaScript</span
+                ><span class="d">dynamic imports, heavy dependencies</span></a
+              >
+              <a class="toc-row" href="sections/07-bundle-size-code-splitting.html"
+                ><span class="n">7</span><span class="t">Bundle Size &amp; Code Splitting</span
+                ><span class="d">wholesale components, heavy imports, barrels</span></a
+              >
+              <a class="toc-row" href="sections/08-server-resolvable-state.html"
+                ><span class="n">8</span><span class="t">Server-Resolvable State</span
+                ><span class="d">use the URL more</span></a
+              >
+            </div>
+            <div class="toc-part">
+              <div class="part-name pb">Part B: Contain the Unknown</div>
+              <a class="toc-row" href="sections/09-containers-content-shifting.html"
+                ><span class="n">9</span><span class="t">Containers &amp; Content Shifting</span
+                ><span class="d">containers are known; they reserve space</span></a
+              >
+              <a class="toc-row" href="sections/10-suspense-streaming.html"
+                ><span class="n">10</span><span class="t">Suspense &amp; Streaming</span
+                ><span class="d">boundary placement, loading &amp; error files</span></a
+              >
+              <a class="toc-row" href="sections/11-blocking-requests.html"
+                ><span class="n">11</span><span class="t">Blocking Requests</span
+                ><span class="d">parallel fetching, parallel routes</span></a
+              >
+            </div>
+            <div class="toc-part">
+              <div class="part-name pc">Part C: Decouple the Parts</div>
+              <a class="toc-row" href="sections/12-minimize-the-wires.html"
+                ><span class="n">12</span><span class="t">Minimize the Wires</span
+                ><span class="d">props, callbacks, and repetition over dependency</span></a
+              >
+              <a class="toc-row" href="sections/13-dedupe-caching.html"
+                ><span class="n">13</span><span class="t">Dedupe &amp; Caching</span
+                ><span class="d">fetch dedupe, React cache, "use cache", SWR</span></a
+              >
+              <a class="toc-row" href="sections/14-component-breakdown.html"
+                ><span class="n">14</span><span class="t">Component Breakdown</span
+                ><span class="d">by UI and responsibility; one per file</span
+                ><span class="soon">draft pending</span></a
+              >
+            </div>
+            <div class="toc-part">
+              <div class="part-name pd">Part D: Applied</div>
+              <a class="toc-row" href="sections/15-worked-example.html"
+                ><span class="n">15</span><span class="t">Worked Example</span
+                ><span class="d">page header + data table, end to end</span
+                ><span class="soon">draft pending</span></a
+              >
+              <a class="toc-row" href="sections/16-signs-doing-it-wrong.html"
+                ><span class="n">16</span><span class="t">Signs You're Doing It Wrong</span
+                ><span class="d">the checklist, grouped by category</span></a
+              >
+              <a class="toc-row" href="sections/17-applied-to-recraft.html"
+                ><span class="n">17</span><span class="t">Applied to recraft</span
+                ><span class="d">the audit: findings, and where each fix lives</span></a
+              >
+            </div>
+            <div class="toc-part">
+              <div class="part-name pz">Appendix</div>
+              <a class="toc-row" href="sections/18-new-primitives.html"
+                ><span class="n">18</span><span class="t">New Primitives</span
+                ><span class="d">Actions, form hooks, ViewTransition, Activity</span></a
+              >
+              <a class="toc-row" href="sections/19-references.html"
+                ><span class="n">19</span><span class="t">References</span
+                ><span class="d">every source used in this guide</span></a
+              >
+            </div>
+          </div>
+</GuidePage>

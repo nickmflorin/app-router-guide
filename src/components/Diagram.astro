@@ -1,0 +1,12 @@
+---
+/* A guide diagram: the SVG goes in the default slot, the caption (HTML
+   allowed, including § links) in the named `caption` slot. Geometry rules
+   live in PROJECT.md; run scripts/svg_lint.py after any change. */
+---
+
+<figure class="diagram">
+  <slot />
+  <figcaption>
+    <slot name="caption" />
+  </figcaption>
+</figure>

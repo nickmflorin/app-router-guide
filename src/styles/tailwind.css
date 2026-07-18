@@ -1,0 +1,3 @@
+/* Phase 2 entry point. NOT imported yet: importing this activates Tailwind
+   preflight and would change rendering before the conversion is done. */
+@import "tailwindcss";

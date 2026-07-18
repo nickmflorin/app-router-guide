@@ -1,0 +1,10 @@
+---
+/* One column of a <Compare>. kind: bad | good. The label carries its own
+   ✕ / ✓ prefix. */
+const { kind, label } = Astro.props;
+---
+
+<div class={kind}>
+  <div class="col-label">{label}</div>
+  <slot />
+</div>

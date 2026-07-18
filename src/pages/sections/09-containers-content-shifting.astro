@@ -1,0 +1,897 @@
+---
+import GuidePage from '../../layouts/GuidePage.astro';
+import Chip from '../../components/Chip.astro';
+import Callout from '../../components/Callout.astro';
+import GoDeeper from '../../components/GoDeeper.astro';
+import Diagram from '../../components/Diagram.astro';
+import Compare from '../../components/Compare.astro';
+import CompareCol from '../../components/CompareCol.astro';
+---
+
+<GuidePage title="Containers &amp; Content Shifting - App Router Guide" root="..">
+<div class="kicker">Chapter 9 · Part B: Contain the Unknown</div>
+          <h1>Containers &amp; Content Shifting</h1>
+          <p class="lede">
+            Containers are the known half of "contain the unknown": they render immediately, they
+            reserve accurate space, and everything uncertain happens <em>inside</em> them. Get this
+            right and nothing on the page ever moves; get it wrong and every request landing is a
+            small earthquake.
+          </p>
+
+          <h2 id="cost">9.1 What content shifting costs</h2>
+          <p>
+            Content shift is the page rearranging itself while the user is already using it. The
+            costs are concrete: the paragraph they were reading jumps out from under their eyes; the
+            button they were about to press moves and they press what replaced it; scroll position
+            stops meaning anything while the page is still "settling." Each shift also re-runs
+            layout for everything below it. On long pages, repeatedly. And users read instability as
+            unreliability: a page that jolts three times before it settles <em>feels</em> broken
+            even when every request succeeded.
+          </p>
+          <p>
+            This is measured in the field as <strong>Cumulative Layout Shift (CLS)</strong>, one of
+            Google's Core Web Vitals: every unexpected shift is scored by how much of the viewport
+            it moved, and the scores accumulate. But the metric is just the symptom sheet. The
+            disease has one cause:
+            <strong>something rendered without its space having been reserved.</strong> And
+            SPA-style pages have it worst, because when all data arrives after hydration (<a
+              href="03-mental-model.html"
+              >§3</a
+            >), <em>every region</em> is a late arrival landing in unreserved space, one request at
+            a time, in whatever order the network decides.
+          </p>
+
+          <Diagram>
+            <svg
+              viewBox="0 0 720 363"
+              xmlns="http://www.w3.org/2000/svg"
+              font-family="Inter, system-ui, sans-serif"
+            >
+              <defs>
+                <marker
+                  id="aS"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+                    fill="none"
+                    stroke="#737373"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </marker>
+                <marker
+                  id="aSr"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+                    fill="none"
+                    stroke="#b0483e"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </marker>
+                <marker
+                  id="aSg"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+                    fill="none"
+                    stroke="#2e7d5b"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </marker>
+              </defs>
+
+              <!-- LANE 1: no reservation. Panels share a strict grid: pad 12/13,
+               rows at +12, +31(slot 26), +63, +77. -->
+              <text
+                x="360"
+                y="10.28"
+                font-size="11.5"
+                fill="#b3261e"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                No reservation: late content pushes everything below it
+              </text>
+              <rect
+                x="120"
+                y="24.28"
+                width="180"
+                height="104"
+                rx="8"
+                fill="#ffffff"
+                stroke="#c9c9c9"
+              />
+              <rect
+                x="134"
+                y="36.28"
+                width="152"
+                height="14"
+                rx="4"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+              />
+              <rect x="134" y="55.28" width="152" height="9" rx="3" fill="#e8e8e8" />
+              <rect x="134" y="70.28" width="152" height="9" rx="3" fill="#e8e8e8" />
+              <rect
+                x="134"
+                y="85.28"
+                width="42"
+                height="14"
+                rx="4"
+                fill="#e7f5ee"
+                stroke="#2ea06d"
+              />
+              <text
+                x="155"
+                y="92.28"
+                font-size="8"
+                fill="#157a4c"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                Save
+              </text>
+              <line
+                x1="198"
+                y1="92.28"
+                x2="181"
+                y2="92.28"
+                stroke="#737373"
+                stroke-width="1.2"
+                marker-end="url(#aS)"
+              />
+              <text x="204" y="92.28" font-size="8" fill="#737373" dominant-baseline="central">
+                cursor is here
+              </text>
+              <rect x="134" y="105.28" width="152" height="9" rx="3" fill="#e8e8e8" />
+              <line
+                x1="304"
+                y1="76.28"
+                x2="412"
+                y2="76.28"
+                stroke="#737373"
+                stroke-width="1.5"
+                marker-end="url(#aS)"
+              />
+              <rect
+                x="420"
+                y="24.28"
+                width="180"
+                height="104"
+                rx="8"
+                fill="#ffffff"
+                stroke="#c9c9c9"
+              />
+              <rect
+                x="434"
+                y="36.28"
+                width="152"
+                height="14"
+                rx="4"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+              />
+              <rect
+                x="434"
+                y="55.28"
+                width="152"
+                height="26"
+                rx="4"
+                fill="#fdecea"
+                stroke="#d93025"
+                stroke-dasharray="5 4"
+              />
+              <text
+                x="510"
+                y="68.28"
+                font-size="8.5"
+                fill="#b3261e"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                stats land; no space was held
+              </text>
+              <rect x="434" y="87.28" width="152" height="9" rx="3" fill="#e8e8e8" />
+              <rect
+                x="434"
+                y="101.28"
+                width="42"
+                height="14"
+                rx="4"
+                fill="#e7f5ee"
+                stroke="#2ea06d"
+              />
+              <text
+                x="455"
+                y="108.28"
+                font-size="8"
+                fill="#157a4c"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                Save
+              </text>
+              <line
+                x1="486"
+                y1="101.28"
+                x2="486"
+                y2="113.28"
+                stroke="#b0483e"
+                stroke-width="1.2"
+                marker-end="url(#aSr)"
+              />
+              <text x="494" y="108.28" font-size="8" fill="#b0483e" dominant-baseline="central">
+                pushed down
+              </text>
+              <text x="210" y="146.28" font-size="10" fill="#737373" text-anchor="middle">
+                t₀: user is reading, about to click
+              </text>
+              <text x="510" y="146.28" font-size="10" fill="#737373" text-anchor="middle">
+                t₁: response lands, page reflows
+              </text>
+              <text x="360" y="166.28" font-size="10.5" fill="#b0483e" text-anchor="middle">
+                the click hits whatever moved under the cursor; the last row left the viewport
+              </text>
+
+              <line x1="14" y1="182.28" x2="706" y2="182.28" stroke="#e0e0e0" />
+
+              <!-- LANE 2: reserved container, same grid, +192 -->
+              <text
+                x="360"
+                y="204.28"
+                font-size="11.5"
+                fill="#157a4c"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Reserved container: the unknown lands in space that was always its own
+              </text>
+              <rect
+                x="120"
+                y="216.28"
+                width="180"
+                height="104"
+                rx="8"
+                fill="#ffffff"
+                stroke="#c9c9c9"
+              />
+              <rect
+                x="134"
+                y="228.28"
+                width="152"
+                height="14"
+                rx="4"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+              />
+              <rect
+                x="134"
+                y="247.28"
+                width="152"
+                height="26"
+                rx="4"
+                fill="#fdf3e3"
+                stroke="#b45309"
+                stroke-dasharray="5 4"
+              />
+              <text
+                x="210"
+                y="260.28"
+                font-size="8.5"
+                fill="#8a5a00"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                ⏳ container holds the space
+              </text>
+              <rect x="134" y="279.28" width="152" height="9" rx="3" fill="#e8e8e8" />
+              <rect
+                x="134"
+                y="293.28"
+                width="42"
+                height="14"
+                rx="4"
+                fill="#e7f5ee"
+                stroke="#2ea06d"
+              />
+              <text
+                x="155"
+                y="300.28"
+                font-size="8"
+                fill="#157a4c"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                Save
+              </text>
+              <line
+                x1="198"
+                y1="300.28"
+                x2="181"
+                y2="300.28"
+                stroke="#737373"
+                stroke-width="1.2"
+                marker-end="url(#aS)"
+              />
+              <text x="204" y="300.28" font-size="8" fill="#737373" dominant-baseline="central">
+                cursor is here
+              </text>
+              <line
+                x1="304"
+                y1="268.28"
+                x2="412"
+                y2="268.28"
+                stroke="#737373"
+                stroke-width="1.5"
+                marker-end="url(#aS)"
+              />
+              <rect
+                x="420"
+                y="216.28"
+                width="180"
+                height="104"
+                rx="8"
+                fill="#ffffff"
+                stroke="#c9c9c9"
+              />
+              <rect
+                x="434"
+                y="228.28"
+                width="152"
+                height="14"
+                rx="4"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+              />
+              <rect
+                x="434"
+                y="247.28"
+                width="152"
+                height="26"
+                rx="4"
+                fill="#e7f5ee"
+                stroke="#2ea06d"
+              />
+              <text
+                x="510"
+                y="260.28"
+                font-size="8.5"
+                fill="#157a4c"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                stats land in the held space
+              </text>
+              <rect x="434" y="279.28" width="152" height="9" rx="3" fill="#e8e8e8" />
+              <rect
+                x="434"
+                y="293.28"
+                width="42"
+                height="14"
+                rx="4"
+                fill="#e7f5ee"
+                stroke="#2ea06d"
+              />
+              <text
+                x="455"
+                y="300.28"
+                font-size="8"
+                fill="#157a4c"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                Save
+              </text>
+              <line
+                x1="498"
+                y1="300.28"
+                x2="481"
+                y2="300.28"
+                stroke="#2e7d5b"
+                stroke-width="1.2"
+                marker-end="url(#aSg)"
+              />
+              <text x="504" y="300.28" font-size="8" fill="#2e7d5b" dominant-baseline="central">
+                still there
+              </text>
+              <text x="210" y="338.28" font-size="10" fill="#737373" text-anchor="middle">
+                t₀: same page, space reserved
+              </text>
+              <text x="510" y="338.28" font-size="10" fill="#737373" text-anchor="middle">
+                t₁: same response lands
+              </text>
+              <text x="360" y="358.28" font-size="10.5" fill="#2e7d5b" text-anchor="middle">
+                nothing below the container ever knew anything happened
+              </text>
+            </svg>
+            
+<Fragment slot="caption">
+The same late-arriving stats block, frame by frame. Top: no space was held, so the
+              landing displaces the text and the Save button mid-click. Bottom: the container held
+              the space from first paint; the swap is invisible to everything around it.
+</Fragment>
+</Diagram>
+
+          <h2 id="doctrine">9.2 The container doctrine</h2>
+          <p>
+            The fix is a strict separation of ownership. Split every uncertain region into two
+            roles:
+          </p>
+          <ul>
+            <li>
+              <strong>The container is known.</strong> It renders immediately, from the server, with
+              the page's first paint: its chrome (card, border, heading, toolbar) and, critically,
+              its <em>dimensions</em>. It is part of the scaffold, so it belongs with the structure
+              (<a href="03-mental-model.html">§3</a>'s app directory,
+              <a href="#layouts">§9.4</a> below). <Chip k="react" />
+              <Chip k="critical" />
+            </li>
+            <li>
+              <strong>The occupants are swapped inside it.</strong> First the fallback, then the
+              content - both rendered <em>into</em> the container, both sized to fit the
+              reservation. The Suspense boundary sits just inside the container's walls (<a
+                href="10-suspense-streaming.html"
+                >§10</a
+              >).
+            </li>
+          </ul>
+          <p>
+            Three rules make the separation real, and each one exists because breaking it produces a
+            specific visible bug:
+          </p>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Rule</th>
+                <th>What breaking it looks like</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <strong>The loading state never includes the container</strong> it sits inside.
+                </td>
+                <td>
+                  Double chrome for a moment (a card inside a card), then a jolt as the real
+                  content's chrome replaces the fallback's.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>The suspended component never renders its own container.</strong></td>
+                <td>
+                  Same double-chrome bug from the other side: the content arrives wearing a card the
+                  container already provides.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Both occupants fit the space the container reserved</strong>: fallback and
+                  content, same footprint.
+                </td>
+                <td>
+                  The swap itself shifts layout: a 3-bar skeleton replaced by a 400px table moves
+                  everything below it, boundary or not.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <Compare>
+<CompareCol kind="bad" label="✕ Occupants own chrome and size">
+              <pre
+                class="code" is:raw
+              ><span class="filename">page.tsx</span>&lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
+  &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={id} /&gt;
+&lt;/<span class="tok-fn">Suspense</span>&gt;</pre>
+              <pre
+                class="code" is:raw
+              ><span class="filename">StatsSkeleton.tsx</span><span class="tok-com">/* The fallback brings its own card:
+   chrome that will be torn down and
+   rebuilt when the content arrives. */</span>
+<span class="tok-kw">export function</span> <span class="tok-fn">StatsSkeleton</span>() {
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Card</span> <span class="tok-prop">title</span>=<span class="tok-str">"Stats"</span>&gt;
+      &lt;<span class="tok-fn">Bars</span> <span class="tok-prop">count</span>={<span class="tok-str">3</span>} /&gt;
+    &lt;/<span class="tok-fn">Card</span>&gt;
+  );
+}
+<span class="tok-com">/* ProgramStats renders another Card.
+   Neither declares a height, so the
+   swap reflows the page anyway. */</span></pre>
+            
+</CompareCol>
+<CompareCol kind="good" label="✓ Container owns chrome and size; occupants fill it">
+              <pre
+                class="code" is:raw
+              ><span class="filename">page.tsx</span><span class="tok-com">/* The container is server markup in the
+   scaffold: chrome + reserved height,
+   painted with the shell. */</span>
+&lt;<span class="tok-fn">StatsCard</span>&gt;
+  &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
+    &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={id} /&gt;
+  &lt;/<span class="tok-fn">Suspense</span>&gt;
+&lt;/<span class="tok-fn">StatsCard</span>&gt;</pre>
+              <pre
+                class="code" is:raw
+              ><span class="filename">StatsCard.tsx - server, known, immediate</span><span class="tok-kw">export function</span> <span class="tok-fn">StatsCard</span>({ children }) {
+  <span class="tok-kw">return</span> (
+    &lt;section <span class="tok-prop">className</span>=<span class="tok-str">"card"</span>&gt;
+      &lt;h3&gt;Stats&lt;/h3&gt;
+      <span class="tok-com">{/* The reservation lives here; both
+          occupants render into this box. */}</span>
+      &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"h-24"</span>&gt;{children}&lt;/div&gt;
+    &lt;/section&gt;
+  );
+}</pre>
+            
+</CompareCol>
+</Compare>
+
+          <h2 id="reserving">9.3 Reserving space honestly</h2>
+          <p>
+            A reservation is a promise about the future: the container claims the space its content
+            will need. The strategies, in order of preference:
+          </p>
+          <ul>
+            <li>
+              <strong>Exact dimensions, when the content's size is knowable.</strong> A paginated
+              table with 10 rows of 44px is 440px before any data exists: rows-per-page times row
+              height <em>is</em> the reservation. Media is the canonical case: always give images
+              explicit <code>width</code>/<code>height</code> (or <code>aspect-ratio</code>) so the
+              browser reserves before loading; <code>next/image</code> enforces this.
+              <Chip k="react" />
+              <Chip k="critical" />
+            </li>
+            <li>
+              <strong><code>min-height</code>, when only the floor is knowable.</strong> Reserve the
+              minimum honest footprint: enough that the common case doesn't shift, growth is rare
+              and downward. A dishonest reservation (a token 40px under a region that always renders
+              400px) is just a smaller earthquake.
+            </li>
+            <li>
+              <strong>Flex-grow and scroll, for the main content region.</strong> The strongest
+              reservation is the viewport itself: the page frame is a column that clips itself
+              (<code>h-full max-h-full overflow-hidden</code>): header and toolbars sized by
+              content, the content region growing (<code>grow</code>) with
+              <code>overflow-y: auto</code>. The page as a whole <em>never changes height</em>;
+              tables can grow, filters can change the row count, and all of it happens inside a
+              scroll area whose outer box is fixed. This is the default posture for every list/table
+              page we build. <Chip k="react" />
+              <Chip k="very" />
+            </li>
+          </ul>
+
+          <pre
+            class="code" is:raw
+          ><span class="filename">app/(admin)/reports/layout.tsx - the flex-grow-and-scroll frame</span><span class="tok-kw">export default function</span> <span class="tok-fn">ReportsLayout</span>({ children }) {
+  <span class="tok-kw">return</span> (
+    <span class="tok-com">{/* The column is exactly viewport height; the page never grows. */}</span>
+    &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex h-full max-h-full overflow-hidden flex-col"</span>&gt;
+      &lt;<span class="tok-fn">ReportsHeader</span> /&gt;
+      <span class="tok-com">{/* The content region takes the remainder and scrolls inside.
+          Whatever streams, loads, or grows in here, the frame holds. */}</span>
+      &lt;main <span class="tok-prop">className</span>=<span class="tok-str">"min-h-0 grow overflow-y-auto"</span>&gt;
+        {children}
+      &lt;/main&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+
+          <Diagram>
+            <svg
+              viewBox="0 0 720 348"
+              xmlns="http://www.w3.org/2000/svg"
+              font-family="Inter, system-ui, sans-serif"
+            >
+              <defs>
+                <marker
+                  id="a9v"
+                  viewBox="0 0 10 10"
+                  refX="5"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+                    fill="none"
+                    stroke="#0070f3"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </marker>
+              </defs>
+
+              <!-- browser frame -->
+              <rect x="8" y="2" width="704" height="344" rx="10" fill="#ffffff" stroke="#d4d4d4" />
+              <circle cx="28" cy="20" r="4" fill="#c9c9c9" />
+              <circle cx="42" cy="20" r="4" fill="#c9c9c9" />
+              <circle cx="56" cy="20" r="4" fill="#c9c9c9" />
+              <rect x="72" y="12" width="270" height="16" rx="8" fill="#f2f2f2" stroke="#e0e0e0" />
+              <text x="84" y="24" font-size="10" fill="#737373">app.craft.com/reports/hours</text>
+
+              <!-- app header bar: app layout -->
+              <rect
+                x="20"
+                y="40"
+                width="676"
+                height="30"
+                rx="6"
+                fill="#f7f7f7"
+                stroke="#c9c9c9"
+                stroke-width="1.5"
+              />
+              <text x="32" y="59" font-size="10.5" fill="#666666">App header (app layout)</text>
+
+              <!-- sidebar: app layout -->
+              <rect
+                data-lint-ignore="scene"
+                x="20"
+                y="82"
+                width="118"
+                height="252"
+                rx="6"
+                fill="#f7f7f7"
+                stroke="#c9c9c9"
+                stroke-width="1.5"
+              />
+              <text x="32" y="100" font-size="10.5" fill="#666666">Sidebar</text>
+              <text x="32" y="114" font-size="9" fill="#8b8b8b">app layout</text>
+              <rect x="32" y="126" width="94" height="8" rx="4" fill="#e0e0e0" />
+              <rect x="32" y="140" width="94" height="8" rx="4" fill="#e0e0e0" />
+              <rect x="32" y="154" width="94" height="8" rx="4" fill="#e0e0e0" />
+
+              <!-- ReportsLayout boundary: beside the sidebar, beneath the app header -->
+              <rect
+                x="150"
+                y="82"
+                width="546"
+                height="252"
+                rx="6"
+                fill="none"
+                stroke="#0070f3"
+                stroke-width="1.5"
+                stroke-dasharray="6 4"
+              />
+              <rect x="560" y="74" width="128" height="16" rx="8" fill="#ffffff" stroke="#0070f3" />
+              <text x="624" y="85.5" font-size="9" fill="#0757ba" text-anchor="middle">
+                ReportsLayout
+              </text>
+
+              <!-- reports header: page-level, content-sized -->
+              <rect
+                x="162"
+                y="94"
+                width="522"
+                height="40"
+                rx="6"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+                stroke-width="1.5"
+              />
+              <text x="174" y="112" font-size="10" fill="#0757ba">&lt;ReportsHeader /&gt;</text>
+              <text x="174" y="126" font-size="9" fill="#56789e">
+                page-level header: sized by content, never scrolls
+              </text>
+
+              <!-- main: grow, overflow-y-auto -->
+              <rect
+                data-lint-ignore="scene"
+                x="162"
+                y="142"
+                width="522"
+                height="180"
+                rx="6"
+                fill="#ffffff"
+                stroke="#0070f3"
+                stroke-width="1.5"
+              />
+              <text x="208" y="162" font-size="9.5" fill="#0757ba" font-weight="500">
+                &lt;main&gt; · grow · overflow-y-auto
+              </text>
+              <line
+                x1="178"
+                y1="152"
+                x2="178"
+                y2="312"
+                stroke="#0070f3"
+                stroke-width="1.2"
+                marker-start="url(#a9v)"
+                marker-end="url(#a9v)"
+              />
+              <rect
+                x="188"
+                y="168"
+                width="458"
+                height="136"
+                rx="5"
+                fill="#fdf3e3"
+                stroke="#b45309"
+                stroke-width="1.5"
+                stroke-dasharray="5 4"
+              />
+              <rect x="196" y="176" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="196" y="194" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="196" y="212" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="196" y="230" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="196" y="248" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="196" y="266" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="196" y="284" width="440" height="12" rx="3" fill="#f3e2c0" />
+              <rect x="652" y="176" width="6" height="120" rx="3" fill="#eef0f2" />
+              <rect x="652" y="176" width="6" height="44" rx="3" fill="#bcc4cc" />
+            </svg>
+            
+<Fragment slot="caption">
+The flex-grow-and-scroll frame from the snippet above, on the page. The app layout
+              owns the chrome: the app header bar across the top and the sidebar down the left.
+              <code>ReportsLayout</code> is the dashed region beside the sidebar and beneath the app
+              header: a column that clips itself (<code>h-full max-h-full overflow-hidden</code>).
+              Inside it, <code>&lt;ReportsHeader /&gt;</code> is a page-level header (not the app
+              header), sized by its content; the main region takes <code>grow</code> and
+              <code>overflow-y-auto</code>, stretching to fill everything beneath the reports header
+              and scrolling its rows internally when they overflow. The chrome, the frame, and both
+              headers stay put no matter how much data lands. Color coding: gray is app chrome
+              (context, not this chapter's subject), blue is the known frame that
+              <code>ReportsLayout</code> owns and reserves, and amber is the unknown: the rows that
+              stream into the scroll region later, landing inside space that never moves.
+</Fragment>
+</Diagram>
+
+          <p>
+            Two more shift sources worth closing while we're here. <strong>Fonts</strong>: a
+            late-swapping webfont reflows every line of text; <code>next/font</code> preloads and
+            applies size-adjusted fallbacks so text renders in its final metrics from the start
+            <Chip k="next" />
+            <Chip k="very" />. And
+            <strong>conditionally-injected UI</strong> (banners, alerts, toolbars that appear after
+            a check): give them reserved slots or overlay them; never insert them into the flow
+            above existing content.
+          </p>
+
+          <h2 id="layouts">9.4 Containers live in the scaffold</h2>
+          <p>
+            Where should containers be rendered? As high as their stability allows, which usually
+            means
+            <strong>in the layout or page, as part of the app directory's scaffold</strong> (<a
+              href="03-mental-model.html"
+              >§3</a
+            >). <Chip k="next" />
+            <Chip k="very" /> The payoff is navigation: layouts
+            persist across route changes; they don't re-render when you move between sibling pages
+            (<a href="03-mental-model.html#rendering-model">§3.1</a>). A container rendered in the
+            layout is therefore stable not just against its own content loading, but against
+            <em>navigation itself</em>: moving from one program's report to another swaps what's
+            inside the containers while the frame (header, tabs, table chrome) never repaints. The
+            page stops feeling like a sequence of pages and starts feeling like an application.
+          </p>
+          <p>
+            This is also the bridge to <a href="11-blocking-requests.html">§11</a>: once containers
+            live in the layout, each one can be filled independently: its own data, its own Suspense
+            boundary, its own error state. That's exactly what parallel routes formalize (<a
+              href="11-blocking-requests.html#parallel-routes"
+              >§11.3</a
+            >): slots in the layout's scaffold, filled as independent units.
+          </p>
+
+          <h2 id="rules">The rules</h2>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Rule</th>
+                <th>Scope</th>
+                <th>Importance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  Containers are
+                  <strong>known, server-rendered, and painted with the first response</strong>:
+                  chrome and dimensions both.
+                </td>
+                <td><Chip k="react" /></td>
+                <td><Chip k="critical" /></td>
+              </tr>
+              <tr>
+                <td>
+                  The loading state <strong>never includes the container</strong>; the suspended
+                  component <strong>never renders its own container</strong>.
+                </td>
+                <td><Chip k="react" /></td>
+                <td><Chip k="critical" /></td>
+              </tr>
+              <tr>
+                <td>
+                  Fallback and content <strong>share one footprint</strong>: the reservation is
+                  honest, and the swap moves nothing.
+                </td>
+                <td><Chip k="react" /></td>
+                <td><Chip k="critical" /></td>
+              </tr>
+              <tr>
+                <td>
+                  List and table pages use the <strong>flex-grow-and-scroll frame</strong>: the page
+                  never changes height; growth happens inside the scroll region.
+                </td>
+                <td><Chip k="react" /></td>
+                <td><Chip k="very" /></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Media always declares its dimensions</strong> (<code>next/image</code>,
+                  <code>aspect-ratio</code>); fonts load via <code>next/font</code>.
+                </td>
+                <td><Chip k="next" /></td>
+                <td><Chip k="critical" /></td>
+              </tr>
+              <tr>
+                <td>
+                  Containers render <strong>as high as their stability allows</strong>: usually the
+                  layout, so navigation reuses them.
+                </td>
+                <td><Chip k="next" /></td>
+                <td><Chip k="very" /></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <GoDeeper>
+            <p>
+              React 19 docs:
+              <a href="https://react.dev/reference/react/Suspense" target="_blank" rel="noopener"
+                >&lt;Suspense&gt;</a
+              >
+              (fallback semantics this chapter builds on). Next.js docs:
+              <a
+                href="https://nextjs.org/docs/app/api-reference/components/image"
+                target="_blank"
+                rel="noopener"
+                >next/image</a
+              >
+              ·
+              <a
+                href="https://nextjs.org/docs/app/getting-started/fonts"
+                target="_blank"
+                rel="noopener"
+                >next/font</a
+              >
+              ·
+              <a
+                href="https://nextjs.org/docs/app/api-reference/file-conventions/layout"
+                target="_blank"
+                rel="noopener"
+                >layout.js</a
+              >. Field metric:
+              <a href="https://web.dev/articles/cls" target="_blank" rel="noopener"
+                >Cumulative Layout Shift (web.dev)</a
+              >. Full list in <a href="19-references.html">§19</a>.
+            </p>
+          
+</GoDeeper>
+</GuidePage>
