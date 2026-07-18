@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>First-Render JavaScript - App Router Guide</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="shell">
+      <nav class="sidebar" id="sidebar"></nav>
+      <main class="content">
+        <div class="content-inner">
+          <div class="kicker">Chapter 6 · Part A: Maximize the Known</div>
+          <h1>First-Render JavaScript</h1>
+          <p class="lede">
+            The known isn't only content; it's also the code required to show it. Every kilobyte of
+            JavaScript the first render demands is a toll paid before the page becomes interactive.
+            This chapter is about keeping that toll to what the first paint actually uses:
+            boundaries first, <code>dynamic()</code> second.
+          </p>
+
+          <h2 id="tax">6.1 What first-render JavaScript costs</h2>
+          <p>
+            Server rendering gets content on screen before any JavaScript runs (<a
+              href="04-ssr.html"
+              >§4</a
+            >), but the page isn't <em>done</em> at first paint. The client bundle still has to
+            download, parse, and execute before hydration attaches your event handlers, and until
+            then the page is a photograph: visible, correct, and deaf. Everything in the bundle
+            gates that moment, whether or not it participates in it. The dialog no one has opened,
+            the chart on a collapsed tab, the editor behind an "Edit" button: if they're in the main
+            bundle, the user pays for them before the first button click works.
+          </p>
+          <p>
+            And the cost isn't limited to interactivity. <code>&lt;Link&gt;</code> can't start
+            prefetching until it hydrates (<a href="04-ssr.html#dynamic-loading">§4.5</a>), so a
+            heavy bundle doesn't just delay this page, it delays the head start on the
+            <em>next</em> one. Note what doesn't help here: the React Compiler removes re-render
+            busywork, not bytes. The only cure for shipping too much code is shipping less of it.
+          </p>
+          <p>
+            What determines the bundle's size is exactly one thing:
+            <strong>the module graphs of your client components</strong> (<a
+              href="05-client-server-boundaries.html#what-it-means"
+              >§5.1</a
+            >). Every <code>"use client"</code> file, everything it imports, and everything
+            <em>those</em> import: that is the bundle. Server components contribute zero bytes, no
+            matter how heavy their dependencies are; their markdown parsers and date libraries run
+            on the server and stay there (<a href="04-ssr.html#benefits">§4.2</a>).
+          </p>
+
+          <h2 id="boundary-first">6.2 The first lever is the boundary, not the loader</h2>
+          <p>
+            Because the bundle is the sum of client module graphs, the biggest reductions come from
+            <a href="05-client-server-boundaries.html">§5</a>, not from this chapter. A page that
+            moves its boundary from the layout to three leaf buttons hasn't "optimized its bundle";
+            it has deleted most of it. <span class="chip chip-next">Next.js</span>
+            <span class="chip chip-critical">Critical</span>
+          </p>
+          <p>
+            Get the order of operations right:
+            <strong
+              >first ask "why is this client at all?", and only then ask "should this client code
+              load later?"</strong
+            >
+            Lazy-loading a God component (<a href="05-client-server-boundaries.html#god-components"
+              >§5.9</a
+            >) is treating a symptom: the page now downloads its architectural mistake slightly
+            later. This chapter's tool, <code>dynamic()</code>, is for the code that has
+            legitimately earned its place on the client but hasn't earned a seat in the
+            <em>first-render</em> bundle.
+          </p>
+
+          <figure class="diagram">
+            <svg
+              viewBox="0 0 720 218"
+              xmlns="http://www.w3.org/2000/svg"
+              font-family="Inter, system-ui, sans-serif"
+            >
+              <text x="14" y="12" font-size="10.5" fill="#b3261e" font-weight="500">
+                Everything imported eagerly: one bundle gates interactivity
+              </text>
+              <rect x="14" y="22" width="140" height="30" rx="5" fill="#d8e8fc" stroke="#0070f3" />
+              <text x="84" y="41" font-size="9.5" fill="#0757ba" text-anchor="middle">
+                React + framework
+              </text>
+              <rect x="154" y="22" width="96" height="30" rx="5" fill="#d8e8fc" stroke="#0070f3" />
+              <text x="202" y="41" font-size="9.5" fill="#0757ba" text-anchor="middle">
+                your leaves
+              </text>
+              <rect x="250" y="22" width="170" height="30" rx="5" fill="#fdf3e3" stroke="#b45309" />
+              <text x="335" y="41" font-size="9.5" fill="#8a5a00" text-anchor="middle">
+                charting library
+              </text>
+              <rect x="420" y="22" width="150" height="30" rx="5" fill="#fdf3e3" stroke="#b45309" />
+              <text x="495" y="41" font-size="9.5" fill="#8a5a00" text-anchor="middle">
+                rich-text editor
+              </text>
+              <rect x="570" y="22" width="102" height="30" rx="5" fill="#fdf3e3" stroke="#b45309" />
+              <text x="621" y="41" font-size="9.5" fill="#8a5a00" text-anchor="middle">
+                dialogs
+              </text>
+              <text x="14" y="74" font-size="10" fill="#b0483e">
+                hydration (and Link prefetching, §4.5) waits for all of it; the amber isn't even
+                visible yet
+              </text>
+
+              <text x="14" y="112" font-size="10.5" fill="#157a4c" font-weight="500">
+                Imported at the leaves, heavy pieces behind dynamic(): the page ships only itself
+              </text>
+              <rect x="14" y="122" width="140" height="30" rx="5" fill="#d8e8fc" stroke="#0070f3" />
+              <text x="84" y="141" font-size="9.5" fill="#0757ba" text-anchor="middle">
+                React + framework
+              </text>
+              <rect x="154" y="122" width="96" height="30" rx="5" fill="#d8e8fc" stroke="#0070f3" />
+              <text x="202" y="141" font-size="9.5" fill="#0757ba" text-anchor="middle">
+                your leaves
+              </text>
+              <text x="262" y="141" font-size="10" fill="#157a4c" font-weight="500">
+                interactive here
+              </text>
+              <text x="14" y="176" font-size="9.5" fill="#8a5a00">
+                separate chunks; each downloads on the interaction that needs it:
+              </text>
+              <rect
+                x="14"
+                y="184"
+                width="190"
+                height="30"
+                rx="5"
+                fill="none"
+                stroke="#b45309"
+                stroke-dasharray="5 4"
+              />
+              <text x="109" y="203" font-size="9.5" fill="#8a5a00" text-anchor="middle">
+                charts: when the tab opens
+              </text>
+              <rect
+                x="216"
+                y="184"
+                width="190"
+                height="30"
+                rx="5"
+                fill="none"
+                stroke="#b45309"
+                stroke-dasharray="5 4"
+              />
+              <text x="311" y="203" font-size="9.5" fill="#8a5a00" text-anchor="middle">
+                editor: on first edit
+              </text>
+              <rect
+                x="418"
+                y="184"
+                width="190"
+                height="30"
+                rx="5"
+                fill="none"
+                stroke="#b45309"
+                stroke-dasharray="5 4"
+              />
+              <text x="513" y="203" font-size="9.5" fill="#8a5a00" text-anchor="middle">
+                dialog: on first open
+              </text>
+            </svg>
+            <figcaption>
+              The same page, two bundles. Amber code is invisible at first paint by definition (a
+              closed dialog, an unopened tab), yet in the top bundle every user downloads, parses,
+              and executes it before any button works. Below, the first-render bundle carries only
+              what the first render uses; the rest arrives as separate chunks, triggered by the
+              interactions that reveal them.
+            </figcaption>
+          </figure>
+
+          <h2 id="dynamic">6.3 <code>dynamic()</code>: loading client code on demand</h2>
+          <p>
+            <code>next/dynamic</code> is <code>React.lazy()</code> plus Suspense in one call: it
+            turns an import into a separate chunk, gives you a <code>loading</code> fallback for the
+            gap, and, critically,
+            <strong>moves the download to the moment the component first renders</strong>. Combined
+            with conditional rendering, "first renders" becomes "the user actually asked for it":
+          </p>
+
+          <pre
+            class="code"
+          ><span class="filename">components/program/AnalyticsSection.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
+
+<span class="tok-com">/* A charting library is parsing and drawing machinery the first paint never
+   uses; the section starts collapsed. The named export comes back from the
+   import() promise; the loading fallback mirrors the chart's geometry so
+   nothing shifts when it lands (§9). */</span>
+<span class="tok-kw">const</span> EnrollmentChart = <span class="tok-fn">dynamic</span>(
+  () =&gt; <span class="tok-kw">import</span>(<span class="tok-str">"./EnrollmentChart"</span>).<span class="tok-fn">then</span>((m) =&gt; m.EnrollmentChart),
+  { <span class="tok-prop">loading</span>: () =&gt; &lt;<span class="tok-fn">ChartSkeleton</span> /&gt; }
+);
+
+<span class="tok-kw">export function</span> <span class="tok-fn">AnalyticsSection</span>({ programId }: { programId: <span class="tok-kw">string</span> }) {
+  <span class="tok-kw">const</span> [expanded, setExpanded] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
+
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Collapsible</span>
+      <span class="tok-prop">expanded</span>={expanded}
+      <span class="tok-prop">onToggle</span>={() =&gt; <span class="tok-fn">setExpanded</span>((prev) =&gt; !prev)}
+    &gt;
+      <span class="tok-com">{/* Mounted only when expanded; the chunk downloads on first open. */}</span>
+      {expanded &amp;&amp; &lt;<span class="tok-fn">EnrollmentChart</span> <span class="tok-prop">programId</span>={programId} /&gt;}
+    &lt;/<span class="tok-fn">Collapsible</span>&gt;
+  );
+}</pre>
+
+          <p>
+            This is the same shape as
+            <a href="05-client-server-boundaries.html#self-contained">§5.7</a>'s
+            dynamically-imported dialog: encapsulation and lazy loading are natural partners,
+            because the component that owns the interaction is also the only one that knows when the
+            code is actually needed. Two mechanics to get right:
+          </p>
+          <ul>
+            <li>
+              <strong>Call <code>dynamic()</code> inside client components.</strong>
+              <span class="chip chip-next">Next.js</span>
+              <span class="chip chip-critical">Critical</span> When a <em>server</em> component
+              dynamically imports a client component, the code is not split, and
+              <code>ssr: false</code> there is a build error. Do the splitting in the client file
+              that renders the thing; a server component's own imports never needed splitting in the
+              first place (they ship nothing).
+            </li>
+            <li>
+              <strong
+                ><code>ssr: false</code> is for code that can't run on the server at all</strong
+              >: libraries that touch <code>window</code> at import time, canvas and map widgets. It
+              skips the server prerender pass entirely, so reach for it only when the component
+              genuinely can't produce server HTML; otherwise you're giving away first-paint content
+              for nothing.
+            </li>
+            <li>
+              <strong
+                >Declare lazy components at module top level, never inside a component.</strong
+              >
+              <span class="chip chip-react">React</span>
+              <span class="chip chip-critical">Critical</span> The React docs call this out
+              directly: a <code>lazy()</code>/<code>dynamic()</code> created inside a component body
+              is a <em>new</em> component on every render, so the loaded component unmounts and
+              loses all state each time the parent re-renders.
+            </li>
+          </ul>
+
+          <pre
+            class="code"
+          ><span class="filename">components/campus/CampusMapPanel.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
+
+<span class="tok-com">/* The map library reads window at import time - it cannot render on the
+   server, period. ssr: false skips its server pass; the skeleton reserves
+   the map's exact dimensions so the late arrival displaces nothing (§9.3). */</span>
+<span class="tok-kw">const</span> CampusMap = <span class="tok-fn">dynamic</span>(
+  () =&gt; <span class="tok-kw">import</span>(<span class="tok-str">"./CampusMap"</span>).<span class="tok-fn">then</span>((m) =&gt; m.CampusMap),
+  { <span class="tok-prop">ssr</span>: <span class="tok-kw">false</span>, <span class="tok-prop">loading</span>: () =&gt; &lt;<span class="tok-fn">MapSkeleton</span> /&gt; }
+);</pre>
+
+          <p>
+            Libraries can be split without splitting a component at all - a plain
+            <code>await import()</code> inside the handler that needs it. A fuzzy-search library
+            used only after the user types, a CSV exporter used only on the export click:
+          </p>
+
+          <pre
+            class="code"
+          ><span class="filename">components/table/ExportButton.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ExportButton</span>({ rows }: { rows: <span class="tok-fn">Row</span>[] }) {
+  <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
+
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Button</span>
+      <span class="tok-prop">loading</span>={isPending}
+      <span class="tok-prop">onClick</span>={() =&gt;
+        <span class="tok-fn">startTransition</span>(<span class="tok-kw">async</span> () =&gt; {
+          <span class="tok-com">/* The CSV library enters the browser on the first export click -
+             not one page load sooner. */</span>
+          <span class="tok-kw">const</span> { toCsv } = <span class="tok-kw">await</span> <span class="tok-kw">import</span>(<span class="tok-str">"@/lib/csv"</span>);
+          <span class="tok-fn">download</span>(<span class="tok-fn">toCsv</span>(rows));
+        })
+      }
+    &gt;
+      Export
+    &lt;/<span class="tok-fn">Button</span>&gt;
+  );
+}</pre>
+
+          <h2 id="candidates">6.4 What earns a dynamic import, and what doesn't</h2>
+          <p>
+            The test is one question: <strong>can the user see or use it at first paint?</strong> If
+            not, its code shouldn't be in the first-render bundle.
+          </p>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Dialogs, drawers, popovers, command palettes</td>
+                <td>
+                  <strong>Always dynamic</strong>: invisible until an interaction, by definition (<a
+                    href="05-client-server-boundaries.html#self-contained"
+                    >§5.7</a
+                  >).
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Heavy libraries: charts, rich-text editors, PDF/file viewers, syntax highlighters,
+                  spreadsheet grids
+                </td>
+                <td>
+                  <strong>Always dynamic</strong>: these dwarf your own code; none belong in a main
+                  bundle.
+                </td>
+              </tr>
+              <tr>
+                <td>Panels behind collapsed sections or non-default tabs</td>
+                <td>
+                  <strong>Dynamic</strong> when the content is client code; if the panel is
+                  server-rendered, prefer route segments (<a
+                    href="08-server-resolvable-state.html#tabs"
+                    >§8.3</a
+                  >) and there's nothing to split.
+                </td>
+              </tr>
+              <tr>
+                <td>Handler-only libraries: exporters, parsers, fuzzy search</td>
+                <td>
+                  <strong><code>await import()</code> in the handler</strong>: no component wrapper
+                  needed.
+                </td>
+              </tr>
+              <tr>
+                <td>Small interactive leaves visible at first paint (buttons, inputs, menus)</td>
+                <td>
+                  <strong>Leave them alone</strong>: splitting a 2&nbsp;kB component adds a round
+                  trip and a loading flash to save nothing. The chunk has to be worth its own
+                  request.
+                </td>
+              </tr>
+              <tr>
+                <td>Anything above the fold that the first paint shows</td>
+                <td>
+                  <strong>Never dynamic with a fallback the user will see</strong>: you'd be
+                  manufacturing a skeleton for content the server could have delivered finished.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Don't guess: <strong>measure</strong>. <span class="chip chip-react">React</span>
+            <span class="chip chip-very">Very important</span>
+            <code>@next/bundle-analyzer</code> shows exactly which imports own the bytes; the
+            browser's coverage panel shows how much of the bundle the first paint actually executed.
+            The two usual convictions: a heavy library imported by a component that's visible for 5%
+            of sessions, and a "shared utils" module that drags a whale in through one re-export.
+          </p>
+
+          <h2 id="rules">The rules</h2>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Rule</th>
+                <th>Scope</th>
+                <th>Importance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  The bundle is the client module graphs:
+                  <strong>shrink it with boundaries first</strong> (<a
+                    href="05-client-server-boundaries.html"
+                    >§5</a
+                  >), <code>dynamic()</code> second.
+                </td>
+                <td><span class="chip chip-next">Next.js</span></td>
+                <td><span class="chip chip-critical">Critical</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong
+                    >Anything invisible at first paint loads behind <code>dynamic()</code></strong
+                  >: dialogs, drawers, collapsed panels, non-default tabs.
+                </td>
+                <td><span class="chip chip-react">React</span></td>
+                <td><span class="chip chip-very">Very important</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Heavy libraries never ride the main bundle</strong>: charts, editors,
+                  viewers split at their leaf; handler-only libraries via
+                  <code>await import()</code>.
+                </td>
+                <td><span class="chip chip-react">React</span></td>
+                <td><span class="chip chip-very">Very important</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <code>dynamic()</code> calls live <strong>inside client components</strong>;
+                  server-side dynamic imports of client components don't split, and
+                  <code>ssr: false</code> there is an error.
+                </td>
+                <td><span class="chip chip-next">Next.js</span></td>
+                <td><span class="chip chip-critical">Critical</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Don't split the small or the visible</strong>: a chunk must be worth its
+                  own network round trip.
+                </td>
+                <td><span class="chip chip-react">React</span></td>
+                <td><span class="chip chip-imp">Important</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Where to go deeper</div>
+            <p>
+              React 19 docs:
+              <a href="https://react.dev/reference/react/lazy" target="_blank" rel="noopener"
+                >lazy</a
+              >
+              ·
+              <a href="https://react.dev/reference/react/Suspense" target="_blank" rel="noopener"
+                >Suspense</a
+              >. Next.js docs:
+              <a
+                href="https://nextjs.org/docs/app/guides/lazy-loading"
+                target="_blank"
+                rel="noopener"
+                >Lazy Loading guide</a
+              >
+              (<code>next/dynamic</code>, <code>ssr: false</code>, named exports, library imports) ·
+              <a
+                href="https://nextjs.org/docs/app/guides/package-bundling"
+                target="_blank"
+                rel="noopener"
+                >Package Bundling</a
+              >
+              (<code>@next/bundle-analyzer</code>). Full list in
+              <a href="19-references.html">§19</a>.
+            </p>
+          </div>
+
+          <div id="pager"></div>
+        </div>
+      </main>
+    </div>
+    <script src="../assets/nav.js"></script>
+  </body>
+</html>

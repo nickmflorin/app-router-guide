@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signs You're Doing It Wrong - App Router Guide</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="shell">
+      <nav class="sidebar" id="sidebar"></nav>
+      <main class="content">
+        <div class="content-inner">
+          <div class="kicker">Chapter 16 · Part D: Applied</div>
+          <h1>Signs You're Doing It Wrong</h1>
+          <p class="lede">
+            A field guide to the tells. If you catch yourself doing one of these, you've probably
+            drifted off the server-first path. Each sign says what it usually means, names its
+            honest exception, and links to the chapter that fixes it.
+          </p>
+
+          <p>
+            These are smells, not sins. Every one of them has a legitimate exception, and every one
+            of them has a real example in <a href="17-applied-to-recraft.html">§17</a>, because we
+            are all of them today. The point of a checklist is speed: something feels off, you scan,
+            you find the row, you follow the link. Read it that way. But before the list, the single
+            reframe that makes most of it unnecessary.
+          </p>
+
+          <h2 id="the-question">16.1 One question underneath all of them</h2>
+          <p>
+            Almost every sign below is a symptom of asking the wrong question first. The instinct we
+            carry from years of client React is:
+            <strong>"how do I get this data to this component?"</strong> That question already
+            assumes the component fetches, in the browser, after mount. It smuggles the whole broken
+            model in through the phrasing. The right question, asked before any other, is blunter:
+            <strong>"why can't this be on the server?"</strong> And when the answer is a real one
+            (it genuinely needs the browser), the immediate follow-up is
+            <strong>"how far down can I push it?"</strong> You are hunting for the smallest leaf
+            that actually needs interactivity, not reaching for a directive at the top of the file.
+          </p>
+
+          <figure class="diagram">
+            <svg
+              viewBox="0 0 720 262"
+              xmlns="http://www.w3.org/2000/svg"
+              font-family="Inter, system-ui, sans-serif"
+            >
+              <defs>
+                <marker
+                  id="a15sp"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+                    fill="none"
+                    stroke="#737373"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </marker>
+                <marker
+                  id="a15out"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+                    fill="none"
+                    stroke="#0f7b48"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </marker>
+              </defs>
+
+              <text
+                x="360"
+                y="12"
+                font-size="12"
+                fill="#171717"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                The one interrogation, top to bottom
+              </text>
+
+              <rect x="40" y="30" width="280" height="44" rx="8" fill="#ffffff" stroke="#c9c9c9" />
+              <text x="180" y="57" font-size="11" fill="#171717" text-anchor="middle">
+                You need to render UI or read some data
+              </text>
+
+              <line
+                x1="180"
+                y1="74"
+                x2="180"
+                y2="104"
+                stroke="#737373"
+                stroke-width="1.5"
+                marker-end="url(#a15sp)"
+              />
+
+              <rect x="40" y="108" width="280" height="54" rx="8" fill="#eaf3fe" stroke="#0070f3" />
+              <text
+                x="180"
+                y="131"
+                font-size="11.5"
+                fill="#0757ba"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Why can't this be on the server?
+              </text>
+              <text x="180" y="148" font-size="9.5" fill="#527dad" text-anchor="middle">
+                the default question, asked first
+              </text>
+
+              <line
+                x1="320"
+                y1="135"
+                x2="428"
+                y2="135"
+                stroke="#0f7b48"
+                stroke-width="1.5"
+                marker-end="url(#a15out)"
+              />
+              <rect
+                x="432"
+                y="111"
+                width="248"
+                height="48"
+                rx="8"
+                fill="#e7f5ee"
+                stroke="#0f7b48"
+              />
+              <text
+                x="556"
+                y="132"
+                font-size="11"
+                fill="#0f7b48"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                It can: server component.
+              </text>
+              <text x="556" y="148" font-size="9.5" fill="#3e7d5c" text-anchor="middle">
+                no client JS, no spinner
+              </text>
+
+              <line
+                x1="180"
+                y1="162"
+                x2="180"
+                y2="200"
+                stroke="#737373"
+                stroke-width="1.5"
+                marker-end="url(#a15sp)"
+              />
+              <text x="192" y="185" font-size="9.5" fill="#737373">
+                it genuinely needs the browser
+              </text>
+
+              <rect x="40" y="204" width="280" height="54" rx="8" fill="#e6f4f9" stroke="#087ea4" />
+              <text
+                x="180"
+                y="227"
+                font-size="11.5"
+                fill="#0e6a8a"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                How far down can I push it?
+              </text>
+              <text x="180" y="244" font-size="9.5" fill="#4a8ba0" text-anchor="middle">
+                find the smallest interactive leaf
+              </text>
+
+              <line
+                x1="320"
+                y1="231"
+                x2="428"
+                y2="231"
+                stroke="#0f7b48"
+                stroke-width="1.5"
+                marker-end="url(#a15out)"
+              />
+              <rect
+                x="432"
+                y="207"
+                width="248"
+                height="48"
+                rx="8"
+                fill="#e7f5ee"
+                stroke="#0f7b48"
+              />
+              <text
+                x="556"
+                y="228"
+                font-size="11"
+                fill="#0f7b48"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Isolate that one leaf.
+              </text>
+              <text x="556" y="244" font-size="9.5" fill="#3e7d5c" text-anchor="middle">
+                everything above stays server
+              </text>
+            </svg>
+            <figcaption>
+              The whole chapter in three boxes. The client component is the bottom of the ladder,
+              reached only after the server has been ruled out and the boundary pushed as low as it
+              goes, never the reflex at the top. Most signs below are what it looks like to skip a
+              rung.
+            </figcaption>
+          </figure>
+
+          <h2 id="questions">16.2 The questions to keep asking</h2>
+          <p>
+            Make these reflexive. If you ask them honestly on every component, most of the signs
+            below never get a chance to appear.
+          </p>
+          <ul>
+            <li>
+              <strong>Why can't this be on the server?</strong> Not "can it," why not. Demand a
+              concrete answer (it needs an event handler, browser state, an interaction). "It's
+              easier this way" is not an answer.
+            </li>
+            <li>
+              <strong>If it truly can't, how far down can I push the boundary?</strong> What is the
+              smallest piece that actually needs the browser? Everything else stays on the server.
+            </li>
+            <li>
+              <strong>Am I about to write a spinner or a loading flag?</strong> What is rendering
+              it, and why isn't that the boundary's job instead of the component's?
+            </li>
+            <li>
+              <strong>Does the parent holding this data actually use it?</strong> Or is it just a
+              pass-through wire I'll have to maintain forever?
+            </li>
+            <li>
+              <strong>Should this live in the URL?</strong> If it describes where the user is or
+              what they're looking at, the request already carries it; the server can resolve it.
+            </li>
+            <li>
+              <strong>Is this import needed in the first paint?</strong> If not, where is the
+              dynamic boundary that keeps it out of the initial bundle?
+            </li>
+          </ul>
+
+          <h2 id="boundary">16.3 The boundary is in the wrong place</h2>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width: 34%">The sign</th>
+                <th>What it means, and where it's fixed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>"use client" sits on a page or layout.</strong></td>
+                <td>
+                  A directive at the top of a route segment forces everything beneath it into the
+                  browser, usually just to read params or run one handler. Push it to the leaf that
+                  needs it. Fixed in
+                  <a href="05-client-server-boundaries.html#what-requires">§5.2</a> and
+                  <a href="05-client-server-boundaries.html#push-down">§5.3</a>.
+                  <em>Exception:</em> a route that is genuinely interactive end to end, which is
+                  rare and worth a hard second look.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>One file holds a pile of components.</strong></td>
+                <td>
+                  Especially in the app directory: it hides the boundary, blocks code splitting, and
+                  grows into a God component. One component per file, interactivity isolated. Fixed
+                  in <a href="14-component-breakdown.html">§14</a>.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>One component owns fetching, UI state, and callbacks.</strong></td>
+                <td>
+                  That is the God component (or God hook): a single boundary that pulls the whole
+                  subtree client-side and couples everything to one object's shape. Fixed in
+                  <a href="05-client-server-boundaries.html#god-components">§5.9</a> and
+                  <a href="12-minimize-the-wires.html#callbacks">§12.4</a>.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>"use client" is your first move, not your last resort.</strong></td>
+                <td>
+                  If adding the directive is the reflex rather than the justified exception, the
+                  model is inverted: the browser is a cost to be argued for, not the default. Fixed
+                  in <a href="01-introduction.html#stakes">§1</a> and
+                  <a href="05-client-server-boundaries.html#what-it-means">§5.1</a>.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 id="fetching">16.4 Data is fetched the wrong way</h2>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width: 34%">The sign</th>
+                <th>What it means, and where it's fixed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>You're fetching inside a useEffect.</strong></td>
+                <td>
+                  First-render data belongs on the server; the effect + state + isLoading triple is
+                  the tell you're rebuilding by hand what the framework does for free. Fixed in
+                  <a href="04-ssr.html">§4</a> and
+                  <a href="13-dedupe-caching.html#client">§13.3</a>. <em>Exception:</em> data that
+                  only exists after an interaction (search-as-you-type, autocomplete) does load
+                  client-side, but through a shared hook, never a raw effect.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>A mutation goes through a Next.js API route.</strong></td>
+                <td>
+                  A server action replaces the hand-written POST endpoint and gives you end-to-end
+                  type safety and cache revalidation for free. Fixed in
+                  <a href="05-client-server-boundaries.html#self-contained">§5.7</a> and
+                  <a href="18-new-primitives.html#use-server">§18</a>.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>A first-render read goes through a proxy route.</strong></td>
+                <td>
+                  If the data isn't born from an interaction, the server should fetch it directly,
+                  one hop, before paint, not bounce it through a route handler after hydration.
+                  Fixed in <a href="04-ssr.html">§4</a>; seen in the wild in
+                  <a href="17-applied-to-recraft.html#finding-1">§17</a>. <em>Exception:</em> reads
+                  genuinely first needed after an interaction.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Queries are chained: one waits on another's result.</strong></td>
+                <td>
+                  Dependent, <code>enabled</code>-gated client queries serialize round-trips that a
+                  server component resolves in a single pass with <code>Promise.all</code>. Fixed in
+                  <a href="11-blocking-requests.html#parallel">§11.2</a>.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 id="wiring">16.5 Components are wired together that shouldn't be</h2>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width: 34%">The sign</th>
+                <th>What it means, and where it's fixed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>A parent fetches data and hands it to several children.</strong></td>
+                <td>
+                  Let each child ask for its own data; deduplication makes the repetition free, and
+                  the parent stops being a distribution hub. Fixed in
+                  <a href="12-minimize-the-wires.html">§12</a> and
+                  <a href="13-dedupe-caching.html">§13</a>.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>A child receives a prop the parent never uses.</strong></td>
+                <td>
+                  Passing anything through a parent that doesn't need it is a wire you will maintain
+                  forever for nothing. Components should take only what they themselves render.
+                  Fixed in <a href="12-minimize-the-wires.html#repetition">§12</a>.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>A child calls back up so the parent can refetch.</strong></td>
+                <td>
+                  <code>onSuccess</code> then <code>refetchAll()</code> is orchestration. Invalidate
+                  the cache instead (<code>revalidateTag</code>, <code>router.refresh</code>, SWR
+                  <code>mutate</code>) and every reader updates itself, no wire required. Fixed in
+                  <a href="05-client-server-boundaries.html#refresh">§5.8</a> and
+                  <a href="12-minimize-the-wires.html#callbacks">§12.4</a>.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 id="loading">16.6 Loading states and containers are misplaced</h2>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width: 34%">The sign</th>
+                <th>What it means, and where it's fixed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>A component renders its own spinner.</strong></td>
+                <td>
+                  Components don't own loading states; the Suspense boundary above them does. A
+                  component that manages its own <code>isLoading</code> is doing the boundary's job
+                  badly. Fixed in <a href="10-suspense-streaming.html#no-own-loading">§10</a>.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>The fallback includes the container the content sits in.</strong></td>
+                <td>
+                  The frame (card, table shell, page header) is known at first render and belongs
+                  outside the boundary, rendered on the server; only the unknown contents suspend.
+                  Putting the container in the fallback means it gets thrown away and rebuilt. Fixed
+                  in <a href="09-containers-content-shifting.html#reserving">§9</a> and
+                  <a href="10-suspense-streaming.html#skeletons">§10</a>.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>The suspending component brings its own container.</strong></td>
+                <td>
+                  Same root cause, mirror image: the frame lives inside the child that suspends
+                  instead of in the layout, so it flickers in with the data instead of being there
+                  from the first byte. Fixed in
+                  <a href="09-containers-content-shifting.html#doctrine">§9</a>.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Containers aren't sized on the server.</strong></td>
+                <td>
+                  If the box isn't rendered immediately and reserving accurate space for both the
+                  fallback and the real content, the page shifts when data lands. Reserve the space
+                  up front. Fixed in
+                  <a href="09-containers-content-shifting.html#reserving">§9</a>.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 id="url-state">16.7 State is living where the URL should own it</h2>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width: 34%">The sign</th>
+                <th>What it means, and where it's fixed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Tabs are held in useState.</strong></td>
+                <td>
+                  A tab is where the user is. That belongs in the route (a segment or a search
+                  param), not in client state that resets on reload and can't be linked to. Fixed in
+                  <a href="08-server-resolvable-state.html#tabs">§8.3</a>.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>The browser reads a query param to decide what to show.</strong></td>
+                <td>
+                  Reading <code>?x=</code> in a client component and conditionally rendering on it
+                  turns the URL into a client-state store the server can't use, and delays the
+                  content behind hydration. If output depends on the query string, resolve it on the
+                  server from the request. Fixed in
+                  <a href="08-server-resolvable-state.html#url-state">§8.2</a>.
+                  <em>Exception:</em> genuinely ephemeral, client-only UI (an open menu, a hover
+                  state) that has no business in the URL at all, covered in
+                  <a href="08-server-resolvable-state.html#client-state">§8.5</a>.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 id="bundle">16.8 Too much JavaScript ships on first render</h2>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width: 34%">The sign</th>
+                <th>What it means, and where it's fixed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>A heavy client package loads on first paint.</strong></td>
+                <td>
+                  Charting libraries, rich-text editors, and date pickers pulled into the initial
+                  bundle inflate time-to-interactive for UI most users never touch on load. Fixed in
+                  <a href="06-first-render-js.html#tax">§6</a>.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Something not needed at first paint has no dynamic boundary.</strong>
+                </td>
+                <td>
+                  If it isn't on screen immediately (dialogs, drawers, below-the-fold panels), it
+                  should load on demand with <code>next/dynamic</code>, not sit in the bundle every
+                  visitor downloads. Fixed in <a href="06-first-render-js.html#dynamic">§6.3</a>.
+                  <em>Exception:</em> small modules that are needed right away, where a dynamic
+                  import only buys you an extra round-trip.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-voice">
+            <div class="callout-title">How to use this list</div>
+            <p>
+              Don't treat it as a purity test. Treat it as a set of tripwires: when you catch
+              yourself doing one, stop and ask the question from
+              <a href="#the-question">§16.1</a> before you write the next line. Sometimes the honest
+              answer lands you on the exception, and that's fine, the exceptions are real and named
+              on purpose. But most of the time the tripwire is telling you the truth, and the fix is
+              one link away. The goal isn't zero client components; it's that every one of them is a
+              decision you could defend out loud.
+            </p>
+          </div>
+
+          <div id="pager"></div>
+        </div>
+      </main>
+    </div>
+    <script src="../assets/nav.js"></script>
+  </body>
+</html>

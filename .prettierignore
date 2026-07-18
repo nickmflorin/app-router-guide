@@ -1,0 +1,3 @@
+# Generated output — never hand-edited, rebuilt by scripts/build_artifact.py.
+build/
+node_modules/

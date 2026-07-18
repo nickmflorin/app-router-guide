@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bundle Size &amp; Code Splitting - App Router Guide</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="shell">
+      <nav class="sidebar" id="sidebar"></nav>
+      <main class="content">
+        <div class="content-inner">
+          <div class="kicker">Chapter 7 · Part A: Maximize the Known</div>
+          <h1>Bundle Size &amp; Code Splitting</h1>
+          <p class="lede">
+            <a href="06-first-render-js.html">§6</a> was about the mechanics of keeping JavaScript
+            out of the first render. This chapter is about the judgment: which dependencies are
+            worth their weight, why a single heavyweight component can undo the entire known/unknown
+            split, and what all that shipped JavaScript actually costs the people using the app.
+          </p>
+
+          <h2 id="tax">7.1 The JavaScript you ship is a tax on the known</h2>
+          <p>
+            Part A is about maximizing what the server can deliver as finished HTML. Every kilobyte
+            of client JavaScript works against that goal from the other side: the browser has to
+            download it, parse it, and execute it before the page is truly interactive, and until
+            then the "known" content you worked so hard to render on the server is sitting there
+            looking ready while doing nothing. A page can be server-rendered and <em>still</em> feel
+            broken if it ships a megabyte of JavaScript in front of the first interaction. So bundle
+            size is not a separate performance chore bolted on at the end; it is the same goal as
+            the rest of Part A, measured at the network instead of the render.
+          </p>
+          <p>
+            The good news is that the App Router splits code by route automatically: a given page
+            ships the JavaScript for its own tree, not the whole app. The bad news is that this
+            automatic splitting is easy to defeat, and the rest of this chapter is a tour of the
+            three most common ways we do it: pulling in a component so heavy it drags the page down,
+            fusing the known and the unknown into one undeferrable lump, and importing through
+            barrel files that quietly negate tree-shaking.
+          </p>
+
+          <h2 id="wholesale">7.2 The wholesale-component trap</h2>
+          <p>
+            Here is the most instructive failure, because it shows how bundle size and the
+            known/unknown thesis are the same problem. Picture a reports page with a data table.
+            Look at what is actually knowable at first render: the toolbar, the title, the column
+            headers, the footer, the pagination controls, the empty-state and the row skeleton are
+            <strong>all known immediately</strong>. The only genuinely unknown part is the body
+            rows, because those depend on data we have to fetch.
+          </p>
+          <p>
+            Now reach for a wholesale data grid, an all-in-one client component like MUI's
+            <code>DataGrid</code> that owns the toolbar, the headers, the rows, the sorting, the
+            virtualization, and the footer in a single package. You have just fused everything back
+            together. The frame that was knowable is now trapped inside a client component that
+            cannot render until its bundle downloads and its data arrives.
+          </p>
+
+          <figure class="diagram">
+            <svg
+              viewBox="0 0 720 274"
+              xmlns="http://www.w3.org/2000/svg"
+              font-family="Inter, system-ui, sans-serif"
+            >
+              <text
+                x="180"
+                y="12"
+                font-size="12"
+                fill="#8a5a00"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Wholesale: one fused client component
+              </text>
+              <text
+                x="540"
+                y="12"
+                font-size="12"
+                fill="#0757ba"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Composed: known frame, unknown rows
+              </text>
+              <line x1="360" y1="2" x2="360" y2="270" stroke="#e0e0e0" />
+
+              <!-- LEFT: fused grid -->
+              <rect x="40" y="34" width="280" height="210" rx="8" fill="#fdf3e3" stroke="#b45309" />
+              <text
+                x="180"
+                y="52"
+                font-size="11"
+                fill="#8a5a00"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                MUI DataGrid (one client component)
+              </text>
+              <line x1="40" y1="64" x2="320" y2="64" stroke="#e0c48f" />
+              <text x="180" y="97" font-size="10.5" fill="#8a5a00" text-anchor="middle">
+                Header + toolbar
+              </text>
+              <line x1="40" y1="124" x2="320" y2="124" stroke="#e0c48f" />
+              <text x="180" y="157" font-size="10.5" fill="#8a5a00" text-anchor="middle">
+                Body rows: the only real unknown
+              </text>
+              <line x1="40" y1="184" x2="320" y2="184" stroke="#e0c48f" />
+              <text x="180" y="217" font-size="10.5" fill="#8a5a00" text-anchor="middle">
+                Footer + pagination
+              </text>
+              <text
+                x="180"
+                y="262"
+                font-size="9.5"
+                fill="#b45309"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                All or nothing: the frame waits on the rows
+              </text>
+
+              <!-- RIGHT: composed -->
+              <rect x="400" y="34" width="280" height="40" rx="6" fill="#eaf3fe" stroke="#0070f3" />
+              <text x="540" y="58" font-size="10.5" fill="#0757ba" text-anchor="middle">
+                Toolbar + title (server, instant)
+              </text>
+              <rect x="400" y="80" width="280" height="32" rx="6" fill="#eaf3fe" stroke="#0070f3" />
+              <text x="540" y="100" font-size="10.5" fill="#0757ba" text-anchor="middle">
+                Column headers (server, instant)
+              </text>
+              <rect
+                x="400"
+                y="118"
+                width="280"
+                height="74"
+                rx="6"
+                fill="#fdf3e3"
+                stroke="#b45309"
+                stroke-dasharray="6 4"
+              />
+              <text
+                x="540"
+                y="140"
+                font-size="10.5"
+                fill="#8a5a00"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                &lt;Suspense&gt;: body rows
+              </text>
+              <text x="540" y="156" font-size="9.5" fill="#8f6b2e" text-anchor="middle">
+                streams when the data resolves
+              </text>
+              <rect
+                x="400"
+                y="198"
+                width="280"
+                height="36"
+                rx="6"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+              />
+              <text x="540" y="220" font-size="10.5" fill="#0757ba" text-anchor="middle">
+                Footer + pagination (server)
+              </text>
+              <text
+                x="540"
+                y="262"
+                font-size="9.5"
+                fill="#0f7b48"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Frame is instant; only the rows wait
+              </text>
+            </svg>
+            <figcaption>
+              The same table, two architectures. On the left, a wholesale grid fuses the knowable
+              frame to the unknowable rows, so nothing appears until the bundle and the data both
+              arrive. On the right, the frame is server-rendered HTML that shows on the first byte,
+              and a <a href="10-suspense-streaming.html">§10</a> boundary wraps only the rows. You
+              cannot get the right-hand behavior out of the left-hand component.
+            </figcaption>
+          </figure>
+
+          <p>
+            The trap is specifically that a wholesale grid takes all three of your best tools off
+            the table at once. You <strong>cannot wrap Suspense around just the body rows</strong>,
+            because the rows aren't a separate component. You
+            <strong>cannot show a skeleton over just the rows</strong> while the header stays put,
+            for the same reason. And you
+            <strong>cannot defer the import of just the rows</strong> and render the known frame
+            immediately, because the frame and the rows are one import. The composed version, a
+            server-rendered table shell with a Suspense boundary around a server component that
+            awaits the rows, gets all three for free.
+          </p>
+
+          <pre
+            class="code"
+          ><span class="filename">app/reports/hours/page.tsx (server component)</span><span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+
+<span class="tok-kw">export default function</span> <span class="tok-fn">HoursPage</span>() {
+  <span class="tok-kw">return</span> (
+    &lt;table&gt;
+      <span class="tok-com">{/* The frame is known on the first byte: server HTML, no client JS. */}</span>
+      &lt;<span class="tok-fn">TableToolbar</span> /&gt;
+      &lt;<span class="tok-fn">TableHead</span> <span class="tok-prop">columns</span>={COLUMNS} /&gt;
+      <span class="tok-com">{/* Only the rows are unknown, so only the rows suspend. */}</span>
+      &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">RowSkeleton</span> <span class="tok-prop">rows</span>={10} /&gt;}&gt;
+        &lt;<span class="tok-fn">HoursRows</span> /&gt;
+      &lt;/<span class="tok-fn">Suspense</span>&gt;
+      &lt;<span class="tok-fn">TableFooter</span> /&gt;
+    &lt;/table&gt;
+  );
+}</pre>
+
+          <p>
+            The same contrast, seen as an actual page rather than a stack of boxes, makes the
+            trade-off obvious. It is the anatomy view from
+            <a href="02-goals.html">§2</a>, aimed at one region: watch what happens to the table
+            when the frame is fused to the rows versus kept separate from them.
+          </p>
+
+          <figure class="diagram">
+            <svg
+              viewBox="0 0 720 334"
+              xmlns="http://www.w3.org/2000/svg"
+              font-family="Inter, system-ui, sans-serif"
+            >
+              <text
+                x="180"
+                y="12"
+                font-size="11.5"
+                fill="#b45309"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Wholesale grid: the whole table waits
+              </text>
+              <text
+                x="540"
+                y="12"
+                font-size="11.5"
+                fill="#0757ba"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Composed: only the rows wait
+              </text>
+
+              <!-- LEFT browser frame: wholesale -->
+              <rect x="8" y="24" width="344" height="278" rx="10" fill="#ffffff" stroke="#d4d4d4" />
+              <circle cx="28" cy="42" r="4" fill="#c9c9c9" />
+              <circle cx="42" cy="42" r="4" fill="#c9c9c9" />
+              <circle cx="56" cy="42" r="4" fill="#c9c9c9" />
+              <rect x="72" y="34" width="190" height="16" rx="8" fill="#f2f2f2" stroke="#e0e0e0" />
+              <text x="82" y="46" font-size="9.5" fill="#737373">app.craft.com/reports/hours</text>
+              <rect
+                x="24"
+                y="60"
+                width="312"
+                height="28"
+                rx="6"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+                stroke-width="1.5"
+              />
+              <text x="36" y="78" font-size="10.5" fill="#0757ba">
+                Page header (server, instant)
+              </text>
+              <rect
+                x="24"
+                y="96"
+                width="312"
+                height="190"
+                rx="6"
+                fill="#fdf3e3"
+                stroke="#b45309"
+                stroke-width="1.5"
+                stroke-dasharray="5 4"
+              />
+              <text
+                x="180"
+                y="150"
+                font-size="11"
+                fill="#8a5a00"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                MUI DataGrid (one client component)
+              </text>
+              <text x="180" y="170" font-size="10" fill="#8f6b2e" text-anchor="middle">
+                toolbar, columns, rows, footer, fused
+              </text>
+              <text x="180" y="188" font-size="10" fill="#8f6b2e" text-anchor="middle">
+                nothing renders until bundle + data
+              </text>
+              <text
+                x="180"
+                y="252"
+                font-size="10"
+                fill="#b45309"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                The whole table is the unknown
+              </text>
+
+              <!-- RIGHT browser frame: composed -->
+              <rect
+                x="368"
+                y="24"
+                width="344"
+                height="278"
+                rx="10"
+                fill="#ffffff"
+                stroke="#d4d4d4"
+              />
+              <circle cx="388" cy="42" r="4" fill="#c9c9c9" />
+              <circle cx="402" cy="42" r="4" fill="#c9c9c9" />
+              <circle cx="416" cy="42" r="4" fill="#c9c9c9" />
+              <rect x="432" y="34" width="190" height="16" rx="8" fill="#f2f2f2" stroke="#e0e0e0" />
+              <text x="442" y="46" font-size="9.5" fill="#737373">app.craft.com/reports/hours</text>
+              <rect
+                x="384"
+                y="60"
+                width="312"
+                height="28"
+                rx="6"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+                stroke-width="1.5"
+              />
+              <text x="396" y="78" font-size="10.5" fill="#0757ba">
+                Page header (server, instant)
+              </text>
+              <rect
+                x="384"
+                y="96"
+                width="312"
+                height="24"
+                rx="5"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+                stroke-width="1.5"
+              />
+              <text x="396" y="112" font-size="10" fill="#0757ba">Toolbar (server)</text>
+              <rect
+                x="384"
+                y="124"
+                width="312"
+                height="22"
+                rx="5"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+                stroke-width="1.5"
+              />
+              <text x="396" y="139" font-size="10" fill="#0757ba">Column headers (server)</text>
+              <!-- data-lint-ignore: rows region reserves space; skeletons sit at the top -->
+              <rect
+                data-lint-ignore="scene"
+                x="384"
+                y="150"
+                width="312"
+                height="116"
+                rx="5"
+                fill="#fdf3e3"
+                stroke="#b45309"
+                stroke-width="1.5"
+                stroke-dasharray="5 4"
+              />
+              <text x="396" y="170" font-size="10.5" fill="#8a5a00" font-weight="500">
+                Body rows: &lt;Suspense&gt;
+              </text>
+              <rect x="396" y="182" width="288" height="7" rx="3" fill="#f3e2c0" />
+              <rect x="396" y="196" width="288" height="7" rx="3" fill="#f3e2c0" />
+              <rect x="396" y="210" width="288" height="7" rx="3" fill="#f3e2c0" />
+              <rect
+                x="384"
+                y="270"
+                width="312"
+                height="26"
+                rx="5"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+                stroke-width="1.5"
+              />
+              <text x="396" y="287" font-size="10" fill="#0757ba">
+                Footer + pagination (server)
+              </text>
+
+              <!-- legend -->
+              <rect
+                x="24"
+                y="316"
+                width="14"
+                height="14"
+                rx="3"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+                stroke-width="1.5"
+              />
+              <text x="46" y="327" font-size="11" fill="#171717">
+                Known: server HTML, renders instantly
+              </text>
+              <rect
+                x="392"
+                y="316"
+                width="14"
+                height="14"
+                rx="3"
+                fill="#fdf3e3"
+                stroke="#b45309"
+                stroke-width="1.5"
+                stroke-dasharray="4 3"
+              />
+              <text x="414" y="327" font-size="11" fill="#171717">
+                Suspended: streams into reserved space
+              </text>
+            </svg>
+            <figcaption>
+              The reports page, laid out both ways. On the left, the wholesale grid makes the entire
+              table region one blocked client component: the header above it can paint, but the
+              table is blank until its bundle and data arrive. On the right, the toolbar, column
+              headers, and footer are server HTML that shows instantly, and only the body rows sit
+              behind a <a href="10-suspense-streaming.html">§10</a> boundary, streaming into space
+              the frame already reserved.
+            </figcaption>
+          </figure>
+
+          <h2 id="heavyweight">7.3 Heavyweight imports, and fallbacks that stay light</h2>
+          <p>
+            Sometimes you genuinely need a heavy client component: a rich text editor, a charting
+            library, a map, a spreadsheet grid whose interactivity you can't rebuild by hand. The
+            rule there is not "never use it," it is
+            <strong>keep it out of the first-render bundle and give it a light fallback</strong>. In
+            our own <code>ojl-tracker</code> work, the data-heavy tables are loaded lazily for
+            exactly this reason: the route paints its frame immediately, and the heavy grid streams
+            in behind a skeleton rather than blocking the whole page on its download.
+          </p>
+          <p>
+            The mechanics of the dynamic import (the <code>ssr: false</code> option, the top-level
+            declaration rule) live in <a href="06-first-render-js.html#dynamic">§6.3</a>; what
+            matters here is the fallback.
+            <strong>The fallback must be lighter than the thing it stands in for.</strong> A common
+            mistake is to hand the loading state another heavy component, or a spinner that itself
+            pulls in an animation library. The fallback should be cheap, static markup that reserves
+            the right space (<a href="09-containers-content-shifting.html">§9</a>): a plain
+            skeleton, sized to match.
+          </p>
+
+          <pre
+            class="code"
+          ><span class="filename">components/reports/HoursGrid.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
+
+<span class="tok-com">/* The heavy grid is pulled out of the first-render bundle and loaded on
+   demand. Its fallback is deliberately minimal: a static skeleton that
+   reserves the right height, not another heavy component. */</span>
+<span class="tok-kw">const</span> <span class="tok-fn">DataGrid</span> = <span class="tok-fn">dynamic</span>(() =&gt; <span class="tok-fn">import</span>(<span class="tok-str">"./HeavyDataGrid"</span>), {
+  loading: () =&gt; &lt;<span class="tok-fn">RowSkeleton</span> <span class="tok-prop">rows</span>={10} /&gt;,
+  ssr: <span class="tok-kw">false</span>,
+});
+
+<span class="tok-kw">export function</span> <span class="tok-fn">HoursGrid</span>({ rows }: { rows: <span class="tok-fn">Row</span>[] }) {
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">DataGrid</span> <span class="tok-prop">rows</span>={rows} /&gt;;
+}</pre>
+
+          <div class="callout callout-warn">
+            <div class="callout-title">Deferring a heavy import is a fallback, not a fix</div>
+            <p>
+              Lazy-loading a wholesale grid is strictly better than shipping it in the first bundle,
+              but it is still the second-best answer. It hides the weight; it doesn't remove it, and
+              the user still pays the download the moment the component is needed. Whenever the
+              frame is genuinely knowable, prefer the composed server-rendered table from
+              <a href="#wholesale">§7.2</a> and reserve the heavy client component for the parts
+              that truly need its interactivity.
+            </p>
+          </div>
+
+          <h2 id="barrels">7.4 Barrel files quietly defeat code splitting</h2>
+          <p>
+            A barrel file is an <code>index.ts</code> that re-exports everything in a folder so
+            callers can write <code>import { Button } from "@/ui"</code> instead of reaching into
+            the specific module. It reads nicely and it is a reliable way to inflate every bundle
+            that touches it. The problem is that importing one name from a barrel makes your route
+            depend on the <em>whole</em> barrel: the bundler now has to consider every module the
+            barrel re-exports, and anything with a side effect, or anything tree-shaking can't prove
+            is unused, comes along for the ride.
+          </p>
+
+          <div class="compare">
+            <div class="bad">
+              <div class="col-label">✕ Barrel: one name pulls the whole package</div>
+              <pre
+                class="code"
+              ><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-com">/* Pulls the entire @/ui barrel into this route's
+   graph: Button drags in Modal, DatePicker,
+   RichTextEditor, Chart, and everything else the
+   index re-exports. */</span>
+<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui"</span>;</pre>
+            </div>
+            <div class="good">
+              <div class="col-label">✓ Direct: one name pulls one module</div>
+              <pre
+                class="code"
+              ><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-com">/* Imports only Button's module. Nothing else in
+   @/ui is added to this route's bundle. */</span>
+<span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui/button"</span>;</pre>
+            </div>
+          </div>
+
+          <p>
+            Modern bundlers and Next's <code>optimizePackageImports</code> can claw some of this
+            back, and for well-behaved side-effect-free packages the damage is smaller than it used
+            to be. But the reliable habit is to not create the problem: import from the specific
+            module, and
+            <strong
+              >don't ship <code>index.ts</code> barrels for your own component libraries</strong
+            >. This is also where bundle size meets component design: barrels tend to grow around
+            files that hold too many components, which is the same instinct
+            <a href="14-component-breakdown.html">§14</a>
+            argues against. One component per file, imported directly, is both cleaner to read and
+            cheaper to ship.
+          </p>
+
+          <h2 id="cost">7.5 What bloated pages actually cost</h2>
+          <p>
+            It is worth being concrete about who pays, because "big bundle" sounds abstract and the
+            costs are not. They land on the two groups we care most about: the people using the app
+            and the people building it.
+          </p>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width: 26%">Who pays</th>
+                <th>What it costs them</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Users, on first load</strong></td>
+                <td>
+                  A longer wait before the page is interactive, even after the server HTML is on
+                  screen. The gap between "looks ready" and "responds to a click" is pure JavaScript
+                  download, parse, and execution time.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Users, on every navigation</strong></td>
+                <td>
+                  Heavier route bundles make client transitions feel sluggish, and the pain scales
+                  with the worst device and network in your user base, not your laptop on office
+                  wifi. Mobile and poor connections feel it first and worst.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Users, on data</strong></td>
+                <td>
+                  Megabytes of JavaScript are megabytes of someone's mobile data plan and battery,
+                  spent re-shipping code that a server render would have turned into a few kilobytes
+                  of HTML.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>The team, on build</strong></td>
+                <td>
+                  Bigger dependency graphs mean slower builds and slower type-checks, a tax on every
+                  commit and every CI run, and a compounding drag on how fast the team can move.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 id="rules">The rules</h2>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Rule</th>
+                <th>Scope</th>
+                <th>Importance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <strong>Keep the knowable frame out of client components.</strong> Render
+                  toolbars, headers, and footers as server HTML; wrap only the unknown parts in a
+                  boundary. Don't reach for a wholesale grid that fuses them.
+                </td>
+                <td><span class="chip chip-react">React</span></td>
+                <td><span class="chip chip-critical">Critical</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Heavy client components load on demand,</strong> out of the first-render
+                  bundle, behind a fallback that is lighter than what it replaces.
+                </td>
+                <td><span class="chip chip-next">Next.js</span></td>
+                <td><span class="chip chip-very">Very important</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Import from the specific module, not a barrel.</strong> Don't ship
+                  <code>index.ts</code> barrels for your own component libraries; they defeat
+                  tree-shaking.
+                </td>
+                <td><span class="chip chip-react">React</span></td>
+                <td><span class="chip chip-very">Very important</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Measure first-render JS as a budget,</strong> not an afterthought; a
+                  server-rendered page that ships a megabyte of JavaScript is not a fast page.
+                </td>
+                <td><span class="chip chip-react">React</span></td>
+                <td><span class="chip chip-imp">Important</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Where to go deeper</div>
+            <p>
+              <a href="06-first-render-js.html">§6</a> for the dynamic-import mechanics ·
+              <a
+                href="https://nextjs.org/docs/app/guides/lazy-loading"
+                target="_blank"
+                rel="noopener"
+                >Next.js: Lazy Loading</a
+              >
+              ·
+              <a
+                href="https://nextjs.org/docs/app/guides/package-bundling"
+                target="_blank"
+                rel="noopener"
+                >Next.js: Package Bundling</a
+              >
+              (bundle analyzer, <code>optimizePackageImports</code>) ·
+              <a href="https://react.dev/reference/react/lazy" target="_blank" rel="noopener"
+                >React: lazy</a
+              >. Full list in <a href="19-references.html">§19</a>.
+            </p>
+          </div>
+
+          <div id="pager"></div>
+        </div>
+      </main>
+    </div>
+    <script src="../assets/nav.js"></script>
+  </body>
+</html>

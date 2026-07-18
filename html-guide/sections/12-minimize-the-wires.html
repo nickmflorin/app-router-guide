@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minimize the Wires - App Router Guide</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="icon" href="../assets/logomark.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="shell">
+      <nav class="sidebar" id="sidebar"></nav>
+      <main class="content">
+        <div class="content-inner">
+          <div class="kicker">Chapter 12 · Part C: Decouple the Parts</div>
+          <h1>Minimize the Wires</h1>
+          <p class="lede">
+            Every prop, callback, and context read is a wire: a dependency connecting two parts of
+            the UI. Wires are not free: each one couples a component's future to its neighbors'.
+            This chapter is about keeping components independent, and why repetition beats plumbing.
+          </p>
+
+          <h2 id="cost">12.1 The cost of a wire</h2>
+          <p>
+            When a parent fetches data and passes it down, the parent stops being a layout concern
+            and becomes a <strong>data router</strong>. It must know what every descendant needs,
+            fetch the union of it, and thread it through. And from that moment, three components
+            change together forever. Child B needs one more field? You edit Child B, the parent's
+            fetch, and the prop signature in between. Multiply by every feature for the life of the
+            product and the parent becomes what we'll call a <em>coupling layer</em>: a component
+            whose main job is re-wiring everyone else's requirements.
+          </p>
+          <p>
+            The rule that falls out of this is blunt:
+            <strong>never pass a child anything the parent does not itself need.</strong>
+            <span class="chip chip-react">React</span>
+            <span class="chip chip-critical">Critical</span> If the parent isn't using the data
+            (isn't branching on it, isn't laying it out), the parent is just a wire, and wires
+            should be deleted. Legitimate exceptions: identity (an <code>id</code> the child will
+            use to ask its own questions), composition (<code>children</code> and other slots), and
+            configuration the parent genuinely owns (a variant, a size).
+          </p>
+
+          <figure class="diagram">
+            <svg
+              viewBox="0 0 720 371"
+              xmlns="http://www.w3.org/2000/svg"
+              font-family="Inter, system-ui, sans-serif"
+            >
+              <defs>
+                <marker
+                  id="aG"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+                    fill="none"
+                    stroke="#737373"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </marker>
+                <marker
+                  id="aB"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+                    fill="none"
+                    stroke="#0070f3"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </marker>
+              </defs>
+
+              <!-- headers -->
+              <text
+                x="170"
+                y="14"
+                font-size="12"
+                fill="#d93025"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Prop drilling: the coupling layer
+              </text>
+              <text
+                x="530"
+                y="14"
+                font-size="12"
+                fill="#157a4c"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Independent components
+              </text>
+              <line x1="360" y1="2" x2="360" y2="369" stroke="#e0e0e0" />
+
+              <!-- LEFT: bad -->
+              <rect x="100" y="30" width="140" height="36" rx="7" fill="#ffffff" stroke="#b45309" />
+              <text x="170" y="52" font-size="11.5" fill="#8a5a00" text-anchor="middle">
+                fetch: everything
+              </text>
+
+              <line
+                x1="170"
+                y1="66"
+                x2="170"
+                y2="104"
+                stroke="#737373"
+                stroke-width="1.5"
+                marker-end="url(#aG)"
+              />
+              <text x="180" y="90" font-size="10" fill="#666666">all the data</text>
+
+              <rect
+                x="85"
+                y="108"
+                width="170"
+                height="40"
+                rx="7"
+                fill="#fdecea"
+                stroke="#d93025"
+                stroke-width="1.5"
+              />
+              <text
+                x="170"
+                y="126"
+                font-size="11.5"
+                fill="#b3261e"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Parent
+              </text>
+              <text x="170" y="140" font-size="9.5" fill="#b0483e" text-anchor="middle">
+                knows everyone's requirements
+              </text>
+
+              <line
+                x1="135"
+                y1="148"
+                x2="93"
+                y2="212"
+                stroke="#737373"
+                stroke-width="1.5"
+                marker-end="url(#aG)"
+              />
+              <line
+                x1="205"
+                y1="148"
+                x2="247"
+                y2="212"
+                stroke="#737373"
+                stroke-width="1.5"
+                marker-end="url(#aG)"
+              />
+              <text x="99" y="187" font-size="10" fill="#666666" text-anchor="end">
+                props &amp; data
+              </text>
+              <text x="241" y="187" font-size="10" fill="#666666">props &amp; data</text>
+
+              <rect x="28" y="218" width="120" height="36" rx="7" fill="#ffffff" stroke="#c9c9c9" />
+              <text x="88" y="240" font-size="11.5" fill="#171717" text-anchor="middle">
+                Child A
+              </text>
+              <rect
+                x="192"
+                y="218"
+                width="120"
+                height="36"
+                rx="7"
+                fill="#ffffff"
+                stroke="#c9c9c9"
+              />
+              <text x="252" y="240" font-size="11.5" fill="#171717" text-anchor="middle">
+                Child B
+              </text>
+
+              <rect
+                x="30"
+                y="280"
+                width="280"
+                height="86"
+                rx="8"
+                fill="#fdf3e3"
+                stroke="#b45309"
+                stroke-dasharray="4 3"
+              />
+              <text
+                x="170"
+                y="301"
+                font-size="10.5"
+                fill="#8a5a00"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                When Child B's needs change:
+              </text>
+              <text x="170" y="319" font-size="10" fill="#8f6b2e" text-anchor="middle">
+                edit Child B → Parent's fetch → the props
+              </text>
+              <text x="170" y="337" font-size="10" fill="#8f6b2e" text-anchor="middle">
+                3 files every time · Parent re-renders everyone
+              </text>
+              <text x="170" y="355" font-size="10" fill="#8f6b2e" text-anchor="middle">
+                children are unusable without this exact Parent
+              </text>
+
+              <!-- RIGHT: good -->
+              <rect
+                x="410"
+                y="30"
+                width="240"
+                height="36"
+                rx="7"
+                fill="#eaf3fe"
+                stroke="#0070f3"
+                stroke-width="1.5"
+              />
+              <text
+                x="530"
+                y="47"
+                font-size="11.5"
+                fill="#0757ba"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Data layer (deduped)
+              </text>
+              <text x="530" y="60" font-size="9.5" fill="#527dad" text-anchor="middle">
+                getProgram(id) · 1 real request
+              </text>
+
+              <rect
+                x="455"
+                y="108"
+                width="150"
+                height="40"
+                rx="7"
+                fill="#ffffff"
+                stroke="#c9c9c9"
+              />
+              <text
+                x="530"
+                y="126"
+                font-size="11.5"
+                fill="#171717"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Parent
+              </text>
+              <text x="530" y="140" font-size="9.5" fill="#666666" text-anchor="middle">
+                layout only
+              </text>
+
+              <line
+                x1="495"
+                y1="148"
+                x2="467"
+                y2="212"
+                stroke="#737373"
+                stroke-width="1.5"
+                marker-end="url(#aG)"
+              />
+              <line
+                x1="565"
+                y1="148"
+                x2="593"
+                y2="212"
+                stroke="#737373"
+                stroke-width="1.5"
+                marker-end="url(#aG)"
+              />
+              <text x="491" y="187" font-size="10" fill="#666666">id only</text>
+              <text x="569" y="187" font-size="10" fill="#666666" text-anchor="end">id only</text>
+
+              <rect
+                x="384"
+                y="218"
+                width="122"
+                height="36"
+                rx="7"
+                fill="#ffffff"
+                stroke="#c9c9c9"
+              />
+              <text x="445" y="240" font-size="11.5" fill="#171717" text-anchor="middle">
+                Child A
+              </text>
+              <rect
+                x="554"
+                y="218"
+                width="122"
+                height="36"
+                rx="7"
+                fill="#ffffff"
+                stroke="#c9c9c9"
+              />
+              <text x="615" y="240" font-size="11.5" fill="#171717" text-anchor="middle">
+                Child B
+              </text>
+
+              <!-- children ask data layer directly -->
+              <line
+                x1="430"
+                y1="218"
+                x2="430"
+                y2="71"
+                stroke="#0070f3"
+                stroke-width="1.5"
+                marker-end="url(#aB)"
+              />
+              <line
+                x1="630"
+                y1="218"
+                x2="630"
+                y2="71"
+                stroke="#0070f3"
+                stroke-width="1.5"
+                marker-end="url(#aB)"
+              />
+              <text x="418" y="138" font-size="10" fill="#0068d6" text-anchor="end">
+                asks itself
+              </text>
+              <text x="642" y="138" font-size="10" fill="#0068d6">asks itself</text>
+
+              <rect
+                x="390"
+                y="280"
+                width="280"
+                height="86"
+                rx="8"
+                fill="#e7f5ee"
+                stroke="#2ea06d"
+                stroke-dasharray="4 3"
+              />
+              <text
+                x="530"
+                y="301"
+                font-size="10.5"
+                fill="#157a4c"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                When Child B's needs change:
+              </text>
+              <text x="530" y="319" font-size="10" fill="#2e7d5b" text-anchor="middle">
+                edit Child B. Done: 1 file
+              </text>
+              <text x="530" y="337" font-size="10" fill="#2e7d5b" text-anchor="middle">
+                Parent never re-renders for data it doesn't use
+              </text>
+              <text x="530" y="355" font-size="10" fill="#2e7d5b" text-anchor="middle">
+                children are portable - drop them anywhere
+              </text>
+            </svg>
+            <figcaption>
+              The same three components, wired two ways. Left: the parent fetches once and drills:
+              every requirement change touches three files. Right: children ask the data layer
+              themselves; the dedupe layer (<a href="13-dedupe-caching.html">§13</a>) collapses
+              their identical questions into one real request.
+            </figcaption>
+          </figure>
+
+          <h2 id="repetition">12.2 Repetition over dependency</h2>
+          <p>
+            The instinct that produces drilling is a good one:
+            <em>don't fetch the same thing twice</em>. For most of React's history, the only way to
+            honor it was to fetch once at the top and share downward. Hooks and context were the
+            first crack in that constraint; in Next, deduped fetches and cached functions remove it
+            entirely.
+            <strong
+              >It is better for two components to ask the same question independently than to be
+              wired together</strong
+            >, because the framework guarantees the question is only answered once per request.
+            <span class="chip chip-next">Next.js</span>
+            <span class="chip chip-very">Very important</span>
+          </p>
+
+          <div class="compare">
+            <div class="bad">
+              <div class="col-label">✕ Parent as data router</div>
+              <pre
+                class="code"
+              ><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
+  <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
+  <span class="tok-com">// This fetches the union of every child's needs.</span>
+  <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> <span class="tok-fn">getProgram</span>(id);
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">ProgramHeader</span>
+        <span class="tok-prop">name</span>={program.name}
+        <span class="tok-prop">status</span>={program.status}
+        <span class="tok-prop">sponsor</span>={program.sponsor} /&gt;
+      &lt;<span class="tok-fn">ProgramStats</span>
+        <span class="tok-prop">enrolled</span>={program.enrolledCount}
+        <span class="tok-prop">completed</span>={program.completedCount} /&gt;
+    &lt;/&gt;
+  );
+}
+<span class="tok-com">/* The Header needs one more field? Edit Header, Page,
+   and getProgram: three files, every time. */</span></pre>
+            </div>
+            <div class="good">
+              <div class="col-label">✓ Independent children, deduped data layer</div>
+              <pre
+                class="code"
+              ><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
+  <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
+  <span class="tok-com">// The only wire is identity.</span>
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">ProgramHeader</span> <span class="tok-prop">programId</span>={id} /&gt;
+      &lt;<span class="tok-fn">ProgramStats</span>  <span class="tok-prop">programId</span>={id} /&gt;
+    &lt;/&gt;
+  );
+}</pre>
+              <pre
+                class="code"
+              ><span class="filename">components/program/ProgramHeader.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramHeader</span>({ programId }) {
+  <span class="tok-com">/* It asks for itself; the dedupe layer
+     makes this free (§13). */</span>
+  <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> <span class="tok-fn">getProgram</span>(programId);
+  <span class="tok-kw">return</span> &lt;header&gt;{program.name} …&lt;/header&gt;;
+}</pre>
+            </div>
+          </div>
+          <p>
+            Both <code>ProgramHeader</code> and <code>ProgramStats</code> call
+            <code>getProgram(id)</code>; only one real request happens, because the data layer is
+            deduped (<a href="13-dedupe-caching.html">§13</a> covers the mechanics:
+            <code>cache()</code>, fetch dedupe, SWR keys). The page went from a data router back to
+            what it should be: structure. And each child is now <strong>portable</strong>: drop it
+            into any page, any parallel route, any dialog, hand it an id, and it works.
+          </p>
+
+          <div class="callout callout-info">
+            <div class="callout-title">This works on both sides of the boundary</div>
+            <p>
+              Server-side, independence is free via <code>React.cache()</code> and fetch dedupe.
+              Client-side, the same pattern holds with <code>useSWR</code>/React Query: two
+              components calling <code>useProgram(id)</code> share one cache entry and one request.
+              What you should <em>not</em> do is hand-roll it: a fetch in an effect has no dedupe
+              layer, so drilling becomes "necessary" again. The anti-patterns feed each other.
+            </p>
+          </div>
+
+          <h2 id="streaming">12.3 Independence changes how the page streams</h2>
+          <p>
+            Wiring isn't just a maintenance cost; it determines where your Suspense boundaries
+            <em>can go</em>. A boundary must sit above whatever awaits. If the parent fetches and
+            drills, the boundary is forced above the parent: the whole subtree is one all-or-nothing
+            unit, gated by its slowest request. If children fetch for themselves, each child gets
+            its own boundary inside the parent: the structure renders instantly and each region
+            streams in as its answer arrives.
+          </p>
+
+          <figure class="diagram">
+            <svg
+              viewBox="0 0 720 276"
+              xmlns="http://www.w3.org/2000/svg"
+              font-family="Inter, system-ui, sans-serif"
+            >
+              <text
+                x="170"
+                y="14"
+                font-size="12"
+                fill="#b3261e"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Parent fetches &amp; drills
+              </text>
+              <text
+                x="530"
+                y="14"
+                font-size="12"
+                fill="#157a4c"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Children fetch for themselves
+              </text>
+              <line x1="360" y1="2" x2="360" y2="274" stroke="#e0e0e0" />
+
+              <!-- LEFT -->
+              <rect
+                x="40"
+                y="32"
+                width="260"
+                height="212"
+                rx="9"
+                fill="#fdf3e3"
+                stroke="#b45309"
+                stroke-width="1.5"
+                stroke-dasharray="6 4"
+              />
+              <text x="170" y="54" font-size="11" fill="#8a5a00" text-anchor="middle">
+                ⏳ Suspense: forced above Parent
+              </text>
+              <rect x="60" y="68" width="220" height="160" rx="7" fill="#ffffff" stroke="#c9c9c9" />
+              <text x="170" y="90" font-size="11.5" fill="#171717" text-anchor="middle">
+                Parent (awaits everything)
+              </text>
+              <rect x="76" y="104" width="188" height="50" rx="6" fill="#fafafa" stroke="#d4d4d4" />
+              <text x="170" y="133" font-size="11" fill="#666666" text-anchor="middle">
+                Child A
+              </text>
+              <rect x="76" y="166" width="188" height="50" rx="6" fill="#fafafa" stroke="#d4d4d4" />
+              <text x="170" y="195" font-size="11" fill="#666666" text-anchor="middle">
+                Child B
+              </text>
+              <text x="170" y="268" font-size="10.5" fill="#b3261e" text-anchor="middle">
+                one unit · gated by the slowest fetch · all-or-nothing
+              </text>
+
+              <!-- RIGHT -->
+              <rect
+                x="420"
+                y="32"
+                width="220"
+                height="212"
+                rx="7"
+                fill="#ffffff"
+                stroke="#c9c9c9"
+              />
+              <text x="530" y="54" font-size="11.5" fill="#171717" text-anchor="middle">
+                Parent: renders instantly
+              </text>
+              <rect
+                x="436"
+                y="68"
+                width="188"
+                height="76"
+                rx="7"
+                fill="#fdf3e3"
+                stroke="#b45309"
+                stroke-width="1.5"
+                stroke-dasharray="5 4"
+              />
+              <text x="530" y="88" font-size="10.5" fill="#8a5a00" text-anchor="middle">
+                ⏳ Suspense
+              </text>
+              <rect x="448" y="96" width="164" height="38" rx="6" fill="#fafafa" stroke="#d4d4d4" />
+              <text x="530" y="119" font-size="11" fill="#171717" text-anchor="middle">
+                Child A: self-fetching
+              </text>
+              <rect
+                x="436"
+                y="156"
+                width="188"
+                height="76"
+                rx="7"
+                fill="#fdf3e3"
+                stroke="#b45309"
+                stroke-width="1.5"
+                stroke-dasharray="5 4"
+              />
+              <text x="530" y="176" font-size="10.5" fill="#8a5a00" text-anchor="middle">
+                ⏳ Suspense
+              </text>
+              <rect
+                x="448"
+                y="184"
+                width="164"
+                height="38"
+                rx="6"
+                fill="#fafafa"
+                stroke="#d4d4d4"
+              />
+              <text x="530" y="207" font-size="11" fill="#171717" text-anchor="middle">
+                Child B: self-fetching
+              </text>
+              <text x="530" y="268" font-size="10.5" fill="#2e7d5b" text-anchor="middle">
+                independent units · each streams when ready
+              </text>
+            </svg>
+            <figcaption>
+              Boundary placement follows the data. Drilled props force one big boundary above the
+              parent; self-fetching children let each region suspend (and stream) on its own. Full
+              treatment of boundary placement in
+              <a href="10-suspense-streaming.html" style="color: #0068d6">§10</a>.
+            </figcaption>
+          </figure>
+
+          <h2 id="callbacks">12.4 Callbacks up are wires too</h2>
+          <p>
+            Passing data down is half the coupling story; the other half is children reporting back
+            up. A callback prop that exists so a child can tell its parent "something changed,
+            please refetch/re-render" is a wire pointing the other direction, and it usually means
+            the coordination is happening at the wrong layer.
+            <strong>Communicate through shared infrastructure instead of through parents</strong>:
+            <span class="chip chip-react">React</span>
+            <span class="chip chip-critical">Critical</span>
+          </p>
+          <ul>
+            <li>
+              <strong>The URL</strong>: filters, tabs, selection, pagination. A filter bar that
+              calls <code>router.replace()</code> with new search params doesn't need to know a
+              table exists; the table re-renders because the page's inputs changed (<a
+                href="08-server-resolvable-state.html"
+                >§8</a
+              >).
+            </li>
+            <li>
+              <strong>Cache invalidation</strong>: after a mutation,
+              <code>revalidatePath</code>/<code>revalidateTag</code> on the server, or SWR/React
+              Query invalidation on the client. Every component reading that data updates, with no
+              parent orchestrating (<a href="13-dedupe-caching.html">§13</a>; the full mutation
+              cycle is drawn in <a href="05-client-server-boundaries.html#refresh">§5.8</a>).
+            </li>
+          </ul>
+          <p>
+            Concretely: the callback you will be tempted to add most often is
+            <code>onSuccess</code>: a mutation button reporting up so someone can refetch. Here is
+            the same button, wired and wireless:
+          </p>
+
+          <div class="compare">
+            <div class="bad">
+              <div class="col-label">✕ Reports up through a wire</div>
+              <pre
+                class="code"
+              ><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-com">/* The button must be handed a wire:
+   someone above must exist, must care,
+   and must never change shape. */</span>
+<span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({
+  programId,
+  onSuccess,
+}: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Button</span>
+      <span class="tok-prop">onClick</span>={<span class="tok-kw">async</span> () =&gt; {
+        <span class="tok-kw">await</span> <span class="tok-fn">publishProgram</span>(programId);
+        <span class="tok-fn">onSuccess</span>();
+      }}
+    &gt;
+      Publish
+    &lt;/<span class="tok-fn">Button</span>&gt;
+  );
+}</pre>
+            </div>
+            <div class="good">
+              <div class="col-label">✓ Invalidates the data's name</div>
+              <pre
+                class="code"
+              ><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-com">/* No wire: the mutation invalidates the
+   name the data lives under, and every
+   reader refires on its own. */</span>
+<span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({ programId }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Button</span>
+      <span class="tok-prop">onClick</span>={() =&gt;
+        <span class="tok-fn">startTransition</span>(<span class="tok-kw">async</span> () =&gt; {
+          <span class="tok-com">/* The action revalidates its
+             tag (§5.8); or, inside an
+             SWR island, mutate the key: */</span>
+          <span class="tok-kw">await</span> <span class="tok-fn">publishProgram</span>(programId);
+          <span class="tok-kw">await</span> <span class="tok-fn">mutate</span>(
+            [<span class="tok-str">"program"</span>, programId]
+          );
+        })
+      }
+    &gt;
+      Publish
+    &lt;/<span class="tok-fn">Button</span>&gt;
+  );
+}</pre>
+            </div>
+          </div>
+
+          <p>
+            The <em>name</em> (a cache tag, a search param, an SWR key) is the entire contract
+            between the leaf and its surroundings. This is deliberately the same
+            <code>PublishButton</code> as
+            <a href="05-client-server-boundaries.html#self-contained">§5.7</a>–<a
+              href="05-client-server-boundaries.html#refresh"
+              >§5.8</a
+            >: that chapter argues the pattern as <em>boundary placement</em> (the leaf is the only
+            client component, so the tree stays server), this one argues it as <em>wiring</em> (the
+            leaf holds zero references to its surroundings, so the tree stays decoupled). Same code,
+            two independent reasons it's right, and the two failures arrive together, too.
+          </p>
+          <p>
+            Which is worth saying explicitly: the God component (<a
+              href="05-client-server-boundaries.html#god-components"
+              >§5.9</a
+            >) is the maximal version of <em>this chapter's</em> failure as much as that one's. In
+            wire terms, a <code>useProgramsManager()</code> that returns nine things has nine wires
+            into every consumer; the tree stops being a tree of components and becomes a
+            distribution network for one object's shape. Every feature threads new props through
+            components that don't use them, every signature change ripples to every consumer. And
+            because that same hook says <code>"use client"</code> at the top, the wiring cost and
+            the boundary cost compound: the structure that couples everything is the structure that
+            client-renders everything.
+          </p>
+          <p>
+            Legitimate exceptions: genuinely local, ephemeral coordination: a form field telling its
+            form it changed, a listbox item telling its listbox it's highlighted. The test is
+            whether the two components form <em>one</em> composite widget with one responsibility,
+            or whether a callback is smuggling app-level data flow through the component tree.
+          </p>
+
+          <h2 id="rules">The rules</h2>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Rule</th>
+                <th>Scope</th>
+                <th>Importance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <strong>Never pass a child anything the parent doesn't itself need.</strong>
+                  Identity, slots, and parent-owned config are the exceptions.
+                </td>
+                <td><span class="chip chip-react">React</span></td>
+                <td><span class="chip chip-critical">Critical</span></td>
+              </tr>
+              <tr>
+                <td>
+                  Don't pass external data to children in parallel:
+                  <strong>let each child ask the deduped data layer itself</strong>.
+                </td>
+                <td><span class="chip chip-next">Next.js</span></td>
+                <td><span class="chip chip-very">Very important</span></td>
+              </tr>
+              <tr>
+                <td>Prefer <strong>repetition backed by dedupe</strong> over shared plumbing.</td>
+                <td><span class="chip chip-next">Next.js</span></td>
+                <td><span class="chip chip-very">Very important</span></td>
+              </tr>
+              <tr>
+                <td>
+                  App-level communication goes <strong>through the URL or the cache</strong>, not
+                  callbacks up the tree.
+                </td>
+                <td><span class="chip chip-react">React</span></td>
+                <td><span class="chip chip-critical">Critical</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Where to go deeper</div>
+            <p>
+              React 19 docs:
+              <a
+                href="https://react.dev/learn/passing-data-deeply-with-context"
+                target="_blank"
+                rel="noopener"
+                >Passing Data Deeply with Context</a
+              >
+              (including its "before you use context" checklist) ·
+              <a
+                href="https://react.dev/learn/you-might-not-need-an-effect"
+                target="_blank"
+                rel="noopener"
+                >You Might Not Need an Effect</a
+              >. Next.js docs:
+              <a
+                href="https://nextjs.org/docs/app/getting-started/server-and-client-components"
+                target="_blank"
+                rel="noopener"
+                >Server and Client Components</a
+              >
+              (composition patterns) ·
+              <a
+                href="https://nextjs.org/docs/app/api-reference/functions/revalidateTag"
+                target="_blank"
+                rel="noopener"
+                >revalidateTag</a
+              >. Full list in <a href="19-references.html">§19</a>.
+            </p>
+          </div>
+
+          <div id="pager"></div>
+        </div>
+      </main>
+    </div>
+    <script src="../assets/nav.js"></script>
+  </body>
+</html>

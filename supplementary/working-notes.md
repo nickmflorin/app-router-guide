@@ -1,0 +1,399 @@
+# Working Notes
+
+This document contains a checklist of content that should be added, modified, removed, or otherwise
+improved in the App Router Guide. It is a work in progress and will be updated as the guide evolves.
+
+Under no circumstances should anything in this document be automatically included in the guide until
+I explicitly ask for it. This is a working document for me to keep track of what needs to be done,
+and is not meant to be a comprehensive list of everything that needs to be done.
+
+At each step of the way, if I ask you to explicitly tackle one of the items (or multiple items) in
+this document, you should do so - and then follow back up by marking those items as completed in
+this document. If you are unsure about whether or not to tackle an item, please ask me for
+clarification before proceeding.
+
+## Design & Style
+
+- [ ] Reducing dead whitespace, particularly in diagrams.
+- [ ] less spacing under page header description
+- [ ] Sub sections for examples probably, better use of subsections maybe
+- [ ] Summary rules at the top for each page (i.e. a TL;DR section that says DOs and Donts) Can use
+      a dropdown/accordion style thing.
+- [ ] The how to read this document section should use alignment for pills and text.
+- [ ] Trying to use horizontal divider lines for tables and/or a light gray thin border around the
+      table area.
+- [ ] TODO-style widgets that I can embed directly in the HTML to mark things that need to be done
+      or inserted in place.
+- [ ] Any code snippet that shows a bad pattern should have a red x in the top right corner or left
+      corner whichever makes more sense, next to or in line with the file name. Same thing with good
+      patterns but with green check marks.
+- [ ] JSX in code blocks not always indented. Has additional space after { ...}
+- [ ] What earns a dynamic import, and what doesn't - section table should have horizontal lines
+      similar to other tables. All table should be consistently displayed. header styling, font,
+      colors, should all be consistent.
+
+## Random Tidbits
+
+- [ ] Further elaboration on how "use client" is a "last resort" and should be avoided as much as
+      possible. It is not a preference, it is a requirement for using React 19 and the App Router,
+      and deviation from that will make things very difficult. Treating everything that cannot be
+      rendered fully on the server as a COST that must be justified, not the other way around.
+- [ ] Benefits of SSR as a separate page where we also discuss HTTP middleman problem.
+- [ ] Use the table web app diagram for illustrating how to reserve space in the header/data table
+      view example.
+- [ ] Client side rendering seems simpler when we're not worried about the details. We're not
+      worried about janky/shifty loading experiences, fallback values that show skeletons that are
+      difficult to maintain over entire content areas, things appearing out of sync with others.
+      When you start talking about an application that looks good, feels good, is snappy, loads in
+      sequence, is fast, handles errors and loading states exhaustively, cleanly - it is infinitely
+      more complex if not impossible. We're not building a simple app with a few users, we should be
+      striving for an app with a production/professional level look and feel - things shouldn't be
+      flashing and shifting around, things should be loading in a way that is predictable and
+      understandable to the user.
+- [ ] diagram for callbacks are wires too section
+- [ ] How server first means that you sometimes have to break your components apart in a different
+      seemingly-awkward-at-first way. It means you have to separate the server from client parts.
+- [ ] Wholesale grid: the whole table waits - the left and right views should be aligned so that the
+      content area is the same height as the sub parts. same thing with the Wholesale: one fused
+      client component.
+- [ ] Containers live in the scaffold - section needs a diagram that shows the content inside the
+      layout changing when route changes but not the layout.
+
+## Page Content to Add or Modify
+
+### Dynamic Importing & Code Splitting
+
+The tasks in this section may make sense to be split into multiple existing pages/sections, if there
+is a seamless transition, but also it may make sense to treat dynamic importing and code splitting
+as a separate page/section that is referenced from other pages/sections. You should organize this
+content the best way you see fit but if you ever find yourself making assumptions please ask and
+confirm with me first.
+
+(Done 2026-07-17: this whole cluster became the new dedicated chapter §7 "Bundle Size & Code
+Splitting", per Nick. §7.2 the wholesale-component (MUI DataGrid) trap with a composed-table
+diagram; §7.3 heavyweight imports + ojl-tracker lazy tables + keeping fallbacks light; §7.4 barrel
+files defeat code splitting; §7.5 what bloated pages cost users and the team. Inserting §7
+renumbered every later chapter +1 (old §7-18 are now §8-19); nav, index, and all cross-refs were
+updated in the same pass. The remaining [N] items below in "Unorganized" (component breakdown /
+too-many-components-per-file) had their code-splitting angle covered in §7.4; their component-DESIGN
+angle is left for §14 Component Breakdown when it is written.)
+
+- [x] Explanation of why wholesale data grid's like MUI are problematic: The only thing that is not
+      yet known is the table body rows, everything else is known on first render. The table header,
+      the table body, the table footer - but we can't use Suspense just around the body rows, or
+      show a skeleton over just the body rows, because the data grid is whole sale. We also can't
+      defer the import of just the table rows, and immediately render the known content.
+- [x] Heavy weight components/imports discussion, mentioning MUI things and what we did in
+      ojl-tracker with the lazy data tables. Discussion of why fallback content should be minimal
+      and light. A separate page for fallback content and dynamic imports/code splitting.
+- [x] Zero index.ts barrel export files and importance. Might make more sense to put this in a
+      dedicated page for bundle size and code splitting.
+- [x] What bloated pages cause, what the effects are on the user, build times, etc.
+
+### Audit Page
+
+- [x] Modify the audit.md document to remove positive sentiment about the profile UI and focus on
+      the gaps, not the places where it's done right. Include an explanation that it is not meant to
+      be bashful but to highlight a problem that will only compound and get worse. (Done 2026-07-17:
+      portal-ui praise removed, kept only as neutral "choice, not constraint" feasibility evidence;
+      purpose + non-bashful sections added.)
+- [x] Incorporate the findings from the audit.md document into the HTML guide, including the
+      statements about how it is not meant to be bashful but to highlight a problem that will only
+      compound and get worse. (Done 2026-07-17: §16 written as the audit findings chapter; each
+      finding links to the chapter that owns the fix.)
+- [x] Please explain what the purpose of the page is and why the audit was being done in the first
+      place. (Done 2026-07-17: §16.1.)
+
+### Introduction Page
+
+(Done 2026-07-17: all of these were woven into §1. New "What this is, and why I wrote it" section
+covers the purpose, the ~90/10 stitching framing, the 2021 trial-and-error origin, the "treat use
+client like a type coercion" mindset callout, and the "can't cover everything, not a replacement for
+the docs" caveat. "Read the docs" was expanded with React-thorough-vs- Next-terse, read-both-docs,
+and patterns-emerge-then-the-terse-lines-click. The "everything assumes server-first" point was
+folded into the existing "Server-first is not optional" alert.)
+
+- [x] Include more information about what the purpose of this guide is and why it was created.
+- [x] Discuss how this document is approximately 90% stitching together sources from Next.js and
+      React, elaborating on and explaining in further detail what some of those things actually
+      mean, and 10% things that I have learned that work and don't work from trying to wrangle my
+      head around some of this stuff for a few years now. Next.js docs will say something really
+      important in a single phrase or sentence, and not elaborate on it. That's what I'm trying to
+      do here - explain what some of those things mean through more concrete examples and design
+      patterns.
+- [x] Tie the above together with a discussion based on this: If you treat every type coercion as
+      the worst possible thing in the world that must be solved and is not acceptable, you will get
+      really good at TypeScript. If you treat every 'use client' directive or use effect as the
+      worst possible thing in the world that should make you cringe and worry every time you see
+      it - you will get really good at the App Router - if not through nothing else other than trial
+      and error. If you treat it that way, and you try to avoid it like the plague, these design
+      patterns will start appearing - and so I'm trying to save ya'll some time by providing them up
+      front.
+- [x] Discuss how I started playing around with the app router back in 2021 and how I had a long,
+      painful journey of trial and error to figure out how to use it effectively. I want to save
+      others from that pain by providing a guide that explains the patterns and best practices that
+      I have learned over the years. I want to help others avoid the pitfalls that I encountered and
+      to help them build better applications with the app router.
+- [x] Discuss how the React 19 docs are relatively thorough, but how NextJS docs will mention some
+      really important concept in a single sentence hidden at the end of a paragraph and not
+      elaborate on it with the why, how or practical examples. Discuss how if you go through the
+      pain staking process of focusing on server-first thinking, and you force your brain to go down
+      those paths, using trial and error until you start getting it right - design patterns will
+      naturally start to emerge. Then, those design patterns you will see in other sources,
+      documents, or the things in the NextJS docs will start to make sense. This is what I am trying
+      to do in this guide - explain the why, how and practical examples of the things that are
+      mentioned in the NextJS docs so that you don't have to go through that painful process.
+- [x] Mention though that they will still have to go through that process but this will only help
+      make it less painful.
+- [x] Discuss how it is impossible to cover everything server-first or app router / react 19
+      specific in a single doc or tech collab - tie this together with the points on the page about
+      going and reading the docs themselves and trying to learn how to use the app router and react
+      19 effectively. This is a guide to help you understand the concepts and patterns, but it is
+      not a replacement for the docs or for your own learning and experimentation.
+- [x] Every single thing that NextJS and React 19 now do assumes that you are thinking along those
+      lines (i.e. the server-first mentality). If you are not, it won't work well. (In intro page
+      alert)
+- [x] Urging to not just read NextJS docs but also react 19 docs.
+
+### SSR
+
+- [ ] Elaborate on security and why it is better to ship HTML and not the JS that is used to
+      generate the HTML.
+- [ ] Elaborate on how with NextJS, the API is your HTML. The server returns HTML not the data that
+      is used to generate HTML.
+
+### Containing the Unknown
+
+- [ ] Extending examples of containers with loading states to also include empty states or other
+      feedback.
+- [ ] Discuss how skeletons should not be used to replace entire content unless that content is
+      fundamentally not known on first render. Things that can be rendered on the screen even if
+      data is still loading should always be on the screen (like Form inputs, buttons, etc.)
+- [ ]
+
+### Client Boundaries
+
+- [ ] Dealing with third-party UI libraries or internal UI packages. Internalization (ojl-tracker
+      concept).
+- [ ] Diagram or diagrams that show what it's like to ship just the HTML output of a lot of JS
+      files/dependencies vs shipping the dependencies themselves. How it relates to security.
+
+### Content Shifting
+
+- [ ] Diagram showing the flex and min height approach on a page, maybe with table and header.
+- [ ] Awaits pushed down - adding containers in the diagram showing the flex grow and reserved space
+      approach.
+- [ ] This is also a UX consideration - design should be aware of how things look different when
+      they are in an unknown state vs a known state vs a streaming state. It affects how pages and
+      views are laid out and structured. Engineers job to communicate these things with Design. Goal
+      is to minimize content shifting.
+- [ ] Examples of difficult patterns - two stacked tables.
+- [x] Loading, data and empty states as three different questions
+  - [ ] Talk about empty state flickering and use a diagram.
+
+### Signs You are Doing It Wrong
+
+This section should be organized so that some of the items are grouped together but also that for
+certain items that have exceptions, those exceptions should be noted in lighter gray text under the
+item itself. Every item should have a code example that shows the pattern that is being discussed.
+The goal is to have a checklist of things that you should be doing and not doing when using the App
+Router and React 19. Things that have don'ts should have "Do instead" or something similar sections.
+
+- [x] You are not constantly asking yourself why something can't be on the server. Or you are asking
+      yourself "how do I get this data to the component" instead of "why can't this be rendered on
+      the server"
+- [x] Adjust the intro that talks about the above to be more direct and less hand wavy - should
+      always be asking how far can I push this down.
+- [x] Have exceptions underneath the signs just so people know some are not always true.
+- [x] **Have a section that discussses question that we should repeatedly ask ourselves when we're
+      doing this stuff.**
+- [x] You have "use client" directives in the app directory.
+- [x] You are passing external data from a parent to multiple components in parallel
+- [x] You are passing external data to a child component when the parent does not need it. You are
+      passing ANYTHING to a child component that the parent does not need.
+- [x] You are performing mutations via NextJS API routes
+- [x] You are performing queries via NextJS API routes when the data does not need to be fetched for
+      the first time after an interaction occurs.
+- [x] You are putting a large number of components in a single file, esp in the app directory.
+- [x] You are managing tabs in state.
+- [x] You are importing very large client heavy packages on first render.
+- [x] You are importing anything that is not needed on first render without a dynamic boundary.
+- [x] You are unnecessarily communicating via callbacks up to a parent component. URL state, cache
+      invalidation, SWR, etc.
+- [x] You are fetching data inside of effects manually.
+- [x] You are letting a component show its own loading state.
+- [x] Your loading state includes a container that the suspended component sits inside of.
+- [x] Your suspended component includes a container.
+- [x] Your containers are not rendered immediately on the server and are not allocating an accurate
+      amount of space for fallback content and the actual component.
+- [x] You are using query parameters to manage content visibility on teh client
+- [x] You are reading query parameters and conditionally rendering based on them on the client.
+
+### Unorganized Content/Thoughts without A Home Yet
+
+(Done 2026-07-17: the caching/data-fetching cluster was folded into §13 Dedupe & Caching. §13.5 "How
+Next.js extends fetch" (per-request dedupe + Data Cache via next/cache options, and why blanket
+force-dynamic/no-store is costly); §13.6 "SWR, in more depth" (keys as identity, null keys,
+refreshInterval/dedupingInterval, revalidation triggers, mutate, stale-while-revalidate); §13.7
+"When client fetching is the right tool" (interaction-born data, dialogs/drawers, polling, with a
+load-on-open drawer example). The React-cache + SWR code both live in §13.2/§13.3/§13.6.)
+
+- [ ] Diagram for client vs server side routing in nextjs
+- [x] Should probably discuss use transitions at some point
+- [ ] General note about how client side stuff is always more complicated than backend because you
+      have user interactions and timing to worry about. Additional variables from user's network
+      connection, browser, speed, internet, firewalls, ad blockers. etc.
+- [ ] **Expanding on habits** you keep to include other things like prop drilling, dependent
+      components, containers and space allocation. Auth on the frontend.
+- [ ] Expand on "decouple the parts" so its also about allowing client boundaries to be pushed
+      further down and isolated inside of smaller more granular pieces.
+- [ ] Content about how Vercel and React are working together and how React 19 and app router have
+      been coming out in tandem. **ELABORATE ON THIS**
+- [x] Code example for React cache and SWR cache diagrams
+- [x] Suspense works for client components too!
+- [ ] Simplicity
+  - [ ] Backend vs. Client Side - backend is serial, you know what things are each step of the way.
+        You're not worried about user events, timing, network requests, latency, ad blockers, etc.
+- [ ] Benefits of SSR and how that relates to the various goals here.
+  - [ ] CONTENT SHIFTING **ELABORATE**
+  - [ ] Simplicity: Difficulty with timing and render blocking requests, nested spinners down
+        through the dom tree, spinners showing on top of spinners, etc. etc **Elaborate**
+  - [ ] Server should be source of truth - everything should point back to the server as much as it
+        can. **Elaborate**
+- [ ] Diagrams on portability
+- [x] How all of these things affect how we break components down. How components that are not pure
+      should be in dedicated files. Inclusion of things like code splitting and bundle size.
+- [x] Bundle Size & Code Splitting Dedicated Section?
+- [ ] Discussion of the nextjs page cache or html cached output and how that relates to the server
+      content that is maximized.
+- [ ] How CSR forces you to choose between using fallback values OR not revealing any content until
+      it's loaded. How complex that makes things. Examples with UserProfilePage and the height of
+      the text content. Maybe videos
+- [x] How NextJS manipulates `fetch`. This should likely be part of the discussion on deduplication
+      and caching.
+- [ ] Client components rendering server components.
+- [x] We need to talk about React's Transition API and how it's used, when to use it.
+- [x] SWR and `useSWR` discussed in way more depth. Might want to do this alongside of the dedupe
+      and caching content but also the content on when client side fetching is appropriate.
+- [ ] PORTABILITY and importance of portable components. Slot usages, how you can provide server
+      components to slots in client components. How you can provide client components to slots in
+      server components. Code examples, diagrams, etc.
+- [x] Server Actions
+  - [x] We need to talk more thoroughly about what server actions/server functions are, how they
+        actually work under the hood, and what the benefits are. We should also go on to discuss
+        what happens when HTTP middlemen are involved - where going through an HTTP layer means a
+        loss of end-to-end type safety and how it means that the surface area of errors that have to
+        be accounted for and handled is now much larger. We can use diagrams for this too. What I
+        mean by that is if we have a server function that uses something like Prisma directly, we
+        can immediately handle cases where the model with the ID does not exist, the user is not
+        allowed to access it, etc. separately and distinctly. When we add HTTP middlemen, we now
+        have to standardize and communicate those errors through the HTTP layer but also we have to
+        now account for things like network errors, timeouts, etc. The discussion should use the
+        direct Prisma access as an example, but also mention how the recraft pattern of funneling
+        through an API layer on the same app UI is not good because it adds a second HTTP layer that
+        things have to be handled through. The less middlemen the better - we should be using server
+        actions that talk to the APIs we have setup as separate services directly, rather than
+        proxying through NextJS API routes.
+  - [ ] The above needs to be expanded on more to include code snippets and direct prisma usage.
+  - [x] Server Functions (React)
+  - [x] Referencing docs in React 19
+  - [x] Forms & Actions
+  - [x] useFormStatus
+  - [x] useActionState
+  - [x] How they work under the hood
+  - [ ] What we lose when we go through HTTP middleman (Expand more on this)
+    - [x] Type Safety (end to end)
+    - [x] latency and speed
+    - [x] simplicity
+    - [x] Larger error surface of things that need to be handled, more difficult for consumer to
+          respond to errors based on specifics of what failed.
+- [x] Files that contain way too many components even if they are just used locally - discourages
+      proper code splitting and isolation of concerns, discourages decoupled components
+- [x] When CSR is generally the right tool (i.e. loading data in a dialog or drawer that is not part
+      of the main content of the page, etc.) diagrams and code examples.
+- [x] Client Waterfalls: Diagrams and code examples. We need to show better diagrams for this, maybe
+      using the full browser diagram view that we use on the goals page. Diagrams should show how to
+      avoid waterfalls and how to avoid them when they are unavoidable. Diagrams should show how to
+      avoid waterfalls when you have a lot of client components that are all trying to load data at
+      the same time.
+- [ ] Diagrams for Reserving space honestly similar to the web app diagram view (the diagram on the
+      goals page thesis section that shows the URL bar). Diagrams use arrows to show how content
+      expands to fill space and how it is reserved. Diagrams show how to reserve space for content
+      that is not known on first render. Diagrams show how to reserve space for content that is not
+      known on first render yet will eventually appear. **REVISIT AND IMPROVE**
+
+(Done 2026-07-17: remaining themes placed as follows. Transitions ("use transitions" / React's
+Transition API) -> §18.4 useTransition, expanded with the three canonical uses (expensive non-urgent
+updates, router/searchParams writes with no fallback, driving server-action pending). "Suspense
+works for client components too" -> a "Suspense is not server-only" callout on §10's triggers list.
+Client Waterfalls -> §11.4, a three-shapes timeline diagram (serial vs server-resolved vs
+parallel-client). Reserving-space diagrams -> §9.3, a before/after reserved-box diagram (fallback
+and content share one box, zero shift). The Server Actions cluster -> new §18.6 "Server actions and
+the HTTP middleman": how they work under the hood as typed RPC, a direct-vs-proxy diagram
+(Prisma-direct vs the recraft API-proxy antipattern, §17 finding 1), the
+type-safety/latency/error-surface cost, and the "fewer middlemen" principle; the form primitives
+useActionState/useFormStatus/Form stay in §18.2.) (Corrected 2026-07-17: the Server Actions /
+HTTP-middleman and Transitions deep discussions were first mis-placed inside §18 New Primitives; per
+Nick, §18 is a reference catalog only, so the in-depth content moved into the CORE flow: §5.10
+"Server actions and the HTTP middleman" (with the direct-vs-proxy diagram) and §10.7 "Transitions
+keep the old UI alive". §18 now holds only short reference entries that link out to those core
+sections.)
+
+- [ ] Transitions need to be expanded on more to include other use cases of deferring state updates.
+- [ ] The same three reads, three shapes - diagram needs to be better. It should incorporate an
+      understanding of how suspense can parallelize server reads and how the server reads are not
+      longer than the client ones.
+
+### Resources
+
+We need to organize an exhaustive set of resources for related content that we find in the official
+NextJS docs and React 19 docs.
+
+(Done 2026-07-17: §18 References now renders the full ledger from supplementary/references.md,
+grouped by source with per-source notes and § cross-links. The ledger keeps growing as chapters are
+written; §18 should be regenerated/extended whenever references.md changes.)
+
+### Primitives
+
+We need to organize a table/list/structure of the various primitives that are available to us in
+React 19 and NextJS. This should include descriptions of each and a code example, with links to the
+official docs for each.
+
+(Done 2026-07-17: §17 New Primitives written as a full catalog: a "map" summary table up top, then
+per-primitive entries with description, when-to-reach-for-it, code example, and official doc links.
+Facts verified against live docs 2026-07-17.)
+
+- [x] Form (NextJS)
+  - [x] Form action (both string-action navigation and function-action mutation forms)
+- [x] `useFormStatus` (React 19)
+- [x] `useDeferredValue` (React 19)
+- [x] `useTransition` (React 19)
+- [x] `useId` (React 19)
+- [x] `useServerAction` (React 19) (no hook by this name exists; covered as `useActionState`, the
+      React 19 replacement for react-dom's `useFormState`)
+- [x] `use` (React 19)
+- [x] `Activity` and `ViewTransition` (React 19) (Activity is stable; ViewTransition is
+      canary/experimental-only as of 2026-07-17 and is flagged "watch, don't adopt" in §17)
+- [x] `useEffectEvent` (React 19) (stable as of 19.2)
+- [x] `useSyncExternalStore` (React 19)
+- [x] React Compiler
+- [x] `cache` (short entry; full treatment stays in §12.2)
+- [x] `Profiler`
+- [x] `useOptimistic` (React 19)
+- [x] `useLinkStatus`
+
+```tsx
+export default function ReportsLayout({ children }) {
+  return (
+    {/* The column is exactly viewport height; the page never grows. */}
+    <div className="flex h-full max-h-full overflow-hidden flex-col">
+      <ReportsHeader />
+      {/* The content region takes the remainder and scrolls inside.
+          Whatever streams, loads, or grows in here, the frame holds. */}
+      <main className="min-h-0 grow overflow-y-auto">
+        {children}
+      </main>
+    </div>
+  );
+}
+```
