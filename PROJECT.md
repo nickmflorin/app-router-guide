@@ -186,14 +186,24 @@ home per technique + cross-references).
   note" in the top-right toolbar arms note mode; clicking any block (paragraph, diagram figure,
   code, table, callout, li, heading) opens a dialog; notes render as numbered amber gutter pins
   with a "Notes (n)" panel (jump/edit/resolve/delete). Storage: localStorage key `arg-notes-v1`;
-  "Save to file" writes `supplementary/page-notes.json` (File System Access API, download
+  "Save to file" writes `public/page-notes.json` (File System Access API, download
   fallback); "Load file" imports it back. THE CONTRACT: when Nick says "address my page notes" (or
-  similar), read `supplementary/page-notes.json`, act on every note with status "open", then set
+  similar), read `public/page-notes.json`, act on every note with status "open", then set
   its status to "resolved" and add a short `resolution` field describing what was done; Nick
   re-imports the file in the browser to clear the pins. Notes locate their target via
   content-inner child-index `path` with a text `snippet` fallback and a nearest-heading `anchor`
   for human context. The whole module (bottom of nav.js) + .draft-tools/.note-* CSS is removed
   when the guide ships.
+- **Notes ledger is APPEND-ONLY at `public/page-notes.json` (moved from supplementary/,
+  2026-07-18):** notes are never deleted, only marked resolved (stable ids). nav.js auto-fetches
+  the ledger on page load (dev server / any http origin) and reconciles: file-resolved notes stop
+  showing locally, unknown notes are imported. file:// cannot fetch, so the manual Load button
+  remains the fallback there. Claude resolves by setting status + resolution in the ledger; no
+  rebuild needed for resolutions to reach the browser.
+- **Code captions (per Nick, 2026-07-18):** summary-style commentary moves OUT of code snippets
+  into a <CodeCaption> right under the pre (styled like diagram figcaptions, .code-caption).
+  In-code comments stay for line-level explanation only. Applied first in §13.3; adopt gradually
+  wherever a snippet ends in a summary comment.
 - **NO EM DASHES, ever (per Nick, 2026-07-16).** The document must contain zero U+2014 characters.
   Use commas, colons, semicolons, parentheses, or split the sentence; plain hyphens are allowed
   where a compound or short-label separator reads naturally. En dashes (U+2013) for numeric ranges

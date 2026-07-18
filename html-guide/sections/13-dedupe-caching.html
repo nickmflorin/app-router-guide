@@ -110,20 +110,17 @@
     <text x="296" y="51" font-size="10.5" fill="#171717" text-anchor="middle">
       Breadcrumbs
     </text>
-    <text x="184" y="82" font-size="10" fill="#737373" text-anchor="middle">
-      each independently calls getProgram(42)
-    </text>
 
-    <path d="M 72 64 C 72 98, 130 106, 165 114" fill="none" stroke="#0070f3" stroke-width="1.5" marker-end="url(#aB2)"></path>
+    <path d="M 72 64 L 72 92 L 160 92 L 160 110" fill="none" stroke="#0070f3" stroke-width="1.5" marker-end="url(#aB2)"></path>
     <line x1="184" y1="64" x2="184" y2="110" stroke="#0070f3" stroke-width="1.5" marker-end="url(#aB2)"></line>
-    <path d="M 296 64 C 296 98, 238 106, 203 114" fill="none" stroke="#0070f3" stroke-width="1.5" marker-end="url(#aB2)"></path>
+    <path d="M 296 64 L 296 92 L 208 92 L 208 110" fill="none" stroke="#0070f3" stroke-width="1.5" marker-end="url(#aB2)"></path>
 
     <rect x="52" y="114" width="264" height="48" rx="8" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"></rect>
     <text x="184" y="134" font-size="11.5" fill="#0757ba" text-anchor="middle" font-weight="500">
       React.cache(): per-request memo
     </text>
     <text x="184" y="150" font-size="10" fill="#527dad" text-anchor="middle">
-      3 calls in, 1 execution out
+      getProgram(42) ×3 in, 1 execution out
     </text>
 
     <line x1="184" y1="162" x2="184" y2="200" stroke="#0070f3" stroke-width="1.5" marker-end="url(#aB2)"></line>
@@ -154,19 +151,16 @@
     <text x="629" y="51" font-size="10.5" fill="#171717" text-anchor="middle">
       ResultsBadge
     </text>
-    <text x="545" y="82" font-size="10" fill="#737373" text-anchor="middle">
-      each calls useProgram(42): same SWR key
-    </text>
 
-    <path d="M 461 64 C 461 98, 500 106, 522 114" fill="none" stroke="#0891b2" stroke-width="1.5" marker-end="url(#aC2)"></path>
-    <path d="M 629 64 C 629 98, 590 106, 568 114" fill="none" stroke="#0891b2" stroke-width="1.5" marker-end="url(#aC2)"></path>
+    <path d="M 461 64 L 461 92 L 517 92 L 517 110" fill="none" stroke="#0891b2" stroke-width="1.5" marker-end="url(#aC2)"></path>
+    <path d="M 629 64 L 629 92 L 573 92 L 573 110" fill="none" stroke="#0891b2" stroke-width="1.5" marker-end="url(#aC2)"></path>
 
     <rect x="410" y="114" width="270" height="48" rx="8" fill="#e0f5f9" stroke="#0891b2" stroke-width="1.5"></rect>
     <text x="545" y="134" font-size="11.5" fill="#0e7490" text-anchor="middle" font-weight="500">
       SWR cache, key: "programs/42"
     </text>
     <text x="545" y="150" font-size="10" fill="#3f8a99" text-anchor="middle">
-      one entry, shared · stale-while-revalidate
+      useProgram(42) ×2 in, 1 shared entry
     </text>
 
     <line x1="545" y1="162" x2="545" y2="290" stroke="#0891b2" stroke-width="1.5" marker-end="url(#aC2)"></line>
@@ -284,11 +278,13 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
     .<span class="tok-fn">then</span>(r =&gt; r.<span class="tok-fn">json</span>())
     .<span class="tok-fn">then</span>(setProgram)
     .<span class="tok-fn">finally</span>(() =&gt; <span class="tok-fn">setIsLoading</span>(<span class="tok-kw">false</span>));
-}, [id]);
-<span class="tok-com">/* Two components means two requests, two
-   loading states, two error paths, and
-   zero sharing. */</span></pre>
+}, [id]);</pre>
+<div class="code-caption">
   
+  Two components asking this way means two requests, two loading states, and
+  two error paths, with zero sharing between them.
+
+</div>
 
 </div>
 <div class="good">
@@ -300,11 +296,13 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
 
 <span class="tok-kw">export function</span> <span class="tok-fn">useProgram</span>(id: <span class="tok-fn">string</span>) {
   <span class="tok-kw">return</span> <span class="tok-fn">useSWR</span>&lt;<span class="tok-fn">Program</span>&gt;(<span class="tok-str">`programs/${id}`</span>, fetcher);
-}
-<span class="tok-com">/* Any number of components call this with
-   the same id: one cache entry, one request,
-   revalidated on focus, updated by mutate(). */</span></pre>
+}</pre>
+<div class="code-caption">
   
+  Any number of components can call this hook with the same id: one cache
+  entry, one request, revalidated on focus and updated by mutate().
+
+</div>
 
 </div>
 

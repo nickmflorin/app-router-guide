@@ -919,3 +919,17 @@ a.toc-row .soon {
 li > pre.code {
   margin: 10px 0 4px;
 }
+
+/* ---------- code captions ---------- */
+/* The code counterpart of a diagram's figcaption: formal prose right under
+   a pre.code, replacing summary-style comments inside the snippet. */
+.code-caption {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: -6px 2px 16px;
+}
+.compare .code-caption {
+  margin-top: 8px;
+  margin-bottom: 4px;
+}

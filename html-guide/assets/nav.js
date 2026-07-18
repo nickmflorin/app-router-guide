@@ -601,6 +601,52 @@ const TOC = [
     input.click();
   }
 
+  /* ---------- auto-sync from the notes ledger on page load ----------
+     public/page-notes.json is APPEND-ONLY: notes are never deleted, only
+     marked resolved (each carries a stable id). On load we fetch it and
+     reconcile: a note resolved in the file stops showing here, and open
+     notes from other pages/machines are imported. fetch() is unavailable
+     under file:// (use the Load button there); on the dev server this makes
+     resolution fully automatic. */
+  async function syncFromFile() {
+    try {
+      const url = location.pathname.includes('/sections/')
+        ? '../page-notes.json'
+        : 'page-notes.json';
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) return;
+      const d = await res.json();
+      if (!d || !Array.isArray(d.notes)) return;
+      const fileById = {};
+      d.notes.forEach(n => {
+        fileById[n.id] = n;
+      });
+      let changed = false;
+      data.notes.forEach(n => {
+        const f = fileById[n.id];
+        if (f && f.status === 'resolved' && n.status !== 'resolved') {
+          n.status = 'resolved';
+          if (f.resolution) n.resolution = f.resolution;
+          changed = true;
+        }
+      });
+      d.notes.forEach(n => {
+        if (!data.notes.some(x => x.id === n.id)) {
+          data.notes.push(n);
+          changed = true;
+        }
+      });
+      if (changed) {
+        persist();
+        renderPins();
+        renderPanel();
+      }
+    } catch (e) {
+      /* No server (file://) or no ledger yet: manual Load still works. */
+    }
+  }
+  syncFromFile();
+
   /* Initial render, after fonts/layout settle. */
   renderPins();
   window.addEventListener('load', () => setTimeout(renderPins, 250));

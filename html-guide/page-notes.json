@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-07-18T15:16:45.662809+00:00",
+  "updatedAt": "2026-07-18T15:22:47.587Z",
   "notes": [
     {
       "id": "nmrpnee5v",
       "page": "07-bundle-size-code-splitting.html",
       "ts": "2026-07-18T00:48:10.291Z",
-      "status": "resolved",
+      "status": "open",
       "text": "In diagrams like this, the content should try to be aligned when it is showing things that are larger subsets of others, or replacements of others.  Here, the spacing between page header, toolbar, column headers, all of that should be the same - and the text should be vertically aligned for the single row tiles (column headers looks like its shoved down in the blue tile a pixel or two).  But, the sum of Page header + mui data grid on the left should have the same heiht as all the small pieces on the right (if that makes sense).  Keep things aligned - the footer's bottom point should matc hthe bottom point on the left of mui data grid",
       "target": {
         "anchor": "wholesale",
@@ -14,14 +14,13 @@
         ],
         "tag": "figure",
         "snippet": "Wholesale grid: the whole table waits Composed: only the rows wait app.craft.com/reports/h"
-      },
-      "resolution": "Browser-frame diagram re-gridded: right column now uniform 26px tiles with uniform 8px gaps; all single-row tile texts vertically centered (dominant-baseline central); left header+DataGrid total now ends at y=294 exactly matching the right footer bottom."
+      }
     },
     {
       "id": "nmrpnfyss",
       "page": "07-bundle-size-code-splitting.html",
       "ts": "2026-07-18T00:49:23.692Z",
-      "status": "resolved",
+      "status": "open",
       "text": "same alignment comment as the comment on the diagram below.  Also - lets shrink the text of the top line of diagrams like Composed: ... or Wholesale... across all diagrams in the app.  Not much, maybe 1 pixel less",
       "target": {
         "anchor": "wholesale",
@@ -30,14 +29,13 @@
         ],
         "tag": "figure",
         "snippet": "Wholesale: one fused client component Composed: known frame, unknown rows MUI DataGrid (on"
-      },
-      "resolution": "Stack diagram aligned the same way (uniform 32px tiles, 6px gaps, both columns end at 244; zone labels centered). Panel titles shrunk 1px guide-wide: 34 titles across 11 chapters, 12->11 and 11.5->10.5; convention updated in PROJECT.md."
+      }
     },
     {
       "id": "nmrqhvkzs",
       "page": "10-suspense-streaming.html",
       "ts": "2026-07-18T15:01:20.776Z",
-      "status": "resolved",
+      "status": "open",
       "text": "For these examples, I would also like to show an example with the useDeferredValue (i.e. client rendered third bullet).  Is it possible to create two sub-sections of this section, each named Example: ... and Example: ..., and the code snippets live under each sub section?  This helps the user understand which bullet point the example is referring to.  Note that we do not need to use an example for client fetched data, just the first and third bullets",
       "target": {
         "anchor": "refetch",
@@ -46,14 +44,13 @@
         ],
         "tag": "pre",
         "snippet": "app/reports/page.tsx - server: the URL is the inputexport default async function Page({ se"
-      },
-      "resolution": "Split into two h3 subsections: \"Example: URL-driven server UI, kept stale through a transition\" (existing end-to-end code) and \"Example: client-rendered results of a fast-changing value\" (new useDeferredValue ProgramFilter example with dim-on-stale). Bullets now link to their example; the client-fetched bullet notes why it needs no example."
+      }
     },
     {
       "id": "nmrqhy3wg",
       "page": "10-suspense-streaming.html",
       "ts": "2026-07-18T15:03:18.592Z",
-      "status": "resolved",
+      "status": "open",
       "text": "One thing I've been noticing a lot is that the treatment of '{' characters seems to be causing weird spacing issues in the diagrams.  Here, the fallback definition reads like this \"fallback={      <Loading /> }>\" (note all the extra spaces before the <).  Additionally, the lines are not properly indented on any of the panels in this diagram.  Suspense should be indented 2 spaces from the previous lines start, Page should not be indented as far inwards as it is, Error Boundary should be indented 2 spaces since it is inside of Layout, etc.  On the left, the return statements should be indented two spaces.",
       "target": {
         "anchor": "streaming",
@@ -62,14 +59,13 @@
         ],
         "tag": "figure",
         "snippet": "loading.tsx export default function Loading() { return <PageScaffoldSkeleton />; } error.t"
-      },
-      "resolution": "Boundary-tree diagram rebuilt: proper 2-space nesting ladder (Layout / ErrorBoundary / Suspense / Page and mirrored closers), pills tightened against the fallback= braces so no phantom spacing remains, file-card return statements indented two spaces, elbow arrows extended to the indented rows."
+      }
     },
     {
       "id": "nmrqhzng8",
       "page": "10-suspense-streaming.html",
       "ts": "2026-07-18T15:04:30.584Z",
-      "status": "resolved",
+      "status": "open",
       "text": "that owns its own spinner or skeleton - or just please generalize it as \"owns its own loading indicator\"",
       "target": {
         "anchor": "no-own-loading",
@@ -78,14 +74,13 @@
         ],
         "tag": "p",
         "snippet": "React Critical A component that renders its own spinner has made three decisions it has no"
-      },
-      "resolution": "Generalized to \"owns its own loading indicator, whether that's a spinner, a skeleton, or any other placeholder\"."
+      }
     },
     {
       "id": "nmrqi0xfo",
       "page": "10-suspense-streaming.html",
       "ts": "2026-07-18T15:05:30.180Z",
-      "status": "resolved",
+      "status": "open",
       "text": "For each of these bullet points, can we include a short, nested code snippet underneath the bullet that shows what it means?  The code snippets should be left aligned with the text after hte bullet, not the bullet itself.",
       "target": {
         "anchor": "triggers",
@@ -95,8 +90,39 @@
         ],
         "tag": "li",
         "snippet": "An async server component awaiting inside the boundary: the canonical App Router case. The"
-      },
-      "resolution": "Each of the five trigger bullets now carries a short nested code snippet (async server component, use(promise), suspense-enabled hooks, dynamic import, useSearchParams), aligned with the bullet text via a new li > pre.code rule."
+      }
+    },
+    {
+      "id": "nmrqicvnl",
+      "page": "13-dedupe-caching.html",
+      "ts": "2026-07-18T15:14:47.745Z",
+      "status": "open",
+      "text": "The curved arrows in this diagram have heads that extend too close to the tile they are referencing or pointing at causing the head to get partially clipped.  Can we instead use arrows that are segmented so the lines are always at intervals of 90 degrees, and the segmented arrows can - for instance - go down a tad, then right a tad, then back down pointing at the tile without a curve?  I would also like to try to do this in a way that would allow us to prevent the text from appearing on top of the arrows - \"each independently calls...\" for instance is hard to read because it appears on top of/under neath arrows that makes the text not legible when they intersect.",
+      "target": {
+        "anchor": "layers",
+        "path": [
+          6
+        ],
+        "tag": "figure",
+        "snippet": "Server: during one request Client: during one session Header Stats Breadcrumbs each indepe"
+      }
+    },
+    {
+      "id": "nmrqieebr",
+      "page": "13-dedupe-caching.html",
+      "ts": "2026-07-18T15:15:58.599Z",
+      "status": "open",
+      "text": "For this diagram the diagram on the right, can we start using a concept of \"captions\" for code snippets?  Similar to captions on diagrams?  And take the comments that are in the code snippet and move it to a caption that is more formally written and clearer?  The caption should be separate for left and right snippets not 1 caption for both.",
+      "target": {
+        "anchor": "client",
+        "path": [
+          17,
+          0,
+          1
+        ],
+        "tag": "pre",
+        "snippet": "every component, separately\"use client\";const [program, setProgram] = useState(null);const"
+      }
     }
   ]
 }
