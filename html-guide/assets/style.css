@@ -267,6 +267,12 @@ code {
   background: #f2f2f2;
   border-color: #e0e0e0;
 }
+/* general UI/UX practice, not tied to React or Next */
+.chip-ux {
+  color: var(--purple);
+  background: var(--purple-soft);
+  border-color: #ddc9f7;
+}
 /* importance metric */
 .chip-critical {
   color: var(--red);

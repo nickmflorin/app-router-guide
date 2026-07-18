@@ -28,20 +28,11 @@
   renders, and exactly where the old instincts betray you.
 </p>
 <p>
-  One thing to understand before the mechanics: <strong>React 19 and the App Router are
-  deeply opinionated, and the App Router more so.</strong> Not opinionated for its own
-  sake; opinionated because these are complex systems, and
-  <strong>complex systems only deliver their guarantees when they can make assumptions
-  about how you use them</strong>. The compiler can only optimize components that follow
-  the rules of React. The router can only cache and stream what the server rendered. The
-  boundary between server and client only pays off if it sits where the platform expects
-  it. Every deviation from how the platform wants something done makes the machinery less
-  effective, and past a point, <strong>actively destructive</strong>: the framework starts
-  working against you, re-fetching what it would have cached, blocking what it would have
-  streamed, shipping what it would have kept on the server.
-  <strong>The opinions are the price of the guarantees.</strong> Accept them and the
-  system does enormous amounts of work on your behalf; fight them and you get the worst of
-  both worlds.
+  And carry in the warning from
+  <a href="01-introduction.html#dont-fight">Chapter 1</a>: these are deeply opinionated
+  systems, and <strong>the opinions are the price of the guarantees</strong>. What
+  follows is not a style this guide happens to prefer. It is the model the platform's
+  machinery assumes, and every deviation from it costs you some of the machinery.
 </p>
 
 <div class="callout callout-voice">

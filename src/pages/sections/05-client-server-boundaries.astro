@@ -739,6 +739,22 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
 </CompareCol>
 </Compare>
 <p>
+  One behavior of this composition is worth being explicit about:
+  <strong><code>ActivityFeed</code> fetches its data when the page loads, whether or not
+  the section is open.</strong> The server renders every child passed through the shell
+  during the page's render; <code>&#123;open &amp;&amp; children&#125;</code> only controls
+  whether the already-rendered HTML is <em>displayed</em>. Collapsed by default changes
+  nothing: the fetch already happened on the server. Usually that is exactly what you
+  want (opening the section is instant, no spinner), and the cost is one possibly-unused
+  query. But if the requirement is that the fetch must <em>not run until the user opens
+  the section</em>, because the query is expensive or rarely wanted, then by definition
+  the data is being requested in response to an interaction, and interaction-driven
+  fetching is client-side fetching: a client component that queries on open (SWR,
+  <a href="14-dedupe-caching.html#swr-depth">§14.6</a>) behind the same shell. That is a
+  legitimate trade, but make it deliberately: you are exchanging an instant open for a
+  loading state the container now has to absorb.
+</p>
+<p>
   This slot pattern is the workhorse for every interactive shell: dialogs, sheets, tabs,
   accordions, tooltips, hover cards. The shell owns open/closed and nothing else; what's
   <em>inside</em> keeps all its server privileges. It's also the answer to context

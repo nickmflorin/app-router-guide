@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-18T19:38:26.029690+00:00",
+  "updatedAt": "2026-07-18T22:29:57.193528+00:00",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -637,6 +637,186 @@
         "snippet": "The same three reads, three shapes Client waterfall profile org id dashboard 3 serial roun"
       },
       "resolution": "Timeline reworked: row gaps tightened from ~36px to 20px; the axis labels moved below the axis line with clearance from the last row; the server segment is now the same length as one client round trip (the dependent reads become in-datacenter hops, so its length matched the parallel case, not exceeded it); and a fourth scenario was added, \"Parallel server (one Suspense per region)\", showing three parallel server queries each streaming into its own boundary. Title and caption updated to \"four shapes\"."
+    },
+    {
+      "id": "nmrqrkejz",
+      "page": "10-suspense-streaming.html",
+      "ts": "2026-07-18T19:32:35.375Z",
+      "status": "resolved",
+      "text": "the text that starst with \"each region swaps in as its ready...\" is too close to the edge of the \"chunk: table\" block.  Please try to use more consistent spacing and push it right a little bit",
+      "target": {
+        "anchor": "streaming",
+        "path": [
+          14
+        ],
+        "tag": "figure",
+        "snippet": "Blocking SSR: response waits for the slowest fetch fetch program (fast) fetch report rows "
+      },
+      "resolution": "Both annotation lines now share one left edge at x=524 (14px clear of the chunk: table block, previously 4px and misaligned); the second line was tightened to keep it inside the canvas."
+    },
+    {
+      "id": "nmrqrszqm",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-18T19:39:16.078Z",
+      "status": "resolved",
+      "text": "please add a paragraph or context before/after these code snippets that explains that the activity feed will still fetch its data when the main page loads even though it's not visible yet.  If the desire is for that fetch to wait until it is visible, it means the data needs to be fetched after an interaction - which requires CSR.",
+      "target": {
+        "anchor": "children-pattern",
+        "path": [
+          20,
+          1,
+          1,
+          0
+        ],
+        "tag": "pre",
+        "snippet": "CollapsibleSection.tsx: client shell, knows nothing\"use client\";export function Collapsibl"
+      },
+      "resolution": "New paragraph right after the compare: the server renders every child passed through the shell during the page render, so ActivityFeed fetches on page load whether or not the section is open ({open && children} only controls display). If the fetch must wait for the open interaction, that is by definition interaction-driven fetching, i.e. client-side fetching (SWR, section 14.6) behind the same shell, trading the instant open for a loading state."
+    },
+    {
+      "id": "nmrqrx9g7",
+      "page": "03-mental-model.html",
+      "ts": "2026-07-18T19:42:35.287Z",
+      "status": "resolved",
+      "text": "this might make more sense on the introduction page under dont fight the framework?  Or at least maybe split up between the two pages",
+      "target": {
+        "anchor": null,
+        "path": [
+          4
+        ],
+        "tag": "p",
+        "snippet": "One thing to understand before the mechanics: React 19 and the App Router are deeply opini"
+      },
+      "resolution": "Split as suggested: the full opinionated argument (complex systems, assumptions, guarantees, deviations turning destructive, \"the opinions are the price of the guarantees\") moved into section 1 under \"Don't fight the framework\"; section 3 keeps a two-sentence bridge linking back to it (\"What follows is not a style this guide happens to prefer...\")."
+    },
+    {
+      "id": "nmrqrzsei",
+      "page": "13-dedupe-caching.html",
+      "ts": "2026-07-18T19:44:33.162Z",
+      "status": "resolved",
+      "text": "we should add content here that discusses why SWR is more favorable than tanstack's use query - its because it is designed specifically for nextjs.  please also do some research to compare the two yourself",
+      "target": {
+        "anchor": "extends-fetch",
+        "path": [
+          25
+        ],
+        "tag": "h2",
+        "snippet": "13.6 SWR, in more depth"
+      },
+      "resolution": "New subsection \"Why SWR and not TanStack Query\" in 14.6, researched against current comparisons: honest ledger first (TanStack more popular ~12M vs ~8M weekly downloads, more powerful: useMutation with rollback, invalidation primitives, infinite queries, devtools), then the architectural argument (our client cache's job is deliberately small because the server layer owns first-paint data/mutations/optimism, so SWR's ~4KB covers what remains vs ~13KB), then alignment (SWR is built by Vercel, defaults designed against the App Router, used in the Next docs' own examples)."
+    },
+    {
+      "id": "nmrqxau6y",
+      "page": "11-designing-for-the-unknown.html",
+      "ts": "2026-07-18T22:13:06.778Z",
+      "status": "resolved",
+      "text": "we don't need to write this as if it is an instruction on how to talk to design.  our engineers know how to talk to design and UX.  The point this doc should be making is that it's someting we HAVE To be talking to them about to begin with.  We should be identifying those places where the design introduces content that is hard to contain earlier on, so that we can start designing the UX in a way where it is predictable and more static across the board, current and future.",
+      "target": {
+        "anchor": "shared-goal",
+        "path": [
+          6,
+          1
+        ],
+        "tag": "p",
+        "snippet": "Never \"this design has CLS problems.\" Instead: \"walk me through what this page shows while"
+      },
+      "resolution": "Reframed 11.1 away from \"how to talk to design\": CLS is now introduced as the engineering measurement of a shared goal whose causes live in composition decisions, so the goal cannot be owned by one team; the point is that the conversation must exist at all, identifying hard-to-contain compositions while the design is still a design, so the UX drifts toward layouts that are stable by default, current and future. Callout replaced with \"What the channel is for\" (what each side brings)."
+    },
+    {
+      "id": "nmrqxcoy6",
+      "page": "11-designing-for-the-unknown.html",
+      "ts": "2026-07-18T22:14:33.294Z",
+      "status": "resolved",
+      "text": "Sometimes our figma comps do include empty states.  The problem is that they show empty states as if they are the same size as the content was when the figma had data in it - but not an empty state or consideration for cases where its flipping between that empty state and a data view where there is just 1 row, for instance, or 300 rows.  In other words, it's often the case that the comp will include a view with 8 data points, showing the 8 data points in a container that has a random height constraint and isn't thinking about what happens when that height constraint is not known or is pushing other content around.  We don't know how big the view should be to show the empty state if we don't know how many rows or data points there are - and we will never know how many rows or data points there are so we have t ofigure out how to swap both states in a way where it doesn't push everything else around.",
+      "target": {
+        "anchor": "happy-path",
+        "path": [
+          8
+        ],
+        "tag": "p",
+        "snippet": "A Figma comp is a snapshot of exactly one state: the happy path. The data has arrived, eve"
+      },
+      "resolution": "Added the subtler-version paragraph to 11.2: comps often DO mock the empty state, but drawn at the size the container had with the artboard's sample rows (a height that was an artifact of the data, not a decision), and never the page flipping between empty / 1 row / 300 rows; since the count is permanently unknowable ahead of time, the real question is how all states swap through the same space without pushing everything around."
+    },
+    {
+      "id": "nmrqxhdbo",
+      "page": "11-designing-for-the-unknown.html",
+      "ts": "2026-07-18T22:18:11.508Z",
+      "status": "resolved",
+      "text": "I'm not sure the NextJS scope works here - maybe we should have a new scope for general UI/UX?",
+      "target": {
+        "anchor": "rules",
+        "path": [
+          32
+        ],
+        "tag": "table",
+        "snippet": "Rule Scope Importance Translate the goal for design: \"the page must not move under the use"
+      },
+      "resolution": "Added a new scope chip: UI/UX (purple, chip-ux, Chip k=\"ux\") and applied it to all five rules in the chapter; available guide-wide for future general UI/UX practices."
+    },
+    {
+      "id": "nmrqxi7ww",
+      "page": "11-designing-for-the-unknown.html",
+      "ts": "2026-07-18T22:18:51.152Z",
+      "status": "resolved",
+      "text": "lets not be talking like the designers are idiots.  we should be talking more from the point of view of these are communication channels we need to open in both directions, and as we keep doing that, ti will become more natural on both sides - engineers will start thinking about it more and bringing it up more and ux will start anticipating those situations more as well",
+      "target": {
+        "anchor": "happy-path",
+        "path": [
+          11
+        ],
+        "tag": "p",
+        "snippet": "A designer who has been asked these questions three times starts asking them without us. T"
+      },
+      "resolution": "Rewrote the closing of 11.2 as a two-way channel that becomes natural on both sides with use: engineers start noticing containment problems in mocks reflexively, UX starts anticipating unknown-size states in the compositions themselves; the deliverable is both teams thinking in states by default."
+    },
+    {
+      "id": "nmrqxj9qg",
+      "page": "11-designing-for-the-unknown.html",
+      "ts": "2026-07-18T22:19:40.168Z",
+      "status": "resolved",
+      "text": "not \"the canonical hard case\" should be \"a common hard case\" or something like that.",
+      "target": {
+        "anchor": "stacked-tables",
+        "path": [
+          13
+        ],
+        "tag": "p",
+        "snippet": "Here is the canonical hard case, and it looks completely innocent in a comp: two tables st"
+      },
+      "resolution": "\"The canonical hard case\" is now \"a common hard case\"."
+    },
+    {
+      "id": "nmrqxkekk",
+      "page": "11-designing-for-the-unknown.html",
+      "ts": "2026-07-18T22:20:33.092Z",
+      "status": "resolved",
+      "text": "lets include a third guess that says the tables should just be auto height - which means that the table bodies won't be contained and won't scroll but the entire content area surrounding the tables and likely the page will scroll, and it also means that the content will push each other around similar to guess 2",
+      "target": {
+        "anchor": "stacked-tables",
+        "path": [
+          16
+        ],
+        "tag": "figure",
+        "snippet": "Guess 2: content-sized with a min-height - the top table shoves the bottom one Assignments"
+      },
+      "resolution": "Added Guess 3 to the failure walk: auto-height tables mean the bodies are never contained and never scroll, the page becomes the scroll container, the shift matches Guess 2 plus the page length itself is data-dependent and the scrollbar jumps as each table resolves; \"auto-height is not a neutral default; it is a decision to let the data lay out the page.\""
+    },
+    {
+      "id": "nmrqxmjul",
+      "page": "11-designing-for-the-unknown.html",
+      "ts": "2026-07-18T22:22:13.245Z",
+      "status": "resolved",
+      "text": "again, the first rule is not us telling design to reduce CLS - we know not to say that, it's more of just a general open the communication channels rule so that we are communicating with them and vice versa about these things",
+      "target": {
+        "anchor": "rules",
+        "path": [
+          32
+        ],
+        "tag": "table",
+        "snippet": "Rule Scope Importance Translate the goal for design: \"the page must not move under the use"
+      },
+      "resolution": "First rule rewritten from the \"translate for design\" instruction to the channel rule: \"Keep the engineering/UX channel open, in both directions: containment concerns surface while a design is still a design, not after the layout is built\" (Critical, UI/UX scope)."
     }
   ]
 }

@@ -32,6 +32,21 @@
   hand-roll worse solutions to them.
 </p>
 <p>
+  The reason to work with the model is not deference; it is mechanics.
+  <strong>React 19 and the App Router are deeply opinionated, and the App Router more
+  so.</strong> Not opinionated for their own sake; opinionated because these are complex
+  systems, and
+  <strong>complex systems only deliver their guarantees when they can make assumptions
+  about how you use them</strong>. The compiler can only optimize components that follow
+  the rules of React. The router can only cache and stream what the server rendered. The
+  boundary between server and client only pays off if it sits where the platform expects
+  it. Every deviation from how the platform wants something done makes the machinery less
+  effective, and past a point, <strong>actively destructive</strong>: the framework
+  starts working against you, re-fetching what it would have cached, blocking what it
+  would have streamed, shipping what it would have kept on the server.
+  <strong>The opinions are the price of the guarantees.</strong>
+</p>
+<p>
   That is the trap this guide exists to keep us out of. The patterns we've all
   internalized from years of traditional React (fetch in an effect, hold it in state, show
   a spinner, lift state up, pass callbacks down) are not neutral habits that happen to be

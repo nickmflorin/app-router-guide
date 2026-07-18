@@ -633,6 +633,43 @@ Both sides of the boundary have a dedupe stack. Server: any number of components
   action-driven writes.
 </p>
 
+<h3 id="swr-vs-query">Why SWR and not TanStack Query</h3>
+<p>
+  The honest comparison first, because TanStack Query is an excellent library and the
+  more popular one (roughly 12 million weekly downloads to SWR's 8 as of this writing,
+  and growing faster). It is also the more <em>powerful</em> one: a dedicated
+  <code>useMutation</code> hook with built-in optimistic updates and rollback, query
+  invalidation primitives, infinite-query and pagination helpers, and first-class
+  devtools. If we were building a client-heavy app where the browser cache <em>is</em>
+  the data layer, TanStack Query would be the stronger tool, and general-audience
+  comparisons rightly recommend it as the default for that world.
+</p>
+<p>
+  We are not building that app, and that is the whole argument.
+  <Chip k="next" />
+  <Chip k="very" /> In this architecture the client
+  cache's job is deliberately small: the server layer owns first-paint data, mutations
+  flow through server actions with <code>revalidateTag</code>
+  (<a href="05-client-server-boundaries.html#server-actions">§5.8</a>), and optimism is
+  <code>useOptimistic</code>. What remains for a client library (<a href="#when-client"
+  >§14.7</a>'s interaction-born, on-demand, and polling cases) is exactly the surface SWR
+  covers, in about 4&nbsp;KB gzipped against TanStack Query's ~13&nbsp;KB, which matters
+  under <a href="07-bundle-size-code-splitting.html">§7</a>'s budget thinking. TanStack
+  Query's extra machinery would mostly duplicate responsibilities the server layer
+  already owns.
+</p>
+<p>
+  The tiebreaker is alignment.
+  <a href="https://swr.vercel.app" target="_blank" rel="noopener">SWR</a> is built and
+  maintained by Vercel, the same team that ships Next.js: its defaults are designed
+  against the App Router's behavior, its releases track Next's, and the Next.js docs use
+  it in their own client-fetching examples. When the framework and the cache library
+  share an owner, the seams between them are somebody's job to keep smooth. Choosing
+  <a href="https://tanstack.com/query/latest" target="_blank" rel="noopener">TanStack
+  Query</a> here would buy capabilities this architecture works to make unnecessary, at
+  three times the bundle weight and with one more vendor's opinions in the mix.
+</p>
+
 <h2 id="when-client">14.7 When client fetching is the right tool</h2>
 <p>
   Server-first does not mean the client never fetches. It means client fetching is a

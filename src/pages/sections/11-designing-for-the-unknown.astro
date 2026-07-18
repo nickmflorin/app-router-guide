@@ -18,36 +18,39 @@ import Diagram from '../../components/Diagram.astro';
   together what the page does while the data is still unknown.
 </p>
 
-<h2 id="shared-goal">11.1 Stability is a shared goal, not an engineering metric</h2>
+<h2 id="shared-goal">11.1 Stability is a cross-team goal</h2>
 <p>
-  When we bring this problem to design as "we need to reduce CLS," we have already lost
-  the conversation. Cumulative Layout Shift is an engineering measurement, not a shared
-  vocabulary: nobody outside the codebase should need to know what the acronym means, and
-  leading with it turns a design conversation into a compliance request. The goal
-  underneath the metric is one designers care about more than we do:
-  <strong>the page must not move under the user.</strong> Nothing they are reading jumps,
-  nothing they are about to click dodges, nothing "settles" in three visible steps. Say it
-  that way and design is on our side immediately; say "CLS" and we are negotiating against
-  a number.
+  Cumulative Layout Shift is the engineering measurement of a goal that is fundamentally
+  shared: <strong>the page must not move under the user.</strong> Nothing they are
+  reading jumps, nothing they are about to click dodges, nothing "settles" in three
+  visible steps. The metric lives in our world, but its causes mostly do not: they live
+  in composition decisions (what shares an axis with what, what gets how much space, what
+  the page shows before the data) that are made in design, before any code exists. A goal
+  whose measurement belongs to one team and whose causes belong to another cannot be
+  owned by either alone. It has to be a standing conversation.
 </p>
 <p>
-  The reason the conversation has to happen at all is timing.
+  Today that conversation mostly doesn't happen, and the reason it must is timing.
   <Chip k="very" /> By the time engineering discovers a
   layout is unstable, the design is approved, the component is half built, and every fix
   is a compromise: a hardcoded height that is wrong half the time, a spinner where a
   skeleton should be, a container that scrolls awkwardly because the space it was given
-  never matched its content. The cheap moment to fix instability is
-  <em>before the mock is approved</em>, and engineering is the only party in the room who
-  knows what the page looks like during the states the mock does not show. That makes it
-  our job to bring the question, not design's job to anticipate it.
+  never matched its content. The cheap moment to catch instability is
+  <em>while the design is still a design</em>: identifying the places where a composition
+  introduces content that is hard to contain, early enough that the UX can be shaped
+  toward predictability instead of patched toward it. Done consistently, that pressure
+  compounds: the design system itself drifts toward layouts that are stable by default,
+  for the screens we are building now and the ones we haven't designed yet.
 </p>
 
-<Callout kind="voice" title="The translation">
+<Callout kind="voice" title="What the channel is for">
   <p>
-    Never "this design has CLS problems." Instead: "walk me through what this page shows
-    while the tables are still loading" and "what should happen when this list has 50
-    rows and that one has 2?" The first framing asks design to fix an engineering number;
-    the second hands them a design problem, which is what it actually is.
+    Not a review gate, a two-way channel. Engineering brings what only engineering can
+    see: which regions arrive late, in what order, and what the page does in the states
+    the mock doesn't show. UX brings what only UX can see: which compositions are worth
+    the containment cost and where stability should bend to hierarchy. The failure mode
+    this chapter exists to prevent is both sides discovering the conflict after the
+    layout is built.
   </p>
 </Callout>
 
@@ -62,6 +65,19 @@ import Diagram from '../../components/Diagram.astro';
   the ones a static frame never has to confront: the second before the data arrives, the
   day the table has one row, the customer whose program list needs three screens of
   scrolling.
+</p>
+<p>
+  The subtler version of the problem survives even in thorough comps. Often the empty
+  state <em>is</em> mocked, but it's drawn at the same size the container had when it
+  held the artboard's eight rows, as if "empty" were just different content in the same
+  box. The box only had that size because eight rows fit it; the height was an artifact
+  of the sample data, not a decision. What the comp never shows is the page
+  <em>flipping between</em> those states: empty today, 1 row after the first save, 300
+  rows next quarter, with everything below the container living or dying by which state
+  it's in. We will never know the count ahead of time; that is permanent. So the real
+  design question is not "what does empty look like?" but
+  <strong>"how do all of these states swap through the same space without pushing
+  everything else around?"</strong>
 </p>
 <p>
   So the questions engineering must put on the table, for every data-driven region in
@@ -90,14 +106,18 @@ import Diagram from '../../components/Diagram.astro';
   </li>
 </ul>
 <p>
-  A designer who has been asked these questions three times starts asking them without us.
-  That is the actual deliverable of this chapter: not a fixed mock, but a design partner
-  who thinks in states.
+  These questions are the channel from <a href="#shared-goal">§11.1</a> in practice, and
+  they flow both ways. The more consistently they get asked, the more natural they become
+  on both sides: engineers start noticing containment problems in mocks reflexively and
+  raising them while the design is still cheap to change, and UX starts anticipating the
+  unknown-size states in the compositions themselves, before anyone has to ask. The
+  deliverable is not any single fixed mock; it is that both teams end up thinking in
+  states by default.
 </p>
 
 <h2 id="stacked-tables">11.3 The worked example: two stacked tables</h2>
 <p>
-  Here is the canonical hard case, and it looks completely innocent in a comp: two tables
+  Here is a common hard case, and it looks completely innocent in a comp: two tables
   stacked vertically inside the app chrome, say <em>Assignments</em> above
   <em>Submissions</em> on a program page. In the mock, each shows a handful of rows and
   together they fill the content area exactly. Now walk the states. On first paint the
@@ -106,14 +126,22 @@ import Diagram from '../../components/Diagram.astro';
   does each table get?
 </p>
 <p>
-  Every naive answer fails a different way. <strong>Split the height 50/50:</strong> the
-  guess is wrong almost every time, because real data is skewed: the top table has 1
-  assignment and sits in a sea of dead space while the bottom one crams 50 submissions
-  into the same half and scrolls furiously. <strong>Size each table to its content with a
-  min-height:</strong> now the pre-data state reserves the min-height, but the moment the
-  top table's 30 rows arrive it grows and <em>shoves the bottom table down the page</em>,
-  possibly below the fold: the exact reading-interrupting shift we exist to prevent, and
-  it happens on every load, in front of the user.
+  Every naive answer fails a different way. <strong>Guess 1, split the height
+  50/50:</strong> the guess is wrong almost every time, because real data is skewed: the
+  top table has 1 assignment and sits in a sea of dead space while the bottom one crams
+  50 submissions into the same half and scrolls furiously. <strong>Guess 2, size each
+  table to its content with a min-height:</strong> now the pre-data state reserves the
+  min-height, but the moment the top table's 30 rows arrive it grows and
+  <em>shoves the bottom table down the page</em>, possibly below the fold: the exact
+  reading-interrupting shift we exist to prevent, and it happens on every load, in front
+  of the user. <strong>Guess 3, just let both tables be auto-height:</strong> no
+  constraints at all, so the table bodies are never contained and never scroll; the
+  content area around them (usually the whole page) becomes the scroll container instead.
+  The shift is the same as Guess 2: whatever the top table turns out to be pushes
+  everything below it, except now the page's total length is also data-dependent, the
+  scrollbar jumps as each table resolves, and the app chrome is the only thing standing
+  still. Auto-height is not a neutral default; it is a decision to let the data lay out
+  the page.
 </p>
 
 <Diagram>
@@ -803,18 +831,19 @@ The same three-step flow, mocked per artboard versus designed as a set. In the t
   <tbody>
     <tr>
       <td>
-        Translate the goal for design: <strong>"the page must not move under the
-        user,"</strong> never "reduce CLS."
+        <strong>Keep the engineering/UX channel open, in both directions:</strong>
+        containment concerns surface while a design is still a design, not after the
+        layout is built.
       </td>
-      <td><Chip k="next" /></td>
-      <td><Chip k="very" /></td>
+      <td><Chip k="ux" /></td>
+      <td><Chip k="critical" /></td>
     </tr>
     <tr>
       <td>
         Every data-driven region in a mock needs its <strong>pre-data, empty, sparse, and
         overflowing states</strong> answered before it is approved.
       </td>
-      <td><Chip k="next" /></td>
+      <td><Chip k="ux" /></td>
       <td><Chip k="critical" /></td>
     </tr>
     <tr>
@@ -822,7 +851,7 @@ The same three-step flow, mocked per artboard versus designed as a set. In the t
         <strong>Regions of unknown size must not compete for one axis.</strong> Partition
         the space, cap one region, or change the composition.
       </td>
-      <td><Chip k="next" /></td>
+      <td><Chip k="ux" /></td>
       <td><Chip k="critical" /></td>
     </tr>
     <tr>
@@ -830,7 +859,7 @@ The same three-step flow, mocked per artboard versus designed as a set. In the t
         Overlays and dialogs get <strong>one frame per flow</strong>, sized for the
         largest step; steps change inside the frame.
       </td>
-      <td><Chip k="next" /></td>
+      <td><Chip k="ux" /></td>
       <td><Chip k="very" /></td>
     </tr>
     <tr>
@@ -838,7 +867,7 @@ The same three-step flow, mocked per artboard versus designed as a set. In the t
         Seed data <strong>skewed on purpose</strong> (0 / 1 / 5 / 50 / 500) so unstable
         layouts fail in development, not in front of users.
       </td>
-      <td><Chip k="next" /></td>
+      <td><Chip k="ux" /></td>
       <td><Chip k="very" /></td>
     </tr>
   </tbody>
