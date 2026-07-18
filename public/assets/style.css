@@ -699,10 +699,10 @@ pre.code .filename {
   color: var(--green);
 }
 /* Only the LAST snippet in a column absorbs leftover height, so stacked
-   snippets keep their natural size. Inside that stretched snippet the code
-   box fills the space UNLESS a caption follows it: then the code box keeps
-   its natural height so the caption hugs it, and the leftover column height
-   falls harmlessly below the caption. */
+   snippets keep their natural size. Inside that stretched snippet the CODE
+   BOX soaks up the extra height and the caption stays pinned 6px beneath it,
+   so a caption's bottom edge lands flush with the neighboring column's
+   bottom: columns always end on the same line, never on dead white space. */
 .compare .snippet {
   margin: 0;
   flex: 0 0 auto;
@@ -715,9 +715,6 @@ pre.code .filename {
 }
 .compare .snippet pre.code {
   flex: 1 1 auto;
-}
-.compare .snippet:has(.code-caption) pre.code {
-  flex: 0 0 auto;
 }
 .compare figure.diagram {
   margin: 0;

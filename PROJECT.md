@@ -214,10 +214,10 @@ home per technique + cross-references).
   wraps ONE <pre class="code"> plus its optional <CodeCaption> (as children). The .snippet
   container owns ALL outer spacing (pre and caption have no outer margins), so the caption sits
   a fixed 6px under the code box everywhere. Never author a bare pre or a sibling caption.
-  Compare columns (CSS): only the LAST .snippet in a column flexes; inside it, the pre fills
-  the leftover height UNLESS the snippet has a caption (:has), in which case the pre keeps its
-  natural height so the caption hugs it and slack falls below the caption. li > .snippet gets
-  the tighter list margin.
+  Compare columns (CSS): only the LAST .snippet in a column flexes; inside it, the PRE fills
+  the leftover height and the caption stays pinned 6px beneath it, so caption bottoms align
+  flush with the neighboring column's bottom (per Nick: symmetry, never dead white space
+  below a column). li > .snippet gets the tighter list margin.
 - **NO EM DASHES, ever (per Nick, 2026-07-16).** The document must contain zero U+2014 characters.
   Use commas, colons, semicolons, parentheses, or split the sentence; plain hyphens are allowed
   where a compound or short-label separator reads naturally. En dashes (U+2013) for numeric ranges
