@@ -1853,6 +1853,35 @@ One container's whole life. The skeleton exists only in the first frame, while t
   <em>alongside</em> the old content instead of replacing it.
 </p>
 
+<Snippet>
+<pre class="code" is:raw><span class="filename">SortSelect.tsx - client leaf: a router write that keeps the table alive</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">SortSelect</span>({ current }: { current: string }) {
+  <span class="tok-kw">const</span> router = <span class="tok-fn">useRouter</span>();
+  <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
+
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Select</span>
+      <span class="tok-prop">value</span>={current}
+      <span class="tok-prop">disabled</span>={isPending}
+      <span class="tok-prop">onChange</span>={(sort) =&gt;
+        <span class="tok-fn">startTransition</span>(() =&gt; {
+          <span class="tok-com">/* A router write: the server re-renders the page.
+             Inside a transition, the table's boundary keeps
+             its revealed rows instead of falling back. */</span>
+          router.<span class="tok-fn">push</span>(<span class="tok-str">`/programs?sort=${sort}`</span>);
+        })
+      }
+    /&gt;
+  );
+}</pre>
+<CodeCaption>
+  While the server prepares the new rows, <code>isPending</code> is true: dim the table,
+  disable the select, badge the header; the old UI never blanks. The end-to-end version
+  of this pattern is the <a href="#example-url-transition">§10.5 example</a>.
+</CodeCaption>
+</Snippet>
+
 <h3 id="transitions-defer">Transitions defer expensive work</h3>
 <p>
   The second use has nothing to do with data: a state update whose <em>re-render</em> is
@@ -1867,6 +1896,38 @@ One container's whole life. The skeleton exists only in the first frame, while t
   <code>useDeferredValue</code> is the same mechanism applied to a value instead of an
   update: the type-to-filter example in <a href="#example-deferred">§10.5</a>.
 </p>
+
+<Snippet>
+<pre class="code" is:raw><span class="filename">ProgramSearch.tsx - client: urgent keystroke, non-urgent filter</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramSearch</span>({ all }: { all: <span class="tok-fn">Program</span>[] }) {
+  <span class="tok-kw">const</span> [query, setQuery] = <span class="tok-fn">useState</span>(<span class="tok-str">""</span>);
+  <span class="tok-kw">const</span> [results, setResults] = <span class="tok-fn">useState</span>(all);
+  <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
+
+  <span class="tok-kw">function</span> <span class="tok-fn">onInput</span>(next: string) {
+    <span class="tok-com">// Urgent: the keystroke must paint immediately.</span>
+    <span class="tok-fn">setQuery</span>(next);
+    <span class="tok-fn">startTransition</span>(() =&gt; {
+      <span class="tok-com">// Non-urgent: rendered in the background, restarted
+      // if another keystroke lands mid-render.</span>
+      <span class="tok-fn">setResults</span>(<span class="tok-fn">filterPrograms</span>(all, next));
+    });
+  }
+
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">Input</span> <span class="tok-prop">value</span>={query} <span class="tok-prop">onChange</span>={onInput} /&gt;
+      &lt;<span class="tok-fn">ResultsList</span> <span class="tok-prop">items</span>={results} <span class="tok-prop">dimmed</span>={isPending} /&gt;
+    &lt;/&gt;
+  );
+}</pre>
+<CodeCaption>
+  Two updates from one keystroke. The input's own value is the urgent one and paints at
+  once; the expensive re-filter of <code>results</code> runs at low priority and never
+  blocks typing.
+</CodeCaption>
+</Snippet>
 
 <h3 id="transitions-async">Async transitions: actions and pending state</h3>
 <p>
@@ -1884,6 +1945,38 @@ One container's whole life. The skeleton exists only in the first frame, while t
   after an <code>await</code>, further state updates inside the action must be wrapped in
   <code>startTransition</code> again, or they lose their transition marking.
 </p>
+
+<Snippet>
+<pre class="code" is:raw><span class="filename">ArchiveButton.tsx - client leaf: an async action</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ArchiveButton</span>({ programId }: { programId: number }) {
+  <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
+
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Button</span>
+      <span class="tok-prop">disabled</span>={isPending}
+      <span class="tok-prop">onClick</span>={() =&gt;
+        <span class="tok-fn">startTransition</span>(<span class="tok-kw">async</span> () =&gt; {
+          <span class="tok-com">/* The action: awaited inside the transition, so
+             isPending covers the server round trip AND the
+             re-render its revalidation triggers. */</span>
+          <span class="tok-kw">const</span> { error } = <span class="tok-kw">await</span> <span class="tok-fn">archiveProgram</span>(programId);
+          <span class="tok-kw">if</span> (error) toast.<span class="tok-fn">error</span>(error);
+        })
+      }
+    &gt;
+      {isPending ? <span class="tok-str">"Archiving…"</span> : <span class="tok-str">"Archive"</span>}
+    &lt;/<span class="tok-fn">Button</span>&gt;
+  );
+}</pre>
+<CodeCaption>
+  The same machinery as the publish button in
+  <a href="05-client-server-boundaries.html#self-contained">§5.7</a>:
+  <code>isPending</code> flips at the first line and holds until every update the action
+  scheduled has landed, so the button cannot double-fire and the label is honest.
+</CodeCaption>
+</Snippet>
+
 <p>
   The API reference for <code>useTransition</code> and <code>useDeferredValue</code> is in
   <a href="18-new-primitives.html#use-transition">§18.3</a>; the caveat list lives in the

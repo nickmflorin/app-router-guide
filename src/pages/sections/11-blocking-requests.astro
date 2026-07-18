@@ -326,7 +326,17 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
     </defs>
 
     <!-- file tree -->
-    <rect x="14" y="2" width="240" height="224" rx="8" fill="#ffffff" stroke="#c9c9c9" />
+    <!-- data-lint-ignore: tree indentation makes the pill inset asymmetric by design -->
+    <rect
+      data-lint-ignore="scene"
+      x="14"
+      y="2"
+      width="240"
+      height="224"
+      rx="8"
+      fill="#ffffff"
+      stroke="#c9c9c9"
+    />
     <text
       x="30"
       y="22"
@@ -337,27 +347,34 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
       app/programs/[id]/
     </text>
     <text
-      x="46"
+      x="30"
       y="50"
       font-size="11"
       fill="#666666"
       font-family="Geist Mono, ui-monospace, monospace"
     >
-      layout.tsx
+      ├── layout.tsx
     </text>
     <text
-      x="46"
+      x="30"
       y="78"
       font-size="11"
       fill="#666666"
       font-family="Geist Mono, ui-monospace, monospace"
     >
-      @header/
+      ├── @header/
     </text>
-    <rect x="26" y="90" width="216" height="24" rx="5" fill="#eaf3fe" stroke="#0070f3" />
-    <circle cx="40" cy="102" r="8" fill="#ffffff" stroke="#0070f3" />
     <text
-      x="40"
+      x="30"
+      y="106"
+      font-size="11"
+      fill="#666666"
+      font-family="Geist Mono, ui-monospace, monospace"
+      xml:space="preserve">│   └──</text>
+    <rect x="86" y="90" width="156" height="24" rx="5" fill="#eaf3fe" stroke="#0070f3" />
+    <circle cx="100" cy="102" r="8" fill="#ffffff" stroke="#0070f3" />
+    <text
+      x="100"
       y="102"
       font-size="8"
       fill="#0757ba"
@@ -367,7 +384,7 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
       H
     </text>
     <text
-      x="54"
+      x="114"
       y="106"
       font-size="10.5"
       fill="#0757ba"
@@ -376,18 +393,25 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
       page.tsx
     </text>
     <text
-      x="46"
+      x="30"
       y="134"
       font-size="11"
       fill="#666666"
       font-family="Geist Mono, ui-monospace, monospace"
     >
-      @summary/
+      ├── @summary/
     </text>
-    <rect x="26" y="146" width="216" height="24" rx="5" fill="#fdf3e3" stroke="#b45309" />
-    <circle cx="40" cy="158" r="8" fill="#ffffff" stroke="#b45309" />
     <text
-      x="40"
+      x="30"
+      y="162"
+      font-size="11"
+      fill="#666666"
+      font-family="Geist Mono, ui-monospace, monospace"
+      xml:space="preserve">│   └──</text>
+    <rect x="86" y="146" width="156" height="24" rx="5" fill="#fdf3e3" stroke="#b45309" />
+    <circle cx="100" cy="158" r="8" fill="#ffffff" stroke="#b45309" />
+    <text
+      x="100"
       y="158"
       font-size="8"
       fill="#8a5a00"
@@ -397,7 +421,7 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
       S
     </text>
     <text
-      x="54"
+      x="114"
       y="162"
       font-size="10.5"
       fill="#8a5a00"
@@ -405,10 +429,19 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
     >
       page.tsx
     </text>
-    <rect x="26" y="190" width="216" height="24" rx="5" fill="#e7f5ee" stroke="#2ea06d" />
-    <circle cx="40" cy="202" r="8" fill="#ffffff" stroke="#2ea06d" />
     <text
-      x="40"
+      x="30"
+      y="206"
+      font-size="11"
+      fill="#666666"
+      font-family="Geist Mono, ui-monospace, monospace"
+    >
+      └──
+    </text>
+    <rect x="60" y="190" width="182" height="24" rx="5" fill="#e7f5ee" stroke="#2ea06d" />
+    <circle cx="74" cy="202" r="8" fill="#ffffff" stroke="#2ea06d" />
+    <text
+      x="74"
       y="202"
       font-size="8"
       fill="#157a4c"
@@ -418,7 +451,7 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
       C
     </text>
     <text
-      x="54"
+      x="88"
       y="206"
       font-size="10.5"
       fill="#157a4c"
@@ -559,12 +592,12 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
     >
       export default function ProgramLayout(&#123; children, header, summary &#125;) &#123;
     </text>
-    <rect x="97" y="304" width="55" height="17" rx="4" fill="#eaf3fe" stroke="#0070f3" />
-    <rect x="154" y="304" width="67" height="17" rx="4" fill="#e7f5ee" stroke="#2ea06d" />
-    <rect x="223" y="304" width="61" height="17" rx="4" fill="#fdf3e3" stroke="#b45309" />
+    <rect x="104" y="297" width="55" height="17" rx="4" fill="#eaf3fe" stroke="#0070f3" />
+    <rect x="161" y="297" width="67" height="17" rx="4" fill="#e7f5ee" stroke="#2ea06d" />
+    <rect x="230" y="297" width="61" height="17" rx="4" fill="#fdf3e3" stroke="#b45309" />
     <text
-      x="30"
-      y="316"
+      x="43"
+      y="309"
       font-size="10.5"
       fill="#171717"
       font-family="Geist Mono, ui-monospace, monospace"
@@ -572,8 +605,8 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
       return &lt;&gt;
     </text>
     <text
-      x="101"
-      y="316"
+      x="108"
+      y="309"
       font-size="10.5"
       fill="#0757ba"
       font-family="Geist Mono, ui-monospace, monospace"
@@ -581,8 +614,8 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
       &#123;header&#125;
     </text>
     <text
-      x="158"
-      y="316"
+      x="165"
+      y="309"
       font-size="10.5"
       fill="#157a4c"
       font-family="Geist Mono, ui-monospace, monospace"
@@ -590,8 +623,8 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
       &#123;children&#125;
     </text>
     <text
-      x="227"
-      y="316"
+      x="234"
+      y="309"
       font-size="10.5"
       fill="#8a5a00"
       font-family="Geist Mono, ui-monospace, monospace"
@@ -599,8 +632,8 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
       &#123;summary&#125;
     </text>
     <text
-      x="286"
-      y="316"
+      x="295"
+      y="309"
       font-size="10.5"
       fill="#171717"
       font-family="Geist Mono, ui-monospace, monospace"
@@ -609,7 +642,7 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
     </text>
     <text
       x="30"
-      y="340"
+      y="328"
       font-size="10.5"
       fill="#171717"
       font-family="Geist Mono, ui-monospace, monospace"
@@ -1015,7 +1048,7 @@ Conditional slots (redrawn from the Next.js parallel-routes docs): the layout pi
 
 <Diagram>
   <svg
-    viewBox="0 0 720 226"
+    viewBox="0 0 720 284"
     xmlns="http://www.w3.org/2000/svg"
     font-family="Inter, system-ui, sans-serif"
   >
@@ -1048,10 +1081,11 @@ Conditional slots (redrawn from the Next.js parallel-routes docs): the layout pi
       text-anchor="middle"
       font-weight="500"
     >
-      The same three reads, three shapes
+      The same three reads, four shapes
     </text>
 
-    <!-- ROW 1: waterfall -->
+    <!-- ROW 1: client waterfall. Rows sit on a strict grid: bars are 22px
+     (or 3x16 stacked), rows separated by 20px, labels on row centers. -->
     <text x="12" y="49" font-size="10.5" fill="#8a5a00" font-weight="500">
       Client waterfall
     </text>
@@ -1069,76 +1103,94 @@ Conditional slots (redrawn from the Next.js parallel-routes docs): the layout pi
       3 serial round trips
     </text>
 
-    <!-- ROW 2: server -->
-    <text x="12" y="109" font-size="10.5" fill="#0757ba" font-weight="500">
+    <!-- ROW 2: server, dependent chain inside one request -->
+    <text x="12" y="93" font-size="10.5" fill="#0757ba" font-weight="500">
       On the server
     </text>
-    <rect x="175" y="96" width="160" height="22" rx="4" fill="#eaf3fe" stroke="#0070f3" />
-    <text x="255" y="111" font-size="9.5" fill="#0757ba" text-anchor="middle">
-      one request: all three
+    <rect x="175" y="78" width="105" height="22" rx="4" fill="#eaf3fe" stroke="#0070f3" />
+    <text x="227" y="93" font-size="9.5" fill="#0757ba" text-anchor="middle">
+      all three
     </text>
-    <text x="351" y="111" font-size="9.5" fill="#0f7b48" font-weight="500">
+    <text x="296" y="93" font-size="9.5" fill="#0f7b48" font-weight="500">
       one round trip
     </text>
 
-    <!-- ROW 3: parallel client -->
-    <text x="12" y="171" font-size="10.5" fill="#0e7490" font-weight="500">
+    <!-- ROW 3: parallel on the server, one Suspense per region -->
+    <text x="12" y="145" font-size="10.5" fill="#0757ba" font-weight="500">
+      Parallel server
+    </text>
+    <text x="12" y="158" font-size="9" fill="#527dad">(one Suspense per region)</text>
+    <rect x="175" y="120" width="105" height="16" rx="3" fill="#eaf3fe" stroke="#0070f3" />
+    <text x="227" y="132" font-size="9" fill="#0757ba" text-anchor="middle">query A</text>
+    <rect x="175" y="140" width="105" height="16" rx="3" fill="#eaf3fe" stroke="#0070f3" />
+    <text x="227" y="152" font-size="9" fill="#0757ba" text-anchor="middle">query B</text>
+    <rect x="175" y="160" width="105" height="16" rx="3" fill="#eaf3fe" stroke="#0070f3" />
+    <text x="227" y="172" font-size="9" fill="#0757ba" text-anchor="middle">query C</text>
+    <text x="296" y="152" font-size="9.5" fill="#0f7b48" font-weight="500">
+      one round trip; each region streams when ready
+    </text>
+
+    <!-- ROW 4: parallel client -->
+    <text x="12" y="221" font-size="10.5" fill="#0e7490" font-weight="500">
       Parallel client
     </text>
-    <text x="12" y="184" font-size="9" fill="#3f8a99">(when unavoidable)</text>
+    <text x="12" y="234" font-size="9" fill="#3f8a99">(when unavoidable)</text>
     <rect
       x="175"
-      y="152"
+      y="196"
       width="105"
       height="16"
       rx="3"
       fill="#e0f5f9"
       stroke="#0891b2"
     />
-    <text x="227" y="164" font-size="9" fill="#0e7490" text-anchor="middle">query A</text>
+    <text x="227" y="208" font-size="9" fill="#0e7490" text-anchor="middle">query A</text>
     <rect
       x="175"
-      y="172"
+      y="216"
       width="105"
       height="16"
       rx="3"
       fill="#e0f5f9"
       stroke="#0891b2"
     />
-    <text x="227" y="184" font-size="9" fill="#0e7490" text-anchor="middle">query B</text>
+    <text x="227" y="228" font-size="9" fill="#0e7490" text-anchor="middle">query B</text>
     <rect
       x="175"
-      y="192"
+      y="236"
       width="105"
       height="16"
       rx="3"
       fill="#e0f5f9"
       stroke="#0891b2"
     />
-    <text x="227" y="204" font-size="9" fill="#0e7490" text-anchor="middle">query C</text>
-    <text x="296" y="184" font-size="9.5" fill="#0f7b48" font-weight="500">
+    <text x="227" y="248" font-size="9" fill="#0e7490" text-anchor="middle">query C</text>
+    <text x="296" y="228" font-size="9.5" fill="#0f7b48" font-weight="500">
       one round trip of latency
     </text>
 
     <!-- time axis -->
     <line
       x1="175"
-      y1="222"
+      y1="266"
       x2="672"
-      y2="222"
+      y2="266"
       stroke="#737373"
       stroke-width="1.2"
       marker-end="url(#a11t)"
     />
-    <text x="175" y="216" font-size="9" fill="#737373">start</text>
-    <text x="640" y="216" font-size="9" fill="#737373">time</text>
+    <text x="175" y="280" font-size="9" fill="#737373">start</text>
+    <text x="640" y="280" font-size="9" fill="#737373">time</text>
   </svg>
-  
+
 <Fragment slot="caption">
-The same three reads, three ways. Chained on the client, each one waits for the last,
-    so latency stacks. Moved to the server, the dependency becomes an in-datacenter hop
-    inside a single request. And where client fetching is legitimate, decoupling the
-    queries lets them start together, so the user waits for the slowest one, not the sum.
+The same three reads, four ways. Chained on the client, each one waits for the last, so
+    latency stacks. Moved to the server, the dependency chain becomes in-datacenter hops
+    inside a single round trip. Independent reads on the server go one better: each
+    region's component fetches in parallel and streams into its own Suspense boundary the
+    moment it resolves (<a href="10-suspense-streaming.html">§10</a>). And where client
+    fetching is legitimate, decoupling the queries lets them start together, so the user
+    waits for the slowest one, not the sum.
 </Fragment>
 </Diagram>
 
