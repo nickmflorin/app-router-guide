@@ -204,6 +204,11 @@ folded into the existing "Server-first is not optional" alert.)
 
 ### Signs You are Doing It Wrong
 
+**ADDITIONAL**
+
+- [ ] You are doing it wrong if you are hiding visible and known content on first paint behind a
+      skeleton that is supposed to only represent the unknown content.
+
 This section should be organized so that some of the items are grouped together but also that for
 certain items that have exceptions, those exceptions should be noted in lighter gray text under the
 item itself. Every item should have a code example that shows the pattern that is being discussed.

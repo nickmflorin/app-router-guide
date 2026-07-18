@@ -36,17 +36,22 @@ import CompareCol from '../../components/CompareCol.astro';
   </li>
   <li>
     <strong>Decouple the parts</strong>, so each region's requirements can change without
-    rewiring its neighbors.
+    rewiring its neighbors. Decoupling buys more than safe change: a component that asks
+    for its own data instead of receiving it through props is <em>portable</em>, so it can
+    be dropped onto any page without a chain of wiring following it (<a
+      href="12-minimize-the-wires.html">§12</a>), and it lets the interactive parts that
+    need hydration be pushed down into small leaves instead of dragging whole regions
+    across the client boundary (<a href="05-client-server-boundaries.html">§5</a>).
   </li>
 </ol>
 <p>
   Server-side rendering is what makes this framing powerful: in a browser-only app, almost
-  nothing is knowable at first render: the client starts blank and earns every pixel
-  through requests. On the server, the page's structure, its static content, and any data
-  the server can fetch are all knowable
-  <em>before the first byte reaches the browser</em>. The App Router exists to make that
-  surface as large as possible. Treat it like an SPA and you shrink the known back down to
-  a spinner.
+  <strong>nothing is knowable at first render</strong>: the client starts blank and earns
+  every pixel through requests. On the server, the page's structure, its static content,
+  and any data the server can fetch are all knowable
+  <em>before the first byte reaches the browser</em>. The App Router
+  <strong>exists to make that surface as large as possible</strong>. Treat it like an SPA
+  and you shrink the known back down to a spinner.
 </p>
 
 <Diagram>

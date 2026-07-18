@@ -26,24 +26,30 @@ import CompareCol from '../../components/CompareCol.astro';
 <p>
   One thing to understand before the mechanics: <strong>React 19 and the App Router are
   deeply opinionated, and the App Router more so.</strong> Not opinionated for its own
-  sake; opinionated because these are complex systems, and complex systems only deliver
-  their guarantees when they can make assumptions about how you use them. The compiler can
-  only optimize components that follow the rules of React. The router can only cache and
-  stream what the server rendered. The boundary between server and client only pays off if
-  it sits where the platform expects it. Every deviation from how the platform wants
-  something done makes the machinery less effective, and past a point, actively
-  destructive: the framework starts working against you, re-fetching what it would have
-  cached, blocking what it would have streamed, shipping what it would have kept on the
-  server. The opinions are the price of the guarantees. Accept them and the system does
-  enormous amounts of work on your behalf; fight them and you get the worst of both
-  worlds.
+  sake; opinionated because these are complex systems, and
+  <strong>complex systems only deliver their guarantees when they can make assumptions
+  about how you use them</strong>. The compiler can only optimize components that follow
+  the rules of React. The router can only cache and stream what the server rendered. The
+  boundary between server and client only pays off if it sits where the platform expects
+  it. Every deviation from how the platform wants something done makes the machinery less
+  effective, and past a point, <strong>actively destructive</strong>: the framework starts
+  working against you, re-fetching what it would have cached, blocking what it would have
+  streamed, shipping what it would have kept on the server.
+  <strong>The opinions are the price of the guarantees.</strong> Accept them and the
+  system does enormous amounts of work on your behalf; fight them and you get the worst of
+  both worlds.
 </p>
 
-<Callout kind="voice" title="The one-sentence version">
+<Callout kind="voice" title="The shift, concretely">
   <p>
-    Traditional React asks: <em>"how do I get data into my components?"</em> Server-first
-    React asks: <em>"which parts of my UI can't be finished on the server, and why?"</em>,
-    and treats every such part as a cost to be justified.
+    In an SPA, the browser receives a nearly empty shell and a JavaScript bundle; after
+    the bundle mounts, each component pulls its own data into place, and the page
+    assembles itself in front of the user. The question that model trains you to ask is
+    <em>"how do I get data into my components?"</em> In the App Router, the page arrives
+    already assembled: the server had the data and rendered with it before the browser saw
+    a single byte. The only question left is
+    <em>"which parts of my UI can't be finished on the server, and why?"</em>, and every
+    such part is a cost to be justified.
   </p>
 </Callout>
 

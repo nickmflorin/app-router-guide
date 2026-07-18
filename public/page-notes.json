@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-18T16:19:55.990118+00:00",
+  "updatedAt": "2026-07-18T19:04:04.124105+00:00",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -411,6 +411,136 @@
         "snippet": "\u2715 Fused: configured with data + functions app layout (forced client)\"use client\";<Sidebar "
       },
       "resolution": "Convention recorded and swept: code references in prose/captions are always <code>-wrapped, and sentences never start with a code reference (e.g. \"Here onClick is a function...\", \"Because react-select is interactive...\"); 8 captions fixed across five chapters."
+    },
+    {
+      "id": "nmrqo0yzr",
+      "page": "02-goals.html",
+      "ts": "2026-07-18T17:53:29.895Z",
+      "status": "resolved",
+      "text": "I want to focus on portability here too.  There are other reasons to decouple the parts that have nothing to do with being able to change something without affecting its neighbors.  That part is still important, but I want to include things like how it allows portability to work, how it allows the client/interactable parts that require hydration to be pushed down to more granular levels, etc.",
+      "target": {
+        "anchor": "thesis",
+        "path": [
+          5,
+          3
+        ],
+        "tag": "li",
+        "snippet": "Decouple the parts, so each region's requirements can change without rewiring its neighbor"
+      },
+      "resolution": "The \"Decouple the parts\" goal now names all three payoffs: safe change, portability (a component that asks for its own data can be dropped onto any page without wiring following it, section 12), and pushing hydration down into small interactive leaves instead of dragging whole regions across the client boundary (section 5)."
+    },
+    {
+      "id": "nmrqo2aot",
+      "page": "02-goals.html",
+      "ts": "2026-07-18T17:54:31.709Z",
+      "status": "resolved",
+      "text": "let's emphasize with bold text \"nothing is knowable at first render\"",
+      "target": {
+        "anchor": "thesis",
+        "path": [
+          6
+        ],
+        "tag": "p",
+        "snippet": "Server-side rendering is what makes this framing powerful: in a browser-only app, almost n"
+      },
+      "resolution": "Bolded \"nothing is knowable at first render\"."
+    },
+    {
+      "id": "nmrqo2r22",
+      "page": "02-goals.html",
+      "ts": "2026-07-18T17:54:52.922Z",
+      "status": "resolved",
+      "text": "lets also bold \"exists to make that surface as large as possible",
+      "target": {
+        "anchor": "thesis",
+        "path": [
+          6
+        ],
+        "tag": "p",
+        "snippet": "Server-side rendering is what makes this framing powerful: in a browser-only app, almost n"
+      },
+      "resolution": "Bolded \"exists to make that surface as large as possible\"."
+    },
+    {
+      "id": "nmrqo47em",
+      "page": "03-mental-model.html",
+      "ts": "2026-07-18T17:56:00.766Z",
+      "status": "resolved",
+      "text": "lets emphasize some key sentence fragments in here to hammer the point home",
+      "target": {
+        "anchor": null,
+        "path": [
+          4
+        ],
+        "tag": "p",
+        "snippet": "One thing to understand before the mechanics: React 19 and the App Router are deeply opini"
+      },
+      "resolution": "Bolded three fragments in the opinionated paragraph: \"complex systems only deliver their guarantees when they can make assumptions about how you use them\", \"actively destructive\", and \"The opinions are the price of the guarantees.\""
+    },
+    {
+      "id": "nmrqo4hli",
+      "page": "03-mental-model.html",
+      "ts": "2026-07-18T17:56:13.974Z",
+      "status": "resolved",
+      "text": "lets see if we can write this better and more concretely - something that focuses more on the difference beteween SPA and app router",
+      "target": {
+        "anchor": null,
+        "path": [
+          5,
+          1
+        ],
+        "tag": "p",
+        "snippet": "Traditional React asks: \"how do I get data into my components?\" Server-first React asks: \""
+      },
+      "resolution": "Rewritten concretely as an SPA vs App Router contrast: SPA ships an empty shell plus a bundle and the page assembles itself in front of the user (hence \"how do I get data into my components?\"); the App Router page arrives already assembled because the server had the data, leaving only \"which parts cannot be finished on the server, and why?\" (callout retitled \"The shift, concretely\")."
+    },
+    {
+      "id": "nmrqo5nl6",
+      "page": "10-suspense-streaming.html",
+      "ts": "2026-07-18T17:57:08.394Z",
+      "status": "resolved",
+      "text": "somewhere on this page, we should have a paragraph, maybe a diagram, or a sub-section or something, that discusses how a suspense boundary means unblocking the page so it doesn't need to wait for that data to be fetched server side before being shipped ot the client and painting, but a suspense boundary also means fallback content must be chosen.  So its' a feeling game, or a per-case decision - in most cases, you'll want to suspend and stream, but you have to be careful about containing those unknown boundaries so that it is a seamless swap without content shifting.",
+      "target": {
+        "anchor": "triggers",
+        "path": [
+          12
+        ],
+        "tag": "h2",
+        "snippet": "10.2 Streaming: Suspense on the server"
+      },
+      "resolution": "New subsection at the end of 10.2, \"Every boundary is a decision: an unblocked paint, for a fallback\": names both sides of the trade (shell ships immediately vs a fallback must be authored as real UI with honest dimensions), frames suspend-vs-block as a per-region judgment call (usually stream; deliberately block when the wait is tiny or an honest fallback cannot be drawn), and closes with a two-question decision callout linking sections 9 and 11."
+    },
+    {
+      "id": "nmrqo8xna",
+      "page": "10-suspense-streaming.html",
+      "ts": "2026-07-18T17:59:41.398Z",
+      "status": "resolved",
+      "text": "somewhere in here, maybe as a subsection, I would like to talk about (with a diagram) empty state flashing that happens when you default things like arrays to be empty so the logic cannot detect empty states.  it should show how the initial fetch vs. empty state vs. present data differ by showing the empty state vs. skeleton vs. present data UI swap in and out of a container, with the skeleton only being swapped in on first load and another non destructive indicator being applied on subsequent loads - regardless of empty or non empty state (i.e. we still would show a faded opacity if it is refetching even if the empty state is present and obviously if the non-empty state is present)",
+      "target": {
+        "anchor": "example-deferred",
+        "path": [
+          42
+        ],
+        "tag": "h2",
+        "snippet": "10.6 Loading, data, and empty are three separate questions"
+      },
+      "resolution": "New subsection in 10.6, \"One container, one skeleton, ever\", with a lifecycle diagram: one container branching from first-load skeleton (its only appearance) to known-empty or rows, then to refetch frames where the same content is dimmed with a \"refreshing\" badge, identically for empty and populated states; prose states that later fetches decorate rather than replace regardless of content."
+    },
+    {
+      "id": "nmrqobduc",
+      "page": "10-suspense-streaming.html",
+      "ts": "2026-07-18T18:01:35.700Z",
+      "status": "resolved",
+      "text": "Transitions need to be expanded on more to include other use cases of deferring state updates.  these discusses can be subsections of this section, might make sense to generalize the header of 10.7 to be transitions and then have transitions keep the old UI alive be the first subsection after an intro paragraph, but I'll leave that up to you as I do not know and am not good at drawing those lines.  This section should at least talk about other ways transitions are used and what they actually do.  maybe reference some things in this: https://react.dev/reference/react/startTransition",
+      "target": {
+        "anchor": "orthogonal",
+        "path": [
+          50
+        ],
+        "tag": "h2",
+        "snippet": "10.7 Transitions keep the old UI alive"
+      },
+      "resolution": "Section 10.7 generalized to \"Transitions\" with an intro on what startTransition actually does (marks updates non-urgent, background render, interruptible by urgent updates) and three subsections: keeping the old UI alive (existing material plus router-state writes), deferring expensive re-renders (with the controlled-input caveat and the useDeferredValue kinship), and React 19 async transitions/actions (isPending lifecycle, errors to boundaries, useOptimistic revert, re-wrap after await). Verified against and linked to the react.dev startTransition reference."
     }
   ]
 }

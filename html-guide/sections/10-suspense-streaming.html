@@ -494,6 +494,43 @@ loading.tsx and error.tsx are sugar for boundaries Next.js wraps around your pag
   </figcaption>
 </figure>
 
+<h3 id="fallback-trade">Every boundary is a decision: an unblocked paint, for a fallback</h3>
+<p>
+  A Suspense boundary is not free structure; it is a trade, and it helps to name both
+  sides of it. <strong>What you buy:</strong> the page stops waiting for that region's
+  data. The server ships the shell the moment it is ready, the browser paints it, and the
+  slow region streams into its slot later; without the boundary, that one fetch holds the
+  entire response hostage (the <a href="#streaming">first diagram above</a>).
+  <strong>What you pay:</strong> something must now occupy that region's space in the
+  meantime. A boundary forces a fallback into existence, and the fallback is real UI: it
+  has to reserve honest dimensions (<a href="09-containers-content-shifting.html">§9</a>),
+  look intentional next to finished content, and hand off to the real thing in a seamless
+  swap.
+</p>
+<p>
+  That makes "should this suspend?" a per-region judgment call, not a rule you can apply
+  mechanically. Most of the time the answer is yes: suspend and stream, because one slow
+  fetch must not set the time-to-first-paint for content that was ready. But the trade
+  tilts the other way when a good fallback cannot be authored. If the region's height is
+  genuinely unknowable in advance, the swap will shift content no matter how careful the
+  skeleton is; if the data resolves in a handful of milliseconds, the fallback is a flash
+  of noise that was never worth painting. In those cases it is legitimate to let the
+  server block on the fetch, provided the wait is kept small and parallel
+  (<a href="11-blocking-requests.html">§11</a>).
+</p>
+<div class="callout callout-voice">
+  <div class="callout-title">The two questions to ask per region</div>
+  
+  <p>
+    First: is this data slow enough, often enough, that the rest of the page should not
+    wait for it? If no, block and render it finished. If yes: can I draw a fallback that
+    reserves this region's true shape? If yes, suspend. If no, fix the container until the
+    answer is yes (<a href="09-containers-content-shifting.html">§9</a>); shipping the
+    shift is not one of the options.
+  </p>
+
+</div>
+
 <h2 id="no-own-loading">10.3 Components must not define their own loading states</h2>
 <p>
   <span class="chip chip-react">React</span>
@@ -1128,32 +1165,189 @@ The empty-state flash, frame by frame. Same request, same 12 rows; the only diff
   </tbody>
 </table>
 
-<h2 id="transitions">10.7 Transitions keep the old UI alive</h2>
+<h3 id="one-skeleton">One container, one skeleton, ever</h3>
+<p>
+  The table reads row by row; watched as one container over its lifetime, it collapses to
+  a single rule: <strong>the skeleton appears exactly once, on first load, while the
+  answer is unknown.</strong> The moment the first response lands, the container has
+  something honest to show forever after: rows if there are rows, a real empty state if
+  there are none. Every fetch from then on (revalidation, filter change, a mutation's
+  refresh) <em>decorates</em> that content instead of replacing it: same UI, dimmed or
+  badged while the request is in flight. And the treatment does not depend on what the
+  content is. A known-empty list being refreshed keeps its empty state and gains the
+  indicator, exactly like a populated list keeps its rows; the skeleton does not get to
+  come back just because the container happens to be empty.
+</p>
+
+<figure class="diagram">
+  
+  <svg viewBox="0 0 720 308" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
+    <defs>
+      <marker id="aL" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 2.5 1.5 L 8 5 L 2.5 8.5" fill="none" stroke="#737373" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+      </marker>
+    </defs>
+
+    <!-- Column 1: first load. Frames share a strict grid: 180x104, inner
+     content rect at +14/+16 (152x56), footer 16px under the frame. -->
+    <rect x="10" y="100" width="180" height="104" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <rect x="24" y="116" width="152" height="56" rx="5" fill="#fdf3e3" stroke="#b45309" stroke-dasharray="5 4"></rect>
+    <rect x="36" y="128" width="128" height="7" rx="3" fill="#f3e2c0"></rect>
+    <rect x="36" y="142" width="128" height="7" rx="3" fill="#f3e2c0"></rect>
+    <rect x="36" y="156" width="96" height="7" rx="3" fill="#f3e2c0"></rect>
+    <text x="100" y="189" font-size="8.5" fill="#8a5a00" text-anchor="middle">
+      ⏳ skeleton: first load only
+    </text>
+    <text x="100" y="220" font-size="10" fill="#737373" text-anchor="middle">
+      t₀: unknown
+    </text>
+
+    <!-- branch arrows -->
+    <path d="M 198 152 L 230 152 L 230 70 L 262 70" fill="none" stroke="#737373" stroke-width="1.5" marker-end="url(#aL)"></path>
+    <path d="M 198 152 L 230 152 L 230 234 L 262 234" fill="none" stroke="#737373" stroke-width="1.5" marker-end="url(#aL)"></path>
+    <text x="360" y="10" font-size="8.5" fill="#737373" text-anchor="middle">finished: 0 rows</text>
+    <text x="360" y="174" font-size="8.5" fill="#737373" text-anchor="middle">finished: 12 rows</text>
+
+    <!-- Column 2 top: known-empty -->
+    <rect x="270" y="18" width="180" height="104" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <rect x="284" y="34" width="152" height="56" rx="5" fill="#fafafa" stroke="#d4d4d4"></rect>
+    <text x="360" y="58" font-size="10" fill="#666666" text-anchor="middle">
+      No programs yet
+    </text>
+    <text x="360" y="74" font-size="8" fill="#999999" text-anchor="middle">
+      Create your first program
+    </text>
+    <text x="360" y="107" font-size="8.5" fill="#737373" text-anchor="middle">
+      known-empty: a real state, not a gap
+    </text>
+    <text x="360" y="138" font-size="10" fill="#737373" text-anchor="middle">
+      t₁: first response
+    </text>
+
+    <!-- Column 2 bottom: data -->
+    <rect x="270" y="182" width="180" height="104" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <rect x="284" y="200" width="152" height="9" rx="3" fill="#bfe3d0"></rect>
+    <rect x="284" y="218" width="152" height="9" rx="3" fill="#bfe3d0"></rect>
+    <rect x="284" y="236" width="152" height="9" rx="3" fill="#bfe3d0"></rect>
+    <rect x="284" y="254" width="152" height="9" rx="3" fill="#bfe3d0"></rect>
+    <text x="360" y="302" font-size="10" fill="#737373" text-anchor="middle">
+      t₁: first response
+    </text>
+
+    <!-- refetch arrows -->
+    <line x1="458" y1="70" x2="522" y2="70" stroke="#737373" stroke-width="1.5" marker-end="url(#aL)"></line>
+    <line x1="458" y1="234" x2="522" y2="234" stroke="#737373" stroke-width="1.5" marker-end="url(#aL)"></line>
+    <text x="490" y="60" font-size="8.5" fill="#737373" text-anchor="middle">refetch</text>
+    <text x="490" y="224" font-size="8.5" fill="#737373" text-anchor="middle">refetch</text>
+
+    <!-- Column 3 top: refetching while empty (dimmed + badge) -->
+    <rect x="530" y="18" width="180" height="104" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <g opacity="0.45">
+      <rect x="544" y="34" width="152" height="56" rx="5" fill="#fafafa" stroke="#d4d4d4"></rect>
+      <text x="620" y="58" font-size="10" fill="#666666" text-anchor="middle">
+        No programs yet
+      </text>
+      <text x="620" y="74" font-size="8" fill="#999999" text-anchor="middle">
+        Create your first program
+      </text>
+    </g>
+    <rect x="636" y="11" width="68" height="15" rx="7" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="670" y="19" font-size="7.5" fill="#0757ba" text-anchor="middle" dominant-baseline="central">
+      ↻ refreshing
+    </text>
+    <text x="620" y="107" font-size="8.5" fill="#737373" text-anchor="middle">
+      same empty state, dimmed; no skeleton
+    </text>
+    <text x="620" y="138" font-size="10" fill="#737373" text-anchor="middle">
+      t₂: any later fetch
+    </text>
+
+    <!-- Column 3 bottom: refetching with data (dimmed + badge) -->
+    <rect x="530" y="182" width="180" height="104" rx="8" fill="#ffffff" stroke="#c9c9c9"></rect>
+    <g opacity="0.45">
+      <rect x="544" y="200" width="152" height="9" rx="3" fill="#bfe3d0"></rect>
+      <rect x="544" y="218" width="152" height="9" rx="3" fill="#bfe3d0"></rect>
+      <rect x="544" y="236" width="152" height="9" rx="3" fill="#bfe3d0"></rect>
+      <rect x="544" y="254" width="152" height="9" rx="3" fill="#bfe3d0"></rect>
+    </g>
+    <rect x="636" y="175" width="68" height="15" rx="7" fill="#eaf3fe" stroke="#0070f3"></rect>
+    <text x="670" y="183" font-size="7.5" fill="#0757ba" text-anchor="middle" dominant-baseline="central">
+      ↻ refreshing
+    </text>
+    <text x="620" y="302" font-size="10" fill="#737373" text-anchor="middle">
+      t₂: any later fetch
+    </text>
+  </svg>
+
+
+
+  <figcaption>
+    
+One container's whole life. The skeleton exists only in the first frame, while the
+    answer is unknown; after that the container always shows its truth (rows or a real
+    empty state) and every subsequent fetch decorates it with a non-destructive indicator,
+    identically for empty and populated content.
+
+  </figcaption>
+</figure>
+
+<h2 id="transitions">10.7 Transitions</h2>
+<p>
+  Every state update in React is <em>urgent</em> by default: React drops what it is doing
+  and re-renders to reflect it as fast as it can. <span class="chip chip-react">React</span>
+  <span class="chip chip-very">Very important</span> <code>useTransition</code> (and its
+  standalone form <code>startTransition</code>) marks an update as
+  <strong>non-urgent</strong>: React prepares the resulting UI <em>in the background</em>
+  while the current one stays visible and interactive, and if a genuinely urgent update
+  (a keystroke) lands mid-render, React abandons the background work, handles the
+  keystroke, and restarts. One flag, and three behaviors fall out of it, each a distinct
+  tool.
+</p>
+
+<h3 id="transitions-stale">Transitions keep the old UI alive</h3>
 <p>
   The callout in <a href="#mechanism">§10.1</a> noted that a boundary already showing
   content will not fall back to its skeleton when an update inside it suspends during a
-  <em>transition</em>. That behavior deserves a rule of its own, because it is how you get
-  updates that don't flash. <span class="chip chip-react">React</span>
-  <span class="chip chip-very">Very important</span> <code>useTransition</code> (and its
-  standalone form <code>startTransition</code>) marks an update as
-  <strong>non-urgent</strong>: React keeps the current UI interactive and visible while
-  the new state prepares, and gives you an <code>isPending</code> flag to show progress
-  <em>alongside</em> the old content instead of replacing it. It is the same doctrine as
-  <a href="#refetch">§10.5</a>, one level up: don't blank what you already have just
-  because something newer is on the way.
+  transition. That behavior is how you get updates that don't flash, and it is the same
+  doctrine as <a href="#refetch">§10.5</a>, one level up: don't blank what you already
+  have just because something newer is on the way. This is the reason writes to
+  router-owned state, a navigation or a <code>searchParams</code> update (<a href="08-server-resolvable-state.html#url-state">§8.2</a>), belong in a transition: the current page stays live while the next view prepares,
+  and the <code>isPending</code> flag from <code>useTransition</code> shows progress
+  <em>alongside</em> the old content instead of replacing it.
+</p>
+
+<h3 id="transitions-defer">Transitions defer expensive work</h3>
+<p>
+  The second use has nothing to do with data: a state update whose <em>re-render</em> is
+  expensive. Re-filtering a large list, re-laying-out a chart, switching a heavy tab: wrap
+  the update in <code>startTransition</code> and the typing, clicking, and scrolling stay
+  responsive while the heavy render runs at low priority, restarted rather than blocking
+  whenever the user does something urgent. Two caveats from the React docs are worth
+  knowing. A transition cannot drive a controlled text input: the input's own value is
+  urgent by definition (the user must see their keystroke), so the transition carries the
+  expensive <em>derived</em> state and the input updates normally. And when the value
+  whose update you would defer is not yours to wrap (it arrives through props or a store),
+  <code>useDeferredValue</code> is the same mechanism applied to a value instead of an
+  update: the type-to-filter example in <a href="#example-deferred">§10.5</a>.
+</p>
+
+<h3 id="transitions-async">Async transitions: actions and pending state</h3>
+<p>
+  React 19 extended transitions to <em>async</em> functions, which the docs call
+  <strong>actions</strong>: <code>startTransition(async () =&gt; &#123; … &#125;)</code>.
+  <code>isPending</code> flips to true at the first call and stays true until every update
+  the action scheduled has landed, which is exactly the lifecycle a submit button needs;
+  this is the machinery behind firing a server action from a leaf (<a href="05-client-server-boundaries.html#self-contained">§5.7</a>), where <code>isPending</code> drives the button and the result object carries the
+  failure (<a href="05-client-server-boundaries.html#server-actions">§5.8</a>). Errors thrown
+  inside an action surface to the nearest error boundary, and optimistic UI
+  (<code>useOptimistic</code>, <a href="08-server-resolvable-state.html#url-state">§8.2</a>) reverts automatically when the action fails. One sharp edge from the docs:
+  after an <code>await</code>, further state updates inside the action must be wrapped in
+  <code>startTransition</code> again, or they lose their transition marking.
 </p>
 <p>
-  Reach for it in three situations. First, a state update that triggers an expensive
-  re-render, re-filtering a large list or re-laying-out a chart: wrap it in
-  <code>startTransition</code> and the input stays responsive while the heavy work runs at
-  low priority. Second, writes to router-owned state, a navigation or a
-  <code>searchParams</code> update (<a href="08-server-resolvable-state.html#url-state">§8.2</a>), so the current page stays live instead of blanking while the next view prepares.
-  Third, firing a server action (<a href="05-client-server-boundaries.html#self-contained">§5.7</a>), where <code>isPending</code> drives the button. The through-line is identical in all
-  three: you are telling React the update is not urgent, so it should keep the UI alive
-  while the update lands rather than yank it back to a fallback. Its close cousin
-  <code>useDeferredValue</code> does the same for a value whose update you do not own (the
-  type-to-filter case). The API reference for both is in
-  <a href="18-new-primitives.html#use-transition">§18.3</a>.
+  The API reference for <code>useTransition</code> and <code>useDeferredValue</code> is in
+  <a href="18-new-primitives.html#use-transition">§18.3</a>; the caveat list lives in the
+  <a href="https://react.dev/reference/react/startTransition" target="_blank" rel="noopener">React docs</a>.
 </p>
 
 <h2 id="rules">The rules</h2>
