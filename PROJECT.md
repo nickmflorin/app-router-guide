@@ -47,8 +47,10 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 
 ## Repo structure (reorganized 2026-07-16 — per Nick, so future distributables aren't crammed together)
 
-- `html-guide/` — THE canonical document: index.html + sections/\*.html + assets/ (style.css,
-  nav.js, logomark.svg). All authoring happens here.
+- `src/` — THE SOURCE OF TRUTH since the Astro migration: pages/, components/, layouts/, data/toc.js,
+  styles/. All authoring happens here. Static assets in `public/assets/`.
+- `html-guide/` — BUILD OUTPUT (`npm run build`): the browsable/distributable document, same URLs as
+  always. Never hand-edit; git-tracked so the folder stays shareable without building.
 - `markdown-guide/` — placeholder (index.md) for the future 1-1 Markdown derivation. Do not author
   here until Nick green-lights artifact 2.
 - `supplementary/` — working-notes.md (Nick's running to-do/content queue with the [ ]/[N]/[x]
