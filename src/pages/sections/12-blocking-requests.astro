@@ -351,35 +351,36 @@ flowchart LR
       </text>
       <text
         x='30'
-        y='50'
+        y='44'
         font-size='11'
         fill='#666666'
         font-family='Geist Mono, ui-monospace, monospace'
       >
-        ├── layout.tsx
+        └── layout.tsx
       </text>
       <text
         x='30'
-        y='78'
+        y='66'
         font-size='11'
         fill='#666666'
         font-family='Geist Mono, ui-monospace, monospace'
       >
-        ├── @header/
+        └── @header/
       </text>
       <text
-        x='30'
-        y='106'
+        x='44'
+        y='94'
         font-size='11'
         fill='#666666'
         font-family='Geist Mono, ui-monospace, monospace'
-        xml:space='preserve'>│ └──</text
       >
-      <rect x='86' y='90' width='156' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <circle cx='100' cy='102' r='8' fill='#ffffff' stroke='#0070f3'></circle>
+        └──
+      </text>
+      <rect x='86' y='78' width='156' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <circle cx='100' cy='90' r='8' fill='#ffffff' stroke='#0070f3'></circle>
       <text
         x='100'
-        y='102'
+        y='90'
         font-size='8'
         fill='#0757ba'
         text-anchor='middle'
@@ -389,7 +390,7 @@ flowchart LR
       </text>
       <text
         x='114'
-        y='106'
+        y='94'
         font-size='10.5'
         fill='#0757ba'
         font-family='Geist Mono, ui-monospace, monospace'
@@ -398,26 +399,27 @@ flowchart LR
       </text>
       <text
         x='30'
-        y='134'
+        y='122'
         font-size='11'
         fill='#666666'
         font-family='Geist Mono, ui-monospace, monospace'
       >
-        ├── @summary/
+        └── @summary/
       </text>
       <text
-        x='30'
-        y='162'
+        x='44'
+        y='150'
         font-size='11'
         fill='#666666'
         font-family='Geist Mono, ui-monospace, monospace'
-        xml:space='preserve'>│ └──</text
       >
-      <rect x='86' y='146' width='156' height='24' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
-      <circle cx='100' cy='158' r='8' fill='#ffffff' stroke='#b45309'></circle>
+        └──
+      </text>
+      <rect x='86' y='134' width='156' height='24' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
+      <circle cx='100' cy='146' r='8' fill='#ffffff' stroke='#b45309'></circle>
       <text
         x='100'
-        y='158'
+        y='146'
         font-size='8'
         fill='#8a5a00'
         text-anchor='middle'
@@ -427,7 +429,7 @@ flowchart LR
       </text>
       <text
         x='114'
-        y='162'
+        y='150'
         font-size='10.5'
         fill='#8a5a00'
         font-family='Geist Mono, ui-monospace, monospace'
@@ -436,18 +438,18 @@ flowchart LR
       </text>
       <text
         x='30'
-        y='206'
+        y='194'
         font-size='11'
         fill='#666666'
         font-family='Geist Mono, ui-monospace, monospace'
       >
         └──
       </text>
-      <rect x='60' y='190' width='182' height='24' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
-      <circle cx='74' cy='202' r='8' fill='#ffffff' stroke='#2ea06d'></circle>
+      <rect x='60' y='178' width='182' height='24' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <circle cx='74' cy='190' r='8' fill='#ffffff' stroke='#2ea06d'></circle>
       <text
         x='74'
-        y='202'
+        y='190'
         font-size='8'
         fill='#157a4c'
         text-anchor='middle'
@@ -457,7 +459,7 @@ flowchart LR
       </text>
       <text
         x='88'
-        y='206'
+        y='194'
         font-size='10.5'
         fill='#157a4c'
         font-family='Geist Mono, ui-monospace, monospace'
@@ -684,7 +686,7 @@ flowchart LR
     <strong>route-level independence</strong> - its own <code>loading.tsx</code>/<code
       >error.tsx</code
     >
-    files, participation in navigation, or different content per sub-route. Nick's canonical example:
+    files, participation in navigation, or different content per sub-route. A canonical example:
     a page header. If the header is <em>static</em>, it's just layout markup - no slot needed. If
     the header <em>depends on server data</em> (program name, status badge, owner), a <code
       >@header</code
@@ -1022,6 +1024,208 @@ flowchart LR
     </Fragment>
   </Diagram>
 
+  <h3 id='slot-subroutes'>Nested routes inside a slot</h3>
+  <p>
+    Slots don't stop at one page. A slot folder can contain a <strong>full nested route tree</strong>
+    of its own: give <code>@summary</code> an <code>archived/page.tsx</code> and the summary region
+    now has two views, recent and archived, each with a file address.
+    <Chip k='next' />
+    <Chip k='very' /> Because slots are not URL segments, the sub-route grafts onto the <em>page's</em>
+    URL: navigating to <code>/programs/42/archived</code> means "render the slot subtree that matches
+    <code>archived</code>", and the slot that matches is <code>@summary/archived</code>.
+  </p>
+  <p>
+    The interesting part is what happens to everybody else. On a <strong>soft navigation</strong> (a
+    <code>&lt;Link&gt;</code> click), Next.js performs a partial render: the slot whose subtree
+    matches the new URL re-renders, and
+    <strong>every other slot keeps its previously active state</strong>, even though the new URL no
+    longer says anything about them. The header and the main content don't re-render, don't refetch,
+    and don't flicker; one pane changes view. On a <strong>hard navigation</strong> (a reload, or a
+    shared deep link), the router has only the URL to go on and cannot reconstruct what the
+    unmatched slots were showing, so each of them renders its <code>default.tsx</code> instead (the
+    implicit <code>children</code> slot included). This is exactly why the rule below insists every
+    slot defines one: a missing <code>default.tsx</code> turns a reload of a perfectly valid URL
+    into a 404.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 259'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker
+          id='aSlotNav'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#737373'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
+        Sub-navigation inside one slot: the URL changes, the other slots hold
+      </text>
+
+      <!-- LEFT: /programs/42 -->
+      <!-- data-lint-ignore: browser scene - chrome bar sits above the content grid -->
+      <rect
+        data-lint-ignore='scene'
+        x='20'
+        y='26'
+        width='330'
+        height='190'
+        rx='8'
+        fill='#ffffff'
+        stroke='#c9c9c9'></rect>
+      <circle cx='38' cy='40' r='4' fill='#c9c9c9'></circle>
+      <circle cx='52' cy='40' r='4' fill='#c9c9c9'></circle>
+      <rect x='64' y='32' width='170' height='16' rx='8' fill='#f2f2f2' stroke='#e0e0e0'></rect>
+      <text x='74' y='44' font-size='9' fill='#737373'>…/programs/42</text>
+      <rect x='36' y='56' width='298' height='22' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='48' y='67' font-size='9' fill='#0757ba' dominant-baseline='central'>
+        &#123;header&#125;
+      </text>
+      <rect x='36' y='86' width='180' height='113' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='48' y='100' font-size='9' fill='#157a4c' dominant-baseline='central'>
+        &#123;children&#125;
+      </text>
+      <rect x='48' y='112' width='156' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='48' y='126' width='156' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='48' y='140' width='116' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='48' y='154' width='156' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='48' y='168' width='156' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='48' y='182' width='116' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='224' y='86' width='110' height='113' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text x='234' y='100' font-size='9' fill='#8a5a00' dominant-baseline='central'>
+        &#123;summary&#125;
+      </text>
+      <text x='234' y='114' font-size='8.5' fill='#8f6b2e' dominant-baseline='central'>
+        recent
+      </text>
+      <rect x='234' y='126' width='90' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='234' y='140' width='90' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='234' y='154' width='66' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='234' y='168' width='90' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='234' y='182' width='66' height='7' rx='3' fill='#f3e2c0'></rect>
+      <text x='185' y='230' font-size='9.5' fill='#737373' text-anchor='middle'>
+        @summary matches page.tsx
+      </text>
+
+      <!-- navigate arrow -->
+      <line
+        x1='352'
+        y1='132'
+        x2='366'
+        y2='132'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#aSlotNav)'></line>
+
+      <!-- RIGHT: /programs/42/archived -->
+      <!-- data-lint-ignore: browser scene - chrome bar sits above the content grid -->
+      <rect
+        data-lint-ignore='scene'
+        x='370'
+        y='26'
+        width='330'
+        height='190'
+        rx='8'
+        fill='#ffffff'
+        stroke='#c9c9c9'></rect>
+      <circle cx='388' cy='40' r='4' fill='#c9c9c9'></circle>
+      <circle cx='402' cy='40' r='4' fill='#c9c9c9'></circle>
+      <rect x='414' y='32' width='170' height='16' rx='8' fill='#f2f2f2' stroke='#e0e0e0'></rect>
+      <text x='424' y='44' font-size='9' fill='#737373'>…/programs/42/archived</text>
+      <rect x='386' y='56' width='298' height='22' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='398' y='67' font-size='9' fill='#0757ba' dominant-baseline='central'>
+        &#123;header&#125; · state kept
+      </text>
+      <rect x='386' y='86' width='180' height='113' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='398' y='100' font-size='9' fill='#157a4c' dominant-baseline='central'>
+        &#123;children&#125; · state kept
+      </text>
+      <rect x='398' y='112' width='156' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='398' y='126' width='156' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='398' y='140' width='116' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='398' y='154' width='156' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='398' y='168' width='156' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='398' y='182' width='116' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect
+        x='574'
+        y='86'
+        width='110'
+        height='113'
+        rx='5'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-width='1.5'></rect>
+      <text x='584' y='100' font-size='9' fill='#8a5a00' dominant-baseline='central'>
+        &#123;summary&#125;
+      </text>
+      <text x='584' y='114' font-size='8.5' fill='#8f6b2e' dominant-baseline='central'>
+        archived
+      </text>
+      <rect x='584' y='126' width='90' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='584' y='140' width='66' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='584' y='154' width='90' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='584' y='168' width='66' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='584' y='182' width='90' height='7' rx='3' fill='#f3e2c0'></rect>
+      <text x='535' y='230' font-size='9.5' fill='#0f7b48' text-anchor='middle'>
+        soft nav: only @summary re-renders, now matching archived/page.tsx
+      </text>
+
+      <text x='360' y='254' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
+        hard reload of /programs/42/archived: unmatched slots render default.tsx (missing default =
+        404)
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart LR
+  subgraph U1["/programs/42"]
+    direction TB
+    a1("@summary · page.tsx, recent"):::amber
+    a2("header + children rendered"):::green
+  end
+  subgraph U2["/programs/42/archived"]
+    direction TB
+    b1("@summary · archived/page.tsx"):::amber
+    b2("header + children: state kept,<br/>not re-rendered"):::green
+  end
+  U1 -->|"Link: soft navigation"| U2
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style U1 fill:#ffffff,stroke:#e0e0e0,color:#171717,rx:8px,ry:8px
+  style U2 fill:#ffffff,stroke:#e0e0e0,color:#171717,rx:8px,ry:8px
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
+    <Fragment slot='caption'>
+      A nested route inside the <code>@summary</code> slot gives one pane its own sub-navigation.
+      Following the link is a soft navigation: the summary pane re-renders against its <code
+        >archived</code
+      > subtree while the header and main content keep their state untouched. Reloading that same URL
+      is a hard navigation: the router can't know what the unmatched slots were showing, so each one
+      falls back to its <code>default.tsx</code>, which is why every slot must define one. The
+      sub-view lives in the URL, so it is shareable and back-button-friendly (<a
+        href='08-server-resolvable-state.html'>§8</a
+      >).
+    </Fragment>
+  </Diagram>
+
   <h2 id='client'>12.4 The client has waterfalls too</h2>
   <p>
     Everything above has a client-side mirror, and it's the expensive one - each client-side gate is
@@ -1346,6 +1550,262 @@ flowchart LR
     </Fragment>
   </Diagram>
 
+  <h3 id='csr-depth'>When CSR runs deep: the tree serializes the network</h3>
+  <p>
+    The waterfall diagrams above show the network cost. There is a structural cost that appears the
+    moment client-side rendering owns <em>layers</em> of content, and it's worse: the top layer
+    cannot finish rendering until its API response lands, and a few layers beneath it sit components
+    with data dependencies of their own, fetched with their own hooks, whose requests
+    <strong>have not even started</strong>, because a component that isn't mounted can't fetch.
+    Depth in the tree becomes serialization on the network, automatically, with nobody ever choosing
+    it. Each layer resolves, renders, and thereby <em>begins</em> the next layer's wait: the user
+    watches spinner generations hatch one inside another.
+    <Chip k='react' />
+    <Chip k='critical' />
+  </p>
+  <p>
+    TypeScript makes the trap explicit. When a child's props are typed non-optional (<code
+      >stats: Stats</code
+    >, not <code>Stats | undefined</code>), the child <em>literally cannot render</em> until the
+    data exists, so the parent has exactly two options, and both are bad. <strong>Gate at the
+    top</strong>: one <code>if (!data) return &lt;Skeleton /&gt;</code> and everything beneath waits,
+    including children whose own fetches now serialize behind the gate. Or <strong>thread
+    <code>undefined</code> down</strong> and let each element decide: now "can this render yet?" is
+    smeared across every leaf in the region, ten scattered checks with ten fallbacks to size and
+    maintain, instead of one. That entire decision space (gate or smear, and where, and with what
+    fallback) exists <em>only because the data might not be there yet</em>. It is the concrete form
+    of <a href='04-ssr.html#simplicity'>§4.2</a>'s argument: on the server the question is
+    unaskable, because by the time anything renders, the data is a value.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-bad'
+      is:raw><span class="filename">ProgramSection.tsx - a gate at every depth</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramSection</span>({ programId }: { programId: <span class="tok-kw">string</span> }) {
+  <span class="tok-kw">const</span> { data: program } = <span class="tok-fn">useProgram</span>(programId);
+
+  <span class="tok-com">/* Nothing below exists until this resolves. The children's own
+     fetches haven't started, because the children don't exist yet. */</span>
+  <span class="tok-kw">if</span> (!program) <span class="tok-kw">return</span> &lt;<span class="tok-fn">SectionSkeleton</span> /&gt;;
+
+  <span class="tok-kw">return</span> (
+    &lt;section&gt;
+      &lt;<span class="tok-fn">ProgramHeader</span> <span class="tok-prop">program</span>={program} /&gt;
+      <span class="tok-com">{/* Mounts only now; only now does its useProgramStats begin. */}</span>
+      &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={program.id} /&gt;
+    &lt;/section&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Every layer that repeats this shape adds a full round trip <em>plus</em> a render cycle to the
+      path. Three such layers and the region's time-to-content is the sum of three sequential
+      requests, none of which needed the others' data. The typed props made the gate feel mandatory;
+      the gate made the waterfall.
+    </CodeCaption>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">ProgramSection.tsx - when CSR is required: both questions asked at mount</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramSection</span>({ programId }: { programId: <span class="tok-kw">string</span> }) {
+  <span class="tok-com">/* Sibling hooks, no coupling: both requests start immediately,
+     keyed by the id the component already has. */</span>
+  <span class="tok-kw">const</span> { data: program } = <span class="tok-fn">useProgram</span>(programId);
+  <span class="tok-kw">const</span> { data: stats } = <span class="tok-fn">useProgramStats</span>(programId);
+
+  <span class="tok-kw">return</span> (
+    &lt;section&gt;
+      {program ? &lt;<span class="tok-fn">ProgramHeader</span> <span class="tok-prop">program</span>={program} /&gt; : &lt;<span class="tok-fn">HeaderSkeleton</span> /&gt;}
+      {stats ? &lt;<span class="tok-fn">StatRow</span> <span class="tok-prop">stats</span>={stats} /&gt; : &lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}
+    &lt;/section&gt;
+  );
+}</pre>
+    <CodeCaption>
+      One change de-serialized it: the stats hook is keyed by <code>programId</code> (already
+      known) instead of <code>program.id</code> (born from the first response). And note what even
+      the fixed version still pays: two render-or-fallback decisions instead of zero. That residual
+      tax is permanent wherever CSR owns layered content, which is the deeper argument for putting
+      the chain on the server in the first place.
+    </CodeCaption>
+  </Snippet>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 208'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
+        The same three reads at depth: structure decides the clock
+      </text>
+
+      <!-- LANE 1: serial by structure -->
+      <text
+        x='12'
+        y='58'
+        font-size='10.5'
+        fill='#b3261e'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        Serial by structure
+      </text>
+      <text x='12' y='71' font-size='9' fill='#b0483e' dominant-baseline='central'>
+        (each layer gates the next)
+      </text>
+      <rect x='175' y='36' width='90' height='18' rx='3' fill='#f5f5f5' stroke='#c9c9c9'></rect>
+      <text
+        x='220'
+        y='45'
+        font-size='9'
+        fill='#525252'
+        text-anchor='middle'
+        dominant-baseline='central'>JS + hydrate</text>
+      <rect x='269' y='36' width='110' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text
+        x='324'
+        y='45'
+        font-size='9'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'>page fetch</text>
+      <rect x='383' y='62' width='110' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text
+        x='438'
+        y='71'
+        font-size='9'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'>section fetch</text>
+      <rect x='497' y='88' width='110' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text
+        x='552'
+        y='97'
+        font-size='9'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'>widget fetch</text>
+      <text x='615' y='93' font-size='9.5' fill='#b3261e' font-weight='500'>
+        3 spinner
+      </text>
+      <text x='615' y='105' font-size='9.5' fill='#b3261e' font-weight='500'>
+        generations
+      </text>
+
+      <!-- LANE 2: parallel by design -->
+      <text
+        x='12'
+        y='168'
+        font-size='10.5'
+        fill='#0e7490'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        Parallel by design
+      </text>
+      <text x='12' y='181' font-size='9' fill='#3f8a99' dominant-baseline='central'>
+        (keys known up front)
+      </text>
+      <rect x='175' y='146' width='90' height='58' rx='3' fill='#f5f5f5' stroke='#c9c9c9'></rect>
+      <text
+        x='220'
+        y='175'
+        font-size='9'
+        fill='#525252'
+        text-anchor='middle'
+        dominant-baseline='central'>JS + hydrate</text>
+      <rect x='269' y='146' width='110' height='16' rx='3' fill='#e0f5f9' stroke='#0891b2'></rect>
+      <text
+        x='324'
+        y='154'
+        font-size='9'
+        fill='#0e7490'
+        text-anchor='middle'
+        dominant-baseline='central'>page fetch</text>
+      <rect x='269' y='166' width='110' height='16' rx='3' fill='#e0f5f9' stroke='#0891b2'></rect>
+      <text
+        x='324'
+        y='174'
+        font-size='9'
+        fill='#0e7490'
+        text-anchor='middle'
+        dominant-baseline='central'>section fetch</text>
+      <rect x='269' y='186' width='110' height='16' rx='3' fill='#e0f5f9' stroke='#0891b2'></rect>
+      <text
+        x='324'
+        y='194'
+        font-size='9'
+        fill='#0e7490'
+        text-anchor='middle'
+        dominant-baseline='central'>widget fetch</text>
+      <text
+        x='395'
+        y='168'
+        font-size='9.5'
+        fill='#0f7b48'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        one spinner generation; the slowest request sets the clock
+      </text>
+      <text x='395' y='181' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+        still worse than the server tree, which starts pre-bundle
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart LR
+  subgraph SD["Serial by structure"]
+    direction LR
+    d0("JS + hydrate"):::neutral
+    d0 --> d1("page fetch"):::amber
+    d1 --> d2("section fetch · starts when page renders"):::amber
+    d2 --> d3("widget fetch · third spinner generation"):::amber
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style SD fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef neutral fill:#f5f5f5,stroke:#c9c9c9,color:#525252
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+%%split%%
+flowchart LR
+  subgraph PD2["Parallel by design"]
+    direction LR
+    e0("JS + hydrate"):::neutral
+    e0 --> e1("page fetch · key known up front"):::cyan
+    e0 --> e2("section fetch · key known up front"):::cyan
+    e0 --> e3("widget fetch · key known up front"):::cyan
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style PD2 fill:#ffffff,stroke:#e0e0e0,color:#0e7490,rx:8px,ry:8px
+  classDef neutral fill:#f5f5f5,stroke:#c9c9c9,color:#525252
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+</pre>
+
+    <Fragment slot='caption'>
+      The same three reads, decided by component structure. In the serial lane nobody wrote "wait
+      for the previous request"; the nesting wrote it, because each layer's hook can't run until the
+      layer above renders it. In the parallel lane the keys were known up front, so every request
+      starts the moment hydration finishes, and the region resolves on the slowest request instead
+      of the sum.
+    </Fragment>
+  </Diagram>
+
+  <p>
+    So the standing rule for the cases where client fetching is genuinely required (<a
+      href='14-dedupe-caching.html#when-client'>§14.7</a
+    >): <strong>the client data flow must never be serial.</strong> If you find a request that can't
+    start until another finishes, that is not a fact of life to be styled around with spinners; it
+    is a signal that something upstream is shaped wrong. Either the earlier request should
+    <strong>fetch more</strong> (return what the children need, so one response feeds the region),
+    or the requests should be <strong>re-keyed to what is already known</strong> so they run in
+    parallel, or the chain never belonged on the client at all and moves to the server. Serial
+    client data flow is a design bug, not a constraint.
+  </p>
+
   <h2 id='rules'>The rules</h2>
   <table class='tbl'>
     <thead>
@@ -1389,8 +1849,8 @@ flowchart LR
       </tr>
       <tr>
         <td>
-          Every slot defines <strong><code>default.tsx</code></strong> - unmatched navigation must not
-          404 the route.
+          Parallel routes: every slot defines <strong><code>default.tsx</code></strong> - a hard
+          navigation to a URL the slot doesn't match must not 404 the route.
         </td>
         <td><Chip k='next' /></td>
         <td><Chip k='critical' /></td>
