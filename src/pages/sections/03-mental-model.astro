@@ -213,7 +213,42 @@ import CompareCol from '../../components/CompareCol.astro';
       page is interactive
     </text>
   </svg>
-  
+
+<pre slot="mermaid" is:raw>
+%%{init: {"theme": "base", "themeVariables": {
+  "fontFamily": "Inter, system-ui, sans-serif", "fontSize": "13px",
+  "lineColor": "#737373", "edgeLabelBackground": "#ffffff",
+  "primaryColor": "#eaf3fe", "primaryBorderColor": "#0070f3", "primaryTextColor": "#0757ba",
+  "clusterBkg": "#fafafa", "clusterBorder": "#eaeaea"}}}%%
+flowchart LR
+  B["Browser"]:::neutral
+  subgraph S["Server"]
+    direction TB
+    S1["render server components"]:::bluesub
+    S2["await data: parallel, deduped"]:::bluesub
+    S3["suspend the not-yet-known"]:::bluesub
+  end
+  subgraph R["Streamed response"]
+    direction TB
+    R1["HTML: structure + known content"]:::green
+    R2["fallbacks in reserved containers"]:::amberdash
+    R3["RSC payload + JS for client leaves"]:::blue
+  end
+  B -->|"GET /programs/42"| S
+  S --> R
+  R --> P1["first paint: real content,<br/>stable layout"]:::green
+  P1 --> P2["suspended regions stream in,<br/>replacing fallbacks in place"]:::amberdash
+  P2 --> P3["leaves hydrate,<br/>page is interactive"]:::cyan
+  style S fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  style R fill:#ffffff,stroke:#d4d4d4,color:#171717
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef bluesub fill:#d8e8fc,stroke:#d8e8fc,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+</pre>
+
 <Fragment slot="caption">
 One request. The server resolves everything knowable, streams structure immediately,
     and the unknown fills in without moving anything. No client-side fetch chain, no
@@ -436,7 +471,43 @@ One request. The server resolves everything knowable, streams structure immediat
       leaves hydrate
     </text>
   </svg>
-  
+
+<pre slot="mermaid" is:raw>
+%%{init: {"theme": "base", "themeVariables": {
+  "fontFamily": "Inter, system-ui, sans-serif", "fontSize": "13px",
+  "lineColor": "#737373", "edgeLabelBackground": "#ffffff",
+  "primaryColor": "#eaf3fe", "primaryBorderColor": "#0070f3", "primaryTextColor": "#0757ba",
+  "clusterBkg": "#ffffff", "clusterBorder": "#e0e0e0"}}}%%
+flowchart TB
+  subgraph SPA["SPA-style page (client-fetch chain)"]
+    direction LR
+    A1["HTML shell"]:::neutral --> A2["download + parse JS"]:::neutral
+    A2 --> A3["hydrate"]:::neutral
+    A3 --> A4["fetch /users/me"]:::amber
+    A4 --> A5["fetch page data"]:::amber
+    A5 --> A6["content visible: T₅"]:::green
+  end
+  N1["T₅: five serialized steps - spinners at each step ·<br/>layout shifts as each lands · repeats on every navigation"]:::rednote
+  subgraph SF["Server-first page (same data)"]
+    direction LR
+    B1["server: fetch in parallel + render"]:::blue
+    B1 --> B2["content visible: T₁"]:::green
+    B2 --> B3["slow regions stream in"]:::amberdash
+    B3 --> B4["leaves hydrate"]:::cyan
+  end
+  SPA ~~~ N1
+  N1 ~~~ SF
+  style SPA color:#b3261e
+  style SF color:#157a4c
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+  classDef rednote fill:none,stroke:none,color:#b0483e
+</pre>
+
 <Fragment slot="caption">
 The same page, same data, two architectures. The SPA chain serializes five round-trips
     before anything meaningful paints, and pays them again on every hard navigation. The

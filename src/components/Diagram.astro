@@ -1,11 +1,25 @@
 ---
 /* A guide diagram: the SVG goes in the default slot, the caption (HTML
    allowed, including § links) in the named `caption` slot. Geometry rules
-   live in PROJECT.md; run scripts/svg_lint.py after any change. */
+   live in PROJECT.md; run scripts/svg_lint.py after any change.
+
+   The optional `mermaid` slot carries the diagram's authored Mermaid twin
+   (author it inside <pre slot="mermaid" is:raw> so braces and newlines
+   survive). It is invisible in the HTML output (a <template> renders
+   nothing); scripts/build_md.py extracts it into the Markdown forms as a
+   ```mermaid fence. Keep the twin in sync when the SVG changes. */
+const hasMermaid = Astro.slots.has('mermaid');
 ---
 
 <figure class="diagram">
   <slot />
+  {
+    hasMermaid && (
+      <template data-mermaid>
+        <slot name="mermaid" />
+      </template>
+    )
+  }
   <figcaption>
     <slot name="caption" />
   </figcaption>

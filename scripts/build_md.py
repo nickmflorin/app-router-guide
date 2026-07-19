@@ -283,14 +283,36 @@ class Converter:
         return "\n".join(out)
 
     def diagram_block(self, n):
-        cap = ""
+        cap_md, cap_plain, mermaid = "", "", None
         for c in n.children:
-            if not isinstance(c, str) and c.tag == "figcaption":
-                cap = squash(self.inline_plain(c))
-        desc = cap or "an illustration for this section (the source figure has no caption)"
+            if isinstance(c, str):
+                continue
+            if c.tag == "figcaption":
+                cap_md = squash(self.inline(c))
+                cap_plain = squash(self.inline_plain(c))
+            elif c.tag == "template" and "data-mermaid" in c.attrs:
+                mermaid = self.raw_text(c).strip("\n").strip()
+        if mermaid:
+            out = f"```mermaid\n{mermaid}\n```"
+            if cap_md:
+                out += f"\n\n> {cap_md}"
+            return out
+        desc = cap_plain or "an illustration for this section (the source figure has no caption)"
         desc = desc.replace("--", "- -")  # '--' is illegal inside html comments
         return ("<!-- DIAGRAM PLACEHOLDER: to be converted to a Mermaid diagram "
                 "in a later pass. The diagram shows: " + desc + " -->")
+
+    def raw_text(self, node):
+        # text with <br/> re-emitted literally (mermaid line breaks in labels)
+        out = []
+        for ch in node.children:
+            if isinstance(ch, str):
+                out.append(ch)
+            elif ch.tag == "br":
+                out.append("<br/>")
+            else:
+                out.append(self.raw_text(ch))
+        return "".join(out)
 
     def inline_plain(self, node):
         # like inline(), but plain text (used inside comments: no md markup)
