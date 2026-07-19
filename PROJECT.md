@@ -60,7 +60,7 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 - `build/` — README.md (COMMITTED, survives builds: explains each distributable so Nick can zip build/ and send it) + `output/` (GITIGNORED, regenerated): ALL build outputs (2026-07-19 reorg; build/output/app-router-guide_html/ and markdown-guide/ DELETED):
   `app-router-guide_html/` (astro outDir: the multi-page site, FINAL, draft layer stripped),
   `app-router-guide.html` (single-file distributable, built by build_artifact.py --final),
-  `output/artifact.html` (Cowork DRAFT preview, build_artifact.py without flags), and
+  `.preview/artifact.html` (Cowork DRAFT preview, build_artifact.py without flags; kept OUTSIDE build/ so zipping build/ ships only final outputs), and
   `app-router-guide_md/` + `app-router-guide.md` (markdown: deterministic conversion via
   scripts/build_md.py from the built html; content-only, generated TOC atop index.md,
   .md#anchor cross-links with <a id> heading anchors, chNN- namespacing in the single file;

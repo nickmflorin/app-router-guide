@@ -17,8 +17,8 @@ Output layout:
     ├── app-router-guide.html    html + file:   one self-contained document
     ├── app-router-guide_md/     md + folder:   multi-page markdown docs
     ├── app-router-guide.md      md + file:     one markdown document
-    └── artifact.html            (not built here: Cowork draft preview,
-                                  scripts/build_artifact.py without --final)
+    (the Cowork DRAFT preview lives outside this folder, in .preview/,
+     so zipping build/ ships only final outputs)
 
 The html folder form is Astro's outDir, so it is always rebuilt fresh by the
 pipeline; the html file form is bundled from it afterwards. All outputs are

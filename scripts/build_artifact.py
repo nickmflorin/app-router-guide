@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Bundle the multi-page guide into ONE self-contained HTML file for publishing
-as a Claude artifact (build/output/artifact.html).
+as a Claude artifact (.preview/artifact.html; NOT a distributable).
 
 - Parses the TOC from build/output/app-router-guide_html/assets/nav.js (single source of truth), so section
   renumbers propagate automatically.
@@ -14,7 +14,7 @@ as a Claude artifact (build/output/artifact.html).
   logic from nav.js is reproduced; DRAFT badge included.
 
 Run:  python3 scripts/build_artifact.py
-Then publish/update the Claude artifact from build/output/artifact.html.
+Then publish/update the Claude artifact from .preview/artifact.html.
 """
 import argparse
 import base64
@@ -227,8 +227,8 @@ doc = f"""<!DOCTYPE html>
 </html>
 """
 
-os.makedirs(os.path.join(ROOT, "build", "output"), exist_ok=True)
-out = os.path.join(ROOT, ARGS.out) if ARGS.out else os.path.join(ROOT, "build", "output", "artifact.html")
+os.makedirs(os.path.join(ROOT, ".preview"), exist_ok=True)
+out = os.path.join(ROOT, ARGS.out) if ARGS.out else os.path.join(ROOT, ".preview", "artifact.html")
 with open(out, "w") as f:
     f.write(doc)
 

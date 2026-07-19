@@ -5,3 +5,4 @@ node_modules/
 .astro/
 **/__pycache__/
 build/output/
+.preview/
