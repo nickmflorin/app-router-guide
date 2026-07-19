@@ -113,7 +113,10 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   #e7f5ee/#2ea06d/#157a4c, amber #fdf3e3/#b45309/#8a5a00 + stroke-dasharray:4 3 for
   suspended/unknown, cyan #e0f5f9/#0891b2/#0e7490), linkStyle default
   stroke:#737373,stroke-width:1.5px, style statements on subgraphs incl. rx:8px,ry:8px
-  (rounded clusters). Node shape ROUNDED: ("label") not ["label"]. NO floating
+  (rounded clusters). Node shape ROUNDED: ("label") not ["label"]. NEVER use ~~~ invisible
+  edges (previewers render them as visible lines): stacked/compared lanes are SEPARATE
+  charts in one twin, split by a %%split%% line (build_md emits consecutive fences that
+  stack via document flow). NO floating
   annotation/caption nodes, and cluster titles SHORT (one line, roughly 25 chars max;
   previewers wrap long titles INTO the nodes without reserving height). ALL commentary and
   annotations belong in the figcaption (build_md renders it as a blockquote under the fence,

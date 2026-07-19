@@ -298,7 +298,12 @@ class Converter:
             elif c.tag == "template" and "data-mermaid" in c.attrs:
                 mermaid = self.raw_text(c).strip("\n").strip()
         if mermaid:
-            out = f"```mermaid\n{mermaid}\n```"
+            # A twin may contain several charts separated by a %%split%% line
+            # (e.g. compared lanes). Separate fences stack via document flow,
+            # which avoids inter-lane edges (some previewers render mermaid's
+            # "invisible" ~~~ links as visible lines).
+            charts = [c.strip() for c in mermaid.split("%%split%%") if c.strip()]
+            out = "\n\n".join(f"```mermaid\n{c}\n```" for c in charts)
             if cap_md:
                 out += f"\n\n> {cap_md}"
             return out
