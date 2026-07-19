@@ -13,8 +13,8 @@ Output layout:
     build/
     ├── app-router-guide_html/   html + folder: the browsable multi-page site
     ├── app-router-guide.html    html + file:   one self-contained document
-    ├── app-router-guide_md/     md + folder:   NOT YET SUPPORTED
-    ├── app-router-guide.md      md + file:     NOT YET SUPPORTED
+    ├── app-router-guide_md/     md + folder:   multi-page markdown docs
+    ├── app-router-guide.md      md + file:     one markdown document
     └── artifact.html            (not built here: Cowork draft preview,
                                   scripts/build_artifact.py without --final)
 
@@ -80,16 +80,21 @@ def main():
             built.append("build/app-router-guide.html   (single file)")
 
     if "md" in formats:
-        for p in packagings:
-            name = "build/app-router-guide_md/" if p == "folder" else "build/app-router-guide.md"
-            skipped.append(name)
-            print(f"WARNING: markdown output is not yet supported; skipping {name}")
+        # md is derived from the built html site; make sure it exists/is fresh.
+        if "html" not in formats:
+            run(["npm", "run", "build"])
+        run([sys.executable, "scripts/build_md.py",
+             "--packaging", ",".join(packagings)])
+        if "folder" in packagings:
+            built.append("build/app-router-guide_md/    (multi-page markdown)")
+        if "file" in packagings:
+            built.append("build/app-router-guide.md     (single-file markdown)")
 
     print("\ndist summary")
     for b in built:
         print(f"  built:   {b}")
-    for s in skipped:
-        print(f"  skipped: {s} (md not yet supported)")
+    for sk in skipped:
+        print(f"  skipped: {sk}")
     if not built and not skipped:
         print("  nothing to do")
 

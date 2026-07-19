@@ -9,8 +9,9 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 1. **HTML guide** (`build/app-router-guide_html/` — index.html + sections/\*.html, shared styles in assets/) — the
    canonical document. Styled, browser-renderable, native SVG/HTML diagrams. **We iterate on this
    alone until Nick explicitly says to start deriving other artifacts.**
-2. Markdown document — generated later from (1), must be 1-1 with it. SVG diagrams convert to
-   mermaid.
+2. Markdown document — GENERATED (2026-07-19) deterministically from (1) by scripts/build_md.py,
+   both folder and single-file forms. SVG diagrams still pending: placeholders carry captions
+   for a future Mermaid conversion pass.
 3. PDF — generated later from (1).
 4. HTML slide deck — summarized (less detailed) version for the team presentation.
 
@@ -60,7 +61,11 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   `app-router-guide_html/` (astro outDir: the multi-page site, FINAL, draft layer stripped),
   `app-router-guide.html` (single-file distributable, built by build_artifact.py --final),
   `artifact.html` (Cowork DRAFT preview, build_artifact.py without flags), and later
-  `app-router-guide_md/` + `app-router-guide.md` (markdown, NOT YET SUPPORTED).
+  `app-router-guide_md/` + `app-router-guide.md` (markdown: deterministic conversion via
+  scripts/build_md.py from the built html; content-only, generated TOC atop index.md,
+  .md#anchor cross-links with <a id> heading anchors, chNN- namespacing in the single file;
+  DIAGRAMS ARE NOT CONVERTED YET: each becomes an html-comment placeholder carrying its
+  figcaption for a future AI-assisted Mermaid pass).
   `npm run dist [-- --output=html|md|all --packaging=folder|file|all]` orchestrates
   (scripts/build_dist.py; defaults all/all; "module" aliases "folder"). Never hand-edit;
   git-tracked so outputs stay shareable without building.
