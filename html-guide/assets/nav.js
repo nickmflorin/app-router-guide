@@ -152,6 +152,14 @@ const TOC = [
             <div class="brand-sub">NextJS 16 App Router &middot; React 19</div>
           </div>
         </div>
+        <svg class="brand-go" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+          <circle cx="2.5" cy="3.5" r="1.1" fill="currentColor"/>
+          <line x1="6" y1="3.5" x2="14" y2="3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="2.5" cy="8" r="1.1" fill="currentColor"/>
+          <line x1="6" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="2.5" cy="12.5" r="1.1" fill="currentColor"/>
+          <line x1="6" y1="12.5" x2="14" y2="12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
       </a>`;
     html += `
       <div class="side-search">

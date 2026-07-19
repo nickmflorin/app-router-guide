@@ -79,7 +79,8 @@ body {
 }
 .sidebar .brand {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
   gap: 9px;
   margin: 0 0 10px -8px;
   padding: 6px 8px;
@@ -91,6 +92,16 @@ body {
   background: var(--surface);
 }
 .sidebar .brand:hover .brand-sub {
+  color: var(--muted);
+}
+/* the standing "a table of contents lives behind this" affordance */
+.sidebar .brand .brand-go {
+  flex-shrink: 0;
+  color: #c4c4c4;
+  margin-right: 2px;
+  transition: color 0.12s ease;
+}
+.sidebar .brand:hover .brand-go {
   color: var(--muted);
 }
 .sidebar .brand .mark {
