@@ -18,10 +18,11 @@
       ]
     }
   },
-  "description": "Craft Education - The App Router Guide (Astro source, html-guide/ is the built output)",
+  "description": "Craft Education - The App Router Guide (Astro source, build/app-router-guide_html/ is the built output)",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build && python3 scripts/postbuild_relativize.py && python3 scripts/build_search_index.py",
+    "dist": "python3 scripts/build_dist.py",
     "preview": "astro preview",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

@@ -1,13 +1,13 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
-/* The built site IS html-guide/: the same folder, URLs, and file names the
-   guide has always had (sections/NN-slug.html), so every downstream tool
-   (svg_lint, build_artifact.py, the annotation layer, file:// viewing)
-   keeps working unchanged. compressHTML stays off so the output remains
-   diffable and prettier-friendly. */
+/* The built site goes straight to build/app-router-guide_html/ (the
+   distributable folder form), same URLs and file names as always
+   (sections/NN-slug.html), so every downstream tool (svg_lint,
+   build_artifact.py, file:// viewing) reads one location. compressHTML
+   stays off so the output remains diffable. */
 export default defineConfig({
-  outDir: './html-guide',
+  outDir: './build/app-router-guide_html',
   build: { format: 'file' },
   compressHTML: false,
   vite: { plugins: [tailwindcss()] },

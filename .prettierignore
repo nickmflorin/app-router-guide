@@ -3,4 +3,4 @@ build/
 node_modules/
 
 # BUILT OUTPUT since the Astro migration (npm run build); never hand-edited.
-html-guide/
+build/
