@@ -617,7 +617,7 @@ flowchart TB
     recommend it as the default for that world.
   </p>
   <p>
-    We are not building that app, and that is the whole argument.
+    <strong>We are not building that app</strong>, and that is the whole argument.
     <Chip k='next' />
     <Chip k='very' /> In this architecture the client cache's job is deliberately small: the server layer
     owns first-paint data, mutations flow through server actions with <code>revalidateTag</code>
@@ -632,8 +632,9 @@ flowchart TB
   <p>
     The tiebreaker is alignment.
     <a href='https://swr.vercel.app' target='_blank' rel='noopener'>SWR</a> is built and maintained by
-    Vercel, the same team that ships Next.js: its defaults are designed against the App Router's behavior,
-    its releases track Next's, and the Next.js docs use it in their own client-fetching examples. When
+    Vercel, the same team that ships Next.js, and was designed from the start for use with Next: its
+    defaults are designed against the App Router's behavior, its releases track Next's, and the
+    Next.js docs use it in their own client-fetching examples. When
     the framework and the cache library share an owner, the seams between them are somebody's job to keep
     smooth. Choosing
     <a href='https://tanstack.com/query/latest' target='_blank' rel='noopener'>TanStack Query</a> here
@@ -680,7 +681,9 @@ flowchart TB
 <span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
 
 <span class="tok-com">// The drawer and its data are both born from the interaction: loaded on open.</span>
-<span class="tok-kw">const</span> <span class="tok-fn">DetailsDrawer</span> = <span class="tok-fn">dynamic</span>(() =&gt; <span class="tok-fn">import</span>(<span class="tok-str">"./DetailsDrawer"</span>));
+<span class="tok-kw">const</span> <span class="tok-fn">DetailsDrawer</span> = <span class="tok-fn">dynamic</span>(() =&gt;
+  <span class="tok-kw">import</span>(<span class="tok-str">"./DetailsDrawer"</span>).<span class="tok-fn">then</span>((m) =&gt; m.DetailsDrawer)
+);
 
 <span class="tok-kw">export function</span> <span class="tok-fn">RowActions</span>({ id }: { id: <span class="tok-fn">string</span> }) {
   <span class="tok-kw">const</span> [open, setOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
@@ -692,6 +695,37 @@ flowchart TB
     &lt;/&gt;
   );
 }</pre>
+  </Snippet>
+
+  <p>And the drawer itself, stubbed to the shape that matters:</p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">components/programs/DetailsDrawer.tsx - born from the click, fetches for itself</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { useDetails } <span class="tok-kw">from</span> <span class="tok-str">"@/hooks/useDetails"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">DetailsDrawer</span>({ id, onClose }: { id: <span class="tok-fn">string</span>; onClose: () =&gt; <span class="tok-kw">void</span> }) {
+  <span class="tok-com">// The shared SWR hook (§14.3): useSWR(`programs/${id}/details`, fetcher).</span>
+  <span class="tok-kw">const</span> { data, error, isLoading } = <span class="tok-fn">useDetails</span>(id);
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Drawer</span> <span class="tok-prop">onClose</span>={onClose}&gt;
+      &lt;<span class="tok-fn">DrawerTitle</span>&gt;Program details&lt;/<span class="tok-fn">DrawerTitle</span>&gt;
+      {isLoading &amp;&amp; &lt;<span class="tok-fn">DetailsSkeleton</span> /&gt;}
+      {error &amp;&amp; &lt;<span class="tok-fn">DrawerError</span> <span class="tok-prop">message</span>=<span class="tok-str">"Couldn't load the details."</span> /&gt;}
+      {data &amp;&amp; &lt;<span class="tok-fn">DetailsBody</span> <span class="tok-prop">details</span>={data} /&gt;}
+    &lt;/<span class="tok-fn">Drawer</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The component mounts only after the click, so the SWR request starts at the exact moment the
+      user asks for the content: nothing about it touches the first paint. Loading, error, and data
+      states all live inside the panel, and because the hook is the shared one from
+      <a href='#client'>§14.3</a>, a second open (or any other component asking the same question)
+      hits the cache instead of the network. This drawer showing its own skeleton is fine by
+      <a href='10-suspense-streaming.html'>§10</a>'s rules: the panel is the container, and the
+      content was never known.
+    </CodeCaption>
   </Snippet>
 
   <p>

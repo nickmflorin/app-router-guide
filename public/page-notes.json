@@ -951,7 +951,7 @@
       "id": "nmrs2qhwo",
       "page": "14-dedupe-caching.html",
       "ts": "2026-07-19T17:33:01.608Z",
-      "status": "open",
+      "status": "resolved",
       "text": "please bold \"we are not building that app\"",
       "target": {
         "anchor": "swr-vs-query",
@@ -960,13 +960,15 @@
         ],
         "tag": "p",
         "snippet": "We are not building that app, and that is the whole argument. Next.js Very important In th"
-      }
+      },
+      "resolution": "Bolded \"We are not building that app\" (comma left outside the strong).",
+      "resolvedAt": "2026-07-19"
     },
     {
       "id": "nmrs2rkio",
       "page": "14-dedupe-caching.html",
       "ts": "2026-07-19T17:33:51.648Z",
-      "status": "open",
+      "status": "resolved",
       "text": "we should mention that swr was designed specifically for next",
       "target": {
         "anchor": "swr-vs-query",
@@ -975,13 +977,15 @@
         ],
         "tag": "p",
         "snippet": "The tiebreaker is alignment. SWR is built and maintained by Vercel, the same team that shi"
-      }
+      },
+      "resolution": "The alignment paragraph now says SWR \"was designed from the start for use with Next\" alongside the existing Vercel/same-team point.",
+      "resolvedAt": "2026-07-19"
     },
     {
       "id": "nmrs2s5d1",
       "page": "14-dedupe-caching.html",
       "ts": "2026-07-19T17:34:18.661Z",
-      "status": "open",
+      "status": "resolved",
       "text": "pleaes include a coe snippet here too that shows a stubbed out drawer that makes the client side request with swr",
       "target": {
         "anchor": "when-client",
@@ -991,7 +995,9 @@
         ],
         "tag": "pre",
         "snippet": "components/programs/RowActions.tsx\"use client\";import { useState } from \"react\";import dyn"
-      }
+      },
+      "resolution": "Added a stubbed DetailsDrawer.tsx snippet right after RowActions: mounts on click, fetches through the shared useDetails SWR hook (comment shows the underlying useSWR key), handles isLoading/error/data inside the panel; caption ties it to §14.3 cache sharing and §10 (panel-as-container may own its skeleton). RowActions dynamic() updated to the named-export mapper for consistency.",
+      "resolvedAt": "2026-07-19"
     }
   ]
 }
