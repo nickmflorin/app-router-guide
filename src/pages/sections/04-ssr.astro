@@ -9,284 +9,246 @@ import CompareCol from '../../components/CompareCol.astro';
 import Snippet from '../../components/Snippet.astro';
 ---
 
-<GuidePage title="Server-Side Rendering - App Router Guide" root="..">
-<div class="kicker">Chapter 4 · Part A: Maximize the Known</div>
-<h1>Server-Side Rendering</h1>
-<p class="lede">
-  Part A is about maximizing the known, and server-side rendering is the machine that
-  makes the known possible at all. This chapter is the why behind every technique that
-  follows: what SSR is, what it buys us, how it changes what "fast" means, and how routing
-  actually moves content around once the server is doing the rendering.
-</p>
+<GuidePage title='Server-Side Rendering - App Router Guide' root='..'>
+  <div class='kicker'>Chapter 4 · Part A: Maximize the Known</div>
+  <h1>Server-Side Rendering</h1>
+  <p class='lede'>
+    Part A is about maximizing the known, and server-side rendering is the machine that makes the
+    known possible at all. This chapter is the why behind every technique that follows: what SSR is,
+    what it buys us, how it changes what "fast" means, and how routing actually moves content around
+    once the server is doing the rendering.
+  </p>
 
-<h2 id="what">4.1 What server-side rendering is</h2>
-<p>
-  Server-side rendering means exactly what it says: your React components execute
-  <strong>on the server</strong>, per request, and what travels to the browser is their
-  <em>output</em>, real HTML, rather than the JavaScript machinery needed to produce that
-  output. The browser can paint that HTML immediately, before any bundle downloads,
-  parses, or runs. Compare the browser-only model, where the server sends an empty shell
-  and the page earns every pixel through a boot sequence: download JS → execute → mount →
-  fetch → render.
-</p>
-<p>
-  In the App Router this is not a feature you enable; it is the default posture of the
-  entire framework. <Chip k="next" />
-  <Chip k="critical" /> Every component is a server component
-  unless you mark it otherwise, so every route starts life fully server-rendered. Even
-  client components participate: Next.js renders their initial HTML on the server too,
-  then <em>hydrates</em> them (attaches the event handlers and state) once their
-  JavaScript arrives. The practical consequence, and the reason this chapter leads Part A:
-  <strong>everything the server can resolve arrives finished</strong>, and only the parts
-  you explicitly carve out ever depend on the client. The rest of Part A is about keeping
-  that carved-out surface small (<a href="05-client-server-boundaries.html">§5</a>–<a
-    href="08-server-resolvable-state.html"
-    >§8</a
-  >); Part B is about handling what remains (<a href="09-containers-content-shifting.html"
-    >§9</a
-  >–<a href="12-blocking-requests.html">§12</a>).
-</p>
+  <h2 id='what'>4.1 What server-side rendering is</h2>
+  <p>
+    Server-side rendering means exactly what it says: your React components execute
+    <strong>on the server</strong>, per request, and what travels to the browser is their
+    <em>output</em>, real HTML, rather than the JavaScript machinery needed to produce that output.
+    The browser can paint that HTML immediately, before any bundle downloads, parses, or runs.
+    Compare the browser-only model, where the server sends an empty shell and the page earns every
+    pixel through a boot sequence: download JS → execute → mount → fetch → render.
+  </p>
+  <p>
+    In the App Router this is not a feature you enable; it is the default posture of the entire
+    framework. <Chip k='next' />
+    <Chip k='critical' /> Every component is a server component unless you mark it otherwise, so every
+    route starts life fully server-rendered. Even client components participate: Next.js renders their
+    initial HTML on the server too, then <em>hydrates</em> them (attaches the event handlers and state)
+    once their JavaScript arrives. The practical consequence, and the reason this chapter leads Part A:
+    <strong>everything the server can resolve arrives finished</strong>, and only the parts you
+    explicitly carve out ever depend on the client. The rest of Part A is about keeping that
+    carved-out surface small (<a href='05-client-server-boundaries.html'>§5</a>–<a
+      href='08-server-resolvable-state.html'>§8</a
+    >); Part B is about handling what remains (<a href='09-containers-content-shifting.html'>§9</a
+    >–<a href='12-blocking-requests.html'>§12</a>).
+  </p>
 
-<h2 id="benefits">4.2 What you get for it</h2>
-<p>
-  The
-  <a
-    href="https://nextjs.org/docs/14/app/building-your-application/rendering/server-components"
-    target="_blank"
-    rel="noopener"
-    >Next.js docs</a
-  >
-  enumerate the benefits of server rendering at length; collapsed, they come down to
-  these:
-</p>
-<table class="tbl">
-  <thead>
-    <tr>
-      <th style="width: 32%">Benefit</th>
-      <th>Why it matters</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Data fetching at the source</strong></td>
-      <td>
-        Fetches run on the server, close to the database and internal services: fewer,
-        faster round trips, instead of every widget dialing home from the browser across
-        the public internet.
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Security by locality</strong></td>
-      <td>
-        Tokens, API keys, and privileged queries <strong>never leave the server</strong>.
-        The browser receives rendered results, not the credentials and endpoints that
-        produced them.
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Less JavaScript shipped</strong></td>
-      <td>
-        Server components add <strong>zero bytes to the bundle</strong>: their code, their
-        dependencies, their markdown parser, all of it stays behind. The client downloads
-        markup, not the machinery (<a href="06-first-render-js.html">§6</a>).
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Rendered once, served many</strong></td>
-      <td>
-        Rendered output is an artifact the framework can
-        <strong>cache and reuse across users</strong>; see
-        <a href="#page-cache">§4.4</a> and <a href="14-dedupe-caching.html">§14</a>.
-      </td>
-    </tr>
-    <tr>
-      <td><strong>First paint and SEO</strong></td>
-      <td>
-        Real HTML on the first response means
-        <strong>content is visible before JavaScript runs</strong>: for users, for
-        crawlers, and for link unfurlers alike.
-      </td>
-    </tr>
-  </tbody>
-</table>
-<p>
-  Those are real, and they're the ones you'll see cited everywhere. But two benefits
-  matter more to this guide than all of the above, because they are the ones our
-  traditional habits give away first: <strong>stability</strong> and
-  <strong>simplicity</strong>.
-</p>
-
-<h3 id="stability">Stability: the known arrives first, already placed</h3>
-<p>
-  Content shifting happens when content arrives <em>late</em> and pushes its neighbors
-  around (<a href="09-containers-content-shifting.html">§9</a> is devoted to it). SSR
-  attacks the problem at its root: whatever the server resolves is part of the
-  <em>first paint</em>, already in its final position, at its final size. It cannot shift
-  anything, because it never "arrives"; it was simply there.
-  <Chip k="react" />
-  <Chip k="critical" />
-</p>
-<p>
-  This is the direct, physical link between SSR and maximizing the known:
-  <strong
-    >every piece of content you move from client fetching to server rendering is a piece
-    of content that can no longer displace the page</strong
-  >. The layout-shift surface of a page is, almost by definition, its unknown surface.
-  Shrink the unknown and the shifting shrinks with it; what little remains gets contained
-  inside reserved containers (<a href="09-containers-content-shifting.html#reserving"
-    >§9.3</a
-  >) instead of being fixed after the fact.
-</p>
-
-<h3 id="simplicity">Simplicity: content that doesn't depend on timing</h3>
-<p>
-  Here is the elaboration this deserves, because "SSR is simpler" sounds backwards to
-  anyone who learned React in the browser, and it is the single biggest quality-of-life
-  difference in practice.
-</p>
-<p>
-  On the server, an <code>async</code> component <code>await</code>s its data and renders
-  it. That's the whole story. Between the await and the render there is
-  <strong>no moment where the component exists but its data doesn't</strong>, so an entire
-  category of questions evaporates: What do I render while it's loading? Where does the
-  loading flag live? What if the response lands after the user changed filters? What's the
-  fallback if the data isn't there <em>yet</em>, as opposed to not there <em>at all</em>?
-  None of these are answerable "wrong" on the server. They are <em>unaskable</em>. Content
-  stops depending on the timing of requests and responses, so the code stops modeling
-  time.
-</p>
-<p>
-  Client-side, every one of those questions must be answered
-  <strong>at every layer that fetches</strong>, and the answers stack. A component can't
-  fetch until it mounts, and it can't mount until its parent's fetch resolves and renders
-  it. So the requests serialize down the tree (render → mount → effect → fetch → children
-  mount → <em>their</em> fetch…), and each layer of the DOM grows its own loading state
-  while it waits on the layer above. The visible result is the most recognizable symptom
-  in our own codebase: <strong>spinners rendered inside spinners</strong>, loading UI at
-  three depths of the same page, each replaced at a different moment as its request lands.
-</p>
-
-<Diagram>
-  <svg
-    viewBox="0 0 720 268"
-    xmlns="http://www.w3.org/2000/svg"
-    font-family="Inter, system-ui, sans-serif"
-  >
-    <!-- left: client-side nesting -->
-    <text
-      x="178"
-      y="12"
-      font-size="10.5"
-      fill="#b3261e"
-      text-anchor="middle"
-      font-weight="500"
+  <h2 id='benefits'>4.2 What you get for it</h2>
+  <p>
+    The
+    <a
+      href='https://nextjs.org/docs/14/app/building-your-application/rendering/server-components'
+      target='_blank'
+      rel='noopener'>Next.js docs</a
     >
-      Client-rendered: each layer blocks the next
-    </text>
-    <rect
-      x="58"
-      y="26"
-      width="240"
-      height="216"
-      rx="8"
-      fill="none"
-      stroke="#b45309"
-      stroke-width="1.5"
-      stroke-dasharray="5 4"
-    />
-    <text x="70" y="44" font-size="9.5" fill="#8a5a00">
-      ① page: spinner while fetching /me
-    </text>
-    <rect
-      x="74"
-      y="58"
-      width="208"
-      height="168"
-      rx="7"
-      fill="none"
-      stroke="#b45309"
-      stroke-width="1.5"
-      stroke-dasharray="5 4"
-    />
-    <text x="86" y="76" font-size="9.5" fill="#8a5a00">② section: fetching the list</text>
-    <rect
-      x="90"
-      y="90"
-      width="176"
-      height="120"
-      rx="6"
-      fill="none"
-      stroke="#b45309"
-      stroke-width="1.5"
-      stroke-dasharray="5 4"
-    />
-    <text x="102" y="108" font-size="9.5" fill="#8a5a00">③ widget: fetching stats</text>
-    <rect x="106" y="122" width="144" height="7" rx="3" fill="#f3e2c0" />
-    <rect x="106" y="136" width="144" height="7" rx="3" fill="#f3e2c0" />
-    <rect x="106" y="150" width="144" height="7" rx="3" fill="#f3e2c0" />
-    <rect x="106" y="164" width="144" height="7" rx="3" fill="#f3e2c0" />
-    <rect x="106" y="178" width="144" height="7" rx="3" fill="#f3e2c0" />
-    <rect x="106" y="192" width="144" height="7" rx="3" fill="#f3e2c0" />
-    <text
-      x="178"
-      y="262"
-      font-size="10.5"
-      fill="#b0483e"
-      text-anchor="middle"
-      font-weight="500"
-    >
-      first content: t₁ + t₂ + t₃ (serialized)
-    </text>
+    enumerate the benefits of server rendering at length; collapsed, they come down to these:
+  </p>
+  <table class='tbl'>
+    <thead>
+      <tr>
+        <th style='width: 32%'>Benefit</th>
+        <th>Why it matters</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Data fetching at the source</strong></td>
+        <td>
+          Fetches run on the server, close to the database and internal services: fewer, faster
+          round trips, instead of every widget dialing home from the browser across the public
+          internet.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Security by locality</strong></td>
+        <td>
+          Tokens, API keys, and privileged queries <strong>never leave the server</strong>. The
+          browser receives rendered results, not the credentials and endpoints that produced them.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Less JavaScript shipped</strong></td>
+        <td>
+          Server components add <strong>zero bytes to the bundle</strong>: their code, their
+          dependencies, their markdown parser, all of it stays behind. The client downloads markup,
+          not the machinery (<a href='06-first-render-js.html'>§6</a>).
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Rendered once, served many</strong></td>
+        <td>
+          Rendered output is an artifact the framework can
+          <strong>cache and reuse across users</strong>; see
+          <a href='#page-cache'>§4.4</a> and <a href='14-dedupe-caching.html'>§14</a>.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>First paint and SEO</strong></td>
+        <td>
+          Real HTML on the first response means
+          <strong>content is visible before JavaScript runs</strong>: for users, for crawlers, and
+          for link unfurlers alike.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    Those are real, and they're the ones you'll see cited everywhere. But two benefits matter more
+    to this guide than all of the above, because they are the ones our traditional habits give away
+    first: <strong>stability</strong> and
+    <strong>simplicity</strong>.
+  </p>
 
-    <!-- right: server-side single pass -->
-    <text
-      x="542"
-      y="12"
-      font-size="10.5"
-      fill="#157a4c"
-      text-anchor="middle"
-      font-weight="500"
+  <h3 id='stability'>Stability: the known arrives first, already placed</h3>
+  <p>
+    Content shifting happens when content arrives <em>late</em> and pushes its neighbors around (<a
+      href='09-containers-content-shifting.html'>§9</a
+    > is devoted to it). SSR attacks the problem at its root: whatever the server resolves is part of
+    the
+    <em>first paint</em>, already in its final position, at its final size. It cannot shift
+    anything, because it never "arrives"; it was simply there.
+    <Chip k='react' />
+    <Chip k='critical' />
+  </p>
+  <p>
+    This is the direct, physical link between SSR and maximizing the known:
+    <strong
+      >every piece of content you move from client fetching to server rendering is a piece of
+      content that can no longer displace the page</strong
+    >. The layout-shift surface of a page is, almost by definition, its unknown surface. Shrink the
+    unknown and the shifting shrinks with it; what little remains gets contained inside reserved
+    containers (<a href='09-containers-content-shifting.html#reserving'>§9.3</a>) instead of being
+    fixed after the fact.
+  </p>
+
+  <h3 id='simplicity'>Simplicity: content that doesn't depend on timing</h3>
+  <p>
+    Here is the elaboration this deserves, because "SSR is simpler" sounds backwards to anyone who
+    learned React in the browser, and it is the single biggest quality-of-life difference in
+    practice.
+  </p>
+  <p>
+    On the server, an <code>async</code> component <code>await</code>s its data and renders it.
+    That's the whole story. Between the await and the render there is
+    <strong>no moment where the component exists but its data doesn't</strong>, so an entire
+    category of questions evaporates: What do I render while it's loading? Where does the loading
+    flag live? What if the response lands after the user changed filters? What's the fallback if the
+    data isn't there <em>yet</em>, as opposed to not there <em>at all</em>? None of these are
+    answerable "wrong" on the server. They are <em>unaskable</em>. Content stops depending on the
+    timing of requests and responses, so the code stops modeling time.
+  </p>
+  <p>
+    Client-side, every one of those questions must be answered
+    <strong>at every layer that fetches</strong>, and the answers stack. A component can't fetch
+    until it mounts, and it can't mount until its parent's fetch resolves and renders it. So the
+    requests serialize down the tree (render → mount → effect → fetch → children mount → <em
+      >their</em
+    > fetch…), and each layer of the DOM grows its own loading state while it waits on the layer above.
+    The visible result is the most recognizable symptom in our own codebase: <strong
+      >spinners rendered inside spinners</strong
+    >, loading UI at three depths of the same page, each replaced at a different moment as its
+    request lands.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 268'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
     >
-      Server-rendered: one pass, awaits are values
-    </text>
-    <rect
-      x="422"
-      y="26"
-      width="240"
-      height="216"
-      rx="8"
-      fill="#ffffff"
-      stroke="#2ea06d"
-      stroke-width="1.5"
-    />
-    <text x="434" y="44" font-size="9.5" fill="#157a4c">
-      HTML arrives complete; no layer waits
-    </text>
-    <rect x="434" y="58" width="216" height="16" rx="4" fill="#d8e8fc" />
-    <rect x="434" y="84" width="216" height="7" rx="3" fill="#cfe9dd" />
-    <rect x="434" y="98" width="216" height="7" rx="3" fill="#cfe9dd" />
-    <rect x="434" y="112" width="216" height="7" rx="3" fill="#cfe9dd" />
-    <rect x="434" y="126" width="216" height="7" rx="3" fill="#cfe9dd" />
-    <rect x="434" y="140" width="216" height="7" rx="3" fill="#cfe9dd" />
-    <rect x="434" y="154" width="216" height="7" rx="3" fill="#cfe9dd" />
-    <rect x="434" y="168" width="216" height="7" rx="3" fill="#cfe9dd" />
-    <rect x="434" y="182" width="216" height="7" rx="3" fill="#cfe9dd" />
-    <rect x="434" y="196" width="216" height="7" rx="3" fill="#cfe9dd" />
-    <rect x="434" y="210" width="216" height="7" rx="3" fill="#cfe9dd" />
-    <rect x="434" y="224" width="216" height="7" rx="3" fill="#cfe9dd" />
-    <text
-      x="542"
-      y="262"
-      font-size="10.5"
-      fill="#157a4c"
-      text-anchor="middle"
-      font-weight="500"
-    >
-      first content: t₁ (one server pass)
-    </text>
-  </svg>
-  
-<pre slot="mermaid" is:raw>
+      <!-- left: client-side nesting -->
+      <text x='178' y='12' font-size='10.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+        Client-rendered: each layer blocks the next
+      </text>
+      <rect
+        x='58'
+        y='26'
+        width='240'
+        height='216'
+        rx='8'
+        fill='none'
+        stroke='#b45309'
+        stroke-width='1.5'
+        stroke-dasharray='5 4'></rect>
+      <text x='70' y='44' font-size='9.5' fill='#8a5a00'> ① page: spinner while fetching /me </text>
+      <rect
+        x='74'
+        y='58'
+        width='208'
+        height='168'
+        rx='7'
+        fill='none'
+        stroke='#b45309'
+        stroke-width='1.5'
+        stroke-dasharray='5 4'></rect>
+      <text x='86' y='76' font-size='9.5' fill='#8a5a00'>② section: fetching the list</text>
+      <rect
+        x='90'
+        y='90'
+        width='176'
+        height='120'
+        rx='6'
+        fill='none'
+        stroke='#b45309'
+        stroke-width='1.5'
+        stroke-dasharray='5 4'></rect>
+      <text x='102' y='108' font-size='9.5' fill='#8a5a00'>③ widget: fetching stats</text>
+      <rect x='106' y='122' width='144' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='106' y='136' width='144' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='106' y='150' width='144' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='106' y='164' width='144' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='106' y='178' width='144' height='7' rx='3' fill='#f3e2c0'></rect>
+      <rect x='106' y='192' width='144' height='7' rx='3' fill='#f3e2c0'></rect>
+      <text x='178' y='262' font-size='10.5' fill='#b0483e' text-anchor='middle' font-weight='500'>
+        first content: t₁ + t₂ + t₃ (serialized)
+      </text>
+
+      <!-- right: server-side single pass -->
+      <text x='542' y='12' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+        Server-rendered: one pass, awaits are values
+      </text>
+      <rect
+        x='422'
+        y='26'
+        width='240'
+        height='216'
+        rx='8'
+        fill='#ffffff'
+        stroke='#2ea06d'
+        stroke-width='1.5'></rect>
+      <text x='434' y='44' font-size='9.5' fill='#157a4c'>
+        HTML arrives complete; no layer waits
+      </text>
+      <rect x='434' y='58' width='216' height='16' rx='4' fill='#d8e8fc'></rect>
+      <rect x='434' y='84' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='434' y='98' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='434' y='112' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='434' y='126' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='434' y='140' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='434' y='154' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='434' y='168' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='434' y='182' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='434' y='196' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='434' y='210' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
+      <rect x='434' y='224' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
+      <text x='542' y='262' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+        first content: t₁ (one server pass)
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
 flowchart LR
   subgraph CR["Client-rendered: each layer blocks the next"]
     direction LR
@@ -313,79 +275,129 @@ flowchart LR
   classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
 </pre>
 
-<Fragment slot="caption">
-The spinner tower. Client-side, each DOM layer is blocked by the client-side request
-    above it (the page can't fetch until it hydrates, the section can't fetch until the
-    page renders it, the widget can't fetch until the section does), so loading states
-    appear at every depth and resolve at different moments. Server-side, the same tree
-    renders in one pass: each <code>await</code> is just a value, and the browser receives
-    the finished result.
-</Fragment>
-</Diagram>
+    <Fragment slot='caption'>
+      The spinner tower. Client-side, each DOM layer is blocked by the client-side request above it
+      (the page can't fetch until it hydrates, the section can't fetch until the page renders it,
+      the widget can't fetch until the section does), so loading states appear at every depth and
+      resolve at different moments. Server-side, the same tree renders in one pass: each <code
+        >await</code
+      > is just a value, and the browser receives the finished result.
+    </Fragment>
+  </Diagram>
 
-<p>
-  Notice what the right side <em>doesn't have</em>: loading flags, fallback branches,
-  effect dependencies, race-condition guards, "is it undefined because it's loading or
-  because it's empty" ambiguity (<a href="10-suspense-streaming.html#orthogonal">§10.6</a
-  >). That code was never simplified; it was never written. Multiply that by every
-  data-bearing component on every page, and "simplicity" stops being an abstract virtue
-  and becomes the difference between a codebase you can reason about and one you can't.
-  <Chip k="react" />
-  <Chip k="very" />
-</p>
+  <p>
+    Notice what the right side <em>doesn't have</em>: loading flags, fallback branches, effect
+    dependencies, race-condition guards, "is it undefined because it's loading or because it's
+    empty" ambiguity (<a href='10-suspense-streaming.html#orthogonal'>§10.6</a>). That code was
+    never simplified; it was never written. Multiply that by every data-bearing component on every
+    page, and "simplicity" stops being an abstract virtue and becomes the difference between a
+    codebase you can reason about and one you can't.
+    <Chip k='react' />
+    <Chip k='very' />
+  </p>
 
-<h3 id="output-not-machinery">The output crosses the wire, not the machinery</h3>
-<p>
-  Two rows of the benefits table deserve to be read together, because they are one fact
-  seen from two sides: <strong>the only thing that ever crosses the network boundary is
-  the rendered output.</strong> Think about what it takes to produce a reports table: the
-  component code that lays it out, the data-layer function that queries for rows, the
-  connection string and API tokens that query needs, the formatting and charting libraries
-  that turn numbers into markup. In a client-rendered architecture, most of that ships to
-  the browser, because the browser is where the rendering happens. In a server-rendered
-  one, none of it does. The client receives what those things <em>produced</em>: finished
-  markup.
-</p>
+  <h3 id='output-not-machinery'>The output crosses the wire, not the machinery</h3>
+  <p>
+    Two rows of the benefits table deserve to be read together, because they are one fact seen from
+    two sides: <strong
+      >the only thing that ever crosses the network boundary is the rendered output.</strong
+    > Think about what it takes to produce a reports table: the component code that lays it out, the data-layer
+    function that queries for rows, the connection string and API tokens that query needs, the formatting
+    and charting libraries that turn numbers into markup. In a client-rendered architecture, most of that
+    ships to the browser, because the browser is where the rendering happens. In a server-rendered one,
+    none of it does. The client receives what those things <em>produced</em>: finished markup.
+  </p>
 
-<Diagram>
-  <svg viewBox="0 0 720 226" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
-    <defs>
-      <marker id="aWire" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 2.5 1.5 L 8 5 L 2.5 8.5" fill="none" stroke="#0f7b48" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </marker>
-    </defs>
-    <text x="174" y="12" font-size="10.5" fill="#0757ba" text-anchor="middle" font-weight="500">Stays on the server</text>
-    <text x="572" y="12" font-size="10.5" fill="#157a4c" text-anchor="middle" font-weight="500">What the client receives</text>
+  <Diagram>
+    <svg
+      viewBox='0 0 720 226'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker
+          id='aWire'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#0f7b48'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+      <text x='174' y='12' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'
+        >Stays on the server</text
+      >
+      <text x='572' y='12' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'
+        >What the client receives</text
+      >
 
-    <rect x="14" y="24" width="320" height="180" rx="8" fill="#eaf3fe" stroke="#0070f3" stroke-width="1.5"/>
-    <rect x="30" y="40" width="288" height="30" rx="5" fill="#ffffff" stroke="#a9cdf5"/>
-    <text x="42" y="59" font-size="10" fill="#0757ba">page.tsx, components, layouts</text>
-    <rect x="30" y="78" width="288" height="30" rx="5" fill="#ffffff" stroke="#a9cdf5"/>
-    <text x="42" y="97" font-size="10" fill="#0757ba">getReports(): the data layer</text>
-    <rect x="30" y="116" width="288" height="30" rx="5" fill="#ffffff" stroke="#a9cdf5"/>
-    <text x="42" y="135" font-size="10" fill="#0757ba">DATABASE_URL, API tokens, secrets</text>
-    <rect x="30" y="154" width="288" height="30" rx="5" fill="#ffffff" stroke="#a9cdf5"/>
-    <text x="42" y="173" font-size="10" fill="#0757ba">markdown + charting libraries</text>
+      <rect
+        x='14'
+        y='24'
+        width='320'
+        height='180'
+        rx='8'
+        fill='#eaf3fe'
+        stroke='#0070f3'
+        stroke-width='1.5'></rect>
+      <rect x='30' y='40' width='288' height='30' rx='5' fill='#ffffff' stroke='#a9cdf5'></rect>
+      <text x='42' y='59' font-size='10' fill='#0757ba'>page.tsx, components, layouts</text>
+      <rect x='30' y='78' width='288' height='30' rx='5' fill='#ffffff' stroke='#a9cdf5'></rect>
+      <text x='42' y='97' font-size='10' fill='#0757ba'>getReports(): the data layer</text>
+      <rect x='30' y='116' width='288' height='30' rx='5' fill='#ffffff' stroke='#a9cdf5'></rect>
+      <text x='42' y='135' font-size='10' fill='#0757ba'>DATABASE_URL, API tokens, secrets</text>
+      <rect x='30' y='154' width='288' height='30' rx='5' fill='#ffffff' stroke='#a9cdf5'></rect>
+      <text x='42' y='173' font-size='10' fill='#0757ba'>markdown + charting libraries</text>
 
-    <line x1="386" y1="24" x2="386" y2="204" stroke="#c9c9c9" stroke-dasharray="6 4"/>
-    <text x="386" y="220" font-size="9.5" fill="#737373" text-anchor="middle">the network boundary</text>
+      <line x1='386' y1='24' x2='386' y2='204' stroke='#c9c9c9' stroke-dasharray='6 4'></line>
+      <text x='386' y='220' font-size='9.5' fill='#737373' text-anchor='middle'
+        >the network boundary</text
+      >
 
-    <text x="386" y="100" font-size="9.5" fill="#157a4c" text-anchor="middle">rendered HTML</text>
-    <line x1="334" y1="114" x2="434" y2="114" stroke="#0f7b48" stroke-width="1.5" marker-end="url(#aWire)"/>
-    <text x="386" y="132" font-size="9" fill="#737373" text-anchor="middle">nothing else</text>
+      <text x='386' y='100' font-size='9.5' fill='#157a4c' text-anchor='middle'>rendered HTML</text>
+      <line
+        x1='334'
+        y1='114'
+        x2='434'
+        y2='114'
+        stroke='#0f7b48'
+        stroke-width='1.5'
+        marker-end='url(#aWire)'></line>
+      <text x='386' y='132' font-size='9' fill='#737373' text-anchor='middle'>nothing else</text>
 
-    <rect x="438" y="24" width="268" height="180" rx="8" fill="#ffffff" stroke="#2ea06d" stroke-width="1.5"/>
-    <rect x="454" y="44" width="236" height="26" rx="5" fill="#e7f5ee" stroke="#2ea06d"/>
-    <text x="572" y="61" font-size="10" fill="#157a4c" text-anchor="middle">Reports: finished markup</text>
-    <rect x="454" y="80" width="236" height="8" rx="3" fill="#cfe9dd"/>
-    <rect x="454" y="96" width="236" height="8" rx="3" fill="#cfe9dd"/>
-    <rect x="454" y="112" width="236" height="8" rx="3" fill="#cfe9dd"/>
-    <rect x="454" y="128" width="236" height="8" rx="3" fill="#cfe9dd"/>
-    <rect x="454" y="144" width="236" height="8" rx="3" fill="#cfe9dd"/>
-    <rect x="454" y="160" width="236" height="8" rx="3" fill="#cfe9dd"/>
-    <rect x="454" y="176" width="236" height="8" rx="3" fill="#cfe9dd"/>
-  </svg>
-<pre slot="mermaid" is:raw>
+      <rect
+        x='438'
+        y='24'
+        width='268'
+        height='180'
+        rx='8'
+        fill='#ffffff'
+        stroke='#2ea06d'
+        stroke-width='1.5'></rect>
+      <rect x='454' y='44' width='236' height='26' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='572' y='61' font-size='10' fill='#157a4c' text-anchor='middle'
+        >Reports: finished markup</text
+      >
+      <rect x='454' y='80' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
+      <rect x='454' y='96' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
+      <rect x='454' y='112' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
+      <rect x='454' y='128' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
+      <rect x='454' y='144' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
+      <rect x='454' y='160' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
+      <rect x='454' y='176' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
+    </svg>
+    <pre
+      slot='mermaid'
+      is:raw>
 flowchart LR
   subgraph SRV["Stays on the server"]
     direction TB
@@ -409,345 +421,325 @@ flowchart LR
   classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
 </pre>
 
-<Fragment slot="caption">
-  Everything needed to produce the page stays behind the boundary; only what it produced
-  crosses. Exactly like the diagrams in this guide: the browser receives the SVG, not the
-  code that generated it.
-</Fragment>
-</Diagram>
+    <Fragment slot='caption'>
+      Everything needed to produce the page stays behind the boundary; only what it produced
+      crosses. Exactly like the diagrams in this guide: the browser receives the SVG, not the code
+      that generated it.
+    </Fragment>
+  </Diagram>
 
-<p>
-  This is why "security by locality" and "less JavaScript shipped" are the same row twice.
-  Security: the credentials, the privileged queries, and the internal API shapes cannot
-  leak to the browser because they were never sent, and
-  <code>server-only</code> (<a href="05-client-server-boundaries.html#third-party">§5.5</a>)
-  turns any accidental attempt into a build error. Performance: those rendering libraries
-  are precisely the heavyweight imports of
-  <a href="07-bundle-size-code-splitting.html">§7</a>, and keeping them on the server is
-  the single cheapest bundle-size win available, because the client downloads a few
-  kilobytes of markup instead of megabytes of machinery (<a href="06-first-render-js.html">§6</a>).
-  One architectural fact, two benefits: expose the output, never the means of producing
-  it.
-</p>
-
-<h2 id="perceived">4.3 Perceived performance, and where streaming fits</h2>
-<p>
-  <strong>Perceived performance</strong> is how fast a page <em>feels</em>, which is not
-  the same thing as how long it takes to finish. Users don't experience totals; they
-  experience milestones: when something first appears, when the content they came for is
-  readable, whether things move around while they wait, and when the page responds to
-  input. A page that paints meaningful content in 300ms and quietly finishes a slow widget
-  at 3s <em>feels fast</em>. A page that shows a spinner until everything is ready at 1.5s
-  feels slower, despite technically "finishing" sooner.
-</p>
-
-<Callout kind="info" title="The Next.js docs, on why this matters">
   <p>
-    "SSR with React and Next.js helps improve the perceived loading performance by showing
-    a non-interactive page to the user as soon as possible." (<a
-      href="https://nextjs.org/docs/14/app/building-your-application/rendering/server-components"
-      target="_blank"
-      rel="noopener"
-      >Server Components, Next.js docs</a
-    >)
+    This is why "security by locality" and "less JavaScript shipped" are the same row twice.
+    Security: the credentials, the privileged queries, and the internal API shapes cannot leak to
+    the browser because they were never sent, and
+    <code>server-only</code> (<a href='05-client-server-boundaries.html#third-party'>§5.5</a>) turns
+    any accidental attempt into a build error. Performance: those rendering libraries are precisely
+    the heavyweight imports of
+    <a href='07-bundle-size-code-splitting.html'>§7</a>, and keeping them on the server is the
+    single cheapest bundle-size win available, because the client downloads a few kilobytes of
+    markup instead of megabytes of machinery (<a href='06-first-render-js.html'>§6</a>). One
+    architectural fact, two benefits: expose the output, never the means of producing it.
   </p>
-</Callout>
 
-<p>
-  Read that carefully: <em>non-interactive</em>, <em>as soon as possible</em>. The docs
-  are conceding something and claiming something. The concession: the first paint isn't
-  interactive yet: hydration hasn't happened. The claim: that trade is worth it, because
-  seeing real content immediately dominates the user's perception of speed. People spend
-  the first moments on a page <em>reading</em>, not clicking; SSR uses that window to be
-  useful while the JavaScript catches up.
-</p>
-<h3 id="streaming-principle">Streaming: the same principle, inside one response</h3>
-<p>
-  <strong>Streaming is the same principle applied within a single response.</strong> Plain
-  SSR has a weakness: if the server waits for <em>all</em> data before sending anything,
-  the slowest query gates the entire page. Streaming removes that gate: the server sends
-  the known immediately (structure, containers, everything already resolved) and flushes
-  the slow parts into their reserved slots as they finish, over the same response (<a
-    href="10-suspense-streaming.html#streaming"
-    >§10.2</a
-  >). Perceived performance is governed by when the first meaningful content lands and
-  whether the page holds still afterward; streaming makes the first independent of your
-  slowest query, and containers (<a href="09-containers-content-shifting.html">§9</a>)
-  guarantee the second. That is the whole Part B playbook in one sentence, powered by the
-  fact that rendering happens on a server that can flush incrementally.
-</p>
+  <h2 id='perceived'>4.3 Perceived performance, and where streaming fits</h2>
+  <p>
+    <strong>Perceived performance</strong> is how fast a page <em>feels</em>, which is not the same
+    thing as how long it takes to finish. Users don't experience totals; they experience milestones:
+    when something first appears, when the content they came for is readable, whether things move
+    around while they wait, and when the page responds to input. A page that paints meaningful
+    content in 300ms and quietly finishes a slow widget at 3s <em>feels fast</em>. A page that shows
+    a spinner until everything is ready at 1.5s feels slower, despite technically "finishing"
+    sooner.
+  </p>
 
-<h3 id="tti">Time-to-interactive is a dead metric</h3>
-<p>
-  A question worth asking a room of engineers: how many of you actually interact with a
-  page within 500ms of it loading? Nobody does. You land, you orient, you read; the first
-  click comes seconds later, after the content has told you what is worth clicking on.
-  Optimizing for the earliest possible moment of interactivity is optimizing a moment that
-  nobody uses.
-</p>
-<p>
-  That is why TTI is, for practical purposes, a dead metric. Everything in this
-  architecture is about optimizing what the user can <em>see</em> and <em>read</em>:
-  getting real content onto the page as fast as humanly possible. The interactive leaves
-  hydrate some time later, and that is fine, because interactivity is not needed
-  immediately and hydration is invisible. A button whose click handler attaches 800ms
-  after first paint looks identical to one that was interactive from the first frame; the
-  user cannot tell the difference, because they were reading. What they absolutely can
-  tell is whether the content was there. Pages built this way <em>feel</em> faster for a
-  simple reason: the part the user knows about (the content) arrives first, and the parts
-  they never needed to know about (handlers attaching, client state hydrating) become
-  hidden work that finishes quietly in the background.
-</p>
+  <Callout kind='info' title='The Next.js docs, on why this matters'>
+    <p>
+      "SSR with React and Next.js helps improve the perceived loading performance by showing a
+      non-interactive page to the user as soon as possible." (<a
+        href='https://nextjs.org/docs/14/app/building-your-application/rendering/server-components'
+        target='_blank'
+        rel='noopener'>Server Components, Next.js docs</a
+      >)
+    </p>
+  </Callout>
 
-<h3 id="cls-feel">Layout shift is perceived slowness</h3>
-<p>
-  The third leg of perceived performance is stillness. A page where loading indicators
-  flash in and out while regions shift around as each response lands just looks terrible:
-  busy, unprofessional, and, crucially, <em>slower</em>, even when the wall-clock time is
-  identical. Every spinner and every reflow gives the user a blatant look into the
-  intermediate machinery: here is what we have not fetched yet, here is the empty space we
-  are holding with fallback content, here is everything arriving one request at a time, in
-  whatever order the network chose. The user is made to watch the kitchen.
-</p>
-<p>
-  All of that can simply be swooped up onto the server. Resolve the data there and the
-  intermediate steps stop existing on the client: the user sees the full page, ready to
-  go, just not yet hydrated, and none of the scaffolding that produced it. Fewer visible
-  steps always reads as faster. The mechanics of holding still (containers, honest space
-  reservation, CLS as a field metric) get a full chapter in
-  <a href="09-containers-content-shifting.html">§9</a>; what belongs here is the
-  perceptual claim: a page that appears at once and never moves feels faster than one that
-  assembles itself in front of the user, regardless of what the network tab says.
-</p>
+  <p>
+    Read that carefully: <em>non-interactive</em>, <em>as soon as possible</em>. The docs are
+    conceding something and claiming something. The concession: the first paint isn't interactive
+    yet: hydration hasn't happened. The claim: that trade is worth it, because seeing real content
+    immediately dominates the user's perception of speed. People spend the first moments on a page <em
+      >reading</em
+    >, not clicking; SSR uses that window to be useful while the JavaScript catches up.
+  </p>
+  <h3 id='streaming-principle'>Streaming: the same principle, inside one response</h3>
+  <p>
+    <strong>Streaming is the same principle applied within a single response.</strong> Plain SSR has a
+    weakness: if the server waits for <em>all</em> data before sending anything, the slowest query gates
+    the entire page. Streaming removes that gate: the server sends the known immediately (structure, containers,
+    everything already resolved) and flushes the slow parts into their reserved slots as they finish,
+    over the same response (<a href='10-suspense-streaming.html#streaming'>§10.2</a>). Perceived
+    performance is governed by when the first meaningful content lands and whether the page holds
+    still afterward; streaming makes the first independent of your slowest query, and containers (<a
+      href='09-containers-content-shifting.html'>§9</a
+    >) guarantee the second. That is the whole Part B playbook in one sentence, powered by the fact
+    that rendering happens on a server that can flush incrementally.
+  </p>
 
-<h2 id="page-cache">
-  4.4 The cached page: maximized server content becomes a cacheable artifact
-</h2>
-<p>
-  There's a compounding payoff hiding in all of this. Once a page is rendered on the
-  server, its rendered output, the HTML plus the RSC payload that describes it (<a
-    href="#routing"
-    >§4.5</a
-  >), is a concrete <em>artifact</em>. And artifacts can be cached.
-</p>
-<p>
-  Next.js does exactly that. Routes that don't depend on request-time information are
-  rendered <strong>once</strong> (at build time, or on first request, or on a revalidation
-  schedule), and the cached output is served to every subsequent visitor without
-  re-rendering: effectively a static site, per route. When part of a page
-  <em>does</em> need request-time data, the modern model (Partial Prerendering /
-  <code>cacheComponents</code>) caches the static shell and streams only the dynamic holes
-  into it. The mechanics (<code>"use cache"</code>, revalidation, cache tags) live in
-  <a href="14-dedupe-caching.html">§14</a>; what belongs here is the architectural point:
-</p>
-<p>
-  <strong>Only server-rendered content can participate in this cache.</strong>
-  <Chip k="next" />
-  <Chip k="critical" /> The framework can only cache output it
-  produces; content fetched from the browser after hydration is invisible to it: every
-  user re-pays the full cost of every client-side request, forever. So each piece of
-  content you move to the server is upgraded twice: it arrives in the first paint
-  <em>and</em> it becomes eligible to be rendered once and served to everyone. Maximizing
-  the known isn't just making one request faster; it's making the page progressively
-  cheaper to serve at all. This is also the trap the audit found us in: a client-rendered
-  tree opts out of the entire caching layer silently, page by page, with no error to tell
-  you what you gave up.
-</p>
+  <h3 id='tti'>Time-to-interactive is a dead metric</h3>
+  <p>
+    A question worth asking a room of engineers: how many of you actually interact with a page
+    within 500ms of it loading? Nobody does. You land, you orient, you read; the first click comes
+    seconds later, after the content has told you what is worth clicking on. Optimizing for the
+    earliest possible moment of interactivity is optimizing a moment that nobody uses.
+  </p>
+  <p>
+    That is why TTI is, for practical purposes, a dead metric. Everything in this architecture is
+    about optimizing what the user can <em>see</em> and <em>read</em>: getting real content onto the
+    page as fast as humanly possible. The interactive leaves hydrate some time later, and that is
+    fine, because interactivity is not needed immediately and hydration is invisible. A button whose
+    click handler attaches 800ms after first paint looks identical to one that was interactive from
+    the first frame; the user cannot tell the difference, because they were reading. What they
+    absolutely can tell is whether the content was there. Pages built this way <em>feel</em> faster for
+    a simple reason: the part the user knows about (the content) arrives first, and the parts they never
+    needed to know about (handlers attaching, client state hydrating) become hidden work that finishes
+    quietly in the background.
+  </p>
 
-<h2 id="routing">4.5 Routing: server routing, client routing, and the RSC payload</h2>
-<p>
-  One reasonable worry remains: if the server renders everything, doesn't every click
-  become a full page reload: white flash, re-downloaded assets, lost state? This is where
-  the App Router is cleverer than classic server rendering, and understanding it requires
-  one piece of vocabulary: the <strong>RSC payload</strong>.
-</p>
-<p>
-  The RSC payload is a compact, streamable serialization of a rendered server component
-  tree. It contains the rendered output of your server components, placeholders marking
-  where client components go (plus references to their JS chunks), and any props passed
-  from server to client. It is what the server <em>actually produces</em> when it renders;
-  HTML is generated from it for first visits. Think of it as "the rendered page, described
-  as data", which is precisely what makes client-side merging possible.
-</p>
-<p>Routing then works in two modes:</p>
-<ul>
-  <li>
-    <strong>First visit: server routing.</strong> The browser requests a URL; the server
-    renders the full tree and responds with a complete HTML document (with the RSC payload
-    embedded for hydration). Real content paints before JavaScript loads: everything
-    §4.1–§4.3 promised.
-  </li>
-  <li>
-    <strong>Every navigation after: client routing.</strong> Clicking a
-    <code>&lt;Link&gt;</code> does <em>not</em> reload the document. The router requests
-    the RSC payload for just the route segments that change, and React merges it into the
-    page in place. Shared layouts don't re-render and their state survives (<a
-      href="03-mental-model.html#rendering-model"
-      >§3.1</a
-    >); only the content that differs is replaced. And because
-    <code>&lt;Link&gt;</code> prefetches payloads for links in the viewport, the merge
-    often happens from cache - navigation lands near-instantly.
-  </li>
-</ul>
+  <h3 id='cls-feel'>Layout shift is perceived slowness</h3>
+  <p>
+    The third leg of perceived performance is stillness. A page where loading indicators flash in
+    and out while regions shift around as each response lands just looks terrible: busy,
+    unprofessional, and, crucially, <em>slower</em>, even when the wall-clock time is identical.
+    Every spinner and every reflow gives the user a blatant look into the intermediate machinery:
+    here is what we have not fetched yet, here is the empty space we are holding with fallback
+    content, here is everything arriving one request at a time, in whatever order the network chose.
+    The user is made to watch the kitchen.
+  </p>
+  <p>
+    All of that can simply be swooped up onto the server. Resolve the data there and the
+    intermediate steps stop existing on the client: the user sees the full page, ready to go, just
+    not yet hydrated, and none of the scaffolding that produced it. Fewer visible steps always reads
+    as faster. The mechanics of holding still (containers, honest space reservation, CLS as a field
+    metric) get a full chapter in
+    <a href='09-containers-content-shifting.html'>§9</a>; what belongs here is the perceptual claim:
+    a page that appears at once and never moves feels faster than one that assembles itself in front
+    of the user, regardless of what the network tab says.
+  </p>
 
-<Diagram>
-  <svg
-    viewBox="0 0 720 160"
-    xmlns="http://www.w3.org/2000/svg"
-    font-family="Inter, system-ui, sans-serif"
-  >
-    <defs>
-      <marker
-        id="navArr"
-        viewBox="0 0 10 10"
-        refX="8"
-        refY="5"
-        markerWidth="6"
-        markerHeight="6"
-        orient="auto-start-reverse"
-      >
-        <path
-          d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-          fill="none"
-          stroke="#737373"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </marker>
-    </defs>
-    <!-- first visit -->
-    <text x="14" y="12" font-size="10.5" fill="#666666" font-weight="500">
-      first visit: server routing
-    </text>
-    <rect x="14" y="22" width="200" height="46" rx="7" fill="#ffffff" stroke="#d4d4d4" />
-    <text x="114" y="49" font-size="10" fill="#171717" text-anchor="middle">
-      GET /programs/42
-    </text>
-    <line
-      x1="218"
-      y1="45"
-      x2="252"
-      y2="45"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#navArr)"
-    />
-    <rect
-      x="260"
-      y="22"
-      width="200"
-      height="46"
-      rx="7"
-      fill="#eaf3fe"
-      stroke="#0070f3"
-      stroke-width="1.5"
-    />
-    <text x="360" y="41" font-size="10" fill="#0757ba" text-anchor="middle">
-      server renders the route
-    </text>
-    <text x="360" y="56" font-size="9" fill="#56789e" text-anchor="middle">
-      layouts, page, data
-    </text>
-    <line
-      x1="464"
-      y1="45"
-      x2="498"
-      y2="45"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#navArr)"
-    />
-    <rect
-      x="506"
-      y="22"
-      width="200"
-      height="46"
-      rx="7"
-      fill="#e7f5ee"
-      stroke="#2ea06d"
-      stroke-width="1.5"
-    />
-    <text x="606" y="41" font-size="10" fill="#157a4c" text-anchor="middle">
-      a full HTML document
-    </text>
-    <text x="606" y="56" font-size="9" fill="#3f8f68" text-anchor="middle">
-      content paints before JS loads
-    </text>
+  <h2 id='page-cache'>
+    4.4 The cached page: maximized server content becomes a cacheable artifact
+  </h2>
+  <p>
+    There's a compounding payoff hiding in all of this. Once a page is rendered on the server, its
+    rendered output, the HTML plus the RSC payload that describes it (<a href='#routing'>§4.5</a>),
+    is a concrete <em>artifact</em>. And artifacts can be cached.
+  </p>
+  <p>
+    Next.js does exactly that. Routes that don't depend on request-time information are rendered <strong
+      >once</strong
+    > (at build time, or on first request, or on a revalidation schedule), and the cached output is served
+    to every subsequent visitor without re-rendering: effectively a static site, per route. When part
+    of a page
+    <em>does</em> need request-time data, the modern model (Partial Prerendering /
+    <code>cacheComponents</code>) caches the static shell and streams only the dynamic holes into
+    it. The mechanics (<code>"use cache"</code>, revalidation, cache tags) live in
+    <a href='14-dedupe-caching.html'>§14</a>; what belongs here is the architectural point:
+  </p>
+  <p>
+    <strong>Only server-rendered content can participate in this cache.</strong>
+    <Chip k='next' />
+    <Chip k='critical' /> The framework can only cache output it produces; content fetched from the browser
+    after hydration is invisible to it: every user re-pays the full cost of every client-side request,
+    forever. So each piece of content you move to the server is upgraded twice: it arrives in the first
+    paint
+    <em>and</em> it becomes eligible to be rendered once and served to everyone. Maximizing the known
+    isn't just making one request faster; it's making the page progressively cheaper to serve at all.
+    This is also the trap the audit found us in: a client-rendered tree opts out of the entire caching
+    layer silently, page by page, with no error to tell you what you gave up.
+  </p>
 
-    <!-- navigations -->
-    <text x="14" y="100" font-size="10.5" fill="#666666" font-weight="500">
-      every navigation after: client routing
-    </text>
-    <rect
-      x="14"
-      y="110"
-      width="200"
-      height="46"
-      rx="7"
-      fill="#e6f7fb"
-      stroke="#0891b2"
-      stroke-width="1.5"
-    />
-    <text x="114" y="129" font-size="10" fill="#0891b2" text-anchor="middle">
-      &lt;Link&gt; click
-    </text>
-    <text x="114" y="144" font-size="9" fill="#4d99a8" text-anchor="middle">
-      no document reload
-    </text>
-    <line
-      x1="218"
-      y1="133"
-      x2="252"
-      y2="133"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#navArr)"
-    />
-    <rect
-      x="260"
-      y="110"
-      width="200"
-      height="46"
-      rx="7"
-      fill="#eaf3fe"
-      stroke="#0070f3"
-      stroke-width="1.5"
-    />
-    <text x="360" y="129" font-size="10" fill="#0757ba" text-anchor="middle">
-      server renders only the
-    </text>
-    <text x="360" y="144" font-size="10" fill="#0757ba" text-anchor="middle">
-      changing segments
-    </text>
-    <line
-      x1="464"
-      y1="133"
-      x2="498"
-      y2="133"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#navArr)"
-    />
-    <rect
-      x="506"
-      y="110"
-      width="200"
-      height="46"
-      rx="7"
-      fill="#d8e8fc"
-      stroke="#0070f3"
-      stroke-width="1.5"
-    />
-    <text x="606" y="129" font-size="10" fill="#0757ba" text-anchor="middle">
-      RSC payload
-    </text>
-    <text x="606" y="144" font-size="9" fill="#56789e" text-anchor="middle">
-      segments swap; layouts persist
-    </text>
-  </svg>
-  
-<pre slot="mermaid" is:raw>
+  <h2 id='routing'>4.5 Routing: server routing, client routing, and the RSC payload</h2>
+  <p>
+    One reasonable worry remains: if the server renders everything, doesn't every click become a
+    full page reload: white flash, re-downloaded assets, lost state? This is where the App Router is
+    cleverer than classic server rendering, and understanding it requires one piece of vocabulary:
+    the <strong>RSC payload</strong>.
+  </p>
+  <p>
+    The RSC payload is a compact, streamable serialization of a rendered server component tree. It
+    contains the rendered output of your server components, placeholders marking where client
+    components go (plus references to their JS chunks), and any props passed from server to client.
+    It is what the server <em>actually produces</em> when it renders; HTML is generated from it for first
+    visits. Think of it as "the rendered page, described as data", which is precisely what makes client-side
+    merging possible.
+  </p>
+  <p>Routing then works in two modes:</p>
+  <ul>
+    <li>
+      <strong>First visit: server routing.</strong> The browser requests a URL; the server renders the
+      full tree and responds with a complete HTML document (with the RSC payload embedded for hydration).
+      Real content paints before JavaScript loads: everything §4.1–§4.3 promised.
+    </li>
+    <li>
+      <strong>Every navigation after: client routing.</strong> Clicking a
+      <code>&lt;Link&gt;</code> does <em>not</em> reload the document. The router requests the RSC payload
+      for just the route segments that change, and React merges it into the page in place. Shared layouts
+      don't re-render and their state survives (<a href='03-mental-model.html#rendering-model'
+        >§3.1</a
+      >); only the content that differs is replaced. And because
+      <code>&lt;Link&gt;</code> prefetches payloads for links in the viewport, the merge often happens
+      from cache - navigation lands near-instantly.
+    </li>
+  </ul>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 160'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker
+          id='navArr'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#737373'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+      <!-- first visit -->
+      <text x='14' y='12' font-size='10.5' fill='#666666' font-weight='500'>
+        first visit: server routing
+      </text>
+      <rect x='14' y='22' width='200' height='46' rx='7' fill='#ffffff' stroke='#d4d4d4'></rect>
+      <text x='114' y='49' font-size='10' fill='#171717' text-anchor='middle'>
+        GET /programs/42
+      </text>
+      <line
+        x1='218'
+        y1='45'
+        x2='252'
+        y2='45'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#navArr)'></line>
+      <rect
+        x='260'
+        y='22'
+        width='200'
+        height='46'
+        rx='7'
+        fill='#eaf3fe'
+        stroke='#0070f3'
+        stroke-width='1.5'></rect>
+      <text x='360' y='41' font-size='10' fill='#0757ba' text-anchor='middle'>
+        server renders the route
+      </text>
+      <text x='360' y='56' font-size='9' fill='#56789e' text-anchor='middle'>
+        layouts, page, data
+      </text>
+      <line
+        x1='464'
+        y1='45'
+        x2='498'
+        y2='45'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#navArr)'></line>
+      <rect
+        x='506'
+        y='22'
+        width='200'
+        height='46'
+        rx='7'
+        fill='#e7f5ee'
+        stroke='#2ea06d'
+        stroke-width='1.5'></rect>
+      <text x='606' y='41' font-size='10' fill='#157a4c' text-anchor='middle'>
+        a full HTML document
+      </text>
+      <text x='606' y='56' font-size='9' fill='#3f8f68' text-anchor='middle'>
+        content paints before JS loads
+      </text>
+
+      <!-- navigations -->
+      <text x='14' y='100' font-size='10.5' fill='#666666' font-weight='500'>
+        every navigation after: client routing
+      </text>
+      <rect
+        x='14'
+        y='110'
+        width='200'
+        height='46'
+        rx='7'
+        fill='#e6f7fb'
+        stroke='#0891b2'
+        stroke-width='1.5'></rect>
+      <text x='114' y='129' font-size='10' fill='#0891b2' text-anchor='middle'>
+        &lt;Link&gt; click
+      </text>
+      <text x='114' y='144' font-size='9' fill='#4d99a8' text-anchor='middle'>
+        no document reload
+      </text>
+      <line
+        x1='218'
+        y1='133'
+        x2='252'
+        y2='133'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#navArr)'></line>
+      <rect
+        x='260'
+        y='110'
+        width='200'
+        height='46'
+        rx='7'
+        fill='#eaf3fe'
+        stroke='#0070f3'
+        stroke-width='1.5'></rect>
+      <text x='360' y='129' font-size='10' fill='#0757ba' text-anchor='middle'>
+        server renders only the
+      </text>
+      <text x='360' y='144' font-size='10' fill='#0757ba' text-anchor='middle'>
+        changing segments
+      </text>
+      <line
+        x1='464'
+        y1='133'
+        x2='498'
+        y2='133'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#navArr)'></line>
+      <rect
+        x='506'
+        y='110'
+        width='200'
+        height='46'
+        rx='7'
+        fill='#d8e8fc'
+        stroke='#0070f3'
+        stroke-width='1.5'></rect>
+      <text x='606' y='129' font-size='10' fill='#0757ba' text-anchor='middle'> RSC payload </text>
+      <text x='606' y='144' font-size='9' fill='#56789e' text-anchor='middle'>
+        segments swap; layouts persist
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
 flowchart LR
   subgraph FV["First visit: server routing"]
     direction LR
@@ -777,46 +769,42 @@ flowchart LR
   classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
 </pre>
 
-<Fragment slot="caption">
-Two routing modes, one rendering model. The first visit is server routing: a complete
-    HTML document, content visible before JavaScript. Every navigation after is client
-    routing: the router fetches the RSC payload for the changing segments (often already
-    prefetched) and merges it in place; layouts, their state, and their containers
-    persist.
-</Fragment>
-</Diagram>
+    <Fragment slot='caption'>
+      Two routing modes, one rendering model. The first visit is server routing: a complete HTML
+      document, content visible before JavaScript. Every navigation after is client routing: the
+      router fetches the RSC payload for the changing segments (often already prefetched) and merges
+      it in place; layouts, their state, and their containers persist.
+    </Fragment>
+  </Diagram>
 
-<p>
-  This is the answer to the worry, and the reason SSR here doesn't mean "a website from
-  2005." You get server rendering's first paint <em>and</em> an SPA's navigation feel,
-  from the same architecture, without building either by hand. But notice it's
-  conditional: the seamless merge works because the server renders segments the router can
-  splice. A page that client-fetches everything after mount gets neither benefit: its
-  first visit is a shell, and its navigations re-run the whole fetch choreography (<a
-    href="12-blocking-requests.html#client"
-    >§12.4</a
-  >).
-</p>
+  <p>
+    This is the answer to the worry, and the reason SSR here doesn't mean "a website from 2005." You
+    get server rendering's first paint <em>and</em> an SPA's navigation feel, from the same architecture,
+    without building either by hand. But notice it's conditional: the seamless merge works because the
+    server renders segments the router can splice. A page that client-fetches everything after mount gets
+    neither benefit: its first visit is a shell, and its navigations re-run the whole fetch choreography
+    (<a href='12-blocking-requests.html#client'>§12.4</a>).
+  </p>
 
-<h3 id="prefetching">Links and prefetching</h3>
-<p>
-  The instant-navigation story above hangs on one component: <code>&lt;Link&gt;</code>.
-  Internal navigation always goes through <code>&lt;Link&gt;</code>, never a plain
-  <code>&lt;a&gt;</code>: an anchor tag opts out of the entire model with a full document
-  load: layouts torn down, state cleared, scroll reset.
-  <Chip k="next" />
-  <Chip k="critical" /> But <code>&lt;Link&gt;</code> does more
-  than route on the client: it <strong>prefetches</strong>. When a link enters the
-  viewport (or is hovered), Next.js quietly loads the target route in the background, so
-  by the time the user actually clicks, the payload the router needs is usually already
-  sitting on the client, and the navigation resolves without waiting on the network at
-  all.
-</p>
+  <h3 id='prefetching'>Links and prefetching</h3>
+  <p>
+    The instant-navigation story above hangs on one component: <code>&lt;Link&gt;</code>. Internal
+    navigation always goes through <code>&lt;Link&gt;</code>, never a plain
+    <code>&lt;a&gt;</code>: an anchor tag opts out of the entire model with a full document load:
+    layouts torn down, state cleared, scroll reset.
+    <Chip k='next' />
+    <Chip k='critical' /> But <code>&lt;Link&gt;</code> does more than route on the client: it <strong
+      >prefetches</strong
+    >. When a link enters the viewport (or is hovered), Next.js quietly loads the target route in
+    the background, so by the time the user actually clicks, the payload the router needs is usually
+    already sitting on the client, and the navigation resolves without waiting on the network at
+    all.
+  </p>
 
-<Snippet>
-<pre
-            class="code" is:raw
-          ><span class="filename">app/layout.tsx</span><span class="tok-com">{/* Prefetched automatically when the link enters the viewport or is hovered. */}</span>
+  <Snippet>
+    <pre
+      class='code'
+      is:raw><span class="filename">app/layout.tsx</span><span class="tok-com">{/* Prefetched automatically when the link enters the viewport or is hovered. */}</span>
 &lt;<span class="tok-fn">Link</span> <span class="tok-prop">href</span>=<span class="tok-str">"/programs"</span>&gt;Programs&lt;/<span class="tok-fn">Link</span>&gt;
 
 <span class="tok-com">{/* A plain anchor opts out of everything: full document load, no prefetch. */}</span>
@@ -826,116 +814,104 @@ Two routing modes, one rendering model. The first visit is server routing: a com
    links (an infinite-scroll table of rows), where eagerly prefetching every
    visible row is wasted work. Prefetch-on-hover is the middle ground. */}</span>
 &lt;<span class="tok-fn">Link</span> <span class="tok-prop">prefetch</span>={<span class="tok-kw">false</span>} <span class="tok-prop">href</span>=<span class="tok-str">"/programs/42"</span>&gt;Program 42&lt;/<span class="tok-fn">Link</span>&gt;</pre>
-</Snippet>
+  </Snippet>
 
-<p>
-  How much can be prefetched is, once again, a known/unknown question, this time asked
-  about a route the user hasn't visited yet:
-</p>
-<ul>
-  <li>
-    <strong>Static routes are prefetched in full.</strong> The route was prerendered (<a
-      href="#page-cache"
-      >§4.4</a
-    >), so its complete payload already exists as a cached artifact; the client can fetch
-    all of it ahead of the click and navigate entirely from cache.
-  </li>
-  <li>
-    <strong>Dynamic routes are prefetched partially, or not at all.</strong> The server
-    can't render request-time content before the request exists. But if the route has a
-    <code>loading.tsx</code>, Next.js prefetches everything that <em>is</em> knowable
-    ahead of time: the shared layouts and the loading skeleton. The known travels early;
-    only the unknown waits for the click.
-  </li>
-</ul>
-
-<h3 id="dynamic-loading">
-  The slow-transition trap: dynamic routes without <code>loading.tsx</code>
-</h3>
-<p>
-  Follow that second bullet to its failure mode, because the
-  <a
-    href="https://nextjs.org/docs/app/getting-started/linking-and-navigating#dynamic-routes-without-loadingtsx"
-    target="_blank"
-    rel="noopener"
-    >docs call it out</a
-  >
-  as the number-one thing that makes transitions feel slow. A dynamic route with no
-  <code>loading.tsx</code> has nothing prefetchable and nothing to show on click, so when
-  the user navigates, <em>nothing happens</em> until the server finishes rendering. Click…
-  wait… still the old page. In the docs' words, it "can give the users the impression that
-  the app is not responding." Every dynamic route should have a
-  <code>loading.tsx</code> (or an equivalent Suspense boundary).
-  <Chip k="next" />
-  <Chip k="very" />
-</p>
-<p>
-  With the file present, the whole sequence inverts. The layouts and skeleton were
-  partially prefetched, so the navigation <strong>commits immediately</strong>: the URL
-  changes, the known structure paints on click, and the server's content streams into the
-  reserved fallback when it arrives (<a href="10-suspense-streaming.html#streaming"
-    >§10.2</a
-  >). The docs enumerate the benefits: immediate visual feedback, shared layouts that stay
-  interactive while the route loads (the user can even interrupt the navigation and click
-  elsewhere), better TTFB/FCP/TTI. But notice what the pattern <em>is</em>:
-  contain-the-unknown, applied to navigation. The known part of the next page travels
-  ahead of the click; the unknown part streams in behind it, into space that was reserved
-  for it.
-</p>
-<p>
-  Three edge notes close the loop. If a dynamic segment's pages are enumerable ahead of
-  time, <code>generateStaticParams</code> promotes them to prerendered static routes: full
-  prefetch, no fallback needed at all. On slow networks the prefetch may not finish before
-  the click; <code>useLinkStatus</code> exposes a <code>pending</code> flag for an
-  immediate, debounced hint on the link itself. And prefetching can't start until
-  <code>&lt;Link&gt;</code> hydrates (it is a client component), which is one more reason
-  to keep first-render JavaScript small (<a href="06-first-render-js.html">§6</a>).
-</p>
-
-<GoDeeper>
   <p>
-    React 19 docs:
-    <a
-      href="https://react.dev/reference/rsc/server-components"
-      target="_blank"
-      rel="noopener"
-      >Server Components</a
-    >
-    ·
-    <a href="https://react.dev/reference/react/Suspense" target="_blank" rel="noopener"
-      >Suspense</a
-    >
-    (streaming SSR semantics). Next.js docs:
-    <a
-      href="https://nextjs.org/docs/app/getting-started/server-and-client-components"
-      target="_blank"
-      rel="noopener"
-      >Server and Client Components</a
-    >
-    ·
-    <a
-      href="https://nextjs.org/docs/14/app/building-your-application/rendering/server-components"
-      target="_blank"
-      rel="noopener"
-      >Server Components rendering (v14 guide)</a
-    >
-    (the strategies section covers static/dynamic/streaming) ·
-    <a
-      href="https://nextjs.org/docs/app/getting-started/linking-and-navigating"
-      target="_blank"
-      rel="noopener"
-      >Linking and Navigating</a
-    >
-    (RSC payload, prefetching, client transitions, the dynamic-routes-without-<code
-      >loading.tsx</code
-    >
-    trap) ·
-    <a
-      href="https://nextjs.org/docs/app/guides/prefetching"
-      target="_blank"
-      rel="noopener"
-      >Prefetching guide</a
-    >. Full list in <a href="20-references.html">§20</a>.
+    How much can be prefetched is, once again, a known/unknown question, this time asked about a
+    route the user hasn't visited yet:
   </p>
-</GoDeeper>
+  <ul>
+    <li>
+      <strong>Static routes are prefetched in full.</strong> The route was prerendered (<a
+        href='#page-cache'>§4.4</a
+      >), so its complete payload already exists as a cached artifact; the client can fetch all of
+      it ahead of the click and navigate entirely from cache.
+    </li>
+    <li>
+      <strong>Dynamic routes are prefetched partially, or not at all.</strong> The server can't render
+      request-time content before the request exists. But if the route has a
+      <code>loading.tsx</code>, Next.js prefetches everything that <em>is</em> knowable ahead of time:
+      the shared layouts and the loading skeleton. The known travels early; only the unknown waits for
+      the click.
+    </li>
+  </ul>
+
+  <h3 id='dynamic-loading'>
+    The slow-transition trap: dynamic routes without <code>loading.tsx</code>
+  </h3>
+  <p>
+    Follow that second bullet to its failure mode, because the
+    <a
+      href='https://nextjs.org/docs/app/getting-started/linking-and-navigating#dynamic-routes-without-loadingtsx'
+      target='_blank'
+      rel='noopener'>docs call it out</a
+    >
+    as the number-one thing that makes transitions feel slow. A dynamic route with no
+    <code>loading.tsx</code> has nothing prefetchable and nothing to show on click, so when the user navigates,
+    <em>nothing happens</em> until the server finishes rendering. Click… wait… still the old page. In
+    the docs' words, it "can give the users the impression that the app is not responding." Every dynamic
+    route should have a
+    <code>loading.tsx</code> (or an equivalent Suspense boundary).
+    <Chip k='next' />
+    <Chip k='very' />
+  </p>
+  <p>
+    With the file present, the whole sequence inverts. The layouts and skeleton were partially
+    prefetched, so the navigation <strong>commits immediately</strong>: the URL changes, the known
+    structure paints on click, and the server's content streams into the reserved fallback when it
+    arrives (<a href='10-suspense-streaming.html#streaming'>§10.2</a>). The docs enumerate the
+    benefits: immediate visual feedback, shared layouts that stay interactive while the route loads
+    (the user can even interrupt the navigation and click elsewhere), better TTFB/FCP/TTI. But
+    notice what the pattern <em>is</em>: contain-the-unknown, applied to navigation. The known part
+    of the next page travels ahead of the click; the unknown part streams in behind it, into space
+    that was reserved for it.
+  </p>
+  <p>
+    Three edge notes close the loop. If a dynamic segment's pages are enumerable ahead of time, <code
+      >generateStaticParams</code
+    > promotes them to prerendered static routes: full prefetch, no fallback needed at all. On slow networks
+    the prefetch may not finish before the click; <code>useLinkStatus</code> exposes a <code
+      >pending</code
+    > flag for an immediate, debounced hint on the link itself. And prefetching can't start until
+    <code>&lt;Link&gt;</code> hydrates (it is a client component), which is one more reason to keep first-render
+    JavaScript small (<a href='06-first-render-js.html'>§6</a>).
+  </p>
+
+  <GoDeeper>
+    <p>
+      React 19 docs:
+      <a href='https://react.dev/reference/rsc/server-components' target='_blank' rel='noopener'
+        >Server Components</a
+      >
+      ·
+      <a href='https://react.dev/reference/react/Suspense' target='_blank' rel='noopener'
+        >Suspense</a
+      >
+      (streaming SSR semantics). Next.js docs:
+      <a
+        href='https://nextjs.org/docs/app/getting-started/server-and-client-components'
+        target='_blank'
+        rel='noopener'>Server and Client Components</a
+      >
+      ·
+      <a
+        href='https://nextjs.org/docs/14/app/building-your-application/rendering/server-components'
+        target='_blank'
+        rel='noopener'>Server Components rendering (v14 guide)</a
+      >
+      (the strategies section covers static/dynamic/streaming) ·
+      <a
+        href='https://nextjs.org/docs/app/getting-started/linking-and-navigating'
+        target='_blank'
+        rel='noopener'>Linking and Navigating</a
+      >
+      (RSC payload, prefetching, client transitions, the dynamic-routes-without-<code
+        >loading.tsx</code
+      >
+      trap) ·
+      <a href='https://nextjs.org/docs/app/guides/prefetching' target='_blank' rel='noopener'
+        >Prefetching guide</a
+      >. Full list in <a href='20-references.html'>§20</a>.
+    </p>
+  </GoDeeper>
 </GuidePage>

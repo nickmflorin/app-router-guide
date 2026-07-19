@@ -5,3 +5,5 @@ node_modules/
 **/__pycache__/
 build/output/
 .preview/
+public/assets/style.css
+public/assets/search-index.js

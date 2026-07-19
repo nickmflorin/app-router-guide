@@ -10,365 +10,259 @@ import CodeCaption from '../../components/CodeCaption.astro';
 import Snippet from '../../components/Snippet.astro';
 ---
 
-<GuidePage title="Minimize the Wires - App Router Guide" root="..">
-<div class="kicker">Chapter 13 · Part C: Decouple the Parts</div>
-<h1>Minimize the Wires</h1>
-<p class="lede">
-  Every prop, callback, and context read is a wire: a dependency connecting two parts of
-  the UI. Wires are not free: each one couples a component's future to its neighbors'.
-  This chapter is about keeping components independent, and why repetition beats plumbing.
-</p>
+<GuidePage title='Minimize the Wires - App Router Guide' root='..'>
+  <div class='kicker'>Chapter 13 · Part C: Decouple the Parts</div>
+  <h1>Minimize the Wires</h1>
+  <p class='lede'>
+    Every prop, callback, and context read is a wire: a dependency connecting two parts of the UI.
+    Wires are not free: each one couples a component's future to its neighbors'. This chapter is
+    about keeping components independent, and why repetition beats plumbing.
+  </p>
 
-<h2 id="cost">13.1 The cost of a wire</h2>
-<p>
-  When a parent fetches data and passes it down, the parent stops being a layout concern
-  and becomes a <strong>data router</strong>. It must know what every descendant needs,
-  fetch the union of it, and thread it through. And from that moment, three components
-  change together forever. Child B needs one more field? You edit Child B, the parent's
-  fetch, and the prop signature in between. Multiply by every feature for the life of the
-  product and the parent becomes what we'll call a <em>coupling layer</em>: a component
-  whose main job is re-wiring everyone else's requirements.
-</p>
-<p>
-  The rule that falls out of this is blunt:
-  <strong>never pass a child anything the parent does not itself need.</strong>
-  <Chip k="react" />
-  <Chip k="critical" /> If the parent isn't using the data
-  (isn't branching on it, isn't laying it out), the parent is just a wire, and wires
-  should be deleted. Legitimate exceptions: identity (an <code>id</code> the child will
-  use to ask its own questions), composition (<code>children</code> and other slots), and
-  configuration the parent genuinely owns (a variant, a size).
-</p>
+  <h2 id='cost'>13.1 The cost of a wire</h2>
+  <p>
+    When a parent fetches data and passes it down, the parent stops being a layout concern and
+    becomes a <strong>data router</strong>. It must know what every descendant needs, fetch the
+    union of it, and thread it through. And from that moment, three components change together
+    forever. Child B needs one more field? You edit Child B, the parent's fetch, and the prop
+    signature in between. Multiply by every feature for the life of the product and the parent
+    becomes what we'll call a <em>coupling layer</em>: a component whose main job is re-wiring
+    everyone else's requirements.
+  </p>
+  <p>
+    The rule that falls out of this is blunt:
+    <strong>never pass a child anything the parent does not itself need.</strong>
+    <Chip k='react' />
+    <Chip k='critical' /> If the parent isn't using the data (isn't branching on it, isn't laying it out),
+    the parent is just a wire, and wires should be deleted. Legitimate exceptions: identity (an <code
+      >id</code
+    > the child will use to ask its own questions), composition (<code>children</code> and other slots),
+    and configuration the parent genuinely owns (a variant, a size).
+  </p>
 
-<Diagram>
-  <svg
-    viewBox="0 0 720 371"
-    xmlns="http://www.w3.org/2000/svg"
-    font-family="Inter, system-ui, sans-serif"
-  >
-    <defs>
-      <marker
-        id="aG"
-        viewBox="0 0 10 10"
-        refX="8"
-        refY="5"
-        markerWidth="6"
-        markerHeight="6"
-        orient="auto-start-reverse"
-      >
-        <path
-          d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-          fill="none"
-          stroke="#737373"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </marker>
-      <marker
-        id="aB"
-        viewBox="0 0 10 10"
-        refX="8"
-        refY="5"
-        markerWidth="6"
-        markerHeight="6"
-        orient="auto-start-reverse"
-      >
-        <path
-          d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-          fill="none"
-          stroke="#0070f3"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </marker>
-    </defs>
-
-    <!-- headers -->
-    <text
-      x="170"
-      y="14"
-      font-size="11"
-      fill="#d93025"
-      text-anchor="middle"
-      font-weight="500"
+  <Diagram>
+    <svg
+      viewBox='0 0 720 371'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
     >
-      Prop drilling: the coupling layer
-    </text>
-    <text
-      x="530"
-      y="14"
-      font-size="11"
-      fill="#157a4c"
-      text-anchor="middle"
-      font-weight="500"
-    >
-      Independent components
-    </text>
-    <line x1="360" y1="2" x2="360" y2="369" stroke="#e0e0e0" />
+      <defs>
+        <marker
+          id='aG'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#737373'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+        <marker
+          id='aB'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#0070f3'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
 
-    <!-- LEFT: bad -->
-    <rect x="100" y="30" width="140" height="36" rx="7" fill="#ffffff" stroke="#b45309" />
-    <text x="170" y="52" font-size="11.5" fill="#8a5a00" text-anchor="middle">
-      fetch: everything
-    </text>
+      <!-- headers -->
+      <text x='170' y='14' font-size='11' fill='#d93025' text-anchor='middle' font-weight='500'>
+        Prop drilling: the coupling layer
+      </text>
+      <text x='530' y='14' font-size='11' fill='#157a4c' text-anchor='middle' font-weight='500'>
+        Independent components
+      </text>
+      <line x1='360' y1='2' x2='360' y2='369' stroke='#e0e0e0'></line>
 
-    <line
-      x1="170"
-      y1="66"
-      x2="170"
-      y2="104"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#aG)"
-    />
-    <text x="180" y="90" font-size="10" fill="#666666">all the data</text>
+      <!-- LEFT: bad -->
+      <rect x='100' y='30' width='140' height='36' rx='7' fill='#ffffff' stroke='#b45309'></rect>
+      <text x='170' y='52' font-size='11.5' fill='#8a5a00' text-anchor='middle'>
+        fetch: everything
+      </text>
 
-    <rect
-      x="85"
-      y="108"
-      width="170"
-      height="40"
-      rx="7"
-      fill="#fdecea"
-      stroke="#d93025"
-      stroke-width="1.5"
-    />
-    <text
-      x="170"
-      y="126"
-      font-size="11.5"
-      fill="#b3261e"
-      text-anchor="middle"
-      font-weight="500"
-    >
-      Parent
-    </text>
-    <text x="170" y="140" font-size="9.5" fill="#b0483e" text-anchor="middle">
-      knows everyone's requirements
-    </text>
+      <line
+        x1='170'
+        y1='66'
+        x2='170'
+        y2='104'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#aG)'></line>
+      <text x='180' y='90' font-size='10' fill='#666666'>all the data</text>
 
-    <line
-      x1="135"
-      y1="148"
-      x2="93"
-      y2="212"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#aG)"
-    />
-    <line
-      x1="205"
-      y1="148"
-      x2="247"
-      y2="212"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#aG)"
-    />
-    <text x="99" y="187" font-size="10" fill="#666666" text-anchor="end">
-      props &amp; data
-    </text>
-    <text x="241" y="187" font-size="10" fill="#666666">props &amp; data</text>
+      <rect
+        x='85'
+        y='108'
+        width='170'
+        height='40'
+        rx='7'
+        fill='#fdecea'
+        stroke='#d93025'
+        stroke-width='1.5'></rect>
+      <text x='170' y='126' font-size='11.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+        Parent
+      </text>
+      <text x='170' y='140' font-size='9.5' fill='#b0483e' text-anchor='middle'>
+        knows everyone's requirements
+      </text>
 
-    <rect x="28" y="218" width="120" height="36" rx="7" fill="#ffffff" stroke="#c9c9c9" />
-    <text x="88" y="240" font-size="11.5" fill="#171717" text-anchor="middle">
-      Child A
-    </text>
-    <rect
-      x="192"
-      y="218"
-      width="120"
-      height="36"
-      rx="7"
-      fill="#ffffff"
-      stroke="#c9c9c9"
-    />
-    <text x="252" y="240" font-size="11.5" fill="#171717" text-anchor="middle">
-      Child B
-    </text>
+      <line
+        x1='135'
+        y1='148'
+        x2='93'
+        y2='212'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#aG)'></line>
+      <line
+        x1='205'
+        y1='148'
+        x2='247'
+        y2='212'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#aG)'></line>
+      <text x='99' y='187' font-size='10' fill='#666666' text-anchor='end'> props &amp; data </text>
+      <text x='241' y='187' font-size='10' fill='#666666'>props &amp; data</text>
 
-    <rect
-      x="30"
-      y="280"
-      width="280"
-      height="86"
-      rx="8"
-      fill="#fdf3e3"
-      stroke="#b45309"
-      stroke-dasharray="4 3"
-    />
-    <text
-      x="170"
-      y="301"
-      font-size="10.5"
-      fill="#8a5a00"
-      text-anchor="middle"
-      font-weight="500"
-    >
-      When Child B's needs change:
-    </text>
-    <text x="170" y="319" font-size="10" fill="#8f6b2e" text-anchor="middle">
-      edit Child B → Parent's fetch → the props
-    </text>
-    <text x="170" y="337" font-size="10" fill="#8f6b2e" text-anchor="middle">
-      3 files every time · Parent re-renders everyone
-    </text>
-    <text x="170" y="355" font-size="10" fill="#8f6b2e" text-anchor="middle">
-      children are unusable without this exact Parent
-    </text>
+      <rect x='28' y='218' width='120' height='36' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='88' y='240' font-size='11.5' fill='#171717' text-anchor='middle'> Child A </text>
+      <rect x='192' y='218' width='120' height='36' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='252' y='240' font-size='11.5' fill='#171717' text-anchor='middle'> Child B </text>
 
-    <!-- RIGHT: good -->
-    <rect
-      x="410"
-      y="30"
-      width="240"
-      height="36"
-      rx="7"
-      fill="#eaf3fe"
-      stroke="#0070f3"
-      stroke-width="1.5"
-    />
-    <text
-      x="530"
-      y="47"
-      font-size="11.5"
-      fill="#0757ba"
-      text-anchor="middle"
-      font-weight="500"
-    >
-      Data layer (deduped)
-    </text>
-    <text x="530" y="60" font-size="9.5" fill="#527dad" text-anchor="middle">
-      getProgram(id) · 1 real request
-    </text>
+      <rect
+        x='30'
+        y='280'
+        width='280'
+        height='86'
+        rx='8'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-dasharray='4 3'></rect>
+      <text x='170' y='301' font-size='10.5' fill='#8a5a00' text-anchor='middle' font-weight='500'>
+        When Child B's needs change:
+      </text>
+      <text x='170' y='319' font-size='10' fill='#8f6b2e' text-anchor='middle'>
+        edit Child B → Parent's fetch → the props
+      </text>
+      <text x='170' y='337' font-size='10' fill='#8f6b2e' text-anchor='middle'>
+        3 files every time · Parent re-renders everyone
+      </text>
+      <text x='170' y='355' font-size='10' fill='#8f6b2e' text-anchor='middle'>
+        children are unusable without this exact Parent
+      </text>
 
-    <rect
-      x="455"
-      y="108"
-      width="150"
-      height="40"
-      rx="7"
-      fill="#ffffff"
-      stroke="#c9c9c9"
-    />
-    <text
-      x="530"
-      y="126"
-      font-size="11.5"
-      fill="#171717"
-      text-anchor="middle"
-      font-weight="500"
-    >
-      Parent
-    </text>
-    <text x="530" y="140" font-size="9.5" fill="#666666" text-anchor="middle">
-      layout only
-    </text>
+      <!-- RIGHT: good -->
+      <rect
+        x='410'
+        y='30'
+        width='240'
+        height='36'
+        rx='7'
+        fill='#eaf3fe'
+        stroke='#0070f3'
+        stroke-width='1.5'></rect>
+      <text x='530' y='47' font-size='11.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+        Data layer (deduped)
+      </text>
+      <text x='530' y='60' font-size='9.5' fill='#527dad' text-anchor='middle'>
+        getProgram(id) · 1 real request
+      </text>
 
-    <line
-      x1="495"
-      y1="148"
-      x2="467"
-      y2="212"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#aG)"
-    />
-    <line
-      x1="565"
-      y1="148"
-      x2="593"
-      y2="212"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#aG)"
-    />
-    <text x="491" y="187" font-size="10" fill="#666666">id only</text>
-    <text x="569" y="187" font-size="10" fill="#666666" text-anchor="end">id only</text>
+      <rect x='455' y='108' width='150' height='40' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='530' y='126' font-size='11.5' fill='#171717' text-anchor='middle' font-weight='500'>
+        Parent
+      </text>
+      <text x='530' y='140' font-size='9.5' fill='#666666' text-anchor='middle'> layout only </text>
 
-    <rect
-      x="384"
-      y="218"
-      width="122"
-      height="36"
-      rx="7"
-      fill="#ffffff"
-      stroke="#c9c9c9"
-    />
-    <text x="445" y="240" font-size="11.5" fill="#171717" text-anchor="middle">
-      Child A
-    </text>
-    <rect
-      x="554"
-      y="218"
-      width="122"
-      height="36"
-      rx="7"
-      fill="#ffffff"
-      stroke="#c9c9c9"
-    />
-    <text x="615" y="240" font-size="11.5" fill="#171717" text-anchor="middle">
-      Child B
-    </text>
+      <line
+        x1='495'
+        y1='148'
+        x2='467'
+        y2='212'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#aG)'></line>
+      <line
+        x1='565'
+        y1='148'
+        x2='593'
+        y2='212'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#aG)'></line>
+      <text x='491' y='187' font-size='10' fill='#666666'>id only</text>
+      <text x='569' y='187' font-size='10' fill='#666666' text-anchor='end'>id only</text>
 
-    <!-- children ask data layer directly -->
-    <line
-      x1="430"
-      y1="218"
-      x2="430"
-      y2="71"
-      stroke="#0070f3"
-      stroke-width="1.5"
-      marker-end="url(#aB)"
-    />
-    <line
-      x1="630"
-      y1="218"
-      x2="630"
-      y2="71"
-      stroke="#0070f3"
-      stroke-width="1.5"
-      marker-end="url(#aB)"
-    />
-    <text x="418" y="138" font-size="10" fill="#0068d6" text-anchor="end">
-      asks itself
-    </text>
-    <text x="642" y="138" font-size="10" fill="#0068d6">asks itself</text>
+      <rect x='384' y='218' width='122' height='36' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='445' y='240' font-size='11.5' fill='#171717' text-anchor='middle'> Child A </text>
+      <rect x='554' y='218' width='122' height='36' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='615' y='240' font-size='11.5' fill='#171717' text-anchor='middle'> Child B </text>
 
-    <rect
-      x="390"
-      y="280"
-      width="280"
-      height="86"
-      rx="8"
-      fill="#e7f5ee"
-      stroke="#2ea06d"
-      stroke-dasharray="4 3"
-    />
-    <text
-      x="530"
-      y="301"
-      font-size="10.5"
-      fill="#157a4c"
-      text-anchor="middle"
-      font-weight="500"
-    >
-      When Child B's needs change:
-    </text>
-    <text x="530" y="319" font-size="10" fill="#2e7d5b" text-anchor="middle">
-      edit Child B. Done: 1 file
-    </text>
-    <text x="530" y="337" font-size="10" fill="#2e7d5b" text-anchor="middle">
-      Parent never re-renders for data it doesn't use
-    </text>
-    <text x="530" y="355" font-size="10" fill="#2e7d5b" text-anchor="middle">
-      children are portable - drop them anywhere
-    </text>
-  </svg>
-  
-<pre slot="mermaid" is:raw>
+      <!-- children ask data layer directly -->
+      <line
+        x1='430'
+        y1='218'
+        x2='430'
+        y2='71'
+        stroke='#0070f3'
+        stroke-width='1.5'
+        marker-end='url(#aB)'></line>
+      <line
+        x1='630'
+        y1='218'
+        x2='630'
+        y2='71'
+        stroke='#0070f3'
+        stroke-width='1.5'
+        marker-end='url(#aB)'></line>
+      <text x='418' y='138' font-size='10' fill='#0068d6' text-anchor='end'> asks itself </text>
+      <text x='642' y='138' font-size='10' fill='#0068d6'>asks itself</text>
+
+      <rect
+        x='390'
+        y='280'
+        width='280'
+        height='86'
+        rx='8'
+        fill='#e7f5ee'
+        stroke='#2ea06d'
+        stroke-dasharray='4 3'></rect>
+      <text x='530' y='301' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+        When Child B's needs change:
+      </text>
+      <text x='530' y='319' font-size='10' fill='#2e7d5b' text-anchor='middle'>
+        edit Child B. Done: 1 file
+      </text>
+      <text x='530' y='337' font-size='10' fill='#2e7d5b' text-anchor='middle'>
+        Parent never re-renders for data it doesn't use
+      </text>
+      <text x='530' y='355' font-size='10' fill='#2e7d5b' text-anchor='middle'>
+        children are portable - drop them anywhere
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
 flowchart TB
   subgraph DR["Prop drilling: the coupling layer"]
     direction TB
@@ -397,35 +291,34 @@ flowchart TB
   classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
 </pre>
 
-<Fragment slot="caption">
-The same three components, wired two ways. Left: the parent fetches once and drills:
-    every requirement change touches three files. Right: children ask the data layer
-    themselves; the dedupe layer (<a href="14-dedupe-caching.html">§14</a>) collapses
-    their identical questions into one real request.
-</Fragment>
-</Diagram>
+    <Fragment slot='caption'>
+      The same three components, wired two ways. Left: the parent fetches once and drills: every
+      requirement change touches three files. Right: children ask the data layer themselves; the
+      dedupe layer (<a href='14-dedupe-caching.html'>§14</a>) collapses their identical questions
+      into one real request.
+    </Fragment>
+  </Diagram>
 
-<h2 id="repetition">13.2 Repetition over dependency</h2>
-<p>
-  The instinct that produces drilling is a good one:
-  <em>don't fetch the same thing twice</em>. For most of React's history, the only way to
-  honor it was to fetch once at the top and share downward. Hooks and context were the
-  first crack in that constraint; in Next, deduped fetches and cached functions remove it
-  entirely.
-  <strong
-    >It is better for two components to ask the same question independently than to be
-    wired together</strong
-  >, because the framework guarantees the question is only answered once per request.
-  <Chip k="next" />
-  <Chip k="very" />
-</p>
+  <h2 id='repetition'>13.2 Repetition over dependency</h2>
+  <p>
+    The instinct that produces drilling is a good one:
+    <em>don't fetch the same thing twice</em>. For most of React's history, the only way to honor it
+    was to fetch once at the top and share downward. Hooks and context were the first crack in that
+    constraint; in Next, deduped fetches and cached functions remove it entirely.
+    <strong
+      >It is better for two components to ask the same question independently than to be wired
+      together</strong
+    >, because the framework guarantees the question is only answered once per request.
+    <Chip k='next' />
+    <Chip k='very' />
+  </p>
 
-<Compare>
-<CompareCol kind="bad" label="✕ Parent as data router">
-    <Snippet>
-    <pre
-                class="code" is:raw
-              ><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
+  <Compare>
+    <CompareCol kind='bad' label='✕ Parent as data router'>
+      <Snippet>
+        <pre
+          class='code'
+          is:raw><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
   <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
   <span class="tok-com">// This fetches the union of every child's needs.</span>
   <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> <span class="tok-fn">getProgram</span>(id);
@@ -441,17 +334,17 @@ The same three components, wired two ways. Left: the parent fetches once and dri
     &lt;/&gt;
   );
 }</pre>
-<CodeCaption>
-  The Header needs one more field? Edit Header, Page, and <code>getProgram</code>: three files, every time.
-</CodeCaption>
-    </Snippet>
-  
-</CompareCol>
-<CompareCol kind="good" label="✓ Independent children, deduped data layer">
-    <Snippet>
-    <pre
-                class="code" is:raw
-              ><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
+        <CodeCaption>
+          The Header needs one more field? Edit Header, Page, and <code>getProgram</code>: three
+          files, every time.
+        </CodeCaption>
+      </Snippet>
+    </CompareCol>
+    <CompareCol kind='good' label='✓ Independent children, deduped data layer'>
+      <Snippet>
+        <pre
+          class='code'
+          is:raw><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
   <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
   <span class="tok-com">// The only wire is identity.</span>
   <span class="tok-kw">return</span> (
@@ -461,171 +354,134 @@ The same three components, wired two ways. Left: the parent fetches once and dri
     &lt;/&gt;
   );
 }</pre>
-    </Snippet>
-    <Snippet>
-    <pre
-                class="code" is:raw
-              ><span class="filename">components/program/ProgramHeader.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramHeader</span>({ programId }) {
+      </Snippet>
+      <Snippet>
+        <pre
+          class='code'
+          is:raw><span class="filename">components/program/ProgramHeader.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramHeader</span>({ programId }) {
   <span class="tok-com">/* It asks for itself; the dedupe layer
      makes this free (§14). */</span>
   <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> <span class="tok-fn">getProgram</span>(programId);
   <span class="tok-kw">return</span> &lt;header&gt;{program.name} …&lt;/header&gt;;
 }</pre>
-    </Snippet>
-  
-</CompareCol>
-</Compare>
-<p>
-  Both <code>ProgramHeader</code> and <code>ProgramStats</code> call
-  <code>getProgram(id)</code>; only one real request happens, because the data layer is
-  deduped (<a href="14-dedupe-caching.html">§14</a> covers the mechanics:
-  <code>cache()</code>, fetch dedupe, SWR keys). The page went from a data router back to
-  what it should be: structure. And each child is now <strong>portable</strong>: drop it
-  into any page, any parallel route, any dialog, hand it an id, and it works.
-</p>
-
-<Callout kind="info" title="This works on both sides of the boundary">
+      </Snippet>
+    </CompareCol>
+  </Compare>
   <p>
-    Server-side, independence is free via <code>React.cache()</code> and fetch dedupe.
-    Client-side, the same pattern holds with <code>useSWR</code>/React Query: two
-    components calling <code>useProgram(id)</code> share one cache entry and one request.
-    What you should <em>not</em> do is hand-roll it: a fetch in an effect has no dedupe
-    layer, so drilling becomes "necessary" again. The anti-patterns feed each other.
+    Both <code>ProgramHeader</code> and <code>ProgramStats</code> call
+    <code>getProgram(id)</code>; only one real request happens, because the data layer is deduped (<a
+      href='14-dedupe-caching.html'>§14</a
+    > covers the mechanics:
+    <code>cache()</code>, fetch dedupe, SWR keys). The page went from a data router back to what it
+    should be: structure. And each child is now <strong>portable</strong>: drop it into any page,
+    any parallel route, any dialog, hand it an id, and it works.
   </p>
-</Callout>
 
-<h2 id="streaming">13.3 Independence changes how the page streams</h2>
-<p>
-  Wiring isn't just a maintenance cost; it determines where your Suspense boundaries
-  <em>can go</em>. A boundary must sit above whatever awaits. If the parent fetches and
-  drills, the boundary is forced above the parent: the whole subtree is one all-or-nothing
-  unit, gated by its slowest request. If children fetch for themselves, each child gets
-  its own boundary inside the parent: the structure renders instantly and each region
-  streams in as its answer arrives.
-</p>
+  <Callout kind='info' title='This works on both sides of the boundary'>
+    <p>
+      Server-side, independence is free via <code>React.cache()</code> and fetch dedupe. Client-side,
+      the same pattern holds with <code>useSWR</code>/React Query: two components calling <code
+        >useProgram(id)</code
+      > share one cache entry and one request. What you should <em>not</em> do is hand-roll it: a fetch
+      in an effect has no dedupe layer, so drilling becomes "necessary" again. The anti-patterns feed
+      each other.
+    </p>
+  </Callout>
 
-<Diagram>
-  <svg
-    viewBox="0 0 720 276"
-    xmlns="http://www.w3.org/2000/svg"
-    font-family="Inter, system-ui, sans-serif"
-  >
-    <text
-      x="170"
-      y="14"
-      font-size="11"
-      fill="#b3261e"
-      text-anchor="middle"
-      font-weight="500"
+  <h2 id='streaming'>13.3 Independence changes how the page streams</h2>
+  <p>
+    Wiring isn't just a maintenance cost; it determines where your Suspense boundaries
+    <em>can go</em>. A boundary must sit above whatever awaits. If the parent fetches and drills,
+    the boundary is forced above the parent: the whole subtree is one all-or-nothing unit, gated by
+    its slowest request. If children fetch for themselves, each child gets its own boundary inside
+    the parent: the structure renders instantly and each region streams in as its answer arrives.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 276'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
     >
-      Parent fetches &amp; drills
-    </text>
-    <text
-      x="530"
-      y="14"
-      font-size="11"
-      fill="#157a4c"
-      text-anchor="middle"
-      font-weight="500"
-    >
-      Children fetch for themselves
-    </text>
-    <line x1="360" y1="2" x2="360" y2="274" stroke="#e0e0e0" />
+      <text x='170' y='14' font-size='11' fill='#b3261e' text-anchor='middle' font-weight='500'>
+        Parent fetches &amp; drills
+      </text>
+      <text x='530' y='14' font-size='11' fill='#157a4c' text-anchor='middle' font-weight='500'>
+        Children fetch for themselves
+      </text>
+      <line x1='360' y1='2' x2='360' y2='274' stroke='#e0e0e0'></line>
 
-    <!-- LEFT -->
-    <rect
-      x="40"
-      y="32"
-      width="260"
-      height="212"
-      rx="9"
-      fill="#fdf3e3"
-      stroke="#b45309"
-      stroke-width="1.5"
-      stroke-dasharray="6 4"
-    />
-    <text x="170" y="54" font-size="11" fill="#8a5a00" text-anchor="middle">
-      ⏳ Suspense: forced above Parent
-    </text>
-    <rect x="60" y="68" width="220" height="160" rx="7" fill="#ffffff" stroke="#c9c9c9" />
-    <text x="170" y="90" font-size="11.5" fill="#171717" text-anchor="middle">
-      Parent (awaits everything)
-    </text>
-    <rect x="76" y="104" width="188" height="50" rx="6" fill="#fafafa" stroke="#d4d4d4" />
-    <text x="170" y="133" font-size="11" fill="#666666" text-anchor="middle">
-      Child A
-    </text>
-    <rect x="76" y="166" width="188" height="50" rx="6" fill="#fafafa" stroke="#d4d4d4" />
-    <text x="170" y="195" font-size="11" fill="#666666" text-anchor="middle">
-      Child B
-    </text>
-    <text x="170" y="268" font-size="10.5" fill="#b3261e" text-anchor="middle">
-      one unit · gated by the slowest fetch · all-or-nothing
-    </text>
+      <!-- LEFT -->
+      <rect
+        x='40'
+        y='32'
+        width='260'
+        height='212'
+        rx='9'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-width='1.5'
+        stroke-dasharray='6 4'></rect>
+      <text x='170' y='54' font-size='11' fill='#8a5a00' text-anchor='middle'>
+        ⏳ Suspense: forced above Parent
+      </text>
+      <rect x='60' y='68' width='220' height='160' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='170' y='90' font-size='11.5' fill='#171717' text-anchor='middle'>
+        Parent (awaits everything)
+      </text>
+      <rect x='76' y='104' width='188' height='50' rx='6' fill='#fafafa' stroke='#d4d4d4'></rect>
+      <text x='170' y='133' font-size='11' fill='#666666' text-anchor='middle'> Child A </text>
+      <rect x='76' y='166' width='188' height='50' rx='6' fill='#fafafa' stroke='#d4d4d4'></rect>
+      <text x='170' y='195' font-size='11' fill='#666666' text-anchor='middle'> Child B </text>
+      <text x='170' y='268' font-size='10.5' fill='#b3261e' text-anchor='middle'>
+        one unit · gated by the slowest fetch · all-or-nothing
+      </text>
 
-    <!-- RIGHT -->
-    <rect
-      x="420"
-      y="32"
-      width="220"
-      height="212"
-      rx="7"
-      fill="#ffffff"
-      stroke="#c9c9c9"
-    />
-    <text x="530" y="54" font-size="11.5" fill="#171717" text-anchor="middle">
-      Parent: renders instantly
-    </text>
-    <rect
-      x="436"
-      y="68"
-      width="188"
-      height="76"
-      rx="7"
-      fill="#fdf3e3"
-      stroke="#b45309"
-      stroke-width="1.5"
-      stroke-dasharray="5 4"
-    />
-    <text x="530" y="88" font-size="10.5" fill="#8a5a00" text-anchor="middle">
-      ⏳ Suspense
-    </text>
-    <rect x="448" y="96" width="164" height="38" rx="6" fill="#fafafa" stroke="#d4d4d4" />
-    <text x="530" y="119" font-size="11" fill="#171717" text-anchor="middle">
-      Child A: self-fetching
-    </text>
-    <rect
-      x="436"
-      y="156"
-      width="188"
-      height="76"
-      rx="7"
-      fill="#fdf3e3"
-      stroke="#b45309"
-      stroke-width="1.5"
-      stroke-dasharray="5 4"
-    />
-    <text x="530" y="176" font-size="10.5" fill="#8a5a00" text-anchor="middle">
-      ⏳ Suspense
-    </text>
-    <rect
-      x="448"
-      y="184"
-      width="164"
-      height="38"
-      rx="6"
-      fill="#fafafa"
-      stroke="#d4d4d4"
-    />
-    <text x="530" y="207" font-size="11" fill="#171717" text-anchor="middle">
-      Child B: self-fetching
-    </text>
-    <text x="530" y="268" font-size="10.5" fill="#2e7d5b" text-anchor="middle">
-      independent units · each streams when ready
-    </text>
-  </svg>
-  
-<pre slot="mermaid" is:raw>
+      <!-- RIGHT -->
+      <rect x='420' y='32' width='220' height='212' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='530' y='54' font-size='11.5' fill='#171717' text-anchor='middle'>
+        Parent: renders instantly
+      </text>
+      <rect
+        x='436'
+        y='68'
+        width='188'
+        height='76'
+        rx='7'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-width='1.5'
+        stroke-dasharray='5 4'></rect>
+      <text x='530' y='88' font-size='10.5' fill='#8a5a00' text-anchor='middle'> ⏳ Suspense </text>
+      <rect x='448' y='96' width='164' height='38' rx='6' fill='#fafafa' stroke='#d4d4d4'></rect>
+      <text x='530' y='119' font-size='11' fill='#171717' text-anchor='middle'>
+        Child A: self-fetching
+      </text>
+      <rect
+        x='436'
+        y='156'
+        width='188'
+        height='76'
+        rx='7'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-width='1.5'
+        stroke-dasharray='5 4'></rect>
+      <text x='530' y='176' font-size='10.5' fill='#8a5a00' text-anchor='middle'>
+        ⏳ Suspense
+      </text>
+      <rect x='448' y='184' width='164' height='38' rx='6' fill='#fafafa' stroke='#d4d4d4'></rect>
+      <text x='530' y='207' font-size='11' fill='#171717' text-anchor='middle'>
+        Child B: self-fetching
+      </text>
+      <text x='530' y='268' font-size='10.5' fill='#2e7d5b' text-anchor='middle'>
+        independent units · each streams when ready
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
 flowchart TB
   subgraph ON["Parent fetches & drills"]
     direction TB
@@ -653,53 +509,53 @@ flowchart TB
   classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
 </pre>
 
-<Fragment slot="caption">
-Boundary placement follows the data. Drilled props force one big boundary above the
-    parent; self-fetching children let each region suspend (and stream) on its own. Full
-    treatment of boundary placement in
-    <a href="10-suspense-streaming.html" style="color: #0068d6">§10</a>.
-</Fragment>
-</Diagram>
+    <Fragment slot='caption'>
+      Boundary placement follows the data. Drilled props force one big boundary above the parent;
+      self-fetching children let each region suspend (and stream) on its own. Full treatment of
+      boundary placement in
+      <a href='10-suspense-streaming.html' style='color: #0068d6'>§10</a>.
+    </Fragment>
+  </Diagram>
 
-<h2 id="callbacks">13.4 Callbacks up are wires too</h2>
-<p>
-  Passing data down is half the coupling story; the other half is children reporting back
-  up. A callback prop that exists so a child can tell its parent "something changed,
-  please refetch/re-render" is a wire pointing the other direction, and it usually means
-  the coordination is happening at the wrong layer.
-  <strong>Communicate through shared infrastructure instead of through parents</strong>:
-  <Chip k="react" />
-  <Chip k="critical" />
-</p>
-<ul>
-  <li>
-    <strong>The URL</strong>: filters, tabs, selection, pagination. A filter bar that
-    calls <code>router.replace()</code> with new search params doesn't need to know a
-    table exists; the table re-renders because the page's inputs changed (<a
-      href="08-server-resolvable-state.html"
-      >§8</a
-    >).
-  </li>
-  <li>
-    <strong>Cache invalidation</strong>: after a mutation,
-    <code>revalidatePath</code>/<code>revalidateTag</code> on the server, or SWR/React
-    Query invalidation on the client. Every component reading that data updates, with no
-    parent orchestrating (<a href="14-dedupe-caching.html">§14</a>; the full mutation
-    cycle is drawn in <a href="05-client-server-boundaries.html#refresh">§5.8</a>).
-  </li>
-</ul>
-<p>
-  Concretely: the callback you will be tempted to add most often is
-  <code>onSuccess</code>: a mutation button reporting up so someone can refetch. Here is
-  the same button, wired and wireless:
-</p>
+  <h2 id='callbacks'>13.4 Callbacks up are wires too</h2>
+  <p>
+    Passing data down is half the coupling story; the other half is children reporting back up. A
+    callback prop that exists so a child can tell its parent "something changed, please
+    refetch/re-render" is a wire pointing the other direction, and it usually means the coordination
+    is happening at the wrong layer.
+    <strong>Communicate through shared infrastructure instead of through parents</strong>:
+    <Chip k='react' />
+    <Chip k='critical' />
+  </p>
+  <ul>
+    <li>
+      <strong>The URL</strong>: filters, tabs, selection, pagination. A filter bar that calls <code
+        >router.replace()</code
+      > with new search params doesn't need to know a table exists; the table re-renders because the page's
+      inputs changed (<a href='08-server-resolvable-state.html'>§8</a>).
+    </li>
+    <li>
+      <strong>Cache invalidation</strong>: after a mutation,
+      <code>revalidatePath</code>/<code>revalidateTag</code> on the server, or SWR/React Query invalidation
+      on the client. Every component reading that data updates, with no parent orchestrating (<a
+        href='14-dedupe-caching.html'>§14</a
+      >; the full mutation cycle is drawn in <a href='05-client-server-boundaries.html#refresh'
+        >§5.8</a
+      >).
+    </li>
+  </ul>
+  <p>
+    Concretely: the callback you will be tempted to add most often is
+    <code>onSuccess</code>: a mutation button reporting up so someone can refetch. Here is the same
+    button, wired and wireless:
+  </p>
 
-<Compare>
-<CompareCol kind="bad" label="✕ Reports up through a wire">
-    <Snippet>
-    <pre
-                class="code" is:raw
-              ><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
+  <Compare>
+    <CompareCol kind='bad' label='✕ Reports up through a wire'>
+      <Snippet>
+        <pre
+          class='code'
+          is:raw><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({
   programId,
@@ -716,17 +572,17 @@ Boundary placement follows the data. Drilled props force one big boundary above 
     &lt;/<span class="tok-fn">Button</span>&gt;
   );
 }</pre>
-<CodeCaption>
-  The button must be handed a wire: someone above must exist, must care, and must never change shape.
-</CodeCaption>
-    </Snippet>
-  
-</CompareCol>
-<CompareCol kind="good" label="✓ Invalidates the data's name">
-    <Snippet>
-    <pre
-                class="code" is:raw
-              ><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
+        <CodeCaption>
+          The button must be handed a wire: someone above must exist, must care, and must never
+          change shape.
+        </CodeCaption>
+      </Snippet>
+    </CompareCol>
+    <CompareCol kind='good' label="✓ Invalidates the data's name">
+      <Snippet>
+        <pre
+          class='code'
+          is:raw><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({ programId }: <span class="tok-fn">Props</span>) {
   <span class="tok-kw">return</span> (
@@ -747,202 +603,182 @@ Boundary placement follows the data. Drilled props force one big boundary above 
     &lt;/<span class="tok-fn">Button</span>&gt;
   );
 }</pre>
-<CodeCaption>
-  No wire: the mutation invalidates the name the data lives under, and every reader refires on its own.
-</CodeCaption>
-    </Snippet>
-  
-</CompareCol>
-</Compare>
+        <CodeCaption>
+          No wire: the mutation invalidates the name the data lives under, and every reader refires
+          on its own.
+        </CodeCaption>
+      </Snippet>
+    </CompareCol>
+  </Compare>
 
-<p>
-  The <em>name</em> (a cache tag, a search param, an SWR key) is the entire contract
-  between the leaf and its surroundings. This is deliberately the same
-  <code>PublishButton</code> as
-  <a href="05-client-server-boundaries.html#self-contained">§5.7</a>–<a
-    href="05-client-server-boundaries.html#refresh"
-    >§5.8</a
-  >: that chapter argues the pattern as <em>boundary placement</em> (the leaf is the only
-  client component, so the tree stays server), this one argues it as <em>wiring</em> (the
-  leaf holds zero references to its surroundings, so the tree stays decoupled). Same code,
-  two independent reasons it's right, and the two failures arrive together, too.
-</p>
-<p>
-  Which is worth saying explicitly: the God component (<a
-    href="05-client-server-boundaries.html#god-components"
-    >§5.9</a
-  >) is the maximal version of <em>this chapter's</em> failure as much as that one's. In
-  wire terms, a <code>useProgramsManager()</code> that returns nine things has nine wires
-  into every consumer; the tree stops being a tree of components and becomes a
-  distribution network for one object's shape. Every feature threads new props through
-  components that don't use them, every signature change ripples to every consumer. And
-  because that same hook says <code>"use client"</code> at the top, the wiring cost and
-  the boundary cost compound: the structure that couples everything is the structure that
-  client-renders everything.
-</p>
-<p>
-  Legitimate exceptions: genuinely local, ephemeral coordination: a form field telling its
-  form it changed, a listbox item telling its listbox it's highlighted. The test is
-  whether the two components form <em>one</em> composite widget with one responsibility,
-  or whether a callback is smuggling app-level data flow through the component tree.
-</p>
+  <p>
+    The <em>name</em> (a cache tag, a search param, an SWR key) is the entire contract between the leaf
+    and its surroundings. This is deliberately the same
+    <code>PublishButton</code> as
+    <a href='05-client-server-boundaries.html#self-contained'>§5.7</a>–<a
+      href='05-client-server-boundaries.html#refresh'>§5.8</a
+    >: that chapter argues the pattern as <em>boundary placement</em> (the leaf is the only client component,
+    so the tree stays server), this one argues it as <em>wiring</em> (the leaf holds zero references to
+    its surroundings, so the tree stays decoupled). Same code, two independent reasons it's right, and
+    the two failures arrive together, too.
+  </p>
+  <p>
+    Which is worth saying explicitly: the God component (<a
+      href='05-client-server-boundaries.html#god-components'>§5.9</a
+    >) is the maximal version of <em>this chapter's</em> failure as much as that one's. In wire terms,
+    a <code>useProgramsManager()</code> that returns nine things has nine wires into every consumer; the
+    tree stops being a tree of components and becomes a distribution network for one object's shape. Every
+    feature threads new props through components that don't use them, every signature change ripples to
+    every consumer. And because that same hook says <code>"use client"</code> at the top, the wiring cost
+    and the boundary cost compound: the structure that couples everything is the structure that client-renders
+    everything.
+  </p>
+  <p>
+    Legitimate exceptions: genuinely local, ephemeral coordination: a form field telling its form it
+    changed, a listbox item telling its listbox it's highlighted. The test is whether the two
+    components form <em>one</em> composite widget with one responsibility, or whether a callback is smuggling
+    app-level data flow through the component tree.
+  </p>
 
-<h2 id="portability">13.5 Portability: components you can pick up and move</h2>
-<p>
-  Everything above argued wires are expensive to <em>maintain</em>. The payoff for
-  cutting them has a name: <strong>portability</strong>. A component whose data arrives
-  through props can never leave its page without the wires coming along: whoever hosts it
-  next must fetch the same data, hold the same state, and pass the same callbacks, so
-  "move the stats card to the dashboard" becomes a plumbing project. A component that
-  addresses its data by name (a fetch keyed by its own props on the server, an SWR key on
-  the client, a search param it reads itself) moves as <strong>one line of JSX</strong>.
-  The dedupe layers of <a href="14-dedupe-caching.html">§14</a> are what make this free:
-  wherever the component lands, its question collapses into the cache with everyone
-  else's.
-</p>
+  <h2 id='portability'>13.5 Portability: components you can pick up and move</h2>
+  <p>
+    Everything above argued wires are expensive to <em>maintain</em>. The payoff for cutting them
+    has a name: <strong>portability</strong>. A component whose data arrives through props can never
+    leave its page without the wires coming along: whoever hosts it next must fetch the same data,
+    hold the same state, and pass the same callbacks, so "move the stats card to the dashboard"
+    becomes a plumbing project. A component that addresses its data by name (a fetch keyed by its
+    own props on the server, an SWR key on the client, a search param it reads itself) moves as <strong
+      >one line of JSX</strong
+    >. The dedupe layers of <a href='14-dedupe-caching.html'>§14</a> are what make this free: wherever
+    the component lands, its question collapses into the cache with everyone else's.
+  </p>
 
-<Diagram>
-  <svg
-    viewBox="0 0 720 300"
-    xmlns="http://www.w3.org/2000/svg"
-    font-family="Inter, system-ui, sans-serif"
-  >
-    <defs>
-      <marker
-        id="a13p"
-        viewBox="0 0 10 10"
-        refX="8"
-        refY="5"
-        markerWidth="6"
-        markerHeight="6"
-        orient="auto-start-reverse"
-      >
-        <path
-          d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-          fill="none"
-          stroke="#737373"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </marker>
-    </defs>
-
-    <text
-      x="180"
-      y="12"
-      font-size="10.5"
-      fill="#b3261e"
-      text-anchor="middle"
-      font-weight="500"
+  <Diagram>
+    <svg
+      viewBox='0 0 720 300'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
     >
-      Wired: the wires are part of the component
-    </text>
-    <text
-      x="540"
-      y="12"
-      font-size="10.5"
-      fill="#157a4c"
-      text-anchor="middle"
-      font-weight="500"
-    >
-      Self-contained: addressed by key, not delivered
-    </text>
-    <line x1="360" y1="2" x2="360" y2="298" stroke="#e0e0e0" />
+      <defs>
+        <marker
+          id='a13p'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#737373'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
 
-    <!-- LANE 1: wired -->
-    <rect x="40" y="24" width="280" height="118" rx="8" fill="#ffffff" stroke="#c9c9c9" />
-    <text x="54" y="42" font-size="9" fill="#737373">Page A</text>
-    <rect x="54" y="50" width="252" height="24" rx="5" fill="#eaf3fe" stroke="#0070f3" />
-    <text x="180" y="66" font-size="9" fill="#0757ba" text-anchor="middle">
-      page fetches, owns state, passes down
-    </text>
-    <line x1="110" y1="74" x2="110" y2="104" stroke="#b0483e" stroke-width="1.2" />
-    <line x1="180" y1="74" x2="180" y2="104" stroke="#b0483e" stroke-width="1.2" />
-    <line x1="250" y1="74" x2="250" y2="104" stroke="#b0483e" stroke-width="1.2" />
-    <text x="118" y="92" font-size="7.5" fill="#b0483e">rows</text>
-    <text x="188" y="92" font-size="7.5" fill="#b0483e">loading</text>
-    <text x="258" y="92" font-size="7.5" fill="#b0483e">onRefresh</text>
-    <rect x="54" y="104" width="252" height="26" rx="5" fill="#ffffff" stroke="#d4d4d4" />
-    <text x="180" y="121" font-size="9.5" fill="#171717" text-anchor="middle">
-      ProgramStats
-    </text>
+      <text x='180' y='12' font-size='10.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+        Wired: the wires are part of the component
+      </text>
+      <text x='540' y='12' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+        Self-contained: addressed by key, not delivered
+      </text>
+      <line x1='360' y1='2' x2='360' y2='298' stroke='#e0e0e0'></line>
 
-    <line
-      x1="180"
-      y1="150"
-      x2="180"
-      y2="172"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#a13p)"
-    />
-    <text x="192" y="165" font-size="8.5" fill="#737373">move it</text>
+      <!-- LANE 1: wired -->
+      <rect x='40' y='24' width='280' height='118' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='54' y='42' font-size='9' fill='#737373'>Page A</text>
+      <rect x='54' y='50' width='252' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='180' y='66' font-size='9' fill='#0757ba' text-anchor='middle'>
+        page fetches, owns state, passes down
+      </text>
+      <line x1='110' y1='74' x2='110' y2='104' stroke='#b0483e' stroke-width='1.2'></line>
+      <line x1='180' y1='74' x2='180' y2='104' stroke='#b0483e' stroke-width='1.2'></line>
+      <line x1='250' y1='74' x2='250' y2='104' stroke='#b0483e' stroke-width='1.2'></line>
+      <text x='118' y='92' font-size='7.5' fill='#b0483e'>rows</text>
+      <text x='188' y='92' font-size='7.5' fill='#b0483e'>loading</text>
+      <text x='258' y='92' font-size='7.5' fill='#b0483e'>onRefresh</text>
+      <rect x='54' y='104' width='252' height='26' rx='5' fill='#ffffff' stroke='#d4d4d4'></rect>
+      <text x='180' y='121' font-size='9.5' fill='#171717' text-anchor='middle'>
+        ProgramStats
+      </text>
 
-    <rect x="40" y="180" width="280" height="88" rx="8" fill="#ffffff" stroke="#c9c9c9" />
-    <text x="54" y="198" font-size="9" fill="#737373">Page B</text>
-    <rect
-      x="54"
-      y="206"
-      width="252"
-      height="24"
-      rx="5"
-      fill="#fdecea"
-      stroke="#d93025"
-      stroke-dasharray="5 4"
-    />
-    <text x="180" y="222" font-size="9" fill="#b3261e" text-anchor="middle">
-      new page must fetch + re-wire all three
-    </text>
-    <rect x="54" y="234" width="252" height="26" rx="5" fill="#ffffff" stroke="#d4d4d4" />
-    <text x="180" y="251" font-size="9.5" fill="#171717" text-anchor="middle">
-      ProgramStats
-    </text>
-    <text x="180" y="290" font-size="10" fill="#b0483e" text-anchor="middle">
-      moving the component means rebuilding its supply
-    </text>
+      <line
+        x1='180'
+        y1='150'
+        x2='180'
+        y2='172'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#a13p)'></line>
+      <text x='192' y='165' font-size='8.5' fill='#737373'>move it</text>
 
-    <!-- LANE 2: self-contained -->
-    <rect x="400" y="24" width="280" height="118" rx="8" fill="#ffffff" stroke="#c9c9c9" />
-    <text x="414" y="42" font-size="9" fill="#737373">Page A</text>
-    <rect x="414" y="50" width="252" height="24" rx="5" fill="#eaf3fe" stroke="#0070f3" />
-    <text x="540" y="66" font-size="9" fill="#0757ba" text-anchor="middle">
-      page just places it
-    </text>
-    <rect x="414" y="90" width="252" height="40" rx="5" fill="#e7f5ee" stroke="#2ea06d" />
-    <text x="540" y="106" font-size="9.5" fill="#157a4c" text-anchor="middle">
-      ProgramStats
-    </text>
-    <text x="540" y="121" font-size="8" fill="#3e7d5c" text-anchor="middle">
-      asks for its own data, by key
-    </text>
+      <rect x='40' y='180' width='280' height='88' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='54' y='198' font-size='9' fill='#737373'>Page B</text>
+      <rect
+        x='54'
+        y='206'
+        width='252'
+        height='24'
+        rx='5'
+        fill='#fdecea'
+        stroke='#d93025'
+        stroke-dasharray='5 4'></rect>
+      <text x='180' y='222' font-size='9' fill='#b3261e' text-anchor='middle'>
+        new page must fetch + re-wire all three
+      </text>
+      <rect x='54' y='234' width='252' height='26' rx='5' fill='#ffffff' stroke='#d4d4d4'></rect>
+      <text x='180' y='251' font-size='9.5' fill='#171717' text-anchor='middle'>
+        ProgramStats
+      </text>
+      <text x='180' y='290' font-size='10' fill='#b0483e' text-anchor='middle'>
+        moving the component means rebuilding its supply
+      </text>
 
-    <line
-      x1="540"
-      y1="150"
-      x2="540"
-      y2="172"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#a13p)"
-    />
-    <text x="552" y="165" font-size="8.5" fill="#737373">move it: one line</text>
+      <!-- LANE 2: self-contained -->
+      <rect x='400' y='24' width='280' height='118' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='414' y='42' font-size='9' fill='#737373'>Page A</text>
+      <rect x='414' y='50' width='252' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='540' y='66' font-size='9' fill='#0757ba' text-anchor='middle'>
+        page just places it
+      </text>
+      <rect x='414' y='90' width='252' height='40' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='540' y='106' font-size='9.5' fill='#157a4c' text-anchor='middle'>
+        ProgramStats
+      </text>
+      <text x='540' y='121' font-size='8' fill='#3e7d5c' text-anchor='middle'>
+        asks for its own data, by key
+      </text>
 
-    <rect x="400" y="180" width="280" height="88" rx="8" fill="#ffffff" stroke="#c9c9c9" />
-    <text x="414" y="198" font-size="9" fill="#737373">Page B</text>
-    <rect x="414" y="212" width="252" height="40" rx="5" fill="#e7f5ee" stroke="#2ea06d" />
-    <text x="540" y="228" font-size="9.5" fill="#157a4c" text-anchor="middle">
-      ProgramStats
-    </text>
-    <text x="540" y="243" font-size="8" fill="#3e7d5c" text-anchor="middle">
-      same key, same cache (§14)
-    </text>
-    <text x="540" y="290" font-size="10" fill="#157a4c" text-anchor="middle">
-      the component carries its own supply
-    </text>
-  </svg>
+      <line
+        x1='540'
+        y1='150'
+        x2='540'
+        y2='172'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#a13p)'></line>
+      <text x='552' y='165' font-size='8.5' fill='#737373'>move it: one line</text>
 
-<pre slot="mermaid" is:raw>
+      <rect x='400' y='180' width='280' height='88' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='414' y='198' font-size='9' fill='#737373'>Page B</text>
+      <rect x='414' y='212' width='252' height='40' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='540' y='228' font-size='9.5' fill='#157a4c' text-anchor='middle'>
+        ProgramStats
+      </text>
+      <text x='540' y='243' font-size='8' fill='#3e7d5c' text-anchor='middle'>
+        same key, same cache (§14)
+      </text>
+      <text x='540' y='290' font-size='10' fill='#157a4c' text-anchor='middle'>
+        the component carries its own supply
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
 flowchart LR
   subgraph WI["Wired"]
     direction LR
@@ -969,30 +805,31 @@ flowchart LR
   classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
 </pre>
 
-<Fragment slot="caption">
-Why wires cost more than maintenance. The wired component's requirements live in its
-    host, so every move re-plumbs them; the self-contained component names its data and
-    can be placed on any page, in any layout, and the dedupe layers make its repeated
-    question free.
-</Fragment>
-</Diagram>
+    <Fragment slot='caption'>
+      Why wires cost more than maintenance. The wired component's requirements live in its host, so
+      every move re-plumbs them; the self-contained component names its data and can be placed on
+      any page, in any layout, and the dedupe layers make its repeated question free.
+    </Fragment>
+  </Diagram>
 
-<p>
-  Portability is what makes a codebase <em>malleable</em>: pages stop being wiring
-  diagrams and become compositions. The mechanism that keeps compositions flexible across
-  the server/client boundary is the <strong>slot</strong>: any JSX-valued prop
-  (<code>children</code> included). Slots work in <em>both directions</em>, and the two
-  directions have different rules worth keeping straight. A <strong>server component can
-  use client components freely</strong>: import them, render them, pass them into other
-  components' slots; that direction is always allowed. A <strong>client component cannot
-  import a server component</strong>, but it can <em>receive</em> one through a slot
-  (<a href="05-client-server-boundaries.html#children-pattern">§5.4</a>): the server
-  renders the content first, and the client shell places the finished output without ever
-  owning it.
-</p>
+  <p>
+    Portability is what makes a codebase <em>malleable</em>: pages stop being wiring diagrams and
+    become compositions. The mechanism that keeps compositions flexible across the server/client
+    boundary is the <strong>slot</strong>: any JSX-valued prop (<code>children</code> included). Slots
+    work in <em>both directions</em>, and the two directions have different rules worth keeping
+    straight. A <strong>server component can use client components freely</strong>: import them,
+    render them, pass them into other components' slots; that direction is always allowed. A <strong
+      >client component cannot import a server component</strong
+    >, but it can <em>receive</em> one through a slot (<a
+      href='05-client-server-boundaries.html#children-pattern'>§5.4</a
+    >): the server renders the content first, and the client shell places the finished output
+    without ever owning it.
+  </p>
 
-<Snippet>
-<pre class="code" is:raw><span class="filename">app/programs/page.tsx - a server page slots BOTH kinds into a client shell</span><span class="tok-kw">export default function</span> <span class="tok-fn">Page</span>() {
+  <Snippet>
+    <pre
+      class='code'
+      is:raw><span class="filename">app/programs/page.tsx - a server page slots BOTH kinds into a client shell</span><span class="tok-kw">export default function</span> <span class="tok-fn">Page</span>() {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">ResizableSplit</span>
       <span class="tok-com">{/* client leaf into a client shell's slot */}</span>
@@ -1003,14 +840,16 @@ Why wires cost more than maintenance. The wired component's requirements live in
     /&gt;
   );
 }</pre>
-<CodeCaption>
-  The page is a server component, so it can compose freely: it imports the client shell
-  and the client leaf, renders the server table, and hands all of them to slots.
-</CodeCaption>
-</Snippet>
+    <CodeCaption>
+      The page is a server component, so it can compose freely: it imports the client shell and the
+      client leaf, renders the server table, and hands all of them to slots.
+    </CodeCaption>
+  </Snippet>
 
-<Snippet>
-<pre class="code" is:raw><span class="filename">components/layout/ResizableSplit.tsx - client shell with two slots</span><span class="tok-dir">"use client"</span>;
+  <Snippet>
+    <pre
+      class='code'
+      is:raw><span class="filename">components/layout/ResizableSplit.tsx - client shell with two slots</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ResizableSplit</span>({ left, right }: <span class="tok-fn">ResizableSplitProps</span>) {
   <span class="tok-kw">const</span> [ratio, setRatio] = <span class="tok-fn">useState</span>(<span class="tok-str">0.3</span>);
@@ -1022,93 +861,87 @@ Why wires cost more than maintenance. The wired component's requirements live in
     &lt;/div&gt;
   );
 }</pre>
-<CodeCaption>
-  The shell owns exactly one thing: the divider. It has no idea one of its slots is
-  server-rendered HTML and the other is an interactive client leaf, which is the point:
-  slots make the boundary invisible to the component that hosts them.
-</CodeCaption>
-</Snippet>
+    <CodeCaption>
+      The shell owns exactly one thing: the divider. It has no idea one of its slots is
+      server-rendered HTML and the other is an interactive client leaf, which is the point: slots
+      make the boundary invisible to the component that hosts them.
+    </CodeCaption>
+  </Snippet>
 
-<p>
-  Now notice what this composition buys. <code>ProgramTable</code> can move to the
-  dashboard, a drawer, or a report page and it brings its data with it.
-  <code>ProgramFilters</code> can be dropped next to any table that reads the same search
-  params. And the shell can be swapped (split panes today, tabs next quarter) without
-  touching either occupant, because neither occupant ever knew about the other. Three
-  components, zero wires among them: every one of them is portable independently.
-</p>
-
-<h2 id="rules">The rules</h2>
-<table class="tbl">
-  <thead>
-    <tr>
-      <th>Rule</th>
-      <th>Scope</th>
-      <th>Importance</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        <strong>Never pass a child anything the parent doesn't itself need.</strong>
-        Identity, slots, and parent-owned config are the exceptions.
-      </td>
-      <td><Chip k="react" /></td>
-      <td><Chip k="critical" /></td>
-    </tr>
-    <tr>
-      <td>
-        Don't pass external data to children in parallel:
-        <strong>let each child ask the deduped data layer itself</strong>.
-      </td>
-      <td><Chip k="next" /></td>
-      <td><Chip k="very" /></td>
-    </tr>
-    <tr>
-      <td>Prefer <strong>repetition backed by dedupe</strong> over shared plumbing.</td>
-      <td><Chip k="next" /></td>
-      <td><Chip k="very" /></td>
-    </tr>
-    <tr>
-      <td>
-        App-level communication goes <strong>through the URL or the cache</strong>, not
-        callbacks up the tree.
-      </td>
-      <td><Chip k="react" /></td>
-      <td><Chip k="critical" /></td>
-    </tr>
-  </tbody>
-</table>
-
-<GoDeeper>
   <p>
-    React 19 docs:
-    <a
-      href="https://react.dev/learn/passing-data-deeply-with-context"
-      target="_blank"
-      rel="noopener"
-      >Passing Data Deeply with Context</a
-    >
-    (including its "before you use context" checklist) ·
-    <a
-      href="https://react.dev/learn/you-might-not-need-an-effect"
-      target="_blank"
-      rel="noopener"
-      >You Might Not Need an Effect</a
-    >. Next.js docs:
-    <a
-      href="https://nextjs.org/docs/app/getting-started/server-and-client-components"
-      target="_blank"
-      rel="noopener"
-      >Server and Client Components</a
-    >
-    (composition patterns) ·
-    <a
-      href="https://nextjs.org/docs/app/api-reference/functions/revalidateTag"
-      target="_blank"
-      rel="noopener"
-      >revalidateTag</a
-    >. Full list in <a href="20-references.html">§20</a>.
+    Now notice what this composition buys. <code>ProgramTable</code> can move to the dashboard, a drawer,
+    or a report page and it brings its data with it.
+    <code>ProgramFilters</code> can be dropped next to any table that reads the same search params. And
+    the shell can be swapped (split panes today, tabs next quarter) without touching either occupant,
+    because neither occupant ever knew about the other. Three components, zero wires among them: every
+    one of them is portable independently.
   </p>
-</GoDeeper>
+
+  <h2 id='rules'>The rules</h2>
+  <table class='tbl'>
+    <thead>
+      <tr>
+        <th>Rule</th>
+        <th>Scope</th>
+        <th>Importance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <strong>Never pass a child anything the parent doesn't itself need.</strong>
+          Identity, slots, and parent-owned config are the exceptions.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
+          Don't pass external data to children in parallel:
+          <strong>let each child ask the deduped data layer itself</strong>.
+        </td>
+        <td><Chip k='next' /></td>
+        <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>Prefer <strong>repetition backed by dedupe</strong> over shared plumbing.</td>
+        <td><Chip k='next' /></td>
+        <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>
+          App-level communication goes <strong>through the URL or the cache</strong>, not callbacks
+          up the tree.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <GoDeeper>
+    <p>
+      React 19 docs:
+      <a
+        href='https://react.dev/learn/passing-data-deeply-with-context'
+        target='_blank'
+        rel='noopener'>Passing Data Deeply with Context</a
+      >
+      (including its "before you use context" checklist) ·
+      <a href='https://react.dev/learn/you-might-not-need-an-effect' target='_blank' rel='noopener'
+        >You Might Not Need an Effect</a
+      >. Next.js docs:
+      <a
+        href='https://nextjs.org/docs/app/getting-started/server-and-client-components'
+        target='_blank'
+        rel='noopener'>Server and Client Components</a
+      >
+      (composition patterns) ·
+      <a
+        href='https://nextjs.org/docs/app/api-reference/functions/revalidateTag'
+        target='_blank'
+        rel='noopener'>revalidateTag</a
+      >. Full list in <a href='20-references.html'>§20</a>.
+    </p>
+  </GoDeeper>
 </GuidePage>

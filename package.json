@@ -20,12 +20,14 @@
   },
   "description": "Craft Education - The App Router Guide (Astro source, build/output/app-router-guide_html/ is the built output)",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build && python3 scripts/postbuild_relativize.py && prettier --write --ignore-path scripts/prettierignore-dist --log-level warn \"build/output/app-router-guide_html/**/*.html\" && python3 scripts/build_search_index.py",
+    "dev": "npm run css && astro dev",
+    "build": "npm run css && astro build && python3 scripts/postbuild_relativize.py && prettier --write --ignore-path scripts/prettierignore-dist --log-level warn \"build/output/app-router-guide_html/**/*.html\" && python3 scripts/build_search_index.py",
     "dist": "python3 scripts/build_dist.py",
     "preview": "astro preview",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "css": "node scripts/build_css.mjs",
+    "css:watch": "sass --watch src/styles/style.scss public/assets/style.css --no-source-map --style=expanded"
   },
   "dependencies": {
     "astro": "^6.0.0"
@@ -34,6 +36,7 @@
     "@tailwindcss/vite": "^4.3.0",
     "tailwindcss": "^4.3.0",
     "prettier": "^3.5.0",
-    "prettier-plugin-astro": "^0.14.0"
+    "prettier-plugin-astro": "^0.14.0",
+    "sass": "^1.80.0"
   }
 }

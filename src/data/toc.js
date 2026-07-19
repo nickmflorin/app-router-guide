@@ -1,5 +1,3 @@
-/* Single source of truth for the TOC. The runtime sidebar (public/assets/nav.js)
-   still carries its own copy for now; these merge in Phase 2. */
 export const TOC = [
   {
     part: 'Foundation',
@@ -22,7 +20,11 @@ export const TOC = [
   {
     part: 'Part B: Contain the Unknown',
     items: [
-      { n: '9', title: 'Containers & Content Shifting', file: '09-containers-content-shifting.html' },
+      {
+        n: '9',
+        title: 'Containers & Content Shifting',
+        file: '09-containers-content-shifting.html',
+      },
       { n: '10', title: 'Suspense & Streaming', file: '10-suspense-streaming.html' },
       { n: '11', title: 'Designing for the Unknown', file: '11-designing-for-the-unknown.html' },
       { n: '12', title: 'Blocking Requests', file: '12-blocking-requests.html' },

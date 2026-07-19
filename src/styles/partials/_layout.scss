@@ -1,0 +1,61 @@
+/* ---------- layout ---------- */
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  padding: 16px 20px 48px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  font-size: 13.5px;
+}
+.sidebar .brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  margin: 0 0 10px -8px;
+  padding: 6px 8px;
+  color: var(--fg);
+  text-decoration: none;
+  border-radius: 8px;
+}
+.sidebar .brand:hover {
+  background: var(--surface);
+}
+.sidebar .brand:hover .brand-sub {
+  color: var(--muted);
+}
+/* the standing "a table of contents lives behind this" affordance */
+.sidebar .brand .brand-go {
+  flex-shrink: 0;
+  color: #c4c4c4;
+  margin-right: 2px;
+  transition: color 0.12s ease;
+}
+.sidebar .brand:hover .brand-go {
+  color: var(--muted);
+}
+.sidebar .brand .mark {
+  width: 22px;
+  height: 19px;
+  display: block;
+  margin-top: 1px;
+}
+.sidebar .brand-title {
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+}
+.sidebar .brand-sub {
+  display: block;
+  color: var(--faint);
+  font-size: 12px;
+  margin-top: 2px;
+}

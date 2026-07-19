@@ -1,0 +1,21 @@
+/* ---------- diagram panels (light) ---------- */
+figure.diagram {
+  margin: 20px 0;
+}
+/* The chrome lives on the SVG itself, so the caption renders BELOW the box. */
+figure.diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+}
+figure.diagram figcaption {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 10px;
+  text-align: center;
+  line-height: 1.5;
+}

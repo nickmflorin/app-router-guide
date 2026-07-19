@@ -10,152 +10,144 @@ import CodeCaption from '../../components/CodeCaption.astro';
 import Snippet from '../../components/Snippet.astro';
 ---
 
-<GuidePage title="Server-Resolvable State - App Router Guide" root="..">
-<div class="kicker">Chapter 8 · Part A: Maximize the Known</div>
-<h1>Server-Resolvable State</h1>
-<p class="lede">
-  The first render is a function of the request. Nothing more. State the request carries
-  (the URL, route params, search params, cookies) is <em>known</em>; state living in a
-  component's memory is invisible to the server, and every pixel that depends on it is
-  unknown. This chapter is about putting state where the server can see it, which mostly
-  means: use the URL more.
-</p>
+<GuidePage title='Server-Resolvable State - App Router Guide' root='..'>
+  <div class='kicker'>Chapter 8 · Part A: Maximize the Known</div>
+  <h1>Server-Resolvable State</h1>
+  <p class='lede'>
+    The first render is a function of the request. Nothing more. State the request carries (the URL,
+    route params, search params, cookies) is <em>known</em>; state living in a component's memory is
+    invisible to the server, and every pixel that depends on it is unknown. This chapter is about
+    putting state where the server can see it, which mostly means: use the URL more.
+  </p>
 
-<h2 id="principle">
-  8.1 The principle: state the server can see is content the server can finish
-</h2>
-<p>
-  When a request arrives, the server knows exactly four kinds of state: the
-  <strong>path</strong> (which page, and its route params), the
-  <strong>search params</strong> (the query string), the <strong>cookies</strong>, and the
-  <strong>headers</strong>. That's the complete list. Everything the first render shows
-  must be derived from those, so every piece of UI state you store anywhere else is a
-  piece of UI the server cannot finish. <Chip k="next" />
-  <Chip k="critical" />
-</p>
-<p>
-  Watch what happens when a filtered table keeps its filter in <code>useState</code>. The
-  server renders the page with… which rows? It doesn't know the filter: the state won't
-  exist until a client component mounts and initializes it. So the table can't be
-  server-rendered with real content; it becomes a client component that fetches after
-  hydration, and we've bought the entire Part B problem set (spinners, shifting,
-  waterfalls; <a href="04-ssr.html#simplicity">§4.2</a>) for a filter that would have fit
-  in twelve characters of query string. Move the same state into the URL and the request
-  <em>is</em> the state: the server reads <code>?status=active</code>, renders the right
-  rows into HTML, and the "state management" is the platform's.
-</p>
-<p>
-  The bonus features come free, and they're not small. State in the URL is
-  <strong>shareable</strong> (paste the link, get the view),
-  <strong>refresh-proof</strong> (F5 reproduces the page instead of resetting it),
-  <strong>navigable</strong> (back/forward walk through filter history),
-  <strong>deep-linkable</strong> (dashboards, emails, and docs can point at a specific
-  view), and <strong>supportable</strong> ("send me the link" replaces "describe every
-  dropdown you touched"). A view that lives in component state has none of these; it dies
-  with the tab.
-</p>
+  <h2 id='principle'>
+    8.1 The principle: state the server can see is content the server can finish
+  </h2>
+  <p>
+    When a request arrives, the server knows exactly four kinds of state: the
+    <strong>path</strong> (which page, and its route params), the
+    <strong>search params</strong> (the query string), the <strong>cookies</strong>, and the
+    <strong>headers</strong>. That's the complete list. Everything the first render shows must be
+    derived from those, so every piece of UI state you store anywhere else is a piece of UI the
+    server cannot finish. <Chip k='next' />
+    <Chip k='critical' />
+  </p>
+  <p>
+    Watch what happens when a filtered table keeps its filter in <code>useState</code>. The server
+    renders the page with… which rows? It doesn't know the filter: the state won't exist until a
+    client component mounts and initializes it. So the table can't be server-rendered with real
+    content; it becomes a client component that fetches after hydration, and we've bought the entire
+    Part B problem set (spinners, shifting, waterfalls; <a href='04-ssr.html#simplicity'>§4.2</a>)
+    for a filter that would have fit in twelve characters of query string. Move the same state into
+    the URL and the request
+    <em>is</em> the state: the server reads <code>?status=active</code>, renders the right rows into
+    HTML, and the "state management" is the platform's.
+  </p>
+  <p>
+    The bonus features come free, and they're not small. State in the URL is
+    <strong>shareable</strong> (paste the link, get the view),
+    <strong>refresh-proof</strong> (F5 reproduces the page instead of resetting it),
+    <strong>navigable</strong> (back/forward walk through filter history),
+    <strong>deep-linkable</strong> (dashboards, emails, and docs can point at a specific view), and <strong
+      >supportable</strong
+    > ("send me the link" replaces "describe every dropdown you touched"). A view that lives in component
+    state has none of these; it dies with the tab.
+  </p>
 
-<Diagram>
-  <svg
-    viewBox="0 0 720 204"
-    xmlns="http://www.w3.org/2000/svg"
-    font-family="Inter, system-ui, sans-serif"
-  >
-    <defs>
-      <marker
-        id="mU"
-        viewBox="0 0 10 10"
-        refX="8"
-        refY="5"
-        markerWidth="6"
-        markerHeight="6"
-        orient="auto-start-reverse"
-      >
-        <path
-          d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-          fill="none"
-          stroke="#737373"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </marker>
-    </defs>
+  <Diagram>
+    <svg
+      viewBox='0 0 720 204'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker
+          id='mU'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#737373'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
 
-    <!-- URL pieces -->
-    <rect x="14" y="13" width="200" height="26" rx="6" fill="#eaf3fe" stroke="#0070f3" />
-    <text x="24" y="29.5" font-size="10" fill="#0757ba">/programs/42: route param</text>
-    <rect x="14" y="49" width="200" height="26" rx="6" fill="#eaf3fe" stroke="#0070f3" />
-    <text x="24" y="65.5" font-size="10" fill="#0757ba">/reports: route segment</text>
-    <rect x="14" y="87" width="200" height="26" rx="6" fill="#fdf3e3" stroke="#b45309" />
-    <text x="24" y="103.5" font-size="10" fill="#8a5a00">?q=algebra: search param</text>
-    <rect x="14" y="163" width="200" height="26" rx="6" fill="#fdf3e3" stroke="#b45309" />
-    <text x="24" y="179.5" font-size="10" fill="#8a5a00">&amp;page=3: search param</text>
+      <!-- URL pieces -->
+      <rect x='14' y='13' width='200' height='26' rx='6' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='24' y='29.5' font-size='10' fill='#0757ba'>/programs/42: route param</text>
+      <rect x='14' y='49' width='200' height='26' rx='6' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='24' y='65.5' font-size='10' fill='#0757ba'>/reports: route segment</text>
+      <rect x='14' y='87' width='200' height='26' rx='6' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text x='24' y='103.5' font-size='10' fill='#8a5a00'>?q=algebra: search param</text>
+      <rect x='14' y='163' width='200' height='26' rx='6' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text x='24' y='179.5' font-size='10' fill='#8a5a00'>&amp;page=3: search param</text>
 
-    <line
-      x1="218"
-      y1="26"
-      x2="312"
-      y2="26"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#mU)"
-    />
-    <line
-      x1="218"
-      y1="62"
-      x2="312"
-      y2="62"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#mU)"
-    />
-    <line
-      x1="218"
-      y1="100"
-      x2="312"
-      y2="100"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#mU)"
-    />
-    <line
-      x1="218"
-      y1="176"
-      x2="312"
-      y2="176"
-      stroke="#737373"
-      stroke-width="1.5"
-      marker-end="url(#mU)"
-    />
+      <line
+        x1='218'
+        y1='26'
+        x2='312'
+        y2='26'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#mU)'></line>
+      <line
+        x1='218'
+        y1='62'
+        x2='312'
+        y2='62'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#mU)'></line>
+      <line
+        x1='218'
+        y1='100'
+        x2='312'
+        y2='100'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#mU)'></line>
+      <line
+        x1='218'
+        y1='176'
+        x2='312'
+        y2='176'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#mU)'></line>
 
-    <!-- rendered page -->
-    <rect x="320" y="4" width="386" height="196" rx="8" fill="#ffffff" stroke="#d4d4d4" />
-    <text x="336" y="30" font-size="11" fill="#171717" font-weight="500">
-      Program 42 · Algebra I
-    </text>
-    <rect x="336" y="52" width="74" height="20" rx="10" fill="#f7f7f7" stroke="#c9c9c9" />
-    <text x="373" y="65" font-size="9.5" fill="#666666" text-anchor="middle">
-      Overview
-    </text>
-    <rect x="418" y="52" width="66" height="20" rx="10" fill="#eaf3fe" stroke="#0070f3" />
-    <text x="451" y="65" font-size="9.5" fill="#0757ba" text-anchor="middle">
-      Reports
-    </text>
-    <rect x="336" y="88" width="200" height="24" rx="6" fill="#ffffff" stroke="#c9c9c9" />
-    <text x="348" y="103.5" font-size="10" fill="#171717">algebra</text>
-    <rect x="336" y="124" width="354" height="7" rx="3" fill="#f2f2f2" />
-    <rect x="336" y="138" width="354" height="7" rx="3" fill="#f2f2f2" />
-    <rect x="336" y="152" width="354" height="7" rx="3" fill="#f2f2f2" />
-    <rect x="600" y="166" width="20" height="20" rx="4" fill="#ffffff" stroke="#c9c9c9" />
-    <text x="610" y="179" font-size="9.5" fill="#666666" text-anchor="middle">1</text>
-    <rect x="628" y="166" width="20" height="20" rx="4" fill="#ffffff" stroke="#c9c9c9" />
-    <text x="638" y="179" font-size="9.5" fill="#666666" text-anchor="middle">2</text>
-    <rect x="656" y="166" width="20" height="20" rx="4" fill="#eaf3fe" stroke="#0070f3" />
-    <text x="666" y="179" font-size="9.5" fill="#0757ba" text-anchor="middle">3</text>
-  </svg>
-  
-<pre slot="mermaid" is:raw>
+      <!-- rendered page -->
+      <rect x='320' y='4' width='386' height='196' rx='8' fill='#ffffff' stroke='#d4d4d4'></rect>
+      <text x='336' y='30' font-size='11' fill='#171717' font-weight='500'>
+        Program 42 · Algebra I
+      </text>
+      <rect x='336' y='52' width='74' height='20' rx='10' fill='#f7f7f7' stroke='#c9c9c9'></rect>
+      <text x='373' y='65' font-size='9.5' fill='#666666' text-anchor='middle'> Overview </text>
+      <rect x='418' y='52' width='66' height='20' rx='10' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='451' y='65' font-size='9.5' fill='#0757ba' text-anchor='middle'> Reports </text>
+      <rect x='336' y='88' width='200' height='24' rx='6' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='348' y='103.5' font-size='10' fill='#171717'>algebra</text>
+      <rect x='336' y='124' width='354' height='7' rx='3' fill='#f2f2f2'></rect>
+      <rect x='336' y='138' width='354' height='7' rx='3' fill='#f2f2f2'></rect>
+      <rect x='336' y='152' width='354' height='7' rx='3' fill='#f2f2f2'></rect>
+      <rect x='600' y='166' width='20' height='20' rx='4' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='610' y='179' font-size='9.5' fill='#666666' text-anchor='middle'>1</text>
+      <rect x='628' y='166' width='20' height='20' rx='4' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='638' y='179' font-size='9.5' fill='#666666' text-anchor='middle'>2</text>
+      <rect x='656' y='166' width='20' height='20' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='666' y='179' font-size='9.5' fill='#0757ba' text-anchor='middle'>3</text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
 flowchart LR
   U1("/programs/42 · route param"):::blue -->|"resolves to"| P1("page header: Program 42 · Algebra I"):::neutral
   U2("/reports · route segment"):::blue -->|"resolves to"| P2("active tab: Reports"):::neutral
@@ -166,33 +158,31 @@ flowchart LR
   classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
 </pre>
 
-<Fragment slot="caption">
-One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
-    serialized description of this view: the page, the active tab, the search text, and
-    the pagination all resolve from it, on the server, into finished HTML. Anyone opening
-    this link gets exactly this screen; nothing about it needs a client fetch or a
-    <code>useState</code> to exist.
-</Fragment>
-</Diagram>
+    <Fragment slot='caption'>
+      One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete, serialized
+      description of this view: the page, the active tab, the search text, and the pagination all
+      resolve from it, on the server, into finished HTML. Anyone opening this link gets exactly this
+      screen; nothing about it needs a client fetch or a
+      <code>useState</code> to exist.
+    </Fragment>
+  </Diagram>
 
-<h2 id="url-state">8.2 The URL is the state manager</h2>
-<p>
-  What belongs in it:
-  <strong
-    >filters, search text, sort column and direction, pagination, tabs, view modes
-    (table/grid), date ranges, expanded-group state on reports, selected item when it
-    drives a panel</strong
-  >; in short, anything that describes
-  <em>which view of the data the user is looking at</em>.
-  <Chip k="next" />
-  <Chip k="very" /> The reading side is a server page
-  prop; both are Promises in Next 16:
-</p>
+  <h2 id='url-state'>8.2 The URL is the state manager</h2>
+  <p>
+    What belongs in it:
+    <strong
+      >filters, search text, sort column and direction, pagination, tabs, view modes (table/grid),
+      date ranges, expanded-group state on reports, selected item when it drives a panel</strong
+    >; in short, anything that describes
+    <em>which view of the data the user is looking at</em>.
+    <Chip k='next' />
+    <Chip k='very' /> The reading side is a server page prop; both are Promises in Next 16:
+  </p>
 
-<Snippet>
-<pre
-            class="code" is:raw
-          ><span class="filename">app/programs/[programId]/reports/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ReportsPage</span>({ params, searchParams }: <span class="tok-fn">PageProps</span>) {
+  <Snippet>
+    <pre
+      class='code'
+      is:raw><span class="filename">app/programs/[programId]/reports/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ReportsPage</span>({ params, searchParams }: <span class="tok-fn">PageProps</span>) {
   <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
   <span class="tok-kw">const</span> { q = <span class="tok-str">""</span>, page = <span class="tok-str">"1"</span> } = <span class="tok-kw">await</span> searchParams;
 
@@ -203,55 +193,53 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
 
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">ReportTable</span> <span class="tok-prop">reports</span>={reports} /&gt;;
 }</pre>
-</Snippet>
+  </Snippet>
 
-<p>
-  The writing side you've already seen: an interactive leaf updates the query string with
-  <code>router.replace()</code> inside a transition, and the server page re-renders with
-  fresh rows: <a href="05-client-server-boundaries.html#refresh">§5.8</a> has the search
-  input, <a href="10-suspense-streaming.html#refetch">§10.5</a> builds the full table
-  around it, and
-  <a href="05-client-server-boundaries.html#searchparams-boundary">§5.6</a> covers the
-  Suspense boundary the reading leaf must carry. Two writing details worth pinning down:
-</p>
-<ul>
-  <li>
-    <strong
-      ><code>replace</code> vs <code>push</code> is a product decision about the back
-      button.</strong
-    >
-    Keystrokes and minor refinements should <code>replace</code> (back shouldn't step
-    through every character typed); discrete view changes (a tab, a page number) can
-    <code>push</code> so back walks the user's actual path.
-  </li>
-  <li>
-    <strong>Reading a search param makes that part of the render request-time</strong>,
-    which is exactly why it must sit behind a Suspense boundary under PPR (<a
-      href="05-client-server-boundaries.html#searchparams-boundary"
-      >§5.6</a
-    >): the static shell prerenders, and the param-dependent region is a deliberate
-    dynamic hole (<a href="04-ssr.html#page-cache">§4.4</a>).
-  </li>
-</ul>
+  <p>
+    The writing side you've already seen: an interactive leaf updates the query string with
+    <code>router.replace()</code> inside a transition, and the server page re-renders with fresh rows:
+    <a href='05-client-server-boundaries.html#refresh'>§5.8</a> has the search input, <a
+      href='10-suspense-streaming.html#refetch'>§10.5</a
+    > builds the full table around it, and
+    <a href='05-client-server-boundaries.html#searchparams-boundary'>§5.6</a> covers the Suspense boundary
+    the reading leaf must carry. Two writing details worth pinning down:
+  </p>
+  <ul>
+    <li>
+      <strong
+        ><code>replace</code> vs <code>push</code> is a product decision about the back button.</strong
+      >
+      Keystrokes and minor refinements should <code>replace</code> (back shouldn't step through every
+      character typed); discrete view changes (a tab, a page number) can
+      <code>push</code> so back walks the user's actual path.
+    </li>
+    <li>
+      <strong>Reading a search param makes that part of the render request-time</strong>, which is
+      exactly why it must sit behind a Suspense boundary under PPR (<a
+        href='05-client-server-boundaries.html#searchparams-boundary'>§5.6</a
+      >): the static shell prerenders, and the param-dependent region is a deliberate dynamic hole (<a
+        href='04-ssr.html#page-cache'>§4.4</a
+      >).
+    </li>
+  </ul>
 
-<h2 id="tabs">8.3 Tabs are routes in disguise</h2>
-<p>
-  The clearest instance of the whole principle, and the smell we most need to unlearn, is
-  <strong>tabs held in <code>useState</code></strong
-  >. A tab bar is a set of views with identities. "Which view am I looking at?" is
-  precisely the kind of state the URL exists to answer, and holding it in memory forfeits
-  everything at once: the link can't say which tab it points at, refresh snaps back to the
-  default, the server can't render the active panel's content, and, since every panel must
-  be reachable by a client-side click, <em>all</em> the panels ship to the client,
-  rendered or not (<a href="06-first-render-js.html">§6</a>).
-</p>
+  <h2 id='tabs'>8.3 Tabs are routes in disguise</h2>
+  <p>
+    The clearest instance of the whole principle, and the smell we most need to unlearn, is
+    <strong>tabs held in <code>useState</code></strong>. A tab bar is a set of views with
+    identities. "Which view am I looking at?" is precisely the kind of state the URL exists to
+    answer, and holding it in memory forfeits everything at once: the link can't say which tab it
+    points at, refresh snaps back to the default, the server can't render the active panel's
+    content, and, since every panel must be reachable by a client-side click, <em>all</em> the panels
+    ship to the client, rendered or not (<a href='06-first-render-js.html'>§6</a>).
+  </p>
 
-<Compare>
-<CompareCol kind="bad" label="✕ Tabs in state: the smell">
-    <Snippet>
-    <pre
-                class="code" is:raw
-              ><span class="filename">ProgramView.tsx</span><span class="tok-dir">"use client"</span>;
+  <Compare>
+    <CompareCol kind='bad' label='✕ Tabs in state: the smell'>
+      <Snippet>
+        <pre
+          class='code'
+          is:raw><span class="filename">ProgramView.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramView</span>() {
   <span class="tok-kw">const</span> [tab, setTab] = <span class="tok-fn">useState</span>(<span class="tok-str">"reports"</span>);
@@ -269,15 +257,17 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
     &lt;/&gt;
   );
 }</pre>
-<CodeCaption>
-  View identity held in memory: not shareable, not refresh-proof, invisible to the server, and every panel ships to the client whether shown or not.
-</CodeCaption>
-    </Snippet>
-  
-</CompareCol>
-<CompareCol kind="good" label="✓ Tabs as route segments">
-    <Snippet>
-    <pre class="code" is:raw><span class="filename">the route structure</span>app/
+        <CodeCaption>
+          View identity held in memory: not shareable, not refresh-proof, invisible to the server,
+          and every panel ships to the client whether shown or not.
+        </CodeCaption>
+      </Snippet>
+    </CompareCol>
+    <CompareCol kind='good' label='✓ Tabs as route segments'>
+      <Snippet>
+        <pre
+          class='code'
+          is:raw><span class="filename">the route structure</span>app/
 └── programs/
     └── [programId]/
         ├── <span class="tok-fn">layout.tsx</span>
@@ -293,30 +283,33 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
             ├── <span class="tok-fn">page.tsx</span>
             ├── loading.tsx
             └── error.tsx</pre>
-<CodeCaption>
-  The header and tab bar render once in <code>layout.tsx</code> and persist across tab
-  changes (<a href="03-mental-model.html#rendering-model">§3.1</a>). Each tab is a segment
-  whose <code>page.tsx</code> is server-rendered, streamed, and prefetched by its Link,
-  and each brings its own <code>loading.tsx</code> and <code>error.tsx</code> boundaries
-  (<a href="10-suspense-streaming.html#streaming">§10.2</a>).
-</CodeCaption>
-    </Snippet>
-</CompareCol>
-</Compare>
+        <CodeCaption>
+          The header and tab bar render once in <code>layout.tsx</code> and persist across tab changes
+          (<a href='03-mental-model.html#rendering-model'>§3.1</a>). Each tab is a segment whose <code
+            >page.tsx</code
+          > is server-rendered, streamed, and prefetched by its Link, and each brings its own <code
+            >loading.tsx</code
+          > and <code>error.tsx</code> boundaries (<a href='10-suspense-streaming.html#streaming'
+            >§10.2</a
+          >).
+        </CodeCaption>
+      </Snippet>
+    </CompareCol>
+  </Compare>
 
-<p>
-  With segments, each tab is a page: server-rendered with real content, prefetched by its
-  <code>&lt;Link&gt;</code> before the click (<a href="04-ssr.html#prefetching">§4.5</a>),
-  and addressable from anywhere. The layout (header, tab bar, containers) persists across
-  switches without re-rendering (<a href="03-mental-model.html#rendering-model">§3.1</a>,
-  <a href="09-containers-content-shifting.html#layouts">§9.4</a>). The tab bar itself is a
-  row of links; its only client concern is knowing which one is active:
-</p>
+  <p>
+    With segments, each tab is a page: server-rendered with real content, prefetched by its
+    <code>&lt;Link&gt;</code> before the click (<a href='04-ssr.html#prefetching'>§4.5</a>), and
+    addressable from anywhere. The layout (header, tab bar, containers) persists across switches
+    without re-rendering (<a href='03-mental-model.html#rendering-model'>§3.1</a>,
+    <a href='09-containers-content-shifting.html#layouts'>§9.4</a>). The tab bar itself is a row of
+    links; its only client concern is knowing which one is active:
+  </p>
 
-<Snippet>
-<pre
-            class="code" is:raw
-          ><span class="filename">components/program/ProgramTabs.tsx</span><span class="tok-dir">"use client"</span>;
+  <Snippet>
+    <pre
+      class='code'
+      is:raw><span class="filename">components/program/ProgramTabs.tsx</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">import</span> { usePathname } <span class="tok-kw">from</span> <span class="tok-str">"next/navigation"</span>;
 
@@ -341,55 +334,60 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
     &lt;/<span class="tok-fn">TabList</span>&gt;
   );
 }</pre>
-</Snippet>
+  </Snippet>
 
-<p>
-  When segments are too heavy for the case (small toggle-like tabs inside one page), the
-  fallback is still the URL: a <code>?view=</code> search param the server page switches
-  on, not <code>useState</code>. The ladder is
-  <strong
-    >segments, then a search param, then (for genuinely cosmetic switches) state</strong
-  >, and each step down the ladder should be a deliberate decision, not a habit.
-  <Chip k="next" />
-  <Chip k="very" />
-</p>
+  <p>
+    When segments are too heavy for the case (small toggle-like tabs inside one page), the fallback
+    is still the URL: a <code>?view=</code> search param the server page switches on, not <code
+      >useState</code
+    >. The ladder is
+    <strong>segments, then a search param, then (for genuinely cosmetic switches) state</strong>,
+    and each step down the ladder should be a deliberate decision, not a habit.
+    <Chip k='next' />
+    <Chip k='very' />
+  </p>
 
-<h2 id="url-writes">8.4 Writing the URL: transitions, stale content, and optimistic tabs</h2>
-<p>
-  Reading the URL is half the contract; the other half is writing it, because
-  <strong>writing the URL is how a client leaf forces the server to re-render.</strong>
-  <Chip k="next" />
-  <Chip k="critical" /> When a leaf calls
-  <code>router.replace()</code> with a new query string, the router performs a client-side
-  transition to the same route: the server re-renders the page with the new
-  <code>searchParams</code>, and the fresh RSC payload merges into the tree in place
-  (<a href="04-ssr.html#routing">§4.5</a>). Watch the network tab while it happens: no
-  document reload, just a small RSC request carrying the re-rendered segments. The URL
-  write <em>is</em> the refetch.
-</p>
-<p>
-  Three refinements turn that mechanic into UI that feels instant. First,
-  <strong>wrap the write in a transition</strong>: the App Router treats navigations as
-  transitions, so an already-revealed Suspense boundary keeps its current content instead
-  of re-showing a fallback (<a href="10-suspense-streaming.html#refetch">§10.5</a>), and
-  your own <code>useTransition</code> gives you <code>isPending</code> as the loading
-  indicator. Second, <strong>show the stale content while the new render is in
-  flight</strong>: dim it against <code>isPending</code>, or reach for
-  <code>useDeferredValue</code> when the results are client-rendered; both worked examples
-  live in <a href="10-suspense-streaming.html#refetch">§10.5</a>. Third, and this is the
-  one that makes tabs feel native: <strong>update the selection optimistically.</strong>
-</p>
-<p>
-  The problem with URL-derived tab state alone: the active highlight comes from
-  <code>searchParams</code>, which only changes when the server render lands. Click a tab
-  and the highlight lags behind by the length of the render. React 19's
-  <code>useOptimistic</code> closes that gap: set the optimistic value immediately inside
-  the transition, and React reconciles it with the URL-derived value automatically when
-  the new payload arrives (or reverts it if the navigation fails):
-</p>
+  <h2 id='url-writes'>8.4 Writing the URL: transitions, stale content, and optimistic tabs</h2>
+  <p>
+    Reading the URL is half the contract; the other half is writing it, because
+    <strong>writing the URL is how a client leaf forces the server to re-render.</strong>
+    <Chip k='next' />
+    <Chip k='critical' /> When a leaf calls
+    <code>router.replace()</code> with a new query string, the router performs a client-side transition
+    to the same route: the server re-renders the page with the new
+    <code>searchParams</code>, and the fresh RSC payload merges into the tree in place (<a
+      href='04-ssr.html#routing'>§4.5</a
+    >). Watch the network tab while it happens: no document reload, just a small RSC request
+    carrying the re-rendered segments. The URL write <em>is</em> the refetch.
+  </p>
+  <p>
+    Three refinements turn that mechanic into UI that feels instant. First,
+    <strong>wrap the write in a transition</strong>: the App Router treats navigations as
+    transitions, so an already-revealed Suspense boundary keeps its current content instead of
+    re-showing a fallback (<a href='10-suspense-streaming.html#refetch'>§10.5</a>), and your own <code
+      >useTransition</code
+    > gives you <code>isPending</code> as the loading indicator. Second, <strong
+      >show the stale content while the new render is in flight</strong
+    >: dim it against <code>isPending</code>, or reach for
+    <code>useDeferredValue</code> when the results are client-rendered; both worked examples live in <a
+      href='10-suspense-streaming.html#refetch'>§10.5</a
+    >. Third, and this is the one that makes tabs feel native: <strong
+      >update the selection optimistically.</strong
+    >
+  </p>
+  <p>
+    The problem with URL-derived tab state alone: the active highlight comes from
+    <code>searchParams</code>, which only changes when the server render lands. Click a tab and the
+    highlight lags behind by the length of the render. React 19's
+    <code>useOptimistic</code> closes that gap: set the optimistic value immediately inside the transition,
+    and React reconciles it with the URL-derived value automatically when the new payload arrives (or
+    reverts it if the navigation fails):
+  </p>
 
-<Snippet>
-<pre class="code" is:raw><span class="filename">ViewTabs.tsx (inner; the baked-in Suspense wrapper of §5.6 is omitted)</span><span class="tok-dir">"use client"</span>;
+  <Snippet>
+    <pre
+      class='code'
+      is:raw><span class="filename">ViewTabs.tsx (inner; the baked-in Suspense wrapper of §5.6 is omitted)</span><span class="tok-dir">"use client"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ViewTabsInner</span>() {
   <span class="tok-kw">const</span> searchParams = <span class="tok-fn">useSearchParams</span>();
@@ -422,38 +420,40 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
     &lt;/<span class="tok-fn">TabList</span>&gt;
   );
 }</pre>
-<CodeCaption>
-  The clicked tab highlights instantly: <code>setOptimisticView</code> applies before the
-  server render starts, the transition carries the URL write, and when the fresh payload
-  lands the optimistic value reconciles with the URL-derived one automatically. If the
-  navigation fails, React reverts the highlight for free. The interaction is never blocked
-  by the page render; only the panel content waits, dimmed, per
-  <a href="10-suspense-streaming.html#refetch">§10.5</a>.
-</CodeCaption>
-</Snippet>
-<p>
-  The result is the best of both worlds from <a href="#tabs">§8.3</a>'s ladder: the URL
-  stays the source of truth (shareable, refresh-proof, server-rendered), and the
-  interaction feels as immediate as any <code>useState</code> tab bar. The same recipe
-  applies to any URL-backed control: filters, sort toggles, pagination, view switches.
-</p>
+    <CodeCaption>
+      The clicked tab highlights instantly: <code>setOptimisticView</code> applies before the server render
+      starts, the transition carries the URL write, and when the fresh payload lands the optimistic value
+      reconciles with the URL-derived one automatically. If the navigation fails, React reverts the highlight
+      for free. The interaction is never blocked by the page render; only the panel content waits, dimmed,
+      per
+      <a href='10-suspense-streaming.html#refetch'>§10.5</a>.
+    </CodeCaption>
+  </Snippet>
+  <p>
+    The result is the best of both worlds from <a href='#tabs'>§8.3</a>'s ladder: the URL stays the
+    source of truth (shareable, refresh-proof, server-rendered), and the interaction feels as
+    immediate as any <code>useState</code> tab bar. The same recipe applies to any URL-backed control:
+    filters, sort toggles, pagination, view switches.
+  </p>
 
-<h2 id="cookies">8.5 Cookies: preferences that follow the user, not the URL</h2>
-<p>
-  Some state should survive across pages and sessions but has no business in a link: the
-  collapsed sidebar, a table-density preference, the dismissed-announcement flag, theme.
-  Put those in <strong>cookies</strong> (the other channel the request carries), and the
-  server resolves them at first render, which is what kills the flash-of-wrong-state that
-  <code>localStorage</code> approaches are doomed to (the server can't read
-  <code>localStorage</code>, so it always renders the default first and corrects after
-  hydration). <Chip k="next" />
-  <Chip k="very" />
-</p>
+  <h2 id='cookies'>8.5 Cookies: preferences that follow the user, not the URL</h2>
+  <p>
+    Some state should survive across pages and sessions but has no business in a link: the collapsed
+    sidebar, a table-density preference, the dismissed-announcement flag, theme. Put those in <strong
+      >cookies</strong
+    > (the other channel the request carries), and the server resolves them at first render, which is
+    what kills the flash-of-wrong-state that
+    <code>localStorage</code> approaches are doomed to (the server can't read
+    <code>localStorage</code>, so it always renders the default first and corrects after hydration). <Chip
+      k='next'
+    />
+    <Chip k='very' />
+  </p>
 
-<Snippet>
-<pre
-            class="code" is:raw
-          ><span class="filename">app/(dashboard)/layout.tsx</span><span class="tok-kw">import</span> { cookies } <span class="tok-kw">from</span> <span class="tok-str">"next/headers"</span>;
+  <Snippet>
+    <pre
+      class='code'
+      is:raw><span class="filename">app/(dashboard)/layout.tsx</span><span class="tok-kw">import</span> { cookies } <span class="tok-kw">from</span> <span class="tok-str">"next/headers"</span>;
 
 <span class="tok-kw">export default async function</span> <span class="tok-fn">DashboardLayout</span>({ children }: <span class="tok-fn">LayoutProps</span>) {
   <span class="tok-com">/* A preference that must survive across pages and sessions, and that the
@@ -464,143 +464,128 @@ One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
 
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">Shell</span> <span class="tok-prop">sidebarCollapsed</span>={collapsed}&gt;{children}&lt;/<span class="tok-fn">Shell</span>&gt;;
 }</pre>
-</Snippet>
+  </Snippet>
 
-<p>
-  The same caveat as search params applies: reading cookies makes that part of the tree
-  request-time, so under PPR it belongs inside a deliberate dynamic region (<a
-    href="04-ssr.html#page-cache"
-    >§4.4</a
-  >). The rule of thumb for choosing the channel:
-  <strong>the URL describes the view, cookies describe the viewer.</strong> A filter is
-  the view: anyone with the link should get it. A collapsed sidebar is the viewer: it
-  would be bizarre in a shared link.
-</p>
-
-<h2 id="client-state">8.6 What genuinely stays client state</h2>
-<p>
-  The point is not that <code>useState</code> is bad; it's that it should hold
-  <strong>interaction</strong>, not <strong>identity</strong>. Ephemeral, mid-gesture,
-  this-tab-only state is exactly what it's for: the text in an input <em>before</em> it's
-  committed to the URL (the debounced draft in
-  <a href="10-suspense-streaming.html#refetch">§10.5</a>), the open/closed flag of a
-  dialog or menu living in its leaf (<a
-    href="05-client-server-boundaries.html#self-contained"
-    >§5.7</a
-  >), hover and focus, an in-flight optimistic value, a drag mid-drag.
-  <Chip k="react" />
-  <Chip k="very" />
-</p>
-<p>
-  Two questions sort every case.
-  <strong
-    >Would the user expect it back after a refresh, or want it in a shared link?</strong
-  >
-  Then it's the URL (view) or a cookie (preference).
-  <strong>Does the server need it to render real content?</strong> Then it must be
-  server-resolvable, full stop. Content the server can't finish is Part B's territory, and
-  we only go there deliberately. If both answers are no, it's interaction state: keep it
-  in the leaf, in memory, where it costs nothing.
-</p>
-
-<h2 id="rules">The rules</h2>
-<table class="tbl">
-  <thead>
-    <tr>
-      <th>Rule</th>
-      <th>Scope</th>
-      <th>Importance</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        State the first render depends on <strong>must be server-resolvable</strong>: the
-        URL, route params, search params, or cookies; never component memory.
-      </td>
-      <td><Chip k="next" /></td>
-      <td><Chip k="critical" /></td>
-    </tr>
-    <tr>
-      <td>
-        Filters, search, sort, pagination, tabs, view modes, date ranges:
-        <strong>the view lives in the URL</strong>.
-      </td>
-      <td><Chip k="next" /></td>
-      <td><Chip k="very" /></td>
-    </tr>
-    <tr>
-      <td>
-        <strong>Tabs are routes</strong>: segments first, a search param second,
-        <code>useState</code> only for cosmetic switches, deliberately.
-      </td>
-      <td><Chip k="next" /></td>
-      <td><Chip k="very" /></td>
-    </tr>
-    <tr>
-      <td>
-        Cross-page, cross-session preferences go in
-        <strong>cookies, read on the server</strong>: the URL describes the view; cookies
-        describe the viewer.
-      </td>
-      <td><Chip k="next" /></td>
-      <td><Chip k="very" /></td>
-    </tr>
-    <tr>
-      <td>
-        <code>useState</code> holds <strong>interaction, not identity</strong>: drafts
-        mid-edit, open leaf widgets, hover/focus, in-flight optimism.
-      </td>
-      <td><Chip k="react" /></td>
-      <td><Chip k="very" /></td>
-    </tr>
-  </tbody>
-</table>
-
-<GoDeeper>
   <p>
-    React 19 docs:
-    <a
-      href="https://react.dev/learn/choosing-the-state-structure"
-      target="_blank"
-      rel="noopener"
-      >Choosing the State Structure</a
-    >
-    ·
-    <a
-      href="https://react.dev/learn/sharing-state-between-components"
-      target="_blank"
-      rel="noopener"
-      >Sharing State Between Components</a
-    >
-    (lifting state, and why the URL is the ultimate lift). Next.js docs:
-    <a
-      href="https://nextjs.org/docs/app/api-reference/file-conventions/page"
-      target="_blank"
-      rel="noopener"
-      >page.js: <code>params</code> and <code>searchParams</code></a
-    >
-    ·
-    <a
-      href="https://nextjs.org/docs/app/api-reference/functions/use-search-params"
-      target="_blank"
-      rel="noopener"
-      >useSearchParams</a
-    >
-    ·
-    <a
-      href="https://nextjs.org/docs/app/api-reference/functions/cookies"
-      target="_blank"
-      rel="noopener"
-      >cookies</a
-    >
-    ·
-    <a
-      href="https://nextjs.org/docs/app/getting-started/linking-and-navigating"
-      target="_blank"
-      rel="noopener"
-      >Linking and Navigating</a
-    >. Full list in <a href="20-references.html">§20</a>.
+    The same caveat as search params applies: reading cookies makes that part of the tree
+    request-time, so under PPR it belongs inside a deliberate dynamic region (<a
+      href='04-ssr.html#page-cache'>§4.4</a
+    >). The rule of thumb for choosing the channel:
+    <strong>the URL describes the view, cookies describe the viewer.</strong> A filter is the view: anyone
+    with the link should get it. A collapsed sidebar is the viewer: it would be bizarre in a shared link.
   </p>
-</GoDeeper>
+
+  <h2 id='client-state'>8.6 What genuinely stays client state</h2>
+  <p>
+    The point is not that <code>useState</code> is bad; it's that it should hold
+    <strong>interaction</strong>, not <strong>identity</strong>. Ephemeral, mid-gesture,
+    this-tab-only state is exactly what it's for: the text in an input <em>before</em> it's committed
+    to the URL (the debounced draft in
+    <a href='10-suspense-streaming.html#refetch'>§10.5</a>), the open/closed flag of a dialog or
+    menu living in its leaf (<a href='05-client-server-boundaries.html#self-contained'>§5.7</a>),
+    hover and focus, an in-flight optimistic value, a drag mid-drag.
+    <Chip k='react' />
+    <Chip k='very' />
+  </p>
+  <p>
+    Two questions sort every case.
+    <strong>Would the user expect it back after a refresh, or want it in a shared link?</strong>
+    Then it's the URL (view) or a cookie (preference).
+    <strong>Does the server need it to render real content?</strong> Then it must be server-resolvable,
+    full stop. Content the server can't finish is Part B's territory, and we only go there deliberately.
+    If both answers are no, it's interaction state: keep it in the leaf, in memory, where it costs nothing.
+  </p>
+
+  <h2 id='rules'>The rules</h2>
+  <table class='tbl'>
+    <thead>
+      <tr>
+        <th>Rule</th>
+        <th>Scope</th>
+        <th>Importance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          State the first render depends on <strong>must be server-resolvable</strong>: the URL,
+          route params, search params, or cookies; never component memory.
+        </td>
+        <td><Chip k='next' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
+          Filters, search, sort, pagination, tabs, view modes, date ranges:
+          <strong>the view lives in the URL</strong>.
+        </td>
+        <td><Chip k='next' /></td>
+        <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>
+          <strong>Tabs are routes</strong>: segments first, a search param second,
+          <code>useState</code> only for cosmetic switches, deliberately.
+        </td>
+        <td><Chip k='next' /></td>
+        <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>
+          Cross-page, cross-session preferences go in
+          <strong>cookies, read on the server</strong>: the URL describes the view; cookies describe
+          the viewer.
+        </td>
+        <td><Chip k='next' /></td>
+        <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>
+          <code>useState</code> holds <strong>interaction, not identity</strong>: drafts mid-edit,
+          open leaf widgets, hover/focus, in-flight optimism.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='very' /></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <GoDeeper>
+    <p>
+      React 19 docs:
+      <a href='https://react.dev/learn/choosing-the-state-structure' target='_blank' rel='noopener'
+        >Choosing the State Structure</a
+      >
+      ·
+      <a
+        href='https://react.dev/learn/sharing-state-between-components'
+        target='_blank'
+        rel='noopener'>Sharing State Between Components</a
+      >
+      (lifting state, and why the URL is the ultimate lift). Next.js docs:
+      <a
+        href='https://nextjs.org/docs/app/api-reference/file-conventions/page'
+        target='_blank'
+        rel='noopener'>page.js: <code>params</code> and <code>searchParams</code></a
+      >
+      ·
+      <a
+        href='https://nextjs.org/docs/app/api-reference/functions/use-search-params'
+        target='_blank'
+        rel='noopener'>useSearchParams</a
+      >
+      ·
+      <a
+        href='https://nextjs.org/docs/app/api-reference/functions/cookies'
+        target='_blank'
+        rel='noopener'>cookies</a
+      >
+      ·
+      <a
+        href='https://nextjs.org/docs/app/getting-started/linking-and-navigating'
+        target='_blank'
+        rel='noopener'>Linking and Navigating</a
+      >. Full list in <a href='20-references.html'>§20</a>.
+    </p>
+  </GoDeeper>
 </GuidePage>

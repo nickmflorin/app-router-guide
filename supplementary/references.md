@@ -140,7 +140,9 @@ Every external source used in the guide. Rendered at the bottom of all derived d
 
 ## Community / secondary (verification & narrative only; prefer official above)
 
-- [How Next.js renders server components on updates - jonfk, May 2024](https://www.jonfk.ca/blog/nextjs-14-server-components-update/) - network-level walkthrough of URL-param writes triggering RSC payload requests (Next 14 era; mechanics verified against Next 16 for 8.4)
+- [How Next.js renders server components on updates - jonfk, May 2024](https://www.jonfk.ca/blog/nextjs-14-server-components-update/) -
+  network-level walkthrough of URL-param writes triggering RSC payload requests (Next 14 era;
+  mechanics verified against Next 16 for 8.4)
 - [React 19.2 is here - LogRocket](https://blog.logrocket.com/react-19-2-is-here/) - 19.2 feature
   summary cross-check
 - [What's Next for React in 2026 - Telerik](https://www.telerik.com/blogs/whats-next-react-2026) -

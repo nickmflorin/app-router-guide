@@ -197,8 +197,7 @@ const TOC = [
     if (current) {
       const top = current.offsetTop - sidebar.scrollTop;
       if (top < 0 || top > sidebar.clientHeight - current.offsetHeight) {
-        sidebar.scrollTop =
-          current.offsetTop - sidebar.clientHeight / 2 + current.offsetHeight / 2;
+        sidebar.scrollTop = current.offsetTop - sidebar.clientHeight / 2 + current.offsetHeight / 2;
       }
     }
     sessionStorage.setItem(SCROLL_KEY, String(sidebar.scrollTop));
@@ -210,7 +209,7 @@ const TOC = [
         if (toc && toc.hidden) return;
         sessionStorage.setItem(SCROLL_KEY, String(sidebar.scrollTop));
       },
-      { passive: true }
+      { passive: true },
     );
 
     /* ---- sidebar search over the build-time index (search-index.js) ---- */
@@ -219,7 +218,7 @@ const TOC = [
     const tocEl = document.getElementById('side-toc');
     if (searchInput && resultsEl && tocEl) {
       const esc = s =>
-        s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
       const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       let active = -1;
 
@@ -495,7 +494,8 @@ const TOC = [
       });
       pinLayer.appendChild(pin);
     });
-    panelBtn.textContent = 'Notes (' + pageNotes().filter(n => n.status !== 'resolved').length + ')';
+    panelBtn.textContent =
+      'Notes (' + pageNotes().filter(n => n.status !== 'resolved').length + ')';
   }
   let repositionTimer = null;
   window.addEventListener('resize', () => {
@@ -697,8 +697,14 @@ const TOC = [
         '<button type="button" data-act="resolve"></button>' +
         '<button type="button" data-act="delete">Delete</button></div>';
       item.querySelector('.np-where').textContent =
-        '#' + (i + 1) + (n.target.anchor ? ' · §' + n.target.anchor : '') + ' · “' + n.target.snippet.slice(0, 46) + '…”';
-      item.querySelector('.np-text').textContent = n.text + (n.resolution ? '\n↳ ' + n.resolution : '');
+        '#' +
+        (i + 1) +
+        (n.target.anchor ? ' · §' + n.target.anchor : '') +
+        ' · “' +
+        n.target.snippet.slice(0, 46) +
+        '…”';
+      item.querySelector('.np-text').textContent =
+        n.text + (n.resolution ? '\n↳ ' + n.resolution : '');
       item.querySelector('[data-act="resolve"]').textContent =
         n.status === 'resolved' ? 'Reopen' : 'Resolve';
       item.querySelector('[data-act="jump"]').addEventListener('click', () => {

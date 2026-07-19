@@ -11,16 +11,16 @@
 const hasMermaid = Astro.slots.has('mermaid');
 ---
 
-<figure class="diagram">
+<figure class='diagram'>
   <slot />
   {
     hasMermaid && (
       <template data-mermaid>
-        <slot name="mermaid" />
+        <slot name='mermaid' />
       </template>
     )
   }
   <figcaption>
-    <slot name="caption" />
+    <slot name='caption' />
   </figcaption>
 </figure>

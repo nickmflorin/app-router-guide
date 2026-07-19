@@ -1,0 +1,53 @@
+/* ---------- chips ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  vertical-align: 2px;
+  white-space: nowrap;
+}
+.chip::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.chip-react {
+  color: var(--react);
+  background: var(--react-soft);
+  border-color: #cde7f0;
+}
+.chip-next {
+  color: #111;
+  background: #f2f2f2;
+  border-color: #e0e0e0;
+}
+/* general UI/UX practice, not tied to React or Next */
+.chip-ux {
+  color: var(--purple);
+  background: var(--purple-soft);
+  border-color: #ddc9f7;
+}
+/* importance metric */
+.chip-critical {
+  color: var(--red);
+  background: var(--red-soft);
+  border-color: #f5c6c0;
+}
+.chip-very {
+  color: var(--amber);
+  background: var(--amber-soft);
+  border-color: #f3e2c0;
+}
+.chip-imp {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: #cde0fb;
+}

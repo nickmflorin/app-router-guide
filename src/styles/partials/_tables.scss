@@ -1,0 +1,28 @@
+/* ---------- tables ---------- */
+table.tbl {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  font-size: 14.5px;
+  margin: 18px 0;
+}
+table.tbl th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 600;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-strong);
+}
+/* Cells always wrap; long rule text may never widen the table past the page. */
+table.tbl td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  overflow-wrap: break-word;
+}
+table.tbl td .chip {
+  white-space: nowrap;
+}

@@ -1,0 +1,74 @@
+/* ---------- typography ---------- */
+h1 {
+  font-size: 34px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 6px 0 6px;
+}
+h2 {
+  font-size: 24px;
+  letter-spacing: -0.015em;
+  margin: 20px 0 10px;
+  padding-top: 4px;
+}
+h3 {
+  font-size: 18.5px;
+  letter-spacing: -0.01em;
+  margin: 18px 0 8px;
+}
+h4 {
+  font-size: 15.5px;
+  margin: 16px 0 8px;
+}
+h2,
+h3 {
+  scroll-margin-top: 24px;
+}
+p {
+  margin: 0 0 14px;
+}
+.kicker {
+  font-size: 12.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 7px;
+}
+.lede {
+  font-size: 18.5px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+strong {
+  font-weight: 650;
+}
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 26px 0;
+}
+ul,
+ol {
+  padding-left: 24px;
+  margin: 0 0 16px;
+}
+li {
+  margin-bottom: 6px;
+}
+code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 5px;
+}

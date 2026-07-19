@@ -1,0 +1,21 @@
+// The guide's design system, authored in SCSS. Compiled by `npm run css`
+// (scripts/build_css.mjs) into public/assets/style.css, which is GENERATED:
+// never edit that file directly. Partials are grouped by the design-system
+// sections; add new styles to the matching partial (or a new one, and @use
+// it here in order).
+
+@use 'partials/base';
+@use 'partials/layout';
+@use 'partials/sidebar-search';
+@use 'partials/typography';
+@use 'partials/chips';
+@use 'partials/draft-tools';
+@use 'partials/callouts';
+@use 'partials/goal-cards';
+@use 'partials/code-blocks-light';
+@use 'partials/snippet-container';
+@use 'partials/diagram-panels-light';
+@use 'partials/tables';
+@use 'partials/prev-next-footer';
+@use 'partials/index-cover';
+@use 'partials/code-captions';

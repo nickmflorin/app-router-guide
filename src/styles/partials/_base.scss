@@ -1,0 +1,62 @@
+/* ============================================================
+   App Router Guide - design system
+   Styled after nextjs.org docs: light canvas, dark diagram
+   panels, Geist-ish typography, blue accent.
+   ============================================================ */
+
+:root {
+  --bg: #ffffff;
+  --fg: #171717;
+  --muted: #666666;
+  --faint: #999999;
+  --border: #eaeaea;
+  --border-strong: #d4d4d4;
+  --surface: #fafafa;
+  --accent: #0070f3;
+  --accent-soft: #e6f0fd;
+  --purple: #7c3aed;
+  --purple-soft: #f1e9fe;
+  --react: #087ea4;
+  --react-soft: #e6f4f9;
+  --amber: #b45309;
+  --amber-soft: #fdf3e3;
+  --green: #0f7b48;
+  --green-soft: #e7f5ee;
+  --red: #d93025;
+  --red-soft: #fdecea;
+
+  /* dark panel (diagrams / code) */
+  --panel: #0a0a0a;
+  --panel-2: #171717;
+  --panel-border: #333333;
+  --panel-fg: #ededed;
+  --panel-muted: #a1a1a1;
+
+  --sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'Geist Mono', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+
+  --sidebar-w: 272px;
+  --content-w: 1000px;
+}
+
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+/* Nothing may ever scroll the page horizontally; wide content wraps or
+   scrolls inside its own block. */
+html,
+body {
+  overflow-x: clip;
+}
+body {
+  margin: 0;
+  font-family: var(--sans);
+  color: var(--fg);
+  background: var(--bg);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}

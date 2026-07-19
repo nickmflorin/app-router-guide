@@ -1,0 +1,106 @@
+/* ---------- snippet container ---------- */
+/* One code snippet = the pre plus its optional caption, in one container
+   (<Snippet>). The container owns ALL outer spacing; the pre and the caption
+   own none, so the caption sits the same fixed distance under the code box
+   everywhere: prose flow, list items, compare columns. */
+.snippet {
+  margin: 18px 0;
+}
+.snippet .code-caption {
+  /* Hug the code box; slight left pad so text clears the border radius. */
+  margin: 6px 2px 0;
+  padding-left: 3px;
+}
+pre.code .code-line {
+  min-height: 1.65em;
+}
+pre.code .filename {
+  display: block;
+  color: var(--muted);
+  font-size: 11.5px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.tok-kw {
+  color: #c41d7f;
+} /* keywords: magenta (next docs light style) */
+.tok-fn {
+  color: #0068d6;
+} /* fn / component names: blue */
+.tok-str {
+  color: #1a7f37;
+} /* strings: green */
+.tok-com {
+  color: #6e7781;
+  font-style: italic;
+}
+.tok-dir {
+  color: #b25000;
+} /* "use client" etc: amber */
+.tok-prop {
+  color: #6f42c1;
+} /* props/attrs: violet */
+
+/* code compare: bad vs good.
+   Columns are equal height (grid stretch); within a column, snippets are
+   separated by a gap and flex to fill, so both columns align top AND bottom
+   even when one side has more snippets than the other. */
+.compare {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+  margin: 18px 0;
+  align-items: stretch;
+  width: 100%;
+}
+.compare > div {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.compare .snippet,
+.compare figure.diagram {
+  width: 100%;
+}
+.compare .col-label {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: -6px;
+}
+.compare .bad .col-label {
+  color: var(--red);
+}
+.compare .good .col-label {
+  color: var(--green);
+}
+/* Only the LAST snippet in a column absorbs leftover height, so stacked
+   snippets keep their natural size. Inside that stretched snippet the CODE
+   BOX soaks up the extra height and the caption stays pinned 6px beneath it,
+   so a caption's bottom edge lands flush with the neighboring column's
+   bottom: columns always end on the same line, never on dead white space. */
+.compare .snippet {
+  margin: 0;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.compare > div > .snippet:last-of-type {
+  flex: 1 1 auto;
+}
+.compare .snippet pre.code {
+  flex: 1 1 auto;
+}
+.compare figure.diagram {
+  margin: 0;
+  flex: 1 1 auto;
+}
+@media (max-width: 1100px) {
+  .compare {
+    grid-template-columns: 1fr;
+  }
+}

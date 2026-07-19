@@ -1,35 +1,27 @@
 ---
-/* The shared page shell: head, sidebar mount, content column, pager mount.
-   The sidebar, pager, code wrapping, DRAFT badge, and annotation layer are
-   still rendered at runtime by assets/nav.js (unchanged from the pre-Astro
-   guide) so Phase 1 produces byte-equivalent pages; they move to build time
-   in a later phase. `root` is the relative path back to the site root:
-   '.' for index, '..' for section pages. */
 import '../styles/tailwind.css';
 
 const { title, root = '..', cover = false } = Astro.props;
-/* '' for the index, '../' for section pages, matching the original pages'
-   relative URLs exactly. */
+/* '' for the index, '../' for section pages, matching the original pages' relative URLs exactly. */
 const prefix = root === '.' ? '' : `${root}/`;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang='en'>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
     <title>{title}</title>
-    <link rel="stylesheet" href={`${prefix}assets/style.css`} />
-    <link rel="icon" href={`${prefix}assets/logomark.svg`} type="image/svg+xml" />
+    <link rel='stylesheet' href={`${prefix}assets/style.css`} />
+    <link rel='icon' href={`${prefix}assets/logomark.svg`} type='image/svg+xml' />
   </head>
   <body>
-    <div class="shell">
-      <nav class="sidebar" id="sidebar"></nav>
-      <main class="content">
+    <div class='shell'>
+      <nav class='sidebar' id='sidebar'></nav>
+      <main class='content'>
         <div class={cover ? 'content-inner cover' : 'content-inner'}>
           <slot />
-
-          {!cover && <div id="pager"></div>}
+          {!cover && <div id='pager' />}
         </div>
       </main>
     </div>
