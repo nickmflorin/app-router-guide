@@ -1064,7 +1064,7 @@
       "id": "nmrsc4nb8",
       "page": "11-designing-for-the-unknown.html",
       "ts": "2026-07-19T21:55:58.340Z",
-      "status": "open",
+      "status": "resolved",
       "text": "it would be great if we could find a real quote out there somewhere that kind of hammers home the point that UX and design have technical elements to them always, and that as engineers we have to understand parts of UI/UX as well - we can't just take what the designers say as the bible and we have to be able to communicate back and forth about parts of design that require technical understanding.  Please confirm with me when you find some quotes so I can choose.  It could go a a callout underneath the desecription here but above 11.1",
       "target": {
         "anchor": null,
@@ -1073,7 +1073,9 @@
         ],
         "tag": "p",
         "snippet": "Everything in §9 and §10 assumed the layout can be contained. That is not an engineering g"
-      }
+      },
+      "resolution": "Quote candidates researched (Jobs/NYT 2003, Eames Design Q&A 1972, Spool \"Design is a Team Sport\", Douglas Martin 1989); per your pick, the Jobs quote now anchors a voice callout under the lede, above 11.1: the full veneer passage (dash normalized to a comma per the no-em-dash rule) with attribution, followed by the cuts-both-ways framing: if design is how it works, design has technical elements and engineering is obligated to be part of designing it.",
+      "resolvedAt": "2026-07-19"
     },
     {
       "id": "nmrsc93m2",
