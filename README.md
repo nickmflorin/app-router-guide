@@ -86,7 +86,6 @@ twins, which `build_md.py` warns about on stderr).
 
 The complete list is in `PROJECT.md`; the ones that bite fastest:
 
-- No em dashes anywhere, ever. The team's app repo is always called "Tracker" in guide content.
 - Every code snippet lives in a `<Snippet>`; whole-snippet commentary goes in `<CodeCaption>`, not
   code comments. Verdict-bearing snippets carry `v-good`, `v-bad`, or `v-warn` on the `pre`.
 - One exported component per example file; no blank line after `"use client"` / `"use server"`.
