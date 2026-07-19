@@ -215,14 +215,7 @@ import CompareCol from '../../components/CompareCol.astro';
   </svg>
 
 <pre slot="mermaid" is:raw>
-%%{init: {"theme": "base",
-  "themeCSS": ".flowchart-link{stroke-width:1.5px;} .marker{transform:scale(0.7);transform-box:fill-box;transform-origin:center;}",
-  "flowchart": {"nodeSpacing": 26, "rankSpacing": 34, "padding": 12},
-  "themeVariables": {
-  "fontFamily": "Inter, system-ui, sans-serif", "fontSize": "13px",
-  "lineColor": "#737373", "edgeLabelBackground": "#ffffff",
-  "primaryColor": "#eaf3fe", "primaryBorderColor": "#0070f3", "primaryTextColor": "#0757ba",
-  "clusterBkg": "#fafafa", "clusterBorder": "#eaeaea"}}}%%
+%%{init: {"flowchart": {"rankSpacing": 34}}}%%
 flowchart LR
   B("Browser"):::neutral
   subgraph S["Server"]
@@ -476,14 +469,7 @@ One request. The server resolves everything knowable, streams structure immediat
   </svg>
 
 <pre slot="mermaid" is:raw>
-%%{init: {"theme": "base",
-  "themeCSS": ".flowchart-link{stroke-width:1.5px;} .marker{transform:scale(0.7);transform-box:fill-box;transform-origin:center;}",
-  "flowchart": {"nodeSpacing": 26, "rankSpacing": 18, "padding": 12},
-  "themeVariables": {
-  "fontFamily": "Inter, system-ui, sans-serif", "fontSize": "13px",
-  "lineColor": "#737373", "edgeLabelBackground": "#ffffff",
-  "primaryColor": "#eaf3fe", "primaryBorderColor": "#0070f3", "primaryTextColor": "#0757ba",
-  "clusterBkg": "#ffffff", "clusterBorder": "#e0e0e0"}}}%%
+%%{init: {"flowchart": {"rankSpacing": 14}}}%%
 flowchart TB
   subgraph SPA["SPA-style page (client-fetch chain)"]
     direction LR
@@ -493,7 +479,7 @@ flowchart TB
     A4 --> A5("fetch page data"):::amber
     A5 --> A6("content visible: T₅"):::green
   end
-  N1("T₅: five serialized steps · spinners at each step · layout shifts as each lands · repeats on every navigation"):::rednote
+  N1("T₅: five serialized steps · spinners at each step<br/>layout shifts as each lands · repeats on every navigation"):::caption
   subgraph SF["Server-first page (same data)"]
     direction LR
     B1("server: fetch in parallel + render"):::blue
@@ -511,7 +497,7 @@ flowchart TB
   classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
   classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
   classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
-  classDef rednote fill:none,stroke:none,color:#b0483e
+  classDef caption fill:none,stroke:none,color:#666666,font-size:12px
 </pre>
 
 <Fragment slot="caption">

@@ -105,15 +105,18 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 - 2026-07-19: **Mermaid twins (pilot, per Nick).** Every Diagram may carry a `mermaid` slot
   (<pre slot="mermaid" is:raw> next to the SVG); Diagram.astro hides it in a <template
   data-mermaid> (invisible in HTML), build_md.py extracts it as a ```mermaid fence + caption
-  blockquote. STYLE RULES for twins: guide palette via init themeVariables (blue #eaf3fe/#0070f3,
-  green #e7f5ee/#2ea06d, amber #fdf3e3/#b45309 + stroke-dasharray for suspended/unknown, cyan
-  #e0f5f9/#0891b2, neutral white; Inter 13px); NO box shadows ever; minimize dead white space:
-  set "flowchart": {"nodeSpacing": ~26, "rankSpacing": 18-34, "padding": 12} in init, prefer
-  single-line labels over <br/> when width allows. Node shape is ROUNDED: use ("label") not
-  ["label"] (matches the HTML border radii); themeCSS shrinks arrowheads + thins links
-  (".flowchart-link{stroke-width:1.5px;} .marker{transform:scale(0.7);...}"; caret-style heads
-  are not achievable in mermaid, scaled triangles are the closest). Renderers that strip
-  themeCSS (some hosts) fall back to default arrows: acceptable. Keep the twin in sync when an SVG changes.
+  blockquote. STYLE RULES for twins: build_md.py PREPENDS a standard init to every twin (MERMAID_INIT
+  constant: guide palette themeVariables, Inter 13px, thin links, scaled-down arrowheads,
+  .cluster rect{rx:8px;ry:8px;} so EVERYTHING has small border radii, default spacing
+  nodeSpacing 26/rankSpacing 30/padding 12). Authored twins contain ONLY the body plus an
+  optional second init for per-diagram flowchart spacing (mermaid merges consecutive
+  directives). Node shape is ROUNDED: ("label") not ["label"]. NO box shadows ever. Minimize
+  dead white space; prefer single-line labels, but break long annotation labels with <br/>
+  BEFORE they clip (mermaid measures with its fallback font and clips overlong html labels).
+  Annotations that caption a lane/diagram use classDef caption
+  fill:none,stroke:none,color:#666666,font-size:12px, placed adjacent to what they describe.
+  Caret-style arrowheads are not achievable; scaled triangles are the closest. Renderers that
+  strip themeCSS fall back to default arrows/square clusters: acceptable. Keep the twin in sync when an SVG changes.
   Chapter 3 done as pilot; remaining 38 diagrams pending Nick's go.
 - 2026-07-18: **Sidebar search added.** `scripts/build_search_index.py` (now part of `npm run
   build`, after relativize) parses built pages into build/output/app-router-guide_html/assets/search-index.js

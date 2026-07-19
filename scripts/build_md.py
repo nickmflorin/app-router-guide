@@ -104,6 +104,24 @@ def parse(fragment):
 
 
 # ---------------- conversion ----------------
+# Standard theming injected in front of EVERY mermaid twin, so palette, fonts,
+# rounded corners (nodes AND clusters), thin links, and small arrowheads are
+# uniform across all diagrams. Authored twins carry only their body plus an
+# optional second init with per-diagram flowchart spacing (mermaid merges
+# consecutive init directives).
+MERMAID_INIT = (
+    '%%{init: {"theme": "base",\n'
+    '  "themeCSS": ".flowchart-link{stroke-width:1.5px;} '
+    '.marker{transform:scale(0.7);transform-box:fill-box;transform-origin:center;} '
+    '.cluster rect{rx:8px;ry:8px;}",\n'
+    '  "flowchart": {"nodeSpacing": 26, "rankSpacing": 30, "padding": 12},\n'
+    '  "themeVariables": {\n'
+    '  "fontFamily": "Inter, system-ui, sans-serif", "fontSize": "13px",\n'
+    '  "lineColor": "#737373", "edgeLabelBackground": "#ffffff",\n'
+    '  "primaryColor": "#eaf3fe", "primaryBorderColor": "#0070f3", "primaryTextColor": "#0757ba",\n'
+    '  "clusterBkg": "#ffffff", "clusterBorder": "#e0e0e0"}}}%%'
+)
+
 SP = re.compile(r"\s+")
 
 
@@ -293,7 +311,7 @@ class Converter:
             elif c.tag == "template" and "data-mermaid" in c.attrs:
                 mermaid = self.raw_text(c).strip("\n").strip()
         if mermaid:
-            out = f"```mermaid\n{mermaid}\n```"
+            out = f"```mermaid\n{MERMAID_INIT}\n{mermaid}\n```"
             if cap_md:
                 out += f"\n\n> {cap_md}"
             return out
