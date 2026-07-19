@@ -1233,7 +1233,7 @@ flowchart LR
     <strong>dependent query chains</strong> (<code>useQuery</code>/<code>useSWR</code> hooks gated on
     each other's results - profile → organization id → dashboard data, each hop serialized after hydration),
     and <strong>fetch-after-mount cascades</strong>, where a component fetches, renders children,
-    and the children then begin <em>their</em> fetches. Our audit found 53 <code>enabled:</code
+    and the children then begin <em>their</em> fetches. The audit found 53 <code>enabled:</code
     >-gated dependent queries in one app - 53 serialized round trips that a server component tree
     would have resolved in one pass.
     <Chip k='react' />

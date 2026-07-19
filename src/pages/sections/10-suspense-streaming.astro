@@ -14,8 +14,7 @@ import Snippet from '../../components/Snippet.astro';
   <div class='kicker'>Chapter 10 · Part B: Contain the Unknown</div>
   <h1>Suspense &amp; Streaming</h1>
   <p class='lede'>
-    Loading is not a component concern. It's a structural one. Suspense moves "what shows while we
-    wait" out of components and into the tree, where the framework can stream around it. This
+    Loading is not a component concern. It's a structural one. Suspense moves "what shows while the page waits" out of components and into the tree, where the framework can stream around it. This
     chapter covers how suspension works, what triggers it, and the loading-state doctrine that
     follows from it.
   </p>
@@ -276,7 +275,7 @@ flowchart LR
     Just as important is what does <em>not</em> trigger suspension:
     <strong>a fetch inside <code>useEffect</code> is invisible to React.</strong> Nothing suspends, no
     boundary activates, no streaming happens; the framework doesn't even know the component is waiting.
-    Every hand-rolled <code>isLoading</code> flag in our codebases exists because the fetching pattern
+    Every hand-rolled <code>isLoading</code> flag in a codebase exists because the fetching pattern
     opted out of the mechanism that would have made it unnecessary.
   </p>
   <Callout kind='info' title="Boundaries don't re-trigger on updates">
@@ -419,7 +418,7 @@ flowchart LR
     <li>
       <strong><code>loading.tsx</code> is a route-level Suspense boundary</strong> the framework wires
       up for you: it wraps the page and shows instantly on navigation. Use it for the route transition,
-      but treat it as the coarsest tool: a whole-page skeleton is exactly the page-level skeleton we avoid
+      but treat it as the coarsest tool: a whole-page skeleton is exactly the page-level skeleton to avoid
       (<a href='#skeletons'>§10.4</a>). Prefer a
       <code>loading.tsx</code> that renders the page's known scaffold, with granular boundaries inside
       the page doing the real work.

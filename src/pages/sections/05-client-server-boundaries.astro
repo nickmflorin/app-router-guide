@@ -620,7 +620,7 @@ flowchart TB
   </Diagram>
 
   <p>
-    This is also why <strong>no <code>"use client"</code> in the app directory</strong> is our house recommendation.
+    This is also why <strong>no <code>"use client"</code> in the app directory</strong> is the house recommendation.
     <Chip k='next' />
     <Chip k='very' /> The app directory is the scaffold: pages, layouts, structure, core content (<a
       href='03-mental-model.html'>§3</a
@@ -776,8 +776,7 @@ flowchart TB
     Design-system components: ship the structure and the leaves separately
   </h3>
   <p>
-    Everything this chapter says about applications applies with extra force to our
-    <strong>monorepo UI library</strong>, because a library component's boundary decision is made
+    Everything this chapter says about applications applies with extra force to the <strong>monorepo UI library</strong>, because a library component's boundary decision is made
     once and inherited by every consumer. The rule:
     <strong
       >a library component with interactive parts exposes its non-interactive structure and its
@@ -945,7 +944,7 @@ flowchart TB
           is:raw><span class="filename">ui/Select.tsx, then ProgramPicker.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">export</span> { <span class="tok-kw">default as</span> Select } <span class="tok-kw">from</span> <span class="tok-str">"react-select"</span>;</pre>
         <CodeCaption>
-          The third-party component is internalized once, behind our own client file: this wrapper
+          The third-party component is internalized once, behind one internal client file: this wrapper
           is the leaf, and nothing else needs the directive.
         </CodeCaption>
       </Snippet>
@@ -1267,7 +1266,7 @@ flowchart TB
     This is genuinely better than drilling an <code>onSuccess</code> callback through three layers: the
     intermediate components stay clean. But look at what it presumes:
     <em>someone above is fetching in client land</em>, or there would be no refetch to offer. The
-    provider and the query pull the boundary back up the tree, and we're client-rendering a region
+    provider and the query pull the boundary back up the tree, client-rendering a region
     to solve a problem the platform already solves. Acceptable inside a genuinely client island (see
     the SWR variant below); the wrong default for a page.
   </p>
@@ -1596,7 +1595,7 @@ flowchart LR
 
   <h2 id='god-components'>5.9 The God component: one boundary to lose everything</h2>
   <p>
-    Now invert every rule in this chapter at once, because our codebase does. Put a
+    Now invert every rule in this chapter at once, because the Tracker codebase does. Put a
     <code>"use client"</code> component (or its more respectable-looking cousins, a provider or a <code
       >useXManager()</code
     > hook) at the top of a tree, and have it do three jobs:
@@ -2371,7 +2370,7 @@ flowchart LR
     and React 19 and Next.js have quietly rebuilt the entire form pipeline around that idea. The
     pieces are the <code>action</code> prop, <code>useActionState</code>,
     <code>useFormStatus</code>, and Next's <code>&lt;Form&gt;</code> component; each one deletes a piece
-    of the form code we used to write by hand.
+    of the form code that used to be written by hand.
   </p>
   <p>
     Start with the <code>action</code> prop.

@@ -497,7 +497,7 @@ flowchart LR
       >): header and toolbars sized by content, the content region growing (<code>grow</code>) with
       <code>overflow-y: auto</code>. The page as a whole <em>never changes height</em>; tables can
       grow, filters can change the row count, and all of it happens inside a scroll area whose outer
-      box is fixed. This is the default posture for every list/table page we build. <Chip
+      box is fixed. This is the default posture for every list/table page in the app. <Chip
         k='react'
       />
       <Chip k='very' />
@@ -695,7 +695,7 @@ flowchart LR
   </Diagram>
 
   <p>
-    Two more shift sources worth closing while we're here. <strong>Fonts</strong>: a late-swapping
+    Two more shift sources worth closing here. <strong>Fonts</strong>: a late-swapping
     webfont reflows every line of text; <code>next/font</code> preloads and applies size-adjusted fallbacks
     so text renders in its final metrics from the start
     <Chip k='next' />

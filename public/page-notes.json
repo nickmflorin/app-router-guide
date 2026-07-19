@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-19T22:24:04.873Z",
+  "updatedAt": "2026-07-19T23:13:06.802Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -1074,8 +1074,7 @@
         "tag": "p",
         "snippet": "Everything in §9 and §10 assumed the layout can be contained. That is not an engineering g"
       },
-      "resolution": "Quote candidates researched (Jobs/NYT 2003, Eames Design Q&A 1972, Spool \"Design is a Team Sport\", Douglas Martin 1989); per your pick, the Jobs quote now anchors a voice callout under the lede, above 11.1: the full veneer passage (dash normalized to a comma per the no-em-dash rule) with attribution, followed by the cuts-both-ways framing: if design is how it works, design has technical elements and engineering is obligated to be part of designing it.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "Quote candidates researched (Jobs/NYT 2003, Eames Design Q&A 1972, Spool \"Design is a Team Sport\", Douglas Martin 1989); per your pick, the Jobs quote now anchors a voice callout under the lede, above 11.1: the full veneer passage (dash normalized to a comma per the no-em-dash rule) with attribution, followed by the cuts-both-ways framing: if design is how it works, design has technical elements and engineering is obligated to be part of designing it."
     },
     {
       "id": "nmrsc93m2",
@@ -1091,8 +1090,7 @@
         "tag": "figure",
         "snippet": "The partitioned resolution: panes are fixed by design; content changes inside them Assignm"
       },
-      "resolution": "Recolored and reframed: title is now amber (\"The partitioned compromise: stable by construction, but still not the ideal composition\"), the loaded rows are neutral blue instead of green, the bottom label reads \"stable, but still a compromise\", the mermaid twin's result node is amber, and the caption states outright that this is the better choice among survivable ones, not a good outcome: the real resolution is layouts/navigation/pages that communicate the information without stacked unbounded regions.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "Recolored and reframed: title is now amber (\"The partitioned compromise: stable by construction, but still not the ideal composition\"), the loaded rows are neutral blue instead of green, the bottom label reads \"stable, but still a compromise\", the mermaid twin's result node is amber, and the caption states outright that this is the better choice among survivable ones, not a good outcome: the real resolution is layouts/navigation/pages that communicate the information without stacked unbounded regions."
     },
     {
       "id": "nmrscbc00",
@@ -1108,8 +1106,7 @@
         "tag": "figure",
         "snippet": "app/programs/[id]/ ├── layout.tsx ├── @header/ │ └── H page.tsx ├── @summary/ │ └── S page"
       },
-      "resolution": "File tree reworked: hockey sticks only (no vertical bars or tee glyphs anywhere), nested page.tsx glyphs indented under their slot, and the vertical rhythm normalized: sibling text rows 22px apart (layout.tsx/@header/ much closer), pill rows follow the @summary-to-page.tsx spacing.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "File tree reworked: hockey sticks only (no vertical bars or tee glyphs anywhere), nested page.tsx glyphs indented under their slot, and the vertical rhythm normalized: sibling text rows 22px apart (layout.tsx/@header/ much closer), pill rows follow the @summary-to-page.tsx spacing."
     },
     {
       "id": "nmrscdm2t",
@@ -1125,8 +1122,7 @@
         "tag": "p",
         "snippet": "When to reach for a slot instead of a plain component: when the region deserves route-leve"
       },
-      "resolution": "Full-document sweep: one occurrence found (\"Nick's canonical example\" in §12.3), now \"A canonical example\". Verification gate now also greps the built output for the name.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "Full-document sweep: one occurrence found (\"Nick's canonical example\" in §12.3), now \"A canonical example\". Verification gate now also greps the built output for the name."
     },
     {
       "id": "nmrscephj",
@@ -1142,8 +1138,7 @@
         "tag": "h2",
         "snippet": "12.3 Parallel routes: independence with a file address"
       },
-      "resolution": "New §12.3 subsection \"Nested routes inside a slot\" (per the Next.js parallel-routes file-convention docs): slots can hold full nested route trees; soft navigation re-renders only the matching slot while every other slot keeps its active state; hard navigation renders default.tsx in unmatched slots (missing default = 404). Includes a two-browser-state diagram modeled on the docs' subnavigation example (recent vs archived in @summary) with a mermaid twin, and ties the sub-view URL to §8.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "New §12.3 subsection \"Nested routes inside a slot\" (per the Next.js parallel-routes file-convention docs): slots can hold full nested route trees; soft navigation re-renders only the matching slot while every other slot keeps its active state; hard navigation renders default.tsx in unmatched slots (missing default = 404). Includes a two-browser-state diagram modeled on the docs' subnavigation example (recent vs archived in @summary) with a mermaid twin, and ties the sub-view URL to §8."
     },
     {
       "id": "nmrscgqp1",
@@ -1159,8 +1154,7 @@
         "tag": "table",
         "snippet": "Rule Scope Importance Await where the data is used - the blocking scope of a request is ex"
       },
-      "resolution": "The default.tsx rule now reads \"Parallel routes: every slot defines default.tsx - a hard navigation to a URL the slot doesn't match must not 404 the route.\" The other slot rule already names parallel-route slots.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "The default.tsx rule now reads \"Parallel routes: every slot defines default.tsx - a hard navigation to a URL the slot doesn't match must not 404 the route.\" The other slot rule already names parallel-route slots."
     },
     {
       "id": "nmrsci0qs",
@@ -1176,8 +1170,7 @@
         "tag": "h2",
         "snippet": "12.4 The client has waterfalls too"
       },
-      "resolution": "New §12.4 subsection \"When CSR runs deep: the tree serializes the network\": depth becomes serialization because unmounted components can't fetch; the TypeScript dilemma (gate the top and everything waits, or thread undefined down and smear ten render-checks with ten fallbacks across the region), both existing only because data might not be there yet (ties to §4.2 unaskable questions); a v-bad gated ProgramSection vs v-good parallel re-keyed version with honest residual-cost caption; a serial-by-structure vs parallel-by-design timeline diagram with twin; closing rule: when CSR is required the data flow must never be serial - fetch more upstream, re-key to what is known, or move the chain to the server.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "New §12.4 subsection \"When CSR runs deep: the tree serializes the network\": depth becomes serialization because unmounted components can't fetch; the TypeScript dilemma (gate the top and everything waits, or thread undefined down and smear ten render-checks with ten fallbacks across the region), both existing only because data might not be there yet (ties to §4.2 unaskable questions); a v-bad gated ProgramSection vs v-good parallel re-keyed version with honest residual-cost caption; a serial-by-structure vs parallel-by-design timeline diagram with twin; closing rule: when CSR is required the data flow must never be serial - fetch more upstream, re-key to what is known, or move the chain to the server."
     },
     {
       "id": "nmrscnhza",
@@ -1198,7 +1191,7 @@
       "id": "nmrscoy0w",
       "page": "01-introduction.html",
       "ts": "2026-07-19T22:11:45.344Z",
-      "status": "open",
+      "status": "resolved",
       "text": "I want to treat the use effect and use client separately.  So first it should say if you treat use effect as bad you start stretching the brain msucles to avoid it and you start getting better at react, learning the design patterns.  And then after that the use client one should be separate, saying you get good at react 19 and app router as you stretch those brain muscles and the design patterns naturally emrege.",
       "target": {
         "anchor": "what-this-is",
@@ -1208,6 +1201,55 @@
         ],
         "tag": "p",
         "snippet": "Here is the mindset that makes all of this click. If you treat every type coercion as the "
+      },
+      "resolution": "The mindset callout is now three paragraphs: the TypeScript coercion model, then useEffect on its own (wince at every effect, stretch the muscles that find another way, and you get better at React itself as its design patterns surface), then \"use client\" separately (avoid it like the plague and the server-first paths and React 19 / App Router patterns emerge naturally through the trial and error of avoidance).",
+      "resolvedAt": "2026-07-19"
+    },
+    {
+      "id": "nmrseqjch",
+      "page": "14-dedupe-caching.html",
+      "ts": "2026-07-19T23:08:58.865Z",
+      "status": "open",
+      "text": "Lets change this section to be less havy on the \"SWR not TanStack\" and more on the \"SWR vs. TanStack\" with an emphasis on SWR due to its ability to seamlessly integrate with NextJS questions.  However it should be clear that tanstack is also 100% great, just that it should not be used as the primary data fetching means because that should be focused more on the server with CSR reserved for cases where SSR is not possible (i.e. data that needs to be fetched after an interaction)",
+      "target": {
+        "anchor": "swr-vs-query",
+        "path": [
+          31
+        ],
+        "tag": "p",
+        "snippet": "The honest comparison first, because TanStack Query is an excellent library and the more p"
+      }
+    },
+    {
+      "id": "nmrseshkr",
+      "page": "17-applied-to-tracker.html",
+      "ts": "2026-07-19T23:10:29.883Z",
+      "status": "resolved",
+      "text": "I want to try to avoid language like \"we\" or \"I\" throughout this entire guide.  It should be more from the point of view of the fact that the repo was audited to evaluate its alignment with App Router conventions and design patterns blah blah.  I'm not sure how to say it formally but things like I, me, we, our, etc. should be limited if we can across the board",
+      "target": {
+        "anchor": null,
+        "path": [
+          3
+        ],
+        "tag": "h2",
+        "snippet": "17.1 Why we audited our own code"
+      },
+      "resolution": "Guide-wide first-person sweep: ~40 organizational uses of we/our/us removed across 16 pages (the audit chapter now reads \"Why the codebase was audited\" / \"the repo's actual usage\" / \"The apps are SPAs...\"; \"our codebase\" is now \"the Tracker codebase\"; \"our house recommendation\" is \"the house recommendation\"; index TOC blurbs depersonalized, etc.). Kept: quoted developer inner monologue (\"how do I get data into my components?\"), the Jobs quote, and didactic universal \"we\" in questions like \"do we have data?\" where impersonal phrasing would flatten the prose. §1 intentionally still first-person pending your call (asked in chat).",
+      "resolvedAt": "2026-07-19"
+    },
+    {
+      "id": "nmrseuop5",
+      "page": "14-dedupe-caching.html",
+      "ts": "2026-07-19T23:12:12.425Z",
+      "status": "open",
+      "text": "please actually do some research here and let me know what you find - if it is the case that SWR is fundamentlaly better suited for NextJS I think we should state that.  But if they're close, then it's more of a tie breaker just going to SWR mildly due to the designer being vercel and its design was intended for next.  Please do some research whn you see this note and ask me about it before changing anything.",
+      "target": {
+        "anchor": "swr-vs-query",
+        "path": [
+          33
+        ],
+        "tag": "p",
+        "snippet": "The tiebreaker is alignment. SWR is built and maintained by Vercel, the same team that shi"
       }
     }
   ]

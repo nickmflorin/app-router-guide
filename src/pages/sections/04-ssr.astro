@@ -15,7 +15,7 @@ import Snippet from '../../components/Snippet.astro';
   <p class='lede'>
     Part A is about maximizing the known, and server-side rendering is the machine that makes the
     known possible at all. This chapter is the why behind every technique that follows: what SSR is,
-    what it buys us, how it changes what "fast" means, and how routing actually moves content around
+    what it buys, how it changes what "fast" means, and how routing actually moves content around
     once the server is doing the rendering.
   </p>
 
@@ -104,7 +104,7 @@ import Snippet from '../../components/Snippet.astro';
   </table>
   <p>
     Those are real, and they're the ones you'll see cited everywhere. But two benefits matter more
-    to this guide than all of the above, because they are the ones our traditional habits give away
+    to this guide than all of the above, because they are the ones traditional React habits give away
     first: <strong>stability</strong> and
     <strong>simplicity</strong>.
   </p>
@@ -154,7 +154,7 @@ import Snippet from '../../components/Snippet.astro';
     requests serialize down the tree (render → mount → effect → fetch → children mount → <em
       >their</em
     > fetch…), and each layer of the DOM grows its own loading state while it waits on the layer above.
-    The visible result is the most recognizable symptom in our own codebase: <strong
+    The visible result is the most recognizable symptom in the Tracker codebase: <strong
       >spinners rendered inside spinners</strong
     >, loading UI at three depths of the same page, each replaced at a different moment as its
     request lands.
@@ -327,8 +327,7 @@ flowchart LR
       effect and ship it. The moment the bar becomes an application that looks and feels
       professional (loads in a predictable sequence, holds still, handles every error and loading
       state cleanly), the client-side version of that is not simpler. It is dramatically more
-      complex, and past a certain surface area it stops being achievable at all. We are not building
-      a demo with a handful of forgiving users; things shouldn't flash and shift around, and loading
+      complex, and past a certain surface area it stops being achievable at all. Tracker is not a demo with a handful of forgiving users; things shouldn't flash and shift around, and loading
       should be something the user can predict and understand. That is the bar, and server-first is
       the cheaper way to clear it.
     </p>
@@ -573,7 +572,7 @@ flowchart LR
     and out while regions shift around as each response lands just looks terrible: busy,
     unprofessional, and, crucially, <em>slower</em>, even when the wall-clock time is identical.
     Every spinner and every reflow gives the user a blatant look into the intermediate machinery:
-    here is what we have not fetched yet, here is the empty space we are holding with fallback
+    here is what has not been fetched yet, here is the empty space being held with fallback
     content, here is everything arriving one request at a time, in whatever order the network chose.
     The user is made to watch the kitchen.
   </p>
@@ -616,7 +615,7 @@ flowchart LR
     paint
     <em>and</em> it becomes eligible to be rendered once and served to everyone. Maximizing the known
     isn't just making one request faster; it's making the page progressively cheaper to serve at all.
-    This is also the trap the audit found us in: a client-rendered tree opts out of the entire caching
+    This is also the trap the audit found Tracker in: a client-rendered tree opts out of the entire caching
     layer silently, page by page, with no error to tell you what you gave up.
   </p>
 

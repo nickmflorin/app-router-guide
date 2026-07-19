@@ -85,14 +85,26 @@ import CompareCol from '../../components/CompareCol.astro';
   </p>
   <Callout kind='voice' title='A useful way to hold it'>
     <p>
-      Here is the mindset that makes all of this click. If you treat every type coercion as the
-      worst thing in the world, an error to be hunted down and never tolerated, you will become very
-      good at TypeScript. In exactly the same way: if you treat every
-      <code>"use client"</code> and every <code>useEffect</code> as something that should make you wince
-      a little every time you write it, a cost to be justified rather than a tool to reach for, you will
-      become very good at the App Router, if only through the trial and error of avoiding them. Treat
-      them like a smell you actively steer away from, and the design patterns in this guide start appearing
-      on their own. I am mostly just trying to save you the months it took me to notice them.
+      Here is the mindset that makes all of this click, and it comes in two steps. The model is
+      TypeScript: if you treat every type coercion as the worst thing in the world, an error to be
+      hunted down and never tolerated, you will become very good at TypeScript.
+    </p>
+    <p>
+      Apply that first to <code>useEffect</code>. Treat every effect as something that should make
+      you wince, a cost to be justified rather than a tool to reach for, and you are forced to
+      stretch the muscles that find another way: derive it during render, move it into the event
+      handler, ask the server. That stretching is what makes you better at <em>React itself</em>;
+      the library's own design patterns start surfacing on their own, and the docs' "you might not
+      need an effect" guidance stops reading like advice and starts reading like the obvious move.
+    </p>
+    <p>
+      Then apply the same treatment to <code>"use client"</code>. Treat every directive as a small
+      defeat, avoid it like the plague, and the brain starts down the server-first paths instead:
+      pushing the boundary lower, splitting along capability seams, asking why the server can't
+      finish this. Stretch those muscles long enough and the design patterns of React 19 and the App
+      Router emerge naturally, through nothing more than the trial and error of avoidance. They are
+      the same patterns this guide hands you up front, to save you the months it takes to notice
+      them.
     </p>
   </Callout>
   <p>

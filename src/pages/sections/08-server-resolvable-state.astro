@@ -36,7 +36,7 @@ import Snippet from '../../components/Snippet.astro';
     Watch what happens when a filtered table keeps its filter in <code>useState</code>. The server
     renders the page with… which rows? It doesn't know the filter: the state won't exist until a
     client component mounts and initializes it. So the table can't be server-rendered with real
-    content; it becomes a client component that fetches after hydration, and we've bought the entire
+    content; it becomes a client component that fetches after hydration, and that buys the entire
     Part B problem set (spinners, shifting, waterfalls; <a href='04-ssr.html#simplicity'>§4.2</a>)
     for a filter that would have fit in twelve characters of query string. Move the same state into
     the URL and the request
@@ -225,7 +225,7 @@ flowchart LR
 
   <h2 id='tabs'>8.3 Tabs are routes in disguise</h2>
   <p>
-    The clearest instance of the whole principle, and the smell we most need to unlearn, is
+    The clearest instance of the whole principle, and the instinct most worth unlearning, is
     <strong>tabs held in <code>useState</code></strong>. A tab bar is a set of views with
     identities. "Which view am I looking at?" is precisely the kind of state the URL exists to
     answer, and holding it in memory forfeits everything at once: the link can't say which tab it
@@ -489,7 +489,7 @@ flowchart LR
     <strong>Would the user expect it back after a refresh, or want it in a shared link?</strong>
     Then it's the URL (view) or a cookie (preference).
     <strong>Does the server need it to render real content?</strong> Then it must be server-resolvable,
-    full stop. Content the server can't finish is Part B's territory, and we only go there deliberately.
+    full stop. Content the server can't finish is Part B's territory, entered only deliberately.
     If both answers are no, it's interaction state: keep it in the leaf, in memory, where it costs nothing.
   </p>
 

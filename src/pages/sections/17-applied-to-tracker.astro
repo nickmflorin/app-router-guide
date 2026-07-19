@@ -17,16 +17,15 @@ import CompareCol from '../../components/CompareCol.astro';
     lives.
   </p>
 
-  <h2 id='why'>17.1 Why we audited our own code</h2>
+  <h2 id='why'>17.1 Why the codebase was audited</h2>
   <p>
-    The audit exists to answer one question: how far does our actual usage of the App Router diverge
+    The audit exists to answer one question: how far the repo's actual usage of the App Router diverges
     from the model React 19 and the App Router require in order to work well? Not the model this
     guide prefers; the model the platform is built on. Deviating from it does not produce a
     different-but-valid architecture, it produces an application the framework cannot help: no
     streaming, no caching, no stability, with the costs compounding page by page (<a
       href='01-introduction.html#direction'>§1</a
-    >). Before asking the team to adopt server-first patterns, we needed a specific, cited picture
-    of where we stand today, so that the guide's recommendations map to real code rather than
+    >). Before asking the team to adopt server-first patterns, the audit had to produce a specific, cited picture of where the codebase stands today, so that the guide's recommendations map to real code rather than
     hypotheticals, and so the fixes can be prioritized by impact instead of by vibes. Every finding
     below points at concrete files; every fix points back at the chapter that covers the pattern.
   </p>
@@ -46,7 +45,7 @@ import CompareCol from '../../components/CompareCol.astro';
 
   <h2 id='verdict'>17.2 The verdict</h2>
   <p>
-    <strong>Our apps are SPAs wearing an App Router costume.</strong> The Next server is used almost exclusively
+    <strong>The apps are SPAs wearing an App Router costume.</strong> The Next server is used almost exclusively
     to serve an empty shell and proxy API calls; nearly all data fetching, authorization, and loading-state
     management happens client-side, after hydration. In the vocabulary of <a href='02-goals.html'
       >§2</a
@@ -286,7 +285,7 @@ flowchart TB
   </Diagram>
 
   <p>
-    Importantly, none of this is imposed by our infrastructure. The proxy's cookie-to-Bearer logic
+    Importantly, none of this is imposed by the infrastructure. The proxy's cookie-to-Bearer logic
     works identically inside a server component, and one app in the repo already reads the profile
     API directly from an async server page with the same auth setup. The client-fetch architecture
     is <strong>a choice, not a constraint</strong>, which is exactly why it is fixable.

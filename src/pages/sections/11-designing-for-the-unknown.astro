@@ -13,7 +13,7 @@ import Diagram from '../../components/Diagram.astro';
     Everything in <a href='09-containers-content-shifting.html'>§9</a> and
     <a href='10-suspense-streaming.html'>§10</a> assumed the layout <em>can</em> be contained. That is
     not an engineering given; it is decided earlier, in design. Some layouts are containable and some
-    fight containment no matter how carefully we implement them, which makes stability a cross-team goal:
+    fight containment no matter how carefully they are implemented, which makes stability a cross-team goal:
     engineering, UX, and design deciding together what the page does while the data is still unknown.
   </p>
 
@@ -41,7 +41,7 @@ import Diagram from '../../components/Diagram.astro';
     Cumulative Layout Shift is the engineering measurement of a goal that is fundamentally shared: <strong
       >the page must not move under the user.</strong
     > Nothing they are reading jumps, nothing they are about to click dodges, nothing "settles" in three
-    visible steps. The metric lives in our world, but its causes mostly do not: they live in composition
+    visible steps. The metric lives in engineering's world, but its causes mostly do not: they live in composition
     decisions (what shares an axis with what, what gets how much space, what the page shows before the
     data) that are made in design, before any code exists. A goal whose measurement belongs to one team
     and whose causes belong to another cannot be owned by either alone. It has to be a standing conversation.
@@ -55,8 +55,7 @@ import Diagram from '../../components/Diagram.astro';
     <em>while the design is still a design</em>: identifying the places where a composition
     introduces content that is hard to contain, early enough that the UX can be shaped toward
     predictability instead of patched toward it. Done consistently, that pressure compounds: the
-    design system itself drifts toward layouts that are stable by default, for the screens we are
-    building now and the ones we haven't designed yet.
+    design system itself drifts toward layouts that are stable by default, for the screens being built now and the ones not yet designed.
   </p>
 
   <Callout kind='voice' title='What the channel is for'>
@@ -88,8 +87,7 @@ import Diagram from '../../components/Diagram.astro';
     rows fit it; the height was an artifact of the sample data, not a decision. What the comp never shows
     is the page
     <em>flipping between</em> those states: empty today, 1 row after the first save, 300 rows next quarter,
-    with everything below the container living or dying by which state it's in. We will never know the
-    count ahead of time; that is permanent. So the real design question is not "what does empty look like?"
+    with everything below the container living or dying by which state it's in. The count is never knowable ahead of time; that is permanent. So the real design question is not "what does empty look like?"
     but
     <strong
       >"how do all of these states swap through the same space without pushing everything else
@@ -102,7 +100,7 @@ import Diagram from '../../components/Diagram.astro';
   </p>
   <ul>
     <li>
-      <strong>"What does this region show before we know what's in it?"</strong> Not "a spinner": what
+      <strong>"What does this region show before its content is known?"</strong> Not "a spinner": what
       shape, what height, what happens to its neighbors while it waits (<a
         href='10-suspense-streaming.html#fallback-trade'>§10.2</a
       >).
@@ -150,7 +148,7 @@ import Diagram from '../../components/Diagram.astro';
     <strong>Guess 2, size each table to its content with a min-height:</strong> now the pre-data state
     reserves the min-height, but the moment the top table's 30 rows arrive it grows and
     <em>shoves the bottom table down the page</em>, possibly below the fold: the exact
-    reading-interrupting shift we exist to prevent, and it happens on every load, in front of the
+    reading-interrupting shift this whole effort exists to prevent, and it happens on every load, in front of the
     user. <strong>Guess 3, just let both tables be auto-height:</strong> no constraints at all, so the
     table bodies are never contained and never scroll; the content area around them (usually the whole
     page) becomes the scroll container instead. The shift is the same as Guess 2: whatever the top table

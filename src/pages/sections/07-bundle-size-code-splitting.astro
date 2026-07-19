@@ -33,7 +33,7 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     The good news is that the App Router splits code by route automatically: a given page ships the
     JavaScript for its own tree, not the whole app. The bad news is that this automatic splitting is
-    easy to defeat, and the rest of this chapter is a tour of the four most common ways we do it:
+    easy to defeat, and the rest of this chapter is a tour of the four most common ways it happens:
     pulling in a component so heavy it drags the page down, fusing the known and the unknown into
     one undeferrable lump, welding an always-visible trigger to the floating panel it opens, and
     importing through barrel files that quietly negate tree-shaking.
@@ -46,7 +46,7 @@ import Snippet from '../../components/Snippet.astro';
     knowable at first render: the toolbar, the title, the column headers, the footer, the pagination
     controls, the empty-state and the row skeleton are
     <strong>all known immediately</strong>. The only genuinely unknown part is the body rows,
-    because those depend on data we have to fetch.
+    because those depend on data that has to be fetched.
   </p>
   <p>
     Now reach for a wholesale data grid, an all-in-one client component like MUI's
@@ -467,9 +467,7 @@ flowchart LR
     Sometimes you genuinely need a heavy client component: a rich text editor, a charting library, a
     map, a spreadsheet grid whose interactivity you can't rebuild by hand. The rule there is not
     "never use it," it is
-    <strong>keep it out of the first-render bundle and give it a light fallback</strong>. In our own <code
-      >ojl-tracker</code
-    > work, the data-heavy tables are loaded lazily for exactly this reason: the route paints its frame
+    <strong>keep it out of the first-render bundle and give it a light fallback</strong>. In <code>ojl-tracker</code>, the data-heavy tables are loaded lazily for exactly this reason: the route paints its frame
     immediately, and the heavy grid streams in behind a skeleton rather than blocking the whole page on
     its download.
   </p>
@@ -689,7 +687,7 @@ flowchart LR
   <h2 id='cost'>7.6 What bloated pages actually cost</h2>
   <p>
     It is worth being concrete about who pays, because "big bundle" sounds abstract and the costs
-    are not. They land on the two groups we care most about: the people using the app and the people
+    are not. They land on the two groups that matter most: the people using the app and the people
     building it.
   </p>
   <table class='tbl'>
