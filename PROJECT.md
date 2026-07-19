@@ -102,6 +102,12 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   worked example: page header + data table (parallel routes, containers in layout, suspense
   placement, deferred values, flex-grow scroll, deduped queries).
 
+- 2026-07-19: **MERMAID SYNC RULE (per Nick) + full rollout: ALL 40 diagrams now have twins.**
+  THE RULE: the SVG in the Diagram is the SOURCE OF TRUTH. Whenever a diagram's SVG is
+  modified, its mermaid twin MUST be updated to match IN THE SAME EDIT. Mermaid twins are
+  NEVER edited on their own; a twin change is only ever derived from the current SVG. A new
+  Diagram is not done until its twin exists. build_md.py warns on any diagram missing a twin
+  (stderr). Rollout stats: 40 twins, 65 fences (multi-lane splits), zero placeholders left.
 - 2026-07-19: **Mermaid twins (pilot, per Nick).** Every Diagram may carry a `mermaid` slot
   (<pre slot="mermaid" is:raw> next to the SVG); Diagram.astro hides it in a <template
   data-mermaid> (invisible in HTML), build_md.py extracts it as a ```mermaid fence + caption
@@ -122,7 +128,7 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   annotations belong in the figcaption (build_md renders it as a blockquote under the fence,
   plain markdown, renders correctly everywhere). Renderer-injected chrome (VS Code preview adds
   node shadows, default spacing applies) is outside our control: acceptable; GitHub renders
-  flat. Keep the twin in sync when the SVG changes. Chapter 3 = pilot; 38 remaining.
+  flat. Keep the twin in sync when the SVG changes. ALL 40 diagrams have twins (rollout complete 2026-07-19).
   - 2026-07-18: **Sidebar search added.** `scripts/build_search_index.py` (now part of `npm run
   build`, after relativize) parses built pages into build/output/app-router-guide_html/assets/search-index.js
   (window.ARG_SEARCH_INDEX; a script tag, not fetch, so file:// works). nav.js renders a search

@@ -217,6 +217,20 @@ import CompareCol from '../../components/CompareCol.astro';
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart TB
+  Q0("You need to render UI or read some data"):::neutral
+  Q0 --> Q1{"Why can't this be on the server?<br/>the default question, asked first"}:::blue
+  Q1 -->|"it can"| SC("Server component<br/>no client JS, no spinner"):::green
+  Q1 -->|"it genuinely needs the browser"| Q2{"How far down can I push it?"}:::blue
+  Q2 --> LF("Isolate the smallest interactive leaf<br/>everything above stays server"):::cyan
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+</pre>
+
 <Fragment slot="caption">
 The whole chapter in three boxes. The client component is the bottom of the ladder,
     reached only after the server has been ruled out and the boundary pushed as low as it

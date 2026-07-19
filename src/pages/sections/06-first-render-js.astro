@@ -163,6 +163,31 @@ import Snippet from '../../components/Snippet.astro';
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph EG["Everything imported eagerly"]
+    direction LR
+    Z1("one bundle: React + framework · your leaves<br/>+ charting library · rich-text editor · dialogs"):::amber
+    Z1 --> Z2("hydration (and Link prefetching, §4.5)<br/>waits for all of it"):::red
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style EG fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef red fill:#fdecea,stroke:#d93025,color:#b3261e
+%%split%%
+flowchart LR
+  subgraph SP["Leaves + dynamic(): the page ships only itself"]
+    direction LR
+    N1("page bundle:<br/>React + framework + your leaves"):::blue
+    N2("charts chunk:<br/>when the tab opens"):::amberdash
+    N3("editor chunk:<br/>on first edit"):::amberdash
+    N4("dialog chunk:<br/>on first open"):::amberdash
+  end
+  style SP fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+</pre>
+
 <Fragment slot="caption">
 The same page, two bundles. Amber code is invisible at first paint by definition (a
     closed dialog, an unopened tab), yet in the top bundle every user downloads, parses,

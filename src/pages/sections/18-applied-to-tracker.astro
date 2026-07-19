@@ -296,6 +296,37 @@ import CompareCol from '../../components/CompareCol.astro';
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart TB
+  subgraph TD["Today: the browser assembles the page"]
+    direction TB
+    t1("Browser requests /programs/42<br/>the user is waiting from here · round trip 1"):::neutral
+    t1 --> t2("Server returns an empty shell<br/>no content in the HTML, just a bundle"):::amber
+    t2 --> t3("Bundle downloads, React hydrates<br/>effects fire only after mount"):::amber
+    t3 --> t4("fetch('/api/proxy/programs/42')<br/>route handler adds a hop upstream · round trips 2 + 3"):::amber
+    t4 --> t5("Data arrives, content renders<br/>first content: after 3 round trips + hydration"):::red
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style TD fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef red fill:#fdecea,stroke:#d93025,color:#b3261e
+%%split%%
+flowchart TB
+  subgraph MO["The model: the server sends the page"]
+    direction TB
+    m1("Browser requests /programs/42<br/>one round trip, one hop"):::neutral
+    m1 --> m2("Async server component runs<br/>calls the upstream API directly"):::blue
+    m2 --> m3("HTML streams, content included<br/>client JS only for interactive leaves"):::green
+    m3 --> m4("First content: in the first response"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style MO fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 The representative trace from the audit
     (<code>ojl-ui/src/app/(participant)/my/home/page.tsx</code>): a 5-line server shell

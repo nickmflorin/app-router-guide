@@ -241,6 +241,17 @@ import Snippet from '../../components/Snippet.astro';
     <line x1="463" y1="112.28" x2="492" y2="112.28" stroke="#737373" stroke-width="1.5" />
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  F0("t₀: shell paints<br/>header known · container reserves space · ⏳ fallback"):::amberdash
+  F0 --> F1("t₁: data resolves<br/>content chunk streams down the wire · header untouched"):::blue
+  F1 --> F2("t₂: swap in place<br/>real content in the same slot · zero layout shift"):::green
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 The lifecycle of one suspended region. The boundary lives inside a known container
     that reserves space, so the fallback → content swap moves nothing around it; this is
@@ -529,6 +540,35 @@ The lifecycle of one suspended region. The boundary lives inside a known contain
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph BK["Blocking SSR"]
+    direction LR
+    BA("fetch program (fast)"):::amber
+    BB("fetch report rows (slow)"):::amber
+    BA --> BR("render all"):::blue
+    BB --> BR
+    BR --> BP("send: first paint, late<br/>the whole page waited on the slowest fetch"):::red
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style BK fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef red fill:#fdecea,stroke:#d93025,color:#b3261e
+%%split%%
+flowchart LR
+  subgraph ST["Streaming SSR"]
+    direction LR
+    SA("shell + fallbacks<br/>first paint: structure, header, skeletons"):::green
+    SA -->|"fast fetch resolves"| SC("chunk: header"):::blue
+    SC -->|"slow fetch resolves"| SD("chunk: table"):::blue
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style ST fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+</pre>
+
 <Fragment slot="caption">
 Recreated from the Next.js docs' streaming illustration: same fetches, same durations;
     blocking SSR gates the whole page on the slowest fetch, while streaming sends the
@@ -844,6 +884,21 @@ Recreated from the Next.js docs' streaming illustration: same fetches, same dura
     />
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart TB
+  subgraph L["Layout: the known scaffold (§9)"]
+    subgraph E["ErrorBoundary · error.tsx"]
+      subgraph S["Suspense · loading.tsx"]
+        PG("Page: your content,<br/>aware of neither"):::green
+      end
+    end
+  end
+  style L fill:#eaf3fe,stroke:#0070f3,color:#0757ba,rx:8px,ry:8px
+  style E fill:#fdecea,stroke:#d93025,color:#b3261e,rx:8px,ry:8px
+  style S fill:#fdf3e3,stroke:#b45309,color:#8a5a00,rx:8px,ry:8px
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 loading.tsx and error.tsx are sugar for boundaries Next.js wraps around your page
     (pattern from the Next.js docs). In contain-the-unknown terms: the Layout is the known
@@ -1087,6 +1142,28 @@ loading.tsx and error.tsx are sugar for boundaries Next.js wraps around your pag
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph FL["First load: the only fallback"]
+    direction LR
+    A1("⏳ skeleton (unknown)"):::amberdash --> A2("content"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style FL fill:#ffffff,stroke:#e0e0e0,color:#8a5a00,rx:8px,ry:8px
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+%%split%%
+flowchart LR
+  subgraph AF["Every load after that"]
+    direction LR
+    B1("stale content: visible, usable<br/>+ subtle indicator (corner spinner, dimmed rows)"):::green
+    B1 --> B2("fresh content, swapped when ready<br/>nothing unmounts, nothing shifts"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style AF fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 The stale-while-revalidate presentation rule. The fallback answers "what goes here?",
     asked once. Refetch, revalidation, filter change, pagination: stale + indicator,
@@ -1515,6 +1592,29 @@ The stale-while-revalidate presentation rule. The fallback answers "what goes he
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph DF["data defaulted to an empty array"]
+    direction LR
+    E1("t₀: shows 'No results found'<br/>the request is still in flight"):::red
+    E1 -->|"t₁: response, 12 rows"| E2("the rows contradict the empty state<br/>a false flash on every first load"):::red
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style DF fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef red fill:#fdecea,stroke:#d93025,color:#b3261e
+%%split%%
+flowchart LR
+  subgraph UD["undefined preserved: unknown stays unknown"]
+    direction LR
+    G1("t₀: ⏳ skeleton (unknown)"):::amberdash
+    G1 -->|"t₁: response, 12 rows"| G2("rows render; an empty state could only<br/>appear after a finished, empty response"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style UD fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 The empty-state flash, frame by frame. Same request, same 12 rows; the only difference
     is whether the data layer erased <code>undefined</code>. Defaulting to
@@ -1817,6 +1917,19 @@ The empty-state flash, frame by frame. Same request, same 12 rows; the only diff
       t₂: any later fetch
     </text>
   </svg>
+
+<pre slot="mermaid" is:raw>
+flowchart LR
+  SK("⏳ skeleton<br/>first load only"):::amberdash
+  SK -->|"finished: 0 rows"| EM("No programs yet<br/>known-empty: a real state, not a gap"):::neutral
+  EM -->|refetch| ER("same empty state, dimmed<br/>↻ refreshing · no skeleton"):::neutral
+  SK -->|"finished: 12 rows"| RW("rows"):::green
+  RW -->|refetch| RR("rows, dimmed<br/>↻ refreshing · content never unmounts"):::green
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
 
 <Fragment slot="caption">
 One container's whole life. The skeleton exists only in the first frame, while the

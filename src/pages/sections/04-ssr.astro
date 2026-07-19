@@ -286,6 +286,33 @@ import Snippet from '../../components/Snippet.astro';
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph CR["Client-rendered: each layer blocks the next"]
+    direction LR
+    P1("① page: spinner while fetching /me"):::amber
+    P1 --> P2("② section: fetching the list"):::amber
+    P2 --> P3("③ widget: fetching stats"):::amber
+    P3 --> P4("first content: t₁ + t₂ + t₃, serialized"):::red
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style CR fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef red fill:#fdecea,stroke:#d93025,color:#b3261e
+%%split%%
+flowchart LR
+  subgraph SR["Server-rendered: one pass"]
+    direction LR
+    Q1("one pass: awaits are just values"):::blue
+    Q1 --> Q2("HTML arrives complete; no layer waits"):::green
+    Q2 --> Q3("first content: t₁, one server pass"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style SR fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 The spinner tower. Client-side, each DOM layer is blocked by the client-side request
     above it (the page can't fetch until it hydrates, the section can't fetch until the
@@ -358,6 +385,30 @@ The spinner tower. Client-side, each DOM layer is blocked by the client-side req
     <rect x="454" y="160" width="236" height="8" rx="3" fill="#cfe9dd"/>
     <rect x="454" y="176" width="236" height="8" rx="3" fill="#cfe9dd"/>
   </svg>
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph SRV["Stays on the server"]
+    direction TB
+    A1("page.tsx, components, layouts"):::blue
+    A2("getReports(): the data layer"):::blue
+    A3("DATABASE_URL, API tokens, secrets"):::amberdash
+    A4("markdown + charting libraries"):::neutral
+  end
+  subgraph CLI["What the client receives"]
+    direction TB
+    B1("rendered HTML: finished markup"):::green
+    B2("nothing else"):::neutral
+  end
+  SRV -->|"the network boundary"| CLI
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style SRV fill:#eaf3fe,stroke:#0070f3,color:#0757ba,rx:8px,ry:8px
+  style CLI fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
   Everything needed to produce the page stays behind the boundary; only what it produced
   crosses. Exactly like the diagrams in this guide: the browser receives the SVG, not the
@@ -696,6 +747,36 @@ The spinner tower. Client-side, each DOM layer is blocked by the client-side req
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph FV["First visit: server routing"]
+    direction LR
+    V1("GET /programs/42"):::neutral
+    V1 --> V2("server renders the route<br/>layouts, page, data"):::blue
+    V2 --> V3("a full HTML document"):::green
+    V3 --> V4("content paints before JS loads"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style FV fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+%%split%%
+flowchart LR
+  subgraph NV["Every navigation after: client routing"]
+    direction LR
+    W1("Link click · no document reload"):::cyan
+    W1 --> W2("server renders only the changing segments"):::blue
+    W2 --> W3("RSC payload"):::blue
+    W3 --> W4("segments swap; layouts persist"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style NV fill:#ffffff,stroke:#e0e0e0,color:#0e7490,rx:8px,ry:8px
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 Two routing modes, one rendering model. The first visit is server routing: a complete
     HTML document, content visible before JavaScript. Every navigation after is client

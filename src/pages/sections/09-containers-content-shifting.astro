@@ -431,6 +431,30 @@ import Snippet from '../../components/Snippet.astro';
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph NR["No reservation"]
+    direction LR
+    A1("t₀: user is reading,<br/>cursor on the Save button"):::neutral
+    A1 -->|"stats land; no space was held"| A2("everything below is pushed down<br/>the click hits whatever moved"):::red
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style NR fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef red fill:#fdecea,stroke:#d93025,color:#b3261e
+%%split%%
+flowchart LR
+  subgraph RC["Reserved container"]
+    direction LR
+    B1("t₀: same page<br/>⏳ container holds the space"):::amberdash
+    B1 -->|"same response lands"| B2("stats land in the held space<br/>nothing below ever knew"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style RC fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 The same late-arriving stats block, frame by frame. Top: no space was held, so the
     landing displaces the text and the Save button mid-click. Bottom: the container held
@@ -756,6 +780,20 @@ The same late-arriving stats block, frame by frame. Top: no space was held, so t
     <rect x="652" y="176" width="6" height="44" rx="3" fill="#bcc4cc" />
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  AH("App header (app layout)"):::blue
+  SB("Sidebar (app layout)"):::blue
+  subgraph RL["ReportsLayout"]
+    direction TB
+    RH("ReportsHeader<br/>sized by content, never scrolls"):::blue
+    MN("main · grow · overflow-y-auto"):::green
+  end
+  style RL fill:#ffffff,stroke:#e0e0e0,color:#171717,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 The flex-grow-and-scroll frame from the snippet above, on the page. The app layout
     owns the chrome: the app header bar across the top and the sidebar down the left.

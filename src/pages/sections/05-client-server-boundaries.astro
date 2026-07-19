@@ -304,6 +304,31 @@ import Snippet from '../../components/Snippet.astro';
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph SM["Server modules: 0 KB shipped"]
+    direction TB
+    S1("page.tsx"):::blue
+    S1 --> S2("ProgramHeader.tsx"):::blue
+    S1 --> S3("data/programs.ts"):::blue
+    S2 --> S4("format.ts · icons"):::bluesub
+  end
+  subgraph CM["Client modules: bundled + hydrated"]
+    direction TB
+    C1("SearchInput.tsx<br/>'use client': entry point"):::cyan
+    C1 --> C2("useDebounce.ts<br/>no directive, dragged across anyway"):::amber
+    C1 --> C3("Input.tsx · Spinner.tsx<br/>imported by an entry point = client"):::amber
+  end
+  S1 -->|"the boundary: 'use client'<br/>server renders it, props must serialize"| C1
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style SM fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
+  style CM fill:#ffffff,stroke:#e0e0e0,color:#8a5a00,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef bluesub fill:#d8e8fc,stroke:#d8e8fc,color:#0757ba
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+</pre>
+
 <Fragment slot="caption">
 "use client" defines where the server hands off, not which component is interactive.
     The directive marks an entry point into the client module graph: everything reachable
@@ -652,6 +677,39 @@ import Snippet from '../../components/Snippet.astro';
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart TB
+  subgraph TP["Boundary at the top"]
+    direction TB
+    G1("page.tsx: 'use client'"):::red
+    G1 --> G2("ReportSection"):::amber
+    G2 --> G3("Toolbar"):::amber
+    G3 --> G4("SearchInput"):::amber
+    G3 --> G5("ExportButton"):::amber
+    G2 --> G6("Table: header, rows, cells,<br/>formatters, icons, badges…"):::amber
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style TP fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef red fill:#fdecea,stroke:#d93025,color:#b3261e
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+%%split%%
+flowchart TB
+  subgraph LV["Boundary at the leaves"]
+    direction TB
+    L1("page.tsx: server"):::blue
+    L1 --> L2("ReportSection: async, awaits data"):::blue
+    L2 --> L3("Toolbar: server markup"):::blue
+    L3 --> L4("SearchInput ✦"):::cyan
+    L3 --> L5("ExportButton ✦"):::cyan
+    L2 --> L6("Table: server-rendered rows"):::blue
+    L6 --> L7("RowActions ✦"):::cyan
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style LV fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+</pre>
+
 <Fragment slot="caption">
 Interactivity isolated into leaves. Same page, same interactions; the boundary's
     position decides how much of the tree pays the client tax: one version ships the whole
@@ -1522,6 +1580,20 @@ Interactivity isolated into leaves. Same page, same interactions; the boundary's
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  P("Server component parent<br/>getProgram(id), tagged 'program-42'"):::blue
+  B("PublishButton: client leaf<br/>owns the click and its pending state"):::cyan
+  A("Server action<br/>mutates, then revalidateTag('program-42')"):::green
+  P -->|"renders the leaf · one serializable prop"| B
+  B -->|"onClick: publishProgram(id)"| A
+  A -->|"fresh RSC payload, streamed back<br/>every reader of the tag re-renders"| P
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 The mutation cycle with zero wires. The parent renders the button with one prop; the
     button calls the action; the action invalidates the tag; every server component that
@@ -2141,6 +2213,34 @@ The mutation cycle with zero wires. The parent renders the button with one prop;
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart TB
+  subgraph GD["One client boundary at the top"]
+    direction TB
+    D1("'use client': ProgramsManager<br/>fetches + UI state + callbacks, all in one"):::red
+    D1 -->|"props + callbacks"| D2("SectionLayout<br/>client, dragged in by the import graph"):::amber
+    D2 -->|"props + callbacks"| D3("ProgramsTable<br/>client, waits for props from the top"):::amber
+    D3 -->|"props + callbacks"| D4("PublishButton<br/>client, handed onSave it didn't ask for"):::amber
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style GD fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef red fill:#fdecea,stroke:#d93025,color:#b3261e
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+%%split%%
+flowchart TB
+  subgraph LF["Server tree, client leaf"]
+    direction TB
+    K1("Page: server<br/>async: awaits tagged data, streams HTML"):::blue
+    K1 -->|children| K2("SectionLayout: server<br/>zero JavaScript shipped"):::blue
+    K2 -->|children| K3("ProgramsTable: server<br/>rows rendered as HTML on the server"):::blue
+    K3 -->|children| K4("PublishButton: client leaf ✦<br/>owns its click, pending state, and dialog"):::cyan
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style LF fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+</pre>
+
 <Fragment slot="caption">
 The same four components, two architectures. Left: one <code>"use client"</code> at
     the top converts the whole tree; every box below it is client because of where it
@@ -2392,6 +2492,32 @@ The same four components, two architectures. Left: one <code>"use client"</code>
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph DI["Server action: direct"]
+    direction LR
+    X1("Client form<br/>action = archiveProgram"):::blue
+    X1 -->|"one typed call"| X2("Server Function<br/>'use server', runs in-process"):::green
+    X2 -->|"direct call"| X3("Prisma / your service<br/>not-found, forbidden: distinct + typed"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style DI fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+%%split%%
+flowchart LR
+  subgraph PX["Proxy route: HTTP middlemen"]
+    direction LR
+    Y1("Client: fetch('/api/proxy/…')"):::amber
+    Y1 -->|"HTTP hop"| Y2("Next.js API route (proxy)"):::amber
+    Y2 -->|"HTTP hop"| Y3("Upstream service"):::amber
+    Y3 -->|HTTP| Y4("Database"):::amber
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style PX fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+</pre>
+
 <Fragment slot="caption">
 The same mutation, two architectures. A server action is one typed boundary from the
     client straight to your data, so distinct failures stay distinct and the types hold

@@ -368,6 +368,35 @@ import Snippet from '../../components/Snippet.astro';
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart TB
+  subgraph DR["Prop drilling: the coupling layer"]
+    direction TB
+    DF("fetch: everything · all the data"):::amber
+    DF --> DPar("Parent: knows everyone's requirements"):::amber
+    DPar -->|"props & data"| DA("Child A"):::neutral
+    DPar -->|"props & data"| DB("Child B"):::neutral
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style DR fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+%%split%%
+flowchart TB
+  subgraph IN["Independent components"]
+    direction TB
+    IP("Parent: layout only"):::blue
+    IP -->|"id only"| IA("Child A: asks itself"):::green
+    IP -->|"id only"| IB("Child B: asks itself"):::green
+    IA --> DL("Data layer, deduped<br/>getProgram(id) · 1 real request"):::blue
+    IB --> DL
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style IN fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 The same three components, wired two ways. Left: the parent fetches once and drills:
     every requirement change touches three files. Right: children ask the data layer
@@ -596,6 +625,34 @@ The same three components, wired two ways. Left: the parent fetches once and dri
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart TB
+  subgraph ON["Parent fetches & drills"]
+    direction TB
+    OS("⏳ Suspense: forced above Parent"):::amberdash
+    OS --> OP("Parent: awaits everything"):::amber
+    OP --> OA("Child A"):::neutral
+    OP --> OB("Child B"):::neutral
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style ON fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+%%split%%
+flowchart TB
+  subgraph MA["Children fetch for themselves"]
+    direction TB
+    MP("Parent: renders instantly"):::blue
+    MP --> M1("⏳ Suspense → Child A: self-fetching"):::amberdash
+    MP --> M2("⏳ Suspense → Child B: self-fetching"):::amberdash
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style MA fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+</pre>
+
 <Fragment slot="caption">
 Boundary placement follows the data. Drilled props force one big boundary above the
     parent; self-fetching children let each region suspend (and stream) on its own. Full
@@ -884,6 +941,33 @@ Boundary placement follows the data. Drilled props force one big boundary above 
       the component carries its own supply
     </text>
   </svg>
+
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph WI["Wired"]
+    direction LR
+    WA("Page A: fetches, owns state<br/>passes rows · loading · onRefresh"):::amber
+    WA --> WS("ProgramStats"):::neutral
+    WS -->|"move it"| WB("Page B: must fetch<br/>+ re-wire all three"):::red
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style WI fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef red fill:#fdecea,stroke:#d93025,color:#b3261e
+%%split%%
+flowchart LR
+  subgraph SE["Self-contained"]
+    direction LR
+    SA("Page A: just places it"):::blue
+    SA --> SS("ProgramStats<br/>asks for its own data, by key"):::green
+    SS -->|"move it: one line"| SB("Page B: same key,<br/>same cache (§14)"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style SE fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
 
 <Fragment slot="caption">
 Why wires cost more than maintenance. The wired component's requirements live in its

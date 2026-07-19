@@ -308,6 +308,37 @@ import CompareCol from '../../components/CompareCol.astro';
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart TB
+  subgraph ERA1["The client era: the browser earns every pixel"]
+    direction TB
+    E1("May 2013 · React is open-sourced<br/>components + the virtual DOM; the ecosystem goes client"):::neutral
+    E1 --> E2("2015 · The SPA toolchain hardens<br/>Redux, client routers, fetch-in-effect: empty div + bundle"):::neutral
+    E2 --> E3("Oct 2016 · Next.js 1.0<br/>server rendering as a framework default; the counter-current begins"):::cyan
+    E3 --> E4("Oct 2018 · Suspense arrives, React 16.6<br/>async UI becomes the framework's problem"):::cyan
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style ERA1 fill:#ffffff,stroke:#e0e0e0,color:#8a5a00,rx:8px,ry:8px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+%%split%%
+flowchart TB
+  subgraph ERA2["The server era: stop shipping the app to render the app"]
+    direction TB
+    F1("Dec 2020 · React Server Components announced<br/>the zero-bundle RFC: rendering and data return to the server"):::blue
+    F1 --> F2("Dec 2021 · React core comes to Vercel<br/>RSC's architect leaves Meta for Vercel; more follow"):::blue
+    F2 --> F3("Mar 2022 · React 18<br/>concurrent rendering, streaming SSR, selective hydration"):::blue
+    F3 --> F4("Oct 2022 · Next.js 13: the App Router<br/>RSC as an architecture: nested layouts, streaming, colocation"):::blue
+    F4 --> F5("May 2023 · App Router stable, Next 13.4<br/>server-first becomes the recommended path; Server Actions arrive"):::blue
+    F5 --> F6("Dec 2024 · React 19<br/>Actions, use(), stable RSC APIs: server-first is the platform"):::green
+    F6 --> F7("Oct 2025 · Next.js 16 + React Compiler 1.0<br/>use cache and PPR-by-default; the compiler ends memo busywork"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style ERA2 fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 Thirteen years, one direction. The client era built machinery for surviving in the
     browser; everything since December 2020 has been about no longer needing to. Note what

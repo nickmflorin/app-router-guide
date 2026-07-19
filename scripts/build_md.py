@@ -307,6 +307,8 @@ class Converter:
             if cap_md:
                 out += f"\n\n> {cap_md}"
             return out
+        print(f"WARNING: diagram without a mermaid twin (caption: {cap_plain[:60]!r})",
+              file=sys.stderr)
         desc = cap_plain or "an illustration for this section (the source figure has no caption)"
         desc = desc.replace("--", "- -")  # '--' is illegal inside html comments
         return ("<!-- DIAGRAM PLACEHOLDER: to be converted to a Mermaid diagram "

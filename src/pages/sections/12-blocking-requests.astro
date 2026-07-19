@@ -177,6 +177,37 @@ import Snippet from '../../components/Snippet.astro';
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph TG["Await at the top: one gate"]
+    direction TB
+    T1("header: static, but waiting"):::amber
+    T2("nav: static, but waiting"):::amber
+    T3("stats: needs fetch A (fast)<br/>ready long ago; held by fetch B"):::amber
+    T4("table: needs fetch B (slow)<br/>the one honest wait"):::amberdash
+  end
+  TG --> TP("first paint: after fetch B,<br/>for everything"):::red
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style TG fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef red fill:#fdecea,stroke:#d93025,color:#b3261e
+%%split%%
+flowchart LR
+  subgraph PD["Awaits pushed down: three small gates"]
+    direction TB
+    D1("header: painted at t₀"):::green
+    D2("nav: painted at t₀"):::green
+    D3("⏳ stats: waits for fetch A only<br/>streams in when A resolves"):::amberdash
+    D4("⏳ table: waits for fetch B only<br/>streams in when B resolves"):::amberdash
+  end
+  PD --> DP("first paint at t₀<br/>each region pays only its own fetch"):::green
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style PD fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+</pre>
+
 <Fragment slot="caption">
 The same page, same two fetches. Blocking scope is positional: an await at the page
     level gates everything behind the slowest request; awaits pushed into the regions that
@@ -651,6 +682,23 @@ The same page, same two fetches. Blocking scope is positional: an await at the p
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph FS["app/programs/[id]/"]
+    direction TB
+    N1("layout.tsx"):::blue
+    N2("@header/page.tsx · H"):::blue
+    N3("@summary/page.tsx · S"):::amber
+    N4("page.tsx · C, the children"):::green
+  end
+  FS -->|"slots arrive as layout props"| LO("ProgramLayout receives<br/>children, header, summary<br/>and places each in the page"):::blue
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style FS fill:#ffffff,stroke:#e0e0e0,color:#171717,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 Slots are filesystem convention becoming layout props (redrawn from the Next.js
     parallel-routes docs). Each <code>@folder</code> is a mini-page; the layout receives
@@ -817,6 +865,30 @@ Slots are filesystem convention becoming layout props (redrawn from the Next.js
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph LD["@summary still loading"]
+    direction TB
+    L1("header slot: rendered"):::green
+    L2("children: rendered"):::green
+    L3("⏳ summary: behind its own loading.tsx"):::amberdash
+  end
+  style LD fill:#ffffff,stroke:#e0e0e0,color:#8a5a00,rx:8px,ry:8px
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+%%split%%
+flowchart LR
+  subgraph ER["@summary throws"]
+    direction TB
+    M1("header slot: rendered"):::green
+    M2("children: rendered"):::green
+    M3("summary: its own error.tsx<br/>scoped to the slot"):::red
+  end
+  style ER fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef red fill:#fdecea,stroke:#d93025,color:#b3261e
+</pre>
+
 <Fragment slot="caption">
 Route-level independence in practice. Left: the summary slot streams behind its own
     <code>loading.tsx</code> while the header and children shipped at first paint. Right:
@@ -1015,6 +1087,19 @@ Route-level independence in practice. Left: the summary slot streams behind its 
     <rect x="396" y="230" width="80" height="10" rx="4" fill="#f3e2c0" />
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  LO("layout.tsx<br/>const role = await checkUserRole()"):::blue
+  LO --> Q{"role === 'admin' ?"}:::neutral
+  Q -->|admin| AA("@admin/page.tsx"):::green
+  Q -->|user| UU("@user/page.tsx"):::cyan
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+</pre>
+
 <Fragment slot="caption">
 Conditional slots (redrawn from the Next.js parallel-routes docs): the layout picks a
     slot per request, so one URL serves two fully separated code trees - and the unchosen
@@ -1182,6 +1267,42 @@ Conditional slots (redrawn from the Next.js parallel-routes docs): the layout pi
     <text x="175" y="280" font-size="9" fill="#737373">start</text>
     <text x="640" y="280" font-size="9" fill="#737373">time</text>
   </svg>
+
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph CW["Client waterfall: 3 serial round trips"]
+    direction LR
+    p1("profile"):::amber --> p2("org id"):::amber --> p3("dashboard"):::amber
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style CW fill:#ffffff,stroke:#e0e0e0,color:#8a5a00,rx:8px,ry:8px
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+%%split%%
+flowchart LR
+  subgraph SV["On the server: 1 round trip"]
+    q1("all three: dependencies become<br/>in-datacenter hops in one request"):::blue
+  end
+  style SV fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+%%split%%
+flowchart LR
+  subgraph PV["Parallel server: 1 round trip"]
+    r1("query A · own Suspense"):::blue
+    r2("query B · own Suspense"):::blue
+    r3("query C · own Suspense"):::blue
+  end
+  style PV fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+%%split%%
+flowchart LR
+  subgraph PC["Parallel client (when unavoidable)"]
+    s1("query A"):::cyan
+    s2("query B"):::cyan
+    s3("query C"):::cyan
+  end
+  style PC fill:#ffffff,stroke:#e0e0e0,color:#0e7490,rx:8px,ry:8px
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+</pre>
 
 <Fragment slot="caption">
 The same three reads, four ways. Chained on the client, each one waits for the last, so

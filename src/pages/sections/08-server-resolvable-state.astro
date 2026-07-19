@@ -155,6 +155,17 @@ import Snippet from '../../components/Snippet.astro';
     <text x="666" y="179" font-size="9.5" fill="#0757ba" text-anchor="middle">3</text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  U1("/programs/42 · route param"):::blue -->|"resolves to"| P1("page header: Program 42 · Algebra I"):::neutral
+  U2("/reports · route segment"):::blue -->|"resolves to"| P2("active tab: Reports"):::neutral
+  U3("?q=algebra · search param"):::blue -->|"resolves to"| P3("search input: algebra"):::neutral
+  U4("&page=3 · search param"):::blue -->|"resolves to"| P4("pagination: page 3"):::neutral
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+</pre>
+
 <Fragment slot="caption">
 One URL, <code>/programs/42/reports?q=algebra&amp;page=3</code>, is a complete,
     serialized description of this view: the page, the active tab, the search text, and

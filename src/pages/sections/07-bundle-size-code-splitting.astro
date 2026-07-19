@@ -176,6 +176,33 @@ import Snippet from '../../components/Snippet.astro';
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph WH["Wholesale: one fused client component"]
+    direction TB
+    U1("Header + toolbar"):::amber
+    U1 --> U2("Body rows: the only real unknown"):::amberdash
+    U2 --> U3("Footer + pagination"):::amber
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style WH fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+%%split%%
+flowchart LR
+  subgraph CO["Composed: known frame, unknown rows"]
+    direction TB
+    V1("Toolbar + title: server, instant"):::blue
+    V1 --> V2("Column headers: server, instant"):::blue
+    V2 --> V3("Suspense: body rows<br/>streams when the data resolves"):::amberdash
+    V3 --> V4("Footer + pagination: server"):::blue
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style CO fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+</pre>
+
 <Fragment slot="caption">
 The same table, two architectures. On the left, a wholesale grid fuses the knowable
     frame to the unknowable rows, so nothing appears until the bundle and the data both
@@ -423,6 +450,33 @@ The same table, two architectures. On the left, a wholesale grid fuses the knowa
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  subgraph WG["Wholesale grid: the whole table waits"]
+    direction TB
+    R1("Page header: server, instant"):::blue
+    R1 --> R2("MUI DataGrid: one client component<br/>toolbar, columns, rows, footer, fused<br/>nothing renders until bundle + data"):::amberdash
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style WG fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+%%split%%
+flowchart LR
+  subgraph CG["Composed: only the rows wait"]
+    direction TB
+    W1("Page header: server, instant"):::blue
+    W1 --> W2("Toolbar: server"):::blue
+    W2 --> W3("Column headers: server"):::blue
+    W3 --> W4("Body rows: Suspense<br/>streams into reserved space"):::amberdash
+    W4 --> W5("Footer + pagination: server"):::blue
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style CG fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+</pre>
+
 <Fragment slot="caption">
 The reports page, laid out both ways. On the left, the wholesale grid makes the entire
     table region one blocked client component: the header above it can paint, but the

@@ -342,6 +342,47 @@ import Snippet from '../../components/Snippet.astro';
     </text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart TB
+  subgraph SR["Server: during one request"]
+    direction TB
+    Hd("Header"):::neutral
+    St("Stats"):::neutral
+    Bc("Breadcrumbs"):::neutral
+    RC("React.cache(): per-request memo<br/>getProgram(42) ×3 in, 1 execution out"):::blue
+    UC("'use cache': cross-request<br/>cacheLife · cacheTag('program-42') · opt-in"):::amberdash
+    OR("Origin: upstream API / database"):::amber
+    Hd --> RC
+    St --> RC
+    Bc --> RC
+    RC --> UC
+    UC -->|"0 or 1 requests"| OR
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style SR fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+%%split%%
+flowchart TB
+  subgraph CL["Client: during one session"]
+    direction TB
+    FB("FilterBar"):::neutral
+    RB("ResultsBadge"):::neutral
+    SW("SWR cache, key 'programs/42'<br/>useProgram(42) ×2 in, 1 shared entry<br/>revalidates on focus / interval / mutate()"):::cyan
+    NW("Network: route handler / API"):::amber
+    FB --> SW
+    RB --> SW
+    SW -->|"1 request"| NW
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style CL fill:#ffffff,stroke:#e0e0e0,color:#0e7490,rx:8px,ry:8px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+</pre>
+
 <Fragment slot="caption">
 Both sides of the boundary have a dedupe stack. Server: any number of components call
     the same cached function during a request: one execution, and with

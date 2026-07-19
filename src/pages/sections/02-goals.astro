@@ -203,6 +203,27 @@ import CompareCol from '../../components/CompareCol.astro';
     <text x="604" y="392" font-size="12" fill="#171717">Interactive leaf</text>
   </svg>
   
+<pre slot="mermaid" is:raw>
+flowchart LR
+  NAV("Top navigation: layout.tsx"):::blue
+  SB("Sidebar: layout.tsx"):::blue
+  subgraph HDR["Header container (known)"]
+    direction TB
+    H1("await program → title, status"):::amberdash
+    H2("actions ✦ interactive leaf"):::cyan
+  end
+  subgraph TBL["Table container (known)"]
+    direction TB
+    T1("search ✦ interactive leaf"):::cyan
+    T2("await rows → TableBody"):::amberdash
+  end
+  style HDR fill:#eaf3fe,stroke:#0070f3,color:#0757ba,rx:8px,ry:8px
+  style TBL fill:#eaf3fe,stroke:#0070f3,color:#0757ba,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+</pre>
+
 <Fragment slot="caption">
 The anatomy of a page under this model: the structure and containers are known and
     render immediately; data-dependent regions are unknown and stream into space reserved

@@ -12,25 +12,41 @@ this document, you should do so - and then follow back up by marking those items
 this document. If you are unsure about whether or not to tackle an item, please ask me for
 clarification before proceeding.
 
+## Revisit
+
+- [x] Benefits of SSR as a separate page where we also discuss HTTP middleman problem. (**Partially
+      done** - **ELABORATE**)
+- [x] CONTENT SHIFTING **ELABORATE**
+- [x] Simplicity: Difficulty with timing and render blocking requests, nested spinners down through
+      the dom tree, spinners showing on top of spinners, etc. etc **Elaborate**
+- [x] Server should be source of truth - everything should point back to the server as much as it
+      can. **Elaborate**
+- [ ] **What we lose when we go through HTTP middleman (Expand more on this)**
+
+## Tentative
+
+- [ ] Reducing dead whitespace, particularly in diagrams.
+- [ ] less spacing under page header description
+- [ ] Any code snippet that shows a bad pattern should have a red x in the top right corner or left
+      corner whichever makes more sense, next to or in line with the file name. Same thing with good
+      patterns but with green check marks.
+- [ ] Diagrams or gifs/references pointing to the video that shows Suspense as an analogy for
+      version control.
+
 ## Repo
 
 - [ ] Converting CSS to SCSS
 
 ## Design & Style
 
-- [ ] Reducing dead whitespace, particularly in diagrams.
-- [ ] less spacing under page header description
 - [x] Sub sections for examples probably, better use of subsections maybe (**Partially done**)
 - [ ] Summary rules at the top for each page (i.e. a TL;DR section that says DOs and Donts) Can use
       a dropdown/accordion style thing.
-- [ ] The how to read this document section should use alignment for pills and text.
+- [x] The how to read this document section should use alignment for pills and text.
 - [x] Trying to use horizontal divider lines for tables and/or a light gray thin border around the
       table area.
 - [x] TODO-style widgets that I can embed directly in the HTML to mark things that need to be done
       or inserted in place.
-- [ ] Any code snippet that shows a bad pattern should have a red x in the top right corner or left
-      corner whichever makes more sense, next to or in line with the file name. Same thing with good
-      patterns but with green check marks.
 - [x] JSX in code blocks not always indented. Has additional space after { ...}
 - [x] What earns a dynamic import, and what doesn't - section table should have horizontal lines
       similar to other tables. All table should be consistently displayed. header styling, font,
@@ -45,8 +61,6 @@ clarification before proceeding.
       possible. It is not a preference, it is a requirement for using React 19 and the App Router,
       and deviation from that will make things very difficult. Treating everything that cannot be
       rendered fully on the server as a COST that must be justified, not the other way around.
-- [x] Benefits of SSR as a separate page where we also discuss HTTP middleman problem. (**Partially
-      done** - **ELABORATE**)
 - [x] Use the table web app diagram for illustrating how to reserve space in the header/data table
       view example.
 - [ ] Client side rendering seems simpler when we're not worried about the details. We're not
@@ -179,17 +193,12 @@ folded into the existing "Server-first is not optional" alert.)
   - [ ] General note about how client side stuff is always more complicated than backend because you
         have user interactions and timing to worry about. Additional variables from user's network
         connection, browser, speed, internet, firewalls, ad blockers. etc.
+  - [ ] How CSR forces you to choose between using fallback values OR not revealing any content
+        until it's loaded. How complex that makes things. Examples with UserProfilePage and the
+        height of the text content. Maybe videos
 - [ ] Discussion of the nextjs page cache or html cached output and how that relates to the server
       content that is maximized.
-- [ ] How CSR forces you to choose between using fallback values OR not revealing any content until
-      it's loaded. How complex that makes things. Examples with UserProfilePage and the height of
-      the text content. Maybe videos
 - [x] Benefits of SSR and how that relates to the various goals here.
-- [x] CONTENT SHIFTING **ELABORATE**
-- [x] Simplicity: Difficulty with timing and render blocking requests, nested spinners down through
-      the dom tree, spinners showing on top of spinners, etc. etc **Elaborate**
-- [x] Server should be source of truth - everything should point back to the server as much as it
-      can. **Elaborate**
 
 ### Decoupling
 
@@ -217,25 +226,22 @@ folded into the existing "Server-first is not optional" alert.)
 ### Content Shifting
 
 - [x] Diagram showing the flex and min height approach on a page, maybe with table and header.
-      (**Partially done**)
 - [x] Awaits pushed down - adding containers in the diagram showing the flex grow and reserved space
-      approach. (**Partially done**)
+      approach.
 - [x] This is also a UX consideration - design should be aware of how things look different when
       they are in an unknown state vs a known state vs a streaming state. It affects how pages and
       views are laid out and structured. Engineers job to communicate these things with Design. Goal
-      is to minimize content shifting. **IMPORTANT**
+      is to minimize content shifting.
 - [x] Examples of difficult patterns - two stacked tables.
 - [x] Loading, data and empty states as three different questions
-  - [ ] Talk about empty state flickering and use a diagram.
+  - [ ] **Talk about empty state flickering and use a diagram.**
 - [x] Diagrams for Reserving space honestly similar to the web app diagram view (the diagram on the
       goals page thesis section that shows the URL bar). Diagrams use arrows to show how content
       expands to fill space and how it is reserved. Diagrams show how to reserve space for content
       that is not known on first render. Diagrams show how to reserve space for content that is not
-      known on first render yet will eventually appear. **REVISIT AND IMPROVE**
+      known on first render yet will eventually appear.
 
 ### Signs You are Doing It Wrong
-
-**ADDITIONAL**
 
 - [x] You are doing it wrong if you are hiding visible and known content on first paint behind a
       skeleton that is supposed to only represent the unknown content.
@@ -285,14 +291,14 @@ refreshInterval/dedupingInterval, revalidation triggers, mutate, stale-while-rev
 "When client fetching is the right tool" (interaction-born data, dialogs/drawers, polling, with a
 load-on-open drawer example). The React-cache + SWR code both live in §13.2/§13.3/§13.6.)
 
-- [x] Diagram for client vs server side routing in nextjs (**Partially done**)
+- [x] Diagram for client vs server side routing in nextjs
 - [x] Should probably discuss use transitions at some point
 - [ ] **Expanding on habits** you keep to include other things like prop drilling, dependent
       components, containers and space allocation. Auth on the frontend.
 - [x] Expand on "decouple the parts" so its also about allowing client boundaries to be pushed
       further down and isolated inside of smaller more granular pieces.
 - [x] Content about how Vercel and React are working together and how React 19 and app router have
-      been coming out in tandem. **ELABORATE ON THIS**
+      been coming out in tandem.
 - [x] Code example for React cache and SWR cache diagrams
 - [x] Suspense works for client components too!
 - [x] How all of these things affect how we break components down. How components that are not pure
@@ -300,7 +306,7 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
 - [x] Bundle Size & Code Splitting Dedicated Section?
 - [x] How NextJS manipulates `fetch`. This should likely be part of the discussion on deduplication
       and caching.
-- [x] Client components rendering server components. (**Partially done**)
+- [x] Client components rendering server components.
 - [x] We need to talk about React's Transition API and how it's used, when to use it.
 - [x] SWR and `useSWR` discussed in way more depth. Might want to do this alongside of the dedupe
       and caching content but also the content on when client side fetching is appropriate.
@@ -327,7 +333,6 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
   - [x] useFormStatus
   - [x] useActionState
   - [x] How they work under the hood
-  - [ ] **What we lose when we go through HTTP middleman (Expand more on this)**
     - [x] Type Safety (end to end)
     - [x] latency and speed
     - [x] simplicity

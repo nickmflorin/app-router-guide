@@ -394,6 +394,19 @@ import Snippet from '../../components/Snippet.astro';
     <text x="516" y="278" font-size="9" fill="#737373">§7, §15.5</text>
   </svg>
 
+<pre slot="mermaid" is:raw>
+flowchart TB
+  S1("1 · Draw the known frame<br/>layout, containers, chrome: renders on the first byte · §2, §9"):::blue
+  S1 --> S2("2 · One async component per data question<br/>independent questions fetch in parallel, never chained · §12, §13"):::neutral
+  S2 --> S3("3 · Contain each unknown<br/>reserved container + Suspense + colocated skeleton · §9, §10"):::neutral
+  S3 --> S4("4 · Push interactivity into leaves<br/>'use client' on interaction atoms; shells receive slots · §5, §6"):::neutral
+  S4 --> S5("5 · One component per file, always<br/>the file is the unit of the boundary; splits stay cheap · §7"):::green
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
 <Fragment slot="caption">
 The decomposition sequence. Frame first, then data, then containment, then
     interactivity; the one-component-per-file rule at the end is what keeps every earlier
