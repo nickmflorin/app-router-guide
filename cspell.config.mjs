@@ -6,6 +6,7 @@ const DefaultGlobs = [
   '**/dist/**',
   '**/out/**',
   '**/build/**',
+  '**/.preview/**',
   '**/.next/**',
   '**/coverage/**',
   'package.json',
