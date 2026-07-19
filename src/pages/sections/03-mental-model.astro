@@ -449,6 +449,37 @@ flowchart LR
           >.
         </td>
       </tr>
+      <tr>
+        <td>Prop drilling: the page fetches, layers pass it down</td>
+        <td>
+          Independent streaming and dedupe: components that can't ask their own questions
+          <strong>can't suspend, stream, or cache on their own</strong>; every wire couples a layer
+          to its parent's timing.
+        </td>
+      </tr>
+      <tr>
+        <td>Dependent components (reads chained through <code>enabled:</code> or parent state)</td>
+        <td>
+          Parallelism: sibling reads that could have started together
+          <strong>serialize into a waterfall</strong>, and the user waits for the sum.
+        </td>
+      </tr>
+      <tr>
+        <td>Content that brings its own container and sizes itself on arrival</td>
+        <td>
+          Layout stability: with no space reserved up front,
+          <strong>the page assembles itself in front of the user</strong>, shifting as each response
+          lands.
+        </td>
+      </tr>
+      <tr>
+        <td>Auth resolved in the browser (fetch the session, then decide what to render)</td>
+        <td>
+          The request already carried identity (cookies): the server could have rendered the right
+          page immediately. Instead
+          <strong>every page boots, asks who you are, and flashes the wrong state</strong> while it waits.
+        </td>
+      </tr>
     </tbody>
   </table>
   <p>

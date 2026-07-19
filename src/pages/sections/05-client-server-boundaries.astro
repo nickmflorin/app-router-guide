@@ -2033,8 +2033,8 @@ flowchart TB
     to the server and back with no schema to hand-maintain and no client to keep in sync. The API
     surface (the directive,
     <code>useActionState</code>, <code>useFormStatus</code>, <code>&lt;Form&gt;</code>) is
-    catalogued in <a href='19-new-primitives.html#actions'>§19.2</a>; what matters here is the
-    architecture.
+    catalogued in <a href='19-new-primitives.html#actions'>§19.2</a> and the form-side flow gets
+    <a href='#forms'>§5.11</a>; what matters here is the architecture.
     <Chip k='next' />
     <Chip k='critical' />
   </p>
@@ -2335,6 +2335,137 @@ flowchart LR
       read.
     </p>
   </Callout>
+
+  <h2 id='forms'>5.11 Forms and actions, end to end</h2>
+  <p>
+    If a server action is a typed remote procedure call, the natural way to invoke one is a form,
+    and React 19 and Next.js have quietly rebuilt the entire form pipeline around that idea. The
+    pieces are the <code>action</code> prop, <code>useActionState</code>,
+    <code>useFormStatus</code>, and Next's <code>&lt;Form&gt;</code> component; each one deletes a
+    piece of the form code we used to write by hand.
+  </p>
+  <p>
+    Start with the <code>action</code> prop.
+    <Chip k='react' />
+    <Chip k='critical' /> In React 19 a form's <code>action</code> can be a <em>function</em>, and
+    when the user submits, React calls it with the form's <code>FormData</code>. That single change
+    retires the whole <code>onSubmit</code> ritual: no <code>preventDefault()</code>, no reading
+    fields into state, no hand-rolled <code>fetch</code>, no <code>isSubmitting</code> flag. And
+    when the function is a <em>server action</em>, submitting the form <em>is</em> the RPC of
+    <a href='#server-actions'>§5.10</a>: fields go in as arguments, the typed result comes back.
+    Because the wiring is declarative, it also works before hydration: submit early and the browser
+    posts natively, and Next replays the submission into the action, so a slow connection degrades
+    to a normal form instead of a dead button.
+  </p>
+  <p>
+    Next question: where does the action's <em>result</em> live? That is
+    <code>useActionState</code>.
+    <Chip k='react' />
+    <Chip k='very' /> It wraps the action and hands back three things: the last result, a bound
+    action to give the form, and a pending flag. The action's return value (the
+    <code>&#123; error &#125;</code> result shape of <a href='#self-contained'>§5.7</a>) simply
+    <em>becomes state</em>, which is exactly where a validation message wants to be:
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">components/programs/CreateProgramForm.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { useActionState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+<span class="tok-kw">import</span> { createProgram } <span class="tok-kw">from</span> <span class="tok-str">"@/app/programs/actions"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">CreateProgramForm</span>() {
+  <span class="tok-kw">const</span> [result, formAction, isPending] = <span class="tok-fn">useActionState</span>(createProgram, <span class="tok-kw">null</span>);
+  <span class="tok-kw">return</span> (
+    &lt;form <span class="tok-prop">action</span>={formAction}&gt;
+      &lt;input <span class="tok-prop">name</span>=<span class="tok-str">"name"</span> <span class="tok-prop">required</span> <span class="tok-prop">disabled</span>={isPending} /&gt;
+      {result?.error &amp;&amp; &lt;<span class="tok-fn">FieldError</span>&gt;{result.error}&lt;/<span class="tok-fn">FieldError</span>&gt;}
+      &lt;<span class="tok-fn">SubmitButton</span>&gt;Create program&lt;/<span class="tok-fn">SubmitButton</span>&gt;
+    &lt;/form&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The whole submit lifecycle in one hook: the action runs on the server, its return value lands
+      in <code>result</code>, and the error renders inline on the next line. Count what is absent:
+      no <code>onSubmit</code>, no <code>fetch</code>, no submitting flag, no state to reset.
+    </CodeCaption>
+  </Snippet>
+
+  <p>
+    The submit button is deliberately not written inline, because pending state is where forms
+    usually grow wires. <code>useFormStatus</code>
+    <Chip k='react' />
+    <Chip k='very' /> lets a leaf component read the status of the <em>form it happens to be
+    inside</em>, with no props and no context of ours:
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">ui/SubmitButton.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { useFormStatus } <span class="tok-kw">from</span> <span class="tok-str">"react-dom"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">SubmitButton</span>({ children }: { children: <span class="tok-fn">ReactNode</span> }) {
+  <span class="tok-com">// The status of the nearest enclosing &lt;form&gt;, read like context.</span>
+  <span class="tok-kw">const</span> { pending } = <span class="tok-fn">useFormStatus</span>();
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Button</span> <span class="tok-prop">type</span>=<span class="tok-str">"submit"</span> <span class="tok-prop">disabled</span>={pending} <span class="tok-prop">loading</span>={pending}&gt;
+      {children}
+    &lt;/<span class="tok-fn">Button</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Write this once in the ui package and every form in the app gets a correct submit button by
+      composition: it disables and spins during any submission, with zero wiring from the form
+      above it. This is <a href='13-minimize-the-wires.html'>§13</a>'s argument in form clothing.
+      The one rule: it must render <em>inside</em> the form, because the hook reads the nearest
+      enclosing one.
+    </CodeCaption>
+  </Snippet>
+
+  <p>
+    Finally, Next's <code>&lt;Form&gt;</code> component (<code>next/form</code>) extends the native
+    element for the <em>other</em> kind of form: the one whose submit is a navigation, not a
+    mutation.
+    <Chip k='next' />
+    <Chip k='very' /> Give it a <strong>string</strong> <code>action</code> and the fields become
+    query parameters of that path, navigated to client-side, with the target route prefetched while
+    the user is still typing. Give it a <strong>function</strong> and it behaves like the mutation
+    form above. The string form is <a href='08-server-resolvable-state.html'>§8</a> arriving by
+    another road: the form writes the URL, and the URL is the state.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">components/programs/ProgramSearch.tsx - a server component; no directive needed</span><span class="tok-kw">import</span> Form <span class="tok-kw">from</span> <span class="tok-str">"next/form"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramSearch</span>() {
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Form</span> <span class="tok-prop">action</span>=<span class="tok-str">"/programs"</span>&gt;
+      <span class="tok-com">{/* Submit navigates to /programs?q=… client-side; the route is prefetched. */}</span>
+      &lt;input <span class="tok-prop">name</span>=<span class="tok-str">"q"</span> <span class="tok-prop">placeholder</span>=<span class="tok-str">"Search programs"</span> /&gt;
+      &lt;<span class="tok-fn">SubmitButton</span>&gt;Search&lt;/<span class="tok-fn">SubmitButton</span>&gt;
+    &lt;/<span class="tok-fn">Form</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      A search form with no client code of its own: the shell is a server component, and the only
+      JavaScript on the page is the shared submit button. Before hydration it still works as a
+      plain GET form. The page it lands on reads <code>searchParams</code> on the server (<a
+        href='08-server-resolvable-state.html'>§8</a
+      >), so the result is shareable, back-button-friendly, and server-rendered.
+    </CodeCaption>
+  </Snippet>
+
+  <p>
+    The decision rule that falls out: <strong>a submit that changes data is a function action
+    through <code>useActionState</code>; a submit that changes what you're looking at is a string
+    action writing the URL.</strong> Both get pending state from the same shared button, both work
+    before hydration, and neither needs an API route, an <code>onSubmit</code>, or a byte of
+    hand-rolled fetch code. The per-primitive reference entries (signatures, options, doc links)
+    stay in <a href='19-new-primitives.html'>§19</a>.
+  </p>
 
   <h2 id='rules'>The rules</h2>
   <table class='tbl'>

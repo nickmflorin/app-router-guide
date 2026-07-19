@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-19T17:34:51.303Z",
+  "updatedAt": "2026-07-19T17:59:33.142Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -961,8 +961,7 @@
         "tag": "p",
         "snippet": "We are not building that app, and that is the whole argument. Next.js Very important In th"
       },
-      "resolution": "Bolded \"We are not building that app\" (comma left outside the strong).",
-      "resolvedAt": "2026-07-19"
+      "resolution": "Bolded \"We are not building that app\" (comma left outside the strong)."
     },
     {
       "id": "nmrs2rkio",
@@ -978,8 +977,7 @@
         "tag": "p",
         "snippet": "The tiebreaker is alignment. SWR is built and maintained by Vercel, the same team that shi"
       },
-      "resolution": "The alignment paragraph now says SWR \"was designed from the start for use with Next\" alongside the existing Vercel/same-team point.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "The alignment paragraph now says SWR \"was designed from the start for use with Next\" alongside the existing Vercel/same-team point."
     },
     {
       "id": "nmrs2s5d1",
@@ -996,8 +994,39 @@
         "tag": "pre",
         "snippet": "components/programs/RowActions.tsx\"use client\";import { useState } from \"react\";import dyn"
       },
-      "resolution": "Added a stubbed DetailsDrawer.tsx snippet right after RowActions: mounts on click, fetches through the shared useDetails SWR hook (comment shows the underlying useSWR key), handles isLoading/error/data inside the panel; caption ties it to §14.3 cache sharing and §10 (panel-as-container may own its skeleton). RowActions dynamic() updated to the named-export mapper for consistency.",
+      "resolution": "Added a stubbed DetailsDrawer.tsx snippet right after RowActions: mounts on click, fetches through the shared useDetails SWR hook (comment shows the underlying useSWR key), handles isLoading/error/data inside the panel; caption ties it to §14.3 cache sharing and §10 (panel-as-container may own its skeleton). RowActions dynamic() updated to the named-export mapper for consistency."
+    },
+    {
+      "id": "nmrs3h459",
+      "page": "12-blocking-requests.html",
+      "ts": "2026-07-19T17:53:43.485Z",
+      "status": "resolved",
+      "text": "in this diagram, the text like 3 serial round trips is not vertically aligned with the center of the rectangles to the left in all 4 cases.  additionally, I think we can add some more detail here that makes it look like parallel serer and parallel client are not thes ame and that parallel server is better for reasons X y ad Z which we can show in the diagram.",
+      "target": {
+        "anchor": "client",
+        "path": [
+          24
+        ],
+        "tag": "figure",
+        "snippet": "The same three reads, four shapes Client waterfall profile org id dashboard 3 serial round"
+      },
+      "resolution": "Labels and row titles are now centered on each row's bar-group center via dominant-baseline (all four rows). Parallel server vs parallel client are now visibly different: the client lane pays a gray \"JS + hydrate\" block before any query can start and its query bars are longer (full browser-to-server round trips), with two-line annotations naming both costs; the server lane's bars are shorter (queries run next to the data) with annotations for request-time start and streaming into reserved space. Mermaid twin synced (hydrate-first node fanning to the three client queries); caption expanded with the not-the-same-thing argument.",
       "resolvedAt": "2026-07-19"
+    },
+    {
+      "id": "nmrs3mj3j",
+      "page": "index.html",
+      "ts": "2026-07-19T17:57:56.143Z",
+      "status": "open",
+      "text": "I have to add this note up here because I can't add it on the individual TOC items because they are links (we should see if there is a way to fix that so I can select a link block without navigating instead of adding a note to it).  But, we need to remove the draft status from all the pages in the TOC.  Draft should no longer exist anywhere except at the top right of the page ONLY WHEN RUNNING THE DEV SERVER but never in the built output.  Then, what I want to do is just remove the \"Worked Example\" page - I don't think we need it anymore and it's blank.  LEts just delete it and adjust all references/tocs/numbers - everything that needs changing due to its removal.",
+      "target": {
+        "anchor": null,
+        "path": [
+          1
+        ],
+        "tag": "h1",
+        "snippet": "The App Router Guide"
+      }
     }
   ]
 }

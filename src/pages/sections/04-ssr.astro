@@ -295,6 +295,45 @@ flowchart LR
     <Chip k='react' />
     <Chip k='very' />
   </p>
+  <p>
+    There is a second, quieter reason the server side is simpler:
+    <strong>the environment itself.</strong> Server code runs in one place you own and provisioned.
+    It executes serially, you know what has resolved at every step, and the machine, the runtime,
+    and the network path to the database are the same on every request. Client code runs on <em
+      >someone else's computer</em
+    >, and everything about that computer is an input to your correctness: their connection speed,
+    their browser and its version, their CPU (which changes the <em>timing</em> of everything),
+    their corporate firewall, and their ad blocker, which routinely eats entire requests that your
+    code assumed would resolve. On the server none of those variables exist. On the client every one
+    of them is a bug report you haven't received yet.
+  </p>
+  <p>
+    And for every piece of content it owns, client rendering forces a choice that server rendering
+    never asks: <strong>guess, or hide.</strong> Either you render fallback values while the data
+    loads (skeletons and placeholder text that have to approximate the real content's size, and be
+    maintained forever as the real content evolves: how tall is a profile page's bio you haven't
+    loaded yet? guess wrong and the page jumps when it lands), or you reveal nothing until
+    everything is ready (and the user stares at a blank region while content that was knowable sits
+    hidden behind it). Both answers are ongoing work; each component that fetches must pick one and
+    keep it correct. On the server, for everything resolvable at request time, the question is
+    unaskable: the content arrives already the size it is (<a
+      href='09-containers-content-shifting.html'>§9</a
+    > picks this up for the parts that genuinely must wait).
+  </p>
+  <Callout kind='voice' title='"But client-side rendering is simpler"'>
+    <p>
+      It seems simpler exactly as long as nobody is sweating the details. If janky loading, layout
+      shift, skeletons drifting out of sync with the content they stand in for, and regions
+      resolving in whatever order the network picked are all acceptable, then yes: fetch in an
+      effect and ship it. The moment the bar becomes an application that looks and feels
+      professional (loads in a predictable sequence, holds still, handles every error and loading
+      state cleanly), the client-side version of that is not simpler. It is dramatically more
+      complex, and past a certain surface area it stops being achievable at all. We are not building
+      a demo with a handful of forgiving users; things shouldn't flash and shift around, and loading
+      should be something the user can predict and understand. That is the bar, and server-first is
+      the cheaper way to clear it.
+    </p>
+  </Callout>
 
   <h3 id='output-not-machinery'>The output crosses the wire, not the machinery</h3>
   <p>
@@ -439,6 +478,32 @@ flowchart LR
     single cheapest bundle-size win available, because the client downloads a few kilobytes of
     markup instead of megabytes of machinery (<a href='06-first-render-js.html'>§6</a>). One
     architectural fact, two benefits: expose the output, never the means of producing it.
+  </p>
+
+  <h3 id='api-is-html'>The API is your HTML</h3>
+  <p>
+    Push that one step further and it changes what "API" means for a page.
+    <strong>With Next.js, the API is your HTML.</strong>
+    <Chip k='next' />
+    <Chip k='very' /> The contract between the server and the browser is not "here are the rows,
+    render them yourself"; it is the rendered page. On first load that is literal HTML; on
+    navigation it is the RSC payload (<a href='#routing'>§4.5</a>), which is still <em>rendered
+    output</em>, a description of finished UI, never the raw data that produced it. The server
+    returns what the data <em>became</em>.
+  </p>
+  <p>
+    Sit with what that deletes. In the fetch-and-render world, every page needs a second, parallel
+    product: a JSON endpoint shaped for it, versioned with it, kept in sync with it, plus the
+    client-side code that fetches, validates, and maps that JSON back into markup. That is an API
+    you have to design, document, and maintain, and its only consumer is your own page. Server-first
+    collapses the two products into one: the unit the server exposes is not
+    <code>/api/reports</code> returning rows, it is the reports page returning the table. The data's
+    shape can change freely because nothing in the browser ever depended on it. (Mutations get the
+    same collapse from server actions, <a href='05-client-server-boundaries.html#server-actions'
+      >§5.8</a
+    >: a typed call instead of a hand-built endpoint. Building JSON routes for your own pages'
+    first-render data is the pattern the audit flagged, <a href='18-applied-to-tracker.html'>§18</a
+    >.)
   </p>
 
   <h2 id='perceived'>4.3 Perceived performance, and where streaming fits</h2>
