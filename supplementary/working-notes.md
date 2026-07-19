@@ -34,6 +34,8 @@ clarification before proceeding.
       verdict snippets classified; markdown output carries the same badge after the filename.)
 - [ ] Diagrams or gifs/references pointing to the video that shows Suspense as an analogy for
       version control.
+- [ ] Summary rules at the top for each page (i.e. a TL;DR section that says DOs and Donts) Can use
+      a dropdown/accordion style thing.
 
 ## Repo
 
@@ -44,8 +46,6 @@ clarification before proceeding.
 ## Design & Style
 
 - [x] Sub sections for examples probably, better use of subsections maybe (**Partially done**)
-- [ ] Summary rules at the top for each page (i.e. a TL;DR section that says DOs and Donts) Can use
-      a dropdown/accordion style thing.
 - [x] The how to read this document section should use alignment for pills and text.
 - [x] Trying to use horizontal divider lines for tables and/or a light gray thin border around the
       table area.
@@ -89,7 +89,7 @@ clarification before proceeding.
       layout shift. Tie together with TTI and why its a dead metric. (**Partially done**)
 - [x] Rename Tracker references to Tracker
 - [x] Importance of 1 component per file.
-- [ ] We need to have a section that should be used to show the importance of keeping things like a
+- [x] We need to have a section that should be used to show the importance of keeping things like a
       dropdown trigger and dropdown in parallel and not as a child.
 
 ## Page Content to Add or Modify
@@ -241,7 +241,7 @@ folded into the existing "Server-first is not optional" alert.)
       is to minimize content shifting.
 - [x] Examples of difficult patterns - two stacked tables.
 - [x] Loading, data and empty states as three different questions
-  - [ ] **Talk about empty state flickering and use a diagram.**
+  - [x] **Talk about empty state flickering and use a diagram.**
 - [x] Diagrams for Reserving space honestly similar to the web app diagram view (the diagram on the
       goals page thesis section that shows the URL bar). Diagrams use arrows to show how content
       expands to fill space and how it is reserved. Diagrams show how to reserve space for content
@@ -376,7 +376,9 @@ sections.)
 - [ ] The same three reads, three shapes - diagram needs to be better. It should incorporate an
       understanding of how suspense can parallelize server reads and how the server reads are not
       longer than the client ones.
-- [ ] More content on forms and actions.
+- [ ] More content on forms and actions - maybe on its own page. Zero in on the new Form component
+      from NextJS, the useFormStatus, the useActionStatus, and how action prop on Form works with
+      server actions.
 
 ### Resources
 
