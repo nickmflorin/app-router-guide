@@ -1014,30 +1014,35 @@ a.toc-row .soon {
   gap: 22px;
   margin: 20px 0;
 }
+/* Each box is a two-column grid: the chip column sizes itself to the widest
+   chip in THAT box, so every description starts on one shared left edge
+   instead of raggedly after each chip. Rows are display:contents so the
+   chip/desc pairs participate in the box's grid directly. */
 .legend .legend-box {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 18px 20px;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 14px;
+  row-gap: 12px;
+  align-content: start;
 }
 .legend .legend-box h4 {
-  margin: 0 0 12px;
+  grid-column: 1 / -1;
+  margin: 0;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted);
 }
 .legend .legend-row {
-  display: flex;
-  gap: 10px;
-  align-items: baseline;
-  margin-bottom: 10px;
+  display: contents;
   font-size: 14px;
 }
-.legend .legend-row:last-child {
-  margin-bottom: 0;
-}
 .legend .legend-row .chip {
-  flex-shrink: 0;
+  justify-self: start;
+  margin-top: 2px; /* optically centers the chip on the desc's first line */
 }
 .legend .legend-row span.desc {
   color: var(--muted);
