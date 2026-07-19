@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-18T23:19:09.915733+00:00",
+  "updatedAt": "2026-07-19T16:29:33.031Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -9,7 +9,9 @@
       "text": "In diagrams like this, the content should try to be aligned when it is showing things that are larger subsets of others, or replacements of others.  Here, the spacing between page header, toolbar, column headers, all of that should be the same - and the text should be vertically aligned for the single row tiles (column headers looks like its shoved down in the blue tile a pixel or two).  But, the sum of Page header + mui data grid on the left should have the same heiht as all the small pieces on the right (if that makes sense).  Keep things aligned - the footer's bottom point should matc hthe bottom point on the left of mui data grid",
       "target": {
         "anchor": "wholesale",
-        "path": [13],
+        "path": [
+          13
+        ],
         "tag": "figure",
         "snippet": "Wholesale grid: the whole table waits Composed: only the rows wait app.craft.com/reports/h"
       },
@@ -23,7 +25,9 @@
       "text": "same alignment comment as the comment on the diagram below.  Also - lets shrink the text of the top line of diagrams like Composed: ... or Wholesale... across all diagrams in the app.  Not much, maybe 1 pixel less",
       "target": {
         "anchor": "wholesale",
-        "path": [9],
+        "path": [
+          9
+        ],
         "tag": "figure",
         "snippet": "Wholesale: one fused client component Composed: known frame, unknown rows MUI DataGrid (on"
       },
@@ -37,7 +41,9 @@
       "text": "For these examples, I would also like to show an example with the useDeferredValue (i.e. client rendered third bullet).  Is it possible to create two sub-sections of this section, each named Example: ... and Example: ..., and the code snippets live under each sub section?  This helps the user understand which bullet point the example is referring to.  Note that we do not need to use an example for client fetched data, just the first and third bullets",
       "target": {
         "anchor": "refetch",
-        "path": [32],
+        "path": [
+          32
+        ],
         "tag": "pre",
         "snippet": "app/reports/page.tsx - server: the URL is the inputexport default async function Page({ se"
       },
@@ -51,7 +57,9 @@
       "text": "One thing I've been noticing a lot is that the treatment of '{' characters seems to be causing weird spacing issues in the diagrams.  Here, the fallback definition reads like this \"fallback={      <Loading /> }>\" (note all the extra spaces before the <).  Additionally, the lines are not properly indented on any of the panels in this diagram.  Suspense should be indented 2 spaces from the previous lines start, Page should not be indented as far inwards as it is, Error Boundary should be indented 2 spaces since it is inside of Layout, etc.  On the left, the return statements should be indented two spaces.",
       "target": {
         "anchor": "streaming",
-        "path": [18],
+        "path": [
+          18
+        ],
         "tag": "figure",
         "snippet": "loading.tsx export default function Loading() { return <PageScaffoldSkeleton />; } error.t"
       },
@@ -65,7 +73,9 @@
       "text": "that owns its own spinner or skeleton - or just please generalize it as \"owns its own loading indicator\"",
       "target": {
         "anchor": "no-own-loading",
-        "path": [20],
+        "path": [
+          20
+        ],
         "tag": "p",
         "snippet": "React Critical A component that renders its own spinner has made three decisions it has no"
       },
@@ -79,7 +89,10 @@
       "text": "For each of these bullet points, can we include a short, nested code snippet underneath the bullet that shows what it means?  The code snippets should be left aligned with the text after hte bullet, not the bullet itself.",
       "target": {
         "anchor": "triggers",
-        "path": [8, 0],
+        "path": [
+          8,
+          0
+        ],
         "tag": "li",
         "snippet": "An async server component awaiting inside the boundary: the canonical App Router case. The"
       },
@@ -93,7 +106,9 @@
       "text": "The curved arrows in this diagram have heads that extend too close to the tile they are referencing or pointing at causing the head to get partially clipped.  Can we instead use arrows that are segmented so the lines are always at intervals of 90 degrees, and the segmented arrows can - for instance - go down a tad, then right a tad, then back down pointing at the tile without a curve?  I would also like to try to do this in a way that would allow us to prevent the text from appearing on top of the arrows - \"each independently calls...\" for instance is hard to read because it appears on top of/under neath arrows that makes the text not legible when they intersect.",
       "target": {
         "anchor": "layers",
-        "path": [6],
+        "path": [
+          6
+        ],
         "tag": "figure",
         "snippet": "Server: during one request Client: during one session Header Stats Breadcrumbs each indepe"
       },
@@ -107,7 +122,11 @@
       "text": "For this diagram the diagram on the right, can we start using a concept of \"captions\" for code snippets?  Similar to captions on diagrams?  And take the comments that are in the code snippet and move it to a caption that is more formally written and clearer?  The caption should be separate for left and right snippets not 1 caption for both.",
       "target": {
         "anchor": "client",
-        "path": [17, 0, 1],
+        "path": [
+          17,
+          0,
+          1
+        ],
         "tag": "pre",
         "snippet": "every component, separately\"use client\";const [program, setProgram] = useState(null);const"
       },
@@ -121,7 +140,9 @@
       "text": "I want to break this into more concrete sub sections.  The first pargraph and everything up until the Streaming is the same principle statement is directly underneath the main section 4.3.  Then, the pargraph that starts with Streaming is the same principle applied ... should be a sub-section with a sub-section header.  Then after that, I want to elaborate on this perceived performance concept further, with an additional TTI sub-section.  That section should lead off by asking \"How many of you interact with a page within 500ms after it loads\"?  It should discuss why TTI is a dead metric because everything is about optimizing what the user SEES and can READ by getting it on the page as fast as humanly possible.  Then, interactive leaves hydrate some time later - because interactivity is not necessarily needed immediately.  It should discuss how this makes page loads feel faster, because what the user knows is there faster and the things they don't need to know about are hidden and done aftewards (i.e. a button's click handler or state hydrating).  There should then be a third sub-section about cumulative layout shift, discussing how cumulative layout shift and constant loading indicators flashing in and out with the page shifting around just looks terrible, unprofessional and makes it feel like the page is loading slower.  It gives the users a blatant look into everything that can be just swooped up onto the server, so all they see is the full page ready to go - just not hydrated - they don't see the intermediate steps that make it feel like its loading slower because the need to show fallback content or loading indicators in empty space when the content isn't there yet.",
       "target": {
         "anchor": "perceived",
-        "path": [20],
+        "path": [
+          20
+        ],
         "tag": "p",
         "snippet": "Perceived performance is how fast a page feels, which is not the same thing as how long it"
       },
@@ -135,7 +156,9 @@
       "text": "In this section, I would like to have a subsection that elaborates on security more, and how it's not necessary to expose the code and values that are needed to render the page we just need to expose the actual output - the rendered page.  It should include a diagram or something that shows how an HTML file like diagram svg is setn to the client across the boundary rather than all the code that is necessary to generate it.  It should discuss how this also relates to bundle size and performance briefly as well.  As well as the less javascripted shipped item.  So maybe a sub-section that is not directly called \"security blah\" but something that can be used to elaborate on both the security by locality and less javascript shipped items.",
       "target": {
         "anchor": "what",
-        "path": [6],
+        "path": [
+          6
+        ],
         "tag": "h2",
         "snippet": "4.2 What you get for it"
       },
@@ -149,7 +172,9 @@
       "text": "In this section, I want to elaborate in subsections with diagrams and code snippets the difference between use client directives usage in the application's components and a monorepo isolated ui library for components.  in the case of a dedicated ui library in the monorepo, it affects how we build those components.  Components that have interactive parts should try to expose both the structure/containers and outer parts that are non interactive along with the interactive smaller parts.  So a sidebar component should not be an all or nothing sidebar where we provide items={[...]} as an array of JS objects with properties like icon and onclick, it should be a container ocmponent Sidebar and also expose things like SidebarItem or SidebarLinkItem, or SidebarButtonItem so that the interactivity can be isolated to just the smaller parts that need \"use client\".  This allows the overall usage in the consuming application to have the flexibility to not be forced into treating the entire sidebar it renders (using the ui library sidebar) into a client component because the sidebar itself can be rendered without interactivity, and the interactive leaves which represent the individual items in the sidebar can be isolated in separate files with on click handlers (if it needs on click) with \"use client\" but if it's a link item and can use an href then the onclick handler is not needed at all and it doesn't need the directive.  This is the general idea there.  I also want to show code snippets/examples of how to \"internalize\" third party components, so that we use a single file that wraps the third-party component and adds \"use client\" so that the third-party component itself is just the leaf, rather than every composite component that imports and uses the third party component directly being forced into \"use client\" usage.",
       "target": {
         "anchor": "children-pattern",
-        "path": [22],
+        "path": [
+          22
+        ],
         "tag": "h2",
         "snippet": "5.5 Third-party components and boundary hygiene"
       },
@@ -163,7 +188,9 @@
       "text": "please do not treat this as 1 component file - every file should only ever export 1 component.",
       "target": {
         "anchor": "library-leaves",
-        "path": [30],
+        "path": [
+          30
+        ],
         "tag": "pre",
         "snippet": "packages/ui/sidebar/Sidebar.tsx + SidebarLinkItem.tsx: structure, no directive/* Pure stru"
       },
@@ -177,7 +204,11 @@
       "text": "remember - this applies to all column views.  The bottom of the second snippet in this panel should be aligned with the bottom of the overall panel on the left - it should always be aligned across columns.  The left column panel can also be shorter, so instead of expanding the second right column panel we can shrink the left column panel.",
       "target": {
         "anchor": "internalize-third-party",
-        "path": [35, 1, 2],
+        "path": [
+          35,
+          1,
+          2
+        ],
         "tag": "pre",
         "snippet": "ProgramPicker.tsx: no directiveimport { Select } from \"@/ui/Select\";export function Progra"
       },
@@ -191,7 +222,11 @@
       "text": "for code comments of code that is in a column, can we maybe bump up the allowed character limit/wrap length of the comments a tad so they don't wrap as early?  Maybe just like 8 chars or something?",
       "target": {
         "anchor": "internalize-third-party",
-        "path": [35, 0, 1],
+        "path": [
+          35,
+          0,
+          1
+        ],
         "tag": "pre",
         "snippet": "ProgramPicker.tsx\"use client\";/* react-select is interactive, so this entire composite is "
       },
@@ -205,7 +240,9 @@
       "text": "In cases where we are adding code comments like this code snippet has that describe the overall snippet or component that the snippet contains, and not a specific sub-part of the snippet where the comment's locality next to the specific thing it references is important, we should treat it as a caption.  Please go through the entire document and anywhere we have comments that reference the snippet as a whole - replace them with captions",
       "target": {
         "anchor": "tabs",
-        "path": [17],
+        "path": [
+          17
+        ],
         "tag": "pre",
         "snippet": "components/program/ProgramTabs.tsx\"use client\";import { usePathname } from \"next/navigatio"
       },
@@ -219,7 +256,9 @@
       "text": "In this diagram, the body rows: <Suspense> text is clipped by the skeleton yellow row bar above it.  I think the skeleton bar has to be underneath the body rows suspense text so that it is with the other 2 skeleton rows and not above the text",
       "target": {
         "anchor": "wholesale",
-        "path": [13],
+        "path": [
+          13
+        ],
         "tag": "figure",
         "snippet": "Wholesale grid: the whole table waits Composed: only the rows wait app.craft.com/reports/h"
       },
@@ -233,7 +272,11 @@
       "text": "can we show this as some sort of like file tree?  where it shows the directory structure starting at app and just showing the programs -> programId -> layout.tsx, roster/page.tsx, settings/page.tsx, reports/page.tsx segments?  Then each segment can have a loading.tsx and an error.tsx as well?",
       "target": {
         "anchor": "tabs",
-        "path": [15, 1, 1],
+        "path": [
+          15,
+          1,
+          1
+        ],
         "tag": "pre",
         "snippet": "app/programs/[programId]/layout.tsx /* Header + tab bar render once and persist across tab"
       },
@@ -247,7 +290,9 @@
       "text": "I would like to add a section here that shows how to add query params to the URL to force the SSR rerender of that component.  The example should likely use a useTransition logic and use transitions in the appropriate places, and it should show how to show the stale conent as the new content is loading in (i.e. maybe use deferred value etc.). It should also talk about optimistic updates for things like tabs that should be set as active somehow in state immediately but then reconcile with hte URL too.  that way it feels more interactive and isn't blocked by the page render/load.  This article has some concepts that would be helpful to explain in it: https://www.jonfk.ca/blog/nextjs-14-server-components-update/ - however, keep in mind that the article is very out of date and uses next 14 so we should make sure that anything we take from that article is in the context of the latest app router versions on the latest next fersion with react 19",
       "target": {
         "anchor": null,
-        "path": [1],
+        "path": [
+          1
+        ],
         "tag": "h1",
         "snippet": "Server-Resolvable State"
       },
@@ -261,7 +306,9 @@
       "text": "Change text to not refer to \"model this guide describes\" but be more stern about the model that is necessary for react 19 and next app router to properly work.  It shouldn't be an opinion thing - don't say that literally but phrase it as a hardlined \"this is the model you must follow because if you don't it won't work well\"",
       "target": {
         "anchor": "why",
-        "path": [4],
+        "path": [
+          4
+        ],
         "tag": "p",
         "snippet": "The audit exists to answer one question: how far does our actual usage of the App Router d"
       },
@@ -275,7 +322,9 @@
       "text": "Somewhere on this page it should discuss how NextJS's app router and React 19 are very opinionated (more so with the app router).  They're not opinioated for the sake of being opinionated, they're opinionated because they are complex systems and for it to work properly they have to make certain expectations about how you are using it.  The more you do things in a way that deviate from how the platform wants you to do them, the less effective it will be - and in many cases, the more destructive it will be.",
       "target": {
         "anchor": null,
-        "path": [1],
+        "path": [
+          1
+        ],
         "tag": "h1",
         "snippet": "The Mental Model"
       },
@@ -289,9 +338,11 @@
       "text": "the captions under code snippets are too far underneath the bottom border of the snippet.  There should be less spacing there.  The captions should also likely be padded maybe like 2px on the left to make it easier on the eyes due to hte bordere radii of the snippets.",
       "target": {
         "anchor": "library-leaves",
-        "path": [28],
+        "path": [
+          28
+        ],
         "tag": "div",
-        "snippet": "\u2715 Fused: configured with data + functions app layout (forced client)\"use client\";/* onClic"
+        "snippet": "✕ Fused: configured with data + functions app layout (forced client)\"use client\";/* onClic"
       },
       "resolution": "Caption styling tightened: margin-top pulled up (hugs the snippet bottom) and 3px left padding added so text clears the border radius; compare-column captions tightened to 4px."
     },
@@ -303,7 +354,9 @@
       "text": "it would be helpful to show in this example how the publishProgram action can return an { error, response } result type and then the handler can actually respond to the error if it is not undefined by issuing a toast message or something",
       "target": {
         "anchor": "self-contained",
-        "path": [50],
+        "path": [
+          50
+        ],
         "tag": "pre",
         "snippet": "components/program/PublishButton.tsx\"use client\";import { useTransition } from \"react\";/* "
       },
@@ -317,7 +370,9 @@
       "text": "please split into two separate snippets at two separate files showing the import.  move the component comments to captions under each snippet",
       "target": {
         "anchor": "swr-refresh",
-        "path": [69],
+        "path": [
+          69
+        ],
         "tag": "pre",
         "snippet": "The SWR variant: same shape, different cache\"use client\";import useSWR, { mutate } from \"s"
       },
@@ -331,7 +386,11 @@
       "text": "indent is missing before <sidebar here",
       "target": {
         "anchor": "library-leaves",
-        "path": [28, 0, 1],
+        "path": [
+          28,
+          0,
+          1
+        ],
         "tag": "pre",
         "snippet": "app layout (forced client)\"use client\";<Sidebar items={[ { icon: <HomeIcon />, label: \"Hom"
       },
@@ -345,9 +404,11 @@
       "text": "please make sure code snippet references across the document always have the monospace font with backtick-style formatting.  A sentence should never start with a code reference - it should always have a plain english word first.",
       "target": {
         "anchor": "library-leaves",
-        "path": [28],
+        "path": [
+          28
+        ],
         "tag": "div",
-        "snippet": "\u2715 Fused: configured with data + functions app layout (forced client)\"use client\";<Sidebar "
+        "snippet": "✕ Fused: configured with data + functions app layout (forced client)\"use client\";<Sidebar "
       },
       "resolution": "Convention recorded and swept: code references in prose/captions are always <code>-wrapped, and sentences never start with a code reference (e.g. \"Here onClick is a function...\", \"Because react-select is interactive...\"); 8 captions fixed across five chapters."
     },
@@ -359,7 +420,10 @@
       "text": "I want to focus on portability here too.  There are other reasons to decouple the parts that have nothing to do with being able to change something without affecting its neighbors.  That part is still important, but I want to include things like how it allows portability to work, how it allows the client/interactable parts that require hydration to be pushed down to more granular levels, etc.",
       "target": {
         "anchor": "thesis",
-        "path": [5, 3],
+        "path": [
+          5,
+          3
+        ],
         "tag": "li",
         "snippet": "Decouple the parts, so each region's requirements can change without rewiring its neighbor"
       },
@@ -373,7 +437,9 @@
       "text": "let's emphasize with bold text \"nothing is knowable at first render\"",
       "target": {
         "anchor": "thesis",
-        "path": [6],
+        "path": [
+          6
+        ],
         "tag": "p",
         "snippet": "Server-side rendering is what makes this framing powerful: in a browser-only app, almost n"
       },
@@ -387,7 +453,9 @@
       "text": "lets also bold \"exists to make that surface as large as possible",
       "target": {
         "anchor": "thesis",
-        "path": [6],
+        "path": [
+          6
+        ],
         "tag": "p",
         "snippet": "Server-side rendering is what makes this framing powerful: in a browser-only app, almost n"
       },
@@ -401,7 +469,9 @@
       "text": "lets emphasize some key sentence fragments in here to hammer the point home",
       "target": {
         "anchor": null,
-        "path": [4],
+        "path": [
+          4
+        ],
         "tag": "p",
         "snippet": "One thing to understand before the mechanics: React 19 and the App Router are deeply opini"
       },
@@ -415,7 +485,10 @@
       "text": "lets see if we can write this better and more concretely - something that focuses more on the difference beteween SPA and app router",
       "target": {
         "anchor": null,
-        "path": [5, 1],
+        "path": [
+          5,
+          1
+        ],
         "tag": "p",
         "snippet": "Traditional React asks: \"how do I get data into my components?\" Server-first React asks: \""
       },
@@ -429,7 +502,9 @@
       "text": "somewhere on this page, we should have a paragraph, maybe a diagram, or a sub-section or something, that discusses how a suspense boundary means unblocking the page so it doesn't need to wait for that data to be fetched server side before being shipped ot the client and painting, but a suspense boundary also means fallback content must be chosen.  So its' a feeling game, or a per-case decision - in most cases, you'll want to suspend and stream, but you have to be careful about containing those unknown boundaries so that it is a seamless swap without content shifting.",
       "target": {
         "anchor": "triggers",
-        "path": [12],
+        "path": [
+          12
+        ],
         "tag": "h2",
         "snippet": "10.2 Streaming: Suspense on the server"
       },
@@ -443,7 +518,9 @@
       "text": "somewhere in here, maybe as a subsection, I would like to talk about (with a diagram) empty state flashing that happens when you default things like arrays to be empty so the logic cannot detect empty states.  it should show how the initial fetch vs. empty state vs. present data differ by showing the empty state vs. skeleton vs. present data UI swap in and out of a container, with the skeleton only being swapped in on first load and another non destructive indicator being applied on subsequent loads - regardless of empty or non empty state (i.e. we still would show a faded opacity if it is refetching even if the empty state is present and obviously if the non-empty state is present)",
       "target": {
         "anchor": "example-deferred",
-        "path": [42],
+        "path": [
+          42
+        ],
         "tag": "h2",
         "snippet": "10.6 Loading, data, and empty are three separate questions"
       },
@@ -457,7 +534,9 @@
       "text": "Transitions need to be expanded on more to include other use cases of deferring state updates.  these discusses can be subsections of this section, might make sense to generalize the header of 10.7 to be transitions and then have transitions keep the old UI alive be the first subsection after an intro paragraph, but I'll leave that up to you as I do not know and am not good at drawing those lines.  This section should at least talk about other ways transitions are used and what they actually do.  maybe reference some things in this: https://react.dev/reference/react/startTransition",
       "target": {
         "anchor": "orthogonal",
-        "path": [50],
+        "path": [
+          50
+        ],
         "tag": "h2",
         "snippet": "10.7 Transitions keep the old UI alive"
       },
@@ -471,9 +550,11 @@
       "text": "lets add a code snippet here",
       "target": {
         "anchor": "transitions-stale",
-        "path": [60],
+        "path": [
+          60
+        ],
         "tag": "p",
-        "snippet": "The callout in \u00a710.1 noted that a boundary already showing content will not fall back to i"
+        "snippet": "The callout in §10.1 noted that a boundary already showing content will not fall back to i"
       },
       "resolution": "Added a SortSelect snippet under \"Transitions keep the old UI alive\": a router write (router.push with a sort param) wrapped in startTransition, with isPending disabling the select; the caption points to the end-to-end 10.5 example."
     },
@@ -485,7 +566,9 @@
       "text": "lets add a code snippet here",
       "target": {
         "anchor": "transitions-defer",
-        "path": [62],
+        "path": [
+          62
+        ],
         "tag": "p",
         "snippet": "The second use has nothing to do with data: a state update whose re-render is expensive. R"
       },
@@ -499,7 +582,9 @@
       "text": "lets add a code snippet here",
       "target": {
         "anchor": "transitions-async",
-        "path": [64],
+        "path": [
+          64
+        ],
         "tag": "p",
         "snippet": "React 19 extended transitions to async functions, which the docs call actions: startTransi"
       },
@@ -513,7 +598,9 @@
       "text": "there's some small spacing/indentation issues in the code snippet - the return is not indented and there's too much whitespace after the first <>.  Also, there should not be blank lines above and below return",
       "target": {
         "anchor": "parallel-routes",
-        "path": [15],
+        "path": [
+          15
+        ],
         "tag": "figure",
         "snippet": "app/programs/[id]/ layout.tsx @header/ H page.tsx @summary/ S page.tsx C page.tsx - childr"
       },
@@ -527,7 +614,9 @@
       "text": "on the top left tile, can we indent the files properly somehow and maybe show a file tree breakdown so its easier to see what is a folder and what is a file?",
       "target": {
         "anchor": "parallel-routes",
-        "path": [15],
+        "path": [
+          15
+        ],
         "tag": "figure",
         "snippet": "app/programs/[id]/ layout.tsx @header/ H page.tsx @summary/ S page.tsx C page.tsx - childr"
       },
@@ -541,7 +630,9 @@
       "text": "lets decrease the spacing between the three scenarios and we have to bump up the spacing after the parallel client case so it's not as close to the word \"start\" on the timeline.  I also don't understand why the segment for \"on the server\" is longer than the 3 parallel segments for teh parallel client case.  There is also the situation where we can show the server doing 3 separate queries, each wrapped with a suspense, so it's not serial or just one giant block",
       "target": {
         "anchor": "client",
-        "path": [24],
+        "path": [
+          24
+        ],
         "tag": "figure",
         "snippet": "The same three reads, three shapes Client waterfall profile org id dashboard 3 serial roun"
       },
@@ -555,7 +646,9 @@
       "text": "the text that starst with \"each region swaps in as its ready...\" is too close to the edge of the \"chunk: table\" block.  Please try to use more consistent spacing and push it right a little bit",
       "target": {
         "anchor": "streaming",
-        "path": [14],
+        "path": [
+          14
+        ],
         "tag": "figure",
         "snippet": "Blocking SSR: response waits for the slowest fetch fetch program (fast) fetch report rows "
       },
@@ -569,7 +662,12 @@
       "text": "please add a paragraph or context before/after these code snippets that explains that the activity feed will still fetch its data when the main page loads even though it's not visible yet.  If the desire is for that fetch to wait until it is visible, it means the data needs to be fetched after an interaction - which requires CSR.",
       "target": {
         "anchor": "children-pattern",
-        "path": [20, 1, 1, 0],
+        "path": [
+          20,
+          1,
+          1,
+          0
+        ],
         "tag": "pre",
         "snippet": "CollapsibleSection.tsx: client shell, knows nothing\"use client\";export function Collapsibl"
       },
@@ -583,7 +681,9 @@
       "text": "this might make more sense on the introduction page under dont fight the framework?  Or at least maybe split up between the two pages",
       "target": {
         "anchor": null,
-        "path": [4],
+        "path": [
+          4
+        ],
         "tag": "p",
         "snippet": "One thing to understand before the mechanics: React 19 and the App Router are deeply opini"
       },
@@ -597,7 +697,9 @@
       "text": "we should add content here that discusses why SWR is more favorable than tanstack's use query - its because it is designed specifically for nextjs.  please also do some research to compare the two yourself",
       "target": {
         "anchor": "extends-fetch",
-        "path": [25],
+        "path": [
+          25
+        ],
         "tag": "h2",
         "snippet": "13.6 SWR, in more depth"
       },
@@ -611,7 +713,10 @@
       "text": "we don't need to write this as if it is an instruction on how to talk to design.  our engineers know how to talk to design and UX.  The point this doc should be making is that it's someting we HAVE To be talking to them about to begin with.  We should be identifying those places where the design introduces content that is hard to contain earlier on, so that we can start designing the UX in a way where it is predictable and more static across the board, current and future.",
       "target": {
         "anchor": "shared-goal",
-        "path": [6, 1],
+        "path": [
+          6,
+          1
+        ],
         "tag": "p",
         "snippet": "Never \"this design has CLS problems.\" Instead: \"walk me through what this page shows while"
       },
@@ -625,7 +730,9 @@
       "text": "Sometimes our figma comps do include empty states.  The problem is that they show empty states as if they are the same size as the content was when the figma had data in it - but not an empty state or consideration for cases where its flipping between that empty state and a data view where there is just 1 row, for instance, or 300 rows.  In other words, it's often the case that the comp will include a view with 8 data points, showing the 8 data points in a container that has a random height constraint and isn't thinking about what happens when that height constraint is not known or is pushing other content around.  We don't know how big the view should be to show the empty state if we don't know how many rows or data points there are - and we will never know how many rows or data points there are so we have t ofigure out how to swap both states in a way where it doesn't push everything else around.",
       "target": {
         "anchor": "happy-path",
-        "path": [8],
+        "path": [
+          8
+        ],
         "tag": "p",
         "snippet": "A Figma comp is a snapshot of exactly one state: the happy path. The data has arrived, eve"
       },
@@ -639,7 +746,9 @@
       "text": "I'm not sure the NextJS scope works here - maybe we should have a new scope for general UI/UX?",
       "target": {
         "anchor": "rules",
-        "path": [32],
+        "path": [
+          32
+        ],
         "tag": "table",
         "snippet": "Rule Scope Importance Translate the goal for design: \"the page must not move under the use"
       },
@@ -653,7 +762,9 @@
       "text": "lets not be talking like the designers are idiots.  we should be talking more from the point of view of these are communication channels we need to open in both directions, and as we keep doing that, ti will become more natural on both sides - engineers will start thinking about it more and bringing it up more and ux will start anticipating those situations more as well",
       "target": {
         "anchor": "happy-path",
-        "path": [11],
+        "path": [
+          11
+        ],
         "tag": "p",
         "snippet": "A designer who has been asked these questions three times starts asking them without us. T"
       },
@@ -667,7 +778,9 @@
       "text": "not \"the canonical hard case\" should be \"a common hard case\" or something like that.",
       "target": {
         "anchor": "stacked-tables",
-        "path": [13],
+        "path": [
+          13
+        ],
         "tag": "p",
         "snippet": "Here is the canonical hard case, and it looks completely innocent in a comp: two tables st"
       },
@@ -681,7 +794,9 @@
       "text": "lets include a third guess that says the tables should just be auto height - which means that the table bodies won't be contained and won't scroll but the entire content area surrounding the tables and likely the page will scroll, and it also means that the content will push each other around similar to guess 2",
       "target": {
         "anchor": "stacked-tables",
-        "path": [16],
+        "path": [
+          16
+        ],
         "tag": "figure",
         "snippet": "Guess 2: content-sized with a min-height - the top table shoves the bottom one Assignments"
       },
@@ -695,7 +810,9 @@
       "text": "again, the first rule is not us telling design to reduce CLS - we know not to say that, it's more of just a general open the communication channels rule so that we are communicating with them and vice versa about these things",
       "target": {
         "anchor": "rules",
-        "path": [32],
+        "path": [
+          32
+        ],
         "tag": "table",
         "snippet": "Rule Scope Importance Translate the goal for design: \"the page must not move under the use"
       },
@@ -709,7 +826,9 @@
       "text": "we should make it clear that this is not an ideal situation and the better solution is to have a structure/UX/design where we don't have two tables on top of one another to begin with - feeding back into the fact that this thing requires engineering/UX coordination",
       "target": {
         "anchor": "stacked-tables-resolution",
-        "path": [21],
+        "path": [
+          21
+        ],
         "tag": "figure",
         "snippet": "The partitioned resolution: panes are fixed by design; content changes inside them Assignm"
       },
@@ -723,7 +842,9 @@
       "text": "I want to get started on this page.  This page should sort of discuss how a server first mentality changes how we break apart components, kind of pulling together the conversations from every other page earlier in this doc.  Also - please do some online research if you can, for patterns and things like that.  I want to also touch on the importance of 1 component per file and how that affects things.  The goal here is to be more of a document reference for component design patterns, kind of pulling together everything we'ce learned thus far.",
       "target": {
         "anchor": null,
-        "path": [0],
+        "path": [
+          0
+        ],
         "tag": "h1",
         "snippet": "Component Breakdown"
       },
@@ -737,7 +858,9 @@
       "text": "I want to talk about portability more on this page.  The importance of portability and how it makes things more malleable. It should use diagrams if possible, and code snippets if applicable.  Slot usages, how you can provide server\n      components to slots in client components. How you can provide client components to slots in\n      server components. Code examples, diagrams, etc.",
       "target": {
         "anchor": null,
-        "path": [1],
+        "path": [
+          1
+        ],
         "tag": "h1",
         "snippet": "Minimize the Wires"
       },
@@ -751,7 +874,9 @@
       "text": "I want to add something about how you're doing it wrong if you are using a skeleton to replace content that is known on first paint, instead of just the content that is not known.  A skeleton sould never wholesale replace pages unless there are very good reasons to do so, it should never replace UI elements that don't need to be replaced, like inputs, selects, things like taht",
       "target": {
         "anchor": null,
-        "path": [1],
+        "path": [
+          1
+        ],
         "tag": "h1",
         "snippet": "Signs You're Doing It Wrong"
       },
@@ -765,7 +890,9 @@
       "text": "I want to expand here and talk more about how traditional prisma usage is built to use prisma directly inside of server actions, eliminating the need for an API.  This applies to other ORMS as well.  But it should say that while that is optimal for latency, flexibility, speed and avoiding an API that is overly copuled to a UI, it is still okay to use a dedicated backend layer or cetnralized API - but it should be direct and not through a proxy in API routes.  I want to include code snippets showing usage with Prisma directly in server actions, but also the HTTP snippets where we go to a centralized API.  It should show prisma examples in the context of error handling surface - and type safety - where we can simply fetch just the data we need in that one action and tialor the way we write the action so that it handles the error cases automatically for that specific action in context - and not 100 other actions that use the same API endpoint (which is where the API coupling gets in).  IT should be like \"if the findUnique is null, then we indicate in the return type that it does not exist with some type of { error } or 'message' or something - but when we go through an HTTP API, a 404 could also mean that the actual endpoint doesn't exist... right?  It could mean that the model doesn't exist too - just as an example for teh error surface and decision making from returns/responses.  But it should say and focus on the fact that even going through a central APi is infinitely better than going through a proxy when we can avoid it - the proxy is not needed for server actions and it widens the error surface and hurts type safety.",
       "target": {
         "anchor": "god-components",
-        "path": [81],
+        "path": [
+          81
+        ],
         "tag": "h2",
         "snippet": "5.10 Server actions and the HTTP middleman"
       },
@@ -779,11 +906,44 @@
       "text": "How server first means that you sometimes have to break your components apart in a different\n      seemingly-awkward-at-first way. It means you have to separate the server from client parts.",
       "target": {
         "anchor": null,
-        "path": [0],
+        "path": [
+          0
+        ],
         "tag": "h1",
         "snippet": "Component Breakdown"
       },
       "resolution": "Covered by 15.1/15.2: the awkward-at-first framing is explicit (\"cutting along those seams feels like over-fragmenting until you notice each fragment is exactly one capability\"), with the card worked example showing the seemingly-one-component splitting into frame/stats/menu because server and client parts must separate."
+    },
+    {
+      "id": "nmrryjwhe",
+      "page": "15-component-breakdown.html",
+      "ts": "2026-07-19T15:35:55.442Z",
+      "status": "open",
+      "text": "I think it might make sense to make this example a little more complex and consider the fact that ProgramCardMenu is a floating element that only opens when a button is clicked.  Is there a way we can show that here too?  Please confirm with me before updating the example - I want to see what you do before you commit it.",
+      "target": {
+        "anchor": "worked",
+        "path": [
+          13,
+          0
+        ],
+        "tag": "pre",
+        "snippet": "ProgramCard.tsx - server: frame renders immediately, reserves spaceexport function Program"
+      }
+    },
+    {
+      "id": "nmrrz4jrr",
+      "page": "01-introduction.html",
+      "ts": "2026-07-19T15:51:58.743Z",
+      "status": "open",
+      "text": "what does \"the first crack in every component fends for itself\" mean?",
+      "target": {
+        "anchor": "direction",
+        "path": [
+          21
+        ],
+        "tag": "figure",
+        "snippet": "The client era: the browser earns every pixel May 2013 React is open-sourced components + "
+      }
     }
   ]
 }
