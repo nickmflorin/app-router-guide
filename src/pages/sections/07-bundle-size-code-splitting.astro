@@ -33,9 +33,10 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     The good news is that the App Router splits code by route automatically: a given page ships the
     JavaScript for its own tree, not the whole app. The bad news is that this automatic splitting is
-    easy to defeat, and the rest of this chapter is a tour of the three most common ways we do it:
+    easy to defeat, and the rest of this chapter is a tour of the four most common ways we do it:
     pulling in a component so heavy it drags the page down, fusing the known and the unknown into
-    one undeferrable lump, and importing through barrel files that quietly negate tree-shaking.
+    one undeferrable lump, welding an always-visible trigger to the floating panel it opens, and
+    importing through barrel files that quietly negate tree-shaking.
   </p>
 
   <h2 id='wholesale'>7.2 The wholesale-component trap</h2>
@@ -513,7 +514,135 @@ flowchart LR
     </p>
   </Callout>
 
-  <h2 id='barrels'>7.4 Barrel files quietly defeat code splitting</h2>
+  <h2 id='triggers'>7.4 The trigger ships; the panel waits</h2>
+  <p>
+    Every floating element - a dropdown menu, a popover, a dialog, a drawer - is closed on first
+    render by definition. The button that opens it is on screen from the first paint. That is the
+    <a href='#tax'>§7.1</a> question answered twice, in opposite directions, by two things that sit
+    an inch apart in the same mock. The structural consequence:
+    <strong
+      >the trigger and the panel it opens should be separate components, side by side,</strong
+    > so the trigger can ship in the first-paint bundle while the panel's import is deferred until someone
+    actually clicks. <a href='15-component-breakdown.html#worked'>§15.2</a>'s card menu is exactly this
+    shape: a trigger file that owns the open state, and a panel file behind a dynamic import.
+  </p>
+  <p>
+    The shape that quietly fights this is the compound-component API most UI libraries document,
+    because it nests the trigger <em>inside</em> the floating component. Tracker's action menus
+    follow it faithfully:
+  </p>
+
+  <Snippet>
+    <pre
+      class='code'
+      is:raw><span class="filename">OrgActionsMenu.tsx - the panel rides in the button's bundle</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">import</span> {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} <span class="tok-kw">from</span> <span class="tok-str">"@tracker/ui"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">OrgActionsMenu</span>({ org }: { org: Organization }) {
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">DropdownMenu</span>&gt;
+      &lt;<span class="tok-fn">DropdownMenuTrigger</span> <span class="tok-prop">asChild</span>&gt;
+        &lt;<span class="tok-fn">Button</span> <span class="tok-prop">size</span>=<span class="tok-str">"sm"</span>&gt;Organization actions&lt;/<span class="tok-fn">Button</span>&gt;
+      &lt;/<span class="tok-fn">DropdownMenuTrigger</span>&gt;
+      &lt;<span class="tok-fn">DropdownMenuContent</span> <span class="tok-prop">align</span>=<span class="tok-str">"end"</span>&gt;
+        &lt;<span class="tok-fn">DropdownMenuItem</span> <span class="tok-prop">onSelect</span>={() =&gt; <span class="tok-fn">startEdit</span>(org.id)}&gt;Edit&lt;/<span class="tok-fn">DropdownMenuItem</span>&gt;
+        &lt;<span class="tok-fn">DropdownMenuItem</span> <span class="tok-prop">onSelect</span>={() =&gt; <span class="tok-fn">deactivate</span>(org.id)}&gt;Deactivate&lt;/<span class="tok-fn">DropdownMenuItem</span>&gt;
+      &lt;/<span class="tok-fn">DropdownMenuContent</span>&gt;
+    &lt;/<span class="tok-fn">DropdownMenu</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      To be fair to the library: it already defers the <em>render</em>. <code
+        >DropdownMenuContent</code
+      > doesn't enter the DOM until the menu opens. What it cannot defer is the <em>download</em>.
+      Because the panel lives in the same file as the always-visible button, every item, icon, and
+      handler is statically reachable from the first paint, and ships with it.
+    </CodeCaption>
+  </Snippet>
+
+  <p>
+    For a two-item text menu the freight is small (though it multiplies by every row of a table that
+    renders one of these). The real damage is that the welded shape gets reused as the panel grows.
+    Tracker's email-change flow is a button that opens a sheet, and because the sheet nests inside
+    the trigger's file, that one button statically imports the form library, the schema-validation
+    library, its resolver, and the entire sheet component - none of which can do anything until a
+    click that most visits never make. The fix is not to abandon the library's API; it is to cut the
+    file at the same seam the user experiences:
+  </p>
+
+  <Snippet>
+    <pre
+      class='code'
+      is:raw><span class="filename">OrgActionsMenu.tsx - the trigger owns the state; the panel is a deferred sibling</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
+<span class="tok-kw">import</span> { Button, DropdownMenu, DropdownMenuTrigger } <span class="tok-kw">from</span> <span class="tok-str">"@tracker/ui"</span>;
+
+<span class="tok-kw">const</span> OrgActionsMenuPanel = <span class="tok-fn">dynamic</span>(() =&gt;
+  <span class="tok-kw">import</span>(<span class="tok-str">"./OrgActionsMenuPanel"</span>).<span class="tok-fn">then</span>((m) =&gt; m.OrgActionsMenuPanel)
+);
+
+<span class="tok-kw">export function</span> <span class="tok-fn">OrgActionsMenu</span>({ org }: { org: Organization }) {
+  <span class="tok-kw">const</span> [open, setOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">DropdownMenu</span> <span class="tok-prop">open</span>={open} <span class="tok-prop">onOpenChange</span>={setOpen}&gt;
+      &lt;<span class="tok-fn">DropdownMenuTrigger</span> <span class="tok-prop">asChild</span>&gt;
+        &lt;<span class="tok-fn">Button</span> <span class="tok-prop">size</span>=<span class="tok-str">"sm"</span>&gt;Organization actions&lt;/<span class="tok-fn">Button</span>&gt;
+      &lt;/<span class="tok-fn">DropdownMenuTrigger</span>&gt;
+      {open &amp;&amp; &lt;<span class="tok-fn">OrgActionsMenuPanel</span> <span class="tok-prop">org</span>={org} /&gt;}
+    &lt;/<span class="tok-fn">DropdownMenu</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The root and trigger stay inline: they are cheap and genuinely needed at first paint. The
+      panel becomes a controlled, conditionally rendered sibling, so <code>dynamic</code> is never
+      even asked for its module until the first open.
+    </CodeCaption>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code'
+      is:raw><span class="filename">OrgActionsMenuPanel.tsx - everything the closed menu doesn't need</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">import</span> { DropdownMenuContent, DropdownMenuItem } <span class="tok-kw">from</span> <span class="tok-str">"@tracker/ui"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">OrgActionsMenuPanel</span>({ org }: { org: Organization }) {
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">DropdownMenuContent</span> <span class="tok-prop">align</span>=<span class="tok-str">"end"</span>&gt;
+      &lt;<span class="tok-fn">DropdownMenuItem</span> <span class="tok-prop">onSelect</span>={() =&gt; <span class="tok-fn">startEdit</span>(org.id)}&gt;Edit&lt;/<span class="tok-fn">DropdownMenuItem</span>&gt;
+      &lt;<span class="tok-fn">DropdownMenuItem</span> <span class="tok-prop">onSelect</span>={() =&gt; <span class="tok-fn">deactivate</span>(org.id)}&gt;Deactivate&lt;/<span class="tok-fn">DropdownMenuItem</span>&gt;
+    &lt;/<span class="tok-fn">DropdownMenuContent</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The compound API still works: the panel renders inside the same <code>DropdownMenu</code> root,
+      so the library's context reaches it. Only the import graph changed - and for the sheet version
+      of this pattern, this file is where the form library, the schema, and the sheet body live,
+      which is precisely the weight the button no longer carries.
+    </CodeCaption>
+  </Snippet>
+
+  <p>
+    Two judgment notes. First, the first open now pays the chunk's download; for panels this is
+    almost always invisible (they are small relative to what they saved, and the fetch races the
+    user's hand), but it is the same trade as <a href='#heavyweight'>§7.3</a>: don't split a
+    three-line panel out of reflex, split when the panel has weight. Second, when you design your
+    <em>own</em> trigger-plus-floating components, bake the seam into the API from the start: a
+    trigger that owns the open state and mounts a lazy panel, as in
+    <a href='15-component-breakdown.html#worked'>§15.2</a>, rather than a component that needs the
+    panel's module just to render the button. It is <a href='#wholesale'>§7.2</a>'s lesson rotated
+    ninety degrees: don't weld the always-visible to the almost-never-visible.
+  </p>
+
+  <h2 id='barrels'>7.5 Barrel files quietly defeat code splitting</h2>
   <p>
     A barrel file is an <code>index.ts</code> that re-exports everything in a folder so callers can write
     <code>import &#123; Button &#125; from "@/ui"</code> instead of reaching into the specific module.
@@ -563,7 +692,7 @@ flowchart LR
     ship.
   </p>
 
-  <h2 id='cost'>7.5 What bloated pages actually cost</h2>
+  <h2 id='cost'>7.6 What bloated pages actually cost</h2>
   <p>
     It is worth being concrete about who pays, because "big bundle" sounds abstract and the costs
     are not. They land on the two groups we care most about: the people using the app and the people
@@ -635,6 +764,15 @@ flowchart LR
           a fallback that is lighter than what it replaces.
         </td>
         <td><Chip k='next' /></td>
+        <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>
+          <strong>Triggers and their floating panels are separate files.</strong> The button ships at
+          first paint; the menu, dialog, or sheet it opens is a deferred sibling behind a dynamic import,
+          not a nested child of the trigger's module.
+        </td>
+        <td><Chip k='react' /></td>
         <td><Chip k='very' /></td>
       </tr>
       <tr>
