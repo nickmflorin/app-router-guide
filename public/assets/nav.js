@@ -268,6 +268,11 @@ const TOC = [
         const { tokens, hits } = search(q);
         tocEl.hidden = true;
         resultsEl.hidden = false;
+        if (!window.ARG_SEARCH_INDEX) {
+          resultsEl.innerHTML =
+            '<div class="sr-empty">Search index not found; run <code>npm run build</code> once to generate it.</div>';
+          return;
+        }
         if (!hits.length) {
           resultsEl.innerHTML =
             '<div class="sr-empty">No matches. Try fewer or different words.</div>';
