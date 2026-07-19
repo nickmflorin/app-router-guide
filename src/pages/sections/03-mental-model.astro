@@ -215,7 +215,6 @@ import CompareCol from '../../components/CompareCol.astro';
   </svg>
 
 <pre slot="mermaid" is:raw>
-%%{init: {"flowchart": {"rankSpacing": 34}}}%%
 flowchart LR
   B("Browser"):::neutral
   subgraph S["Server"]
@@ -235,8 +234,9 @@ flowchart LR
   R --> P1("first paint: real content,<br/>stable layout"):::green
   P1 --> P2("suspended regions stream in,<br/>replacing fallbacks in place"):::amberdash
   P2 --> P3("leaves hydrate,<br/>page is interactive"):::cyan
-  style S fill:#eaf3fe,stroke:#0070f3,color:#0757ba
-  style R fill:#ffffff,stroke:#d4d4d4,color:#171717
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style S fill:#eaf3fe,stroke:#0070f3,color:#0757ba,rx:8px,ry:8px
+  style R fill:#ffffff,stroke:#d4d4d4,color:#171717,rx:8px,ry:8px
   classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
   classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
   classDef bluesub fill:#d8e8fc,stroke:#d8e8fc,color:#0757ba
@@ -469,9 +469,8 @@ One request. The server resolves everything knowable, streams structure immediat
   </svg>
 
 <pre slot="mermaid" is:raw>
-%%{init: {"flowchart": {"rankSpacing": 14}}}%%
 flowchart TB
-  subgraph SPA["SPA-style page (client-fetch chain)"]
+  subgraph SPA["SPA-style page (client-fetch chain): five serialized steps, repeated on every navigation"]
     direction LR
     A1("HTML shell"):::neutral --> A2("download + parse JS"):::neutral
     A2 --> A3("hydrate"):::neutral
@@ -479,25 +478,23 @@ flowchart TB
     A4 --> A5("fetch page data"):::amber
     A5 --> A6("content visible: T₅"):::green
   end
-  N1("T₅: five serialized steps · spinners at each step<br/>layout shifts as each lands · repeats on every navigation"):::caption
-  subgraph SF["Server-first page (same data)"]
+  subgraph SF["Server-first page (same data): parallel on the server, one round trip"]
     direction LR
     B1("server: fetch in parallel + render"):::blue
     B1 --> B2("content visible: T₁"):::green
     B2 --> B3("slow regions stream in"):::amberdash
     B3 --> B4("leaves hydrate"):::cyan
   end
-  SPA ~~~ N1
-  N1 ~~~ SF
-  style SPA color:#b3261e
-  style SF color:#157a4c
+  SPA ~~~ SF
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style SPA fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  style SF fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
   classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
   classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
   classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
   classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
   classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
   classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
-  classDef caption fill:none,stroke:none,color:#666666,font-size:12px
 </pre>
 
 <Fragment slot="caption">

@@ -105,20 +105,21 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 - 2026-07-19: **Mermaid twins (pilot, per Nick).** Every Diagram may carry a `mermaid` slot
   (<pre slot="mermaid" is:raw> next to the SVG); Diagram.astro hides it in a <template
   data-mermaid> (invisible in HTML), build_md.py extracts it as a ```mermaid fence + caption
-  blockquote. STYLE RULES for twins: build_md.py PREPENDS a standard init to every twin (MERMAID_INIT
-  constant: guide palette themeVariables, Inter 13px, thin links, scaled-down arrowheads,
-  .cluster rect{rx:8px;ry:8px;} so EVERYTHING has small border radii, default spacing
-  nodeSpacing 26/rankSpacing 30/padding 12). Authored twins contain ONLY the body plus an
-  optional second init for per-diagram flowchart spacing (mermaid merges consecutive
-  directives). Node shape is ROUNDED: ("label") not ["label"]. NO box shadows ever. Minimize
-  dead white space; prefer single-line labels, but break long annotation labels with <br/>
-  BEFORE they clip (mermaid measures with its fallback font and clips overlong html labels).
-  Annotations that caption a lane/diagram use classDef caption
-  fill:none,stroke:none,color:#666666,font-size:12px, placed adjacent to what they describe.
-  Caret-style arrowheads are not achievable; scaled triangles are the closest. Renderers that
-  strip themeCSS fall back to default arrows/square clusters: acceptable. Keep the twin in sync when an SVG changes.
-  Chapter 3 done as pilot; remaining 38 diagrams pending Nick's go.
-- 2026-07-18: **Sidebar search added.** `scripts/build_search_index.py` (now part of `npm run
+  blockquote. STYLE RULES for twins (v2, PORTABILITY-FIRST, after VS Code preview testing): third-party
+  renderers ignore/sanitize init theming and measure text with their own fonts, so twins use
+  NO init directives at all: no themeCSS, no themeVariables, no font settings (font overrides
+  CAUSE label clipping in previewers). Style everything IN-DIAGRAM: classDef per palette role
+  (neutral #ffffff/#c9c9c9, blue #eaf3fe/#0070f3/#0757ba, bluesub #d8e8fc, green
+  #e7f5ee/#2ea06d/#157a4c, amber #fdf3e3/#b45309/#8a5a00 + stroke-dasharray:4 3 for
+  suspended/unknown, cyan #e0f5f9/#0891b2/#0e7490), linkStyle default
+  stroke:#737373,stroke-width:1.5px, style statements on subgraphs incl. rx:8px,ry:8px
+  (rounded clusters). Node shape ROUNDED: ("label") not ["label"]. NO floating
+  annotation/caption nodes (their position and width are renderer-dependent): fold lane
+  annotations into subgraph titles, longer commentary belongs in the figcaption (build_md
+  renders it as a blockquote under the fence). Renderer-injected chrome (VS Code preview adds
+  node shadows, default spacing applies) is outside our control: acceptable; GitHub renders
+  flat. Keep the twin in sync when the SVG changes. Chapter 3 = pilot; 38 remaining.
+  - 2026-07-18: **Sidebar search added.** `scripts/build_search_index.py` (now part of `npm run
   build`, after relativize) parses built pages into build/output/app-router-guide_html/assets/search-index.js
   (window.ARG_SEARCH_INDEX; a script tag, not fetch, so file:// works). nav.js renders a search
   input above the TOC: as-you-type results replace the TOC list (chapter, heading, highlighted
