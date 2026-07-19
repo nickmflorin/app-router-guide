@@ -1176,7 +1176,7 @@
       "id": "nmrscnhza",
       "page": "10-suspense-streaming.html",
       "ts": "2026-07-19T22:10:37.894Z",
-      "status": "open",
+      "status": "resolved",
       "text": "Before we start talking about what triggers a suspense boundary, I want to elaborate more thoroughly on how suspense actually works and what it does.  It should include htings like how it doesn't actually mount the component yet or register its lifecycle methods - I stopped writing this please ask me if you stumble into this note and I forgot to finish!",
       "target": {
         "anchor": null,
@@ -1185,7 +1185,9 @@
         ],
         "tag": "h2",
         "snippet": "10.1 How Suspense actually works"
-      }
+      },
+      "resolution": "Per your finished thought: §10.1 gained an \"Under the hood: rendering is speculative, committing is atomic\" subsection: the throw-a-thenable mechanism, the attempt-not-commitment point (suspended component is never mounted: no DOM, no effects, no lifecycle; the attempt is discarded and the subtree re-renders from scratch on resolve), and the render-vs-commit two-phase model. Then the Beyond React 16 version-control analogy as a four-frame git-graph diagram (main on screen; branch suspends unmerged; main keeps moving; data resolves and merges atomically) with mermaid twin; the caption credits and links the talk at the ~29min mark and adds the fallback/transition footnotes. A GIF is not feasible in the SVG+markdown pipeline, so it is a multi-frame static diagram. Talk added to the references ledger.",
+      "resolvedAt": "2026-07-19"
     },
     {
       "id": "nmrscoy0w",
@@ -1209,7 +1211,7 @@
       "id": "nmrseqjch",
       "page": "14-dedupe-caching.html",
       "ts": "2026-07-19T23:08:58.865Z",
-      "status": "open",
+      "status": "resolved",
       "text": "Lets change this section to be less havy on the \"SWR not TanStack\" and more on the \"SWR vs. TanStack\" with an emphasis on SWR due to its ability to seamlessly integrate with NextJS questions.  However it should be clear that tanstack is also 100% great, just that it should not be used as the primary data fetching means because that should be focused more on the server with CSR reserved for cases where SSR is not possible (i.e. data that needs to be fetched after an interaction)",
       "target": {
         "anchor": "swr-vs-query",
@@ -1218,7 +1220,9 @@
         ],
         "tag": "p",
         "snippet": "The honest comparison first, because TanStack Query is an excellent library and the more p"
-      }
+      },
+      "resolution": "§14.6 reframed as \"SWR vs TanStack Query\": TanStack acknowledged as more popular, more powerful, fully App Router compatible, and the right general-audience default; the architectural point is now explicit that NEITHER is the primary data fetching means (server owns that; client fetching is the §14.7 interaction-born residue); within that small role SWR gets a mild nod for surface fit, 4KB vs 13KB, and Vercel/Next alignment, with the caveat that neither choice is wrong.",
+      "resolvedAt": "2026-07-19"
     },
     {
       "id": "nmrseshkr",
@@ -1241,7 +1245,7 @@
       "id": "nmrseuop5",
       "page": "14-dedupe-caching.html",
       "ts": "2026-07-19T23:12:12.425Z",
-      "status": "open",
+      "status": "resolved",
       "text": "please actually do some research here and let me know what you find - if it is the case that SWR is fundamentlaly better suited for NextJS I think we should state that.  But if they're close, then it's more of a tie breaker just going to SWR mildly due to the designer being vercel and its design was intended for next.  Please do some research whn you see this note and ask me about it before changing anything.",
       "target": {
         "anchor": "swr-vs-query",
@@ -1250,7 +1254,9 @@
         ],
         "tag": "p",
         "snippet": "The tiebreaker is alignment. SWR is built and maintained by Vercel, the same team that shi"
-      }
+      },
+      "resolution": "Research reported in chat and approved: not fundamentally better suited, a mild tiebreaker (both fully App Router compatible; TanStack ~12M weekly downloads and growing faster, stronger mutations/devtools, slightly more hydration ceremony; SWR ~4KB, small surface, Vercel co-maintained and designed for use with Next). §14.6 rewritten on that agreed basis.",
+      "resolvedAt": "2026-07-19"
     }
   ]
 }

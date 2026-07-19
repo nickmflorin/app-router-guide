@@ -15,6 +15,9 @@ clarification before proceeding.
 ## Tentative (DO NOT AUTOMATICALLY ADDRESS ANYTHING IN THIS SECTION)
 
 - [ ] Reducing dead whitespace, particularly in diagrams.
-- [ ] Diagrams or GIFs/references pointing to the video that shows Suspense as an analogy for
-      version control.
+- [x] Diagrams or GIFs/references pointing to the video that shows Suspense as an analogy for
+      version control. (Done 2026-07-19, explicitly requested: §10.1 got an "Under the hood"
+      subsection with a four-frame git-graph diagram of the analogy and a caption crediting/linking
+      Beyond React 16 (JSConf Iceland 2018) at the ~29min mark; a GIF isn't feasible in the
+      SVG+markdown pipeline, so it's a multi-frame static diagram.)
 - [ ] Do's and Don'ts Summaries for Each Page

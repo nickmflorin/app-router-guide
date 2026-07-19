@@ -110,6 +110,7 @@ Every external source used in the guide. Rendered at the bottom of all derived d
   (§17)
 - [form (react-dom)](https://react.dev/reference/react-dom/components/form) - function-action form
   semantics underlying Next's Form (§17)
+- [Beyond React 16 (Dan Abramov, JSConf Iceland 2018)](https://www.youtube.com/watch?v=nLF0n9SACd4) - the talk that introduced Suspense; the version-control analogy (~29:00) is rendered as the four-frame diagram in §10.1.
 
 ## Talks & essays (the "voices" table in §1)
 
