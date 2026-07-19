@@ -52,6 +52,14 @@ def run(cmd, **kw):
     subprocess.run(cmd, cwd=ROOT, check=True, **kw)
 
 
+def prettify(glob_pattern):
+    """Format a built output in place (the repo .prettierignore excludes
+    build/, so the dist pipeline supplies its own ignore file)."""
+    run(["npx", "prettier", "--write", "--log-level", "warn",
+         "--ignore-path", "scripts/prettierignore-dist",
+         "--no-error-on-unmatched-pattern", glob_pattern])
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -77,6 +85,7 @@ def main():
         if "file" in packagings:
             run([sys.executable, "scripts/build_artifact.py", "--final",
                  "--out", "build/app-router-guide.html"])
+            prettify("build/app-router-guide.html")
             built.append("build/app-router-guide.html   (single file)")
 
     if "md" in formats:
@@ -85,6 +94,10 @@ def main():
             run(["npm", "run", "build"])
         run([sys.executable, "scripts/build_md.py",
              "--packaging", ",".join(packagings)])
+        if "folder" in packagings:
+            prettify("build/app-router-guide_md/**/*.md")
+        if "file" in packagings:
+            prettify("build/app-router-guide.md")
         if "folder" in packagings:
             built.append("build/app-router-guide_md/    (multi-page markdown)")
         if "file" in packagings:

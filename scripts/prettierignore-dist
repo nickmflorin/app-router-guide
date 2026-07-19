@@ -1,0 +1,4 @@
+# Ignore rules for formatting BUILD OUTPUTS (the repo's .prettierignore
+# excludes build/ entirely; the dist pipeline overrides with this file).
+**/search-index.js
+**/_astro/

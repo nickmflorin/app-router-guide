@@ -21,7 +21,7 @@
   "description": "Craft Education - The App Router Guide (Astro source, build/app-router-guide_html/ is the built output)",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && python3 scripts/postbuild_relativize.py && python3 scripts/build_search_index.py",
+    "build": "astro build && python3 scripts/postbuild_relativize.py && prettier --write --ignore-path scripts/prettierignore-dist --log-level warn \"build/app-router-guide_html/**/*.html\" && python3 scripts/build_search_index.py",
     "dist": "python3 scripts/build_dist.py",
     "preview": "astro preview",
     "format": "prettier --write .",
