@@ -382,14 +382,23 @@ const TOC = [
 })();
 
 /* ------------------------------------------------------------------------
-   Draft annotation layer (remove this whole module when the guide ships).
+   Draft annotation layer - LOCAL DEV ONLY.
+
+   The whole module (DRAFT badge, note mode, pins, panel, ledger auto-sync)
+   activates only on the astro dev server. The built html-guide/ output is
+   final: no badge, no annotation UI, and the ledger (page-notes.json) is
+   stripped from it at build time (scripts/postbuild_relativize.py).
 
    "Add note" arms note mode: click any block (paragraph, diagram, code,
    table, callout...) and type a note. Notes render as numbered amber pins
-   in the left gutter, persist in localStorage, and can be exported to /
-   imported from supplementary/page-notes.json so Claude can act on them.
+   in the left gutter, persist in localStorage, and sync against the
+   append-only ledger in public/page-notes.json so Claude can act on them.
    Keyboard: Escape exits note mode or closes the dialog. */
 (function () {
+  const IS_DEV =
+    (location.hostname === 'localhost' || location.hostname === '127.0.0.1') &&
+    location.protocol.startsWith('http');
+  if (!IS_DEV) return;
   const KEY = 'arg-notes-v1';
   const page = location.pathname.split('/').pop() || 'index.html';
   const BLOCKS =

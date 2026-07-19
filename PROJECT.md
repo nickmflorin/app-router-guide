@@ -100,6 +100,11 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   snippet, link to page#anchor), arrow-key + Enter navigation, "/" focuses, Esc clears. Sidebar
   scroll position also persists across navigations (sessionStorage). Search works in the
   html-guide folder distribution; the single-file artifact bundle does NOT have search yet.
+- 2026-07-18: **Draft layer is DEV-ONLY (per Nick).** The built html-guide/ is FINAL, never a
+  draft: nav.js gates the entire annotation module (DRAFT badge, note mode, pins, panel,
+  ledger auto-sync) behind a localhost check, and postbuild_relativize.py strips
+  page-notes.json from the build output (also gitignored there). The working ledger stays at
+  public/page-notes.json; the notes workflow only exists on the astro dev server.
 - 2026-07-18: **Inserted new chapter §11 "Designing for the Unknown" (Part B), per Nick.** Full
   restructuring-rule pass: old §11-19 shifted to §12-20; files renamed 11-19 -> 12-20; toc.js,
   nav.js, index.astro, kickers, in-page N.M headings, and every cross-ref updated; verified

@@ -24,3 +24,10 @@ for dirpath, _, files in os.walk(OUT):
             with open(p, 'w') as fh:
                 fh.write(s2)
 print('asset URLs relativized')
+
+# The annotation ledger is dev-only tooling (nav.js gates the whole draft
+# layer to localhost); the built output is final and must not carry it.
+ledger = os.path.join(OUT, 'page-notes.json')
+if os.path.exists(ledger):
+    os.remove(ledger)
+    print('page-notes.json stripped from build output')
