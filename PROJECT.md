@@ -178,20 +178,20 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   wrote it" + deeper "Read the docs"). §14 Dedupe & Caching gained §14.5 how-Next-extends-fetch,
   §14.6 SWR-in-depth, §14.7 when-client-fetching-is-right. §9.3 gained a reserving-space
   before/after diagram. §10 gained a "Suspense is not server-only" callout. §12.4 gained a
-  client-waterfall timeline diagram. §19 gained an expanded useTransition entry and new §19.6
+  client-waterfall timeline diagram. §18 gained an expanded useTransition entry and new §18.6
   "Server actions and the HTTP middleman" (typed-RPC explainer + direct-vs-proxy diagram +
   fewer-middlemen principle). All [N] items in working-notes are now [x].
 - 2026-07-17 INCIDENT + RECOVERY: the device staging (read) channel returned stale cached copies
-  during the big renumber, so §1 and §17-§20 were shuffled in as their old stubs while the real
+  during the big renumber, so §1 and §16-§19 were shuffled in as their old stubs while the real
   content was moved to _to_delete/renumbered-old-sections/. Recovered all five by re-transforming
   the _to_delete originals / re-applying edits, working through the direct-disk (device_bash)
   channel, which is reliable. Lesson: do not trust device_stage_files reads this session; read and
   write via direct disk. The full guide re-verified (203 §-links, invariant, svg_lint, HTML).
 
 - 2026-07-17 (correction): the server-actions/HTTP-middleman and transitions deep dives were briefly
-  added to §19 New Primitives, then MOVED per Nick: §19 is a reference catalog only. The in-depth
+  added to §18 New Primitives, then MOVED per Nick: §18 is a reference catalog only. The in-depth
   discussions now live in the core: §5.10 "Server actions and the HTTP middleman" (diagram included)
-  and §10.7 "Transitions keep the old UI alive"; §19 entries link out to them.
+  and §10.7 "Transitions keep the old UI alive"; §18 entries link out to them.
 
 ## Approved document outline (2026-07-13)
 
@@ -225,17 +225,18 @@ home per technique + cross-references).
   minimize fetch deps, parallel routes + default.tsx)
 - Part C — Decouple the Parts: §13 Minimize the wires · §14 Dedupe & caching (fetch dedupe, React
   cache, "use cache"/cacheComponents, SWR) · §15 Component breakdown (one per file, portability)
-- Part D — Applied: §16 Worked example (page header + data table) · §17 Signs You're Doing It Wrong
-  (checklist, links back) · §18 Applied to Tracker (before/after from audit)
-- §19 New Primitives (lower priority; details of Server Actions, form hooks, ViewTransition,
+- Part D — Applied: §16 Signs You're Doing It Wrong (checklist, links back) · §17 Applied to
+  Tracker (before/after from audit) (the Worked Example chapter was deleted 2026-07-19, never
+  written)
+- §18 New Primitives (lower priority; details of Server Actions, form hooks, ViewTransition,
   Activity, useEffectEvent, compiler)
-- §20 References
+- §19 References
 
 ## Working agreements (remember across sessions)
 
 - **NAMING (per Nick, 2026-07-18): the product is called "Tracker" everywhere a reader can
   see it** (sidebar, titles, prose: formal "Tracker"; filenames/slugs: lowercase "tracker",
-  e.g. 18-applied-to-tracker.html). The string "recraft" must NOT appear in guide content.
+  e.g. 17-applied-to-tracker.html). The string "recraft" must NOT appear in guide content.
   "recraft" remains ONLY as the actual repo/clone/PR name in internal notes: the local clone
   is still `~/ai/recraft`, and PR references (e.g. #1617) keep the real repo name.
 
@@ -294,7 +295,7 @@ home per technique + cross-references).
   the wrong way), `v-warn` (amber ! chip: an option, but not the ideal one, e.g. lazy-loading a
   wholesale grid, the context-provider approach). CSS renders the chip at the right edge of the
   filename bar (::after in _snippet-container.scss). Purely illustrative/reference snippets
-  (§19 primitives catalog, headerless mini-snippets) stay unbadged. build_md.py appends the
+  (§18 primitives catalog, headerless mini-snippets) stay unbadged. build_md.py appends the
   matching glyph (✓ / ✕ / ⚠︎) after the bold filename line in markdown output. Snippets inside
   Compare columns get badges too (matching the column's kind).
 - **No blank line after "use client"/"use server" in snippets (per Nick, 2026-07-19):** the
@@ -436,7 +437,9 @@ right. Local clone at `~/ai/recraft`.
       replace-vs-push; tabs-are-routes ladder (segments > ?view= > state) w/ compare + ProgramTabs;
       cookies=viewer vs URL=view, localStorage flash; interaction-not-identity test.
 - [x] §7 Bundle Size & Code Splitting written + full renumber (2026-07-17).
-- [ ] Remaining: §15 Component Breakdown, §16 Worked Example (the only stubs left).
+- [x] No stubs remain. §15 Component Breakdown written 2026-07-18; the Worked Example chapter
+  was DELETED (never written) 2026-07-19 per Nick, and chapters 17-20 renumbered to 16-19
+  (16-signs-doing-it-wrong, 17-applied-to-tracker, 18-new-primitives, 19-references).
 - §5/§13 division of labor (2026-07-15, per Nick — deliberate overlap, examples repeated in both
   contexts): §5.7–5.9 own the BOUNDARY story (self-contained mutation buttons w/ useTransition +
   server action; dialogs/floating elements live in the button that opens them; parent refresh via

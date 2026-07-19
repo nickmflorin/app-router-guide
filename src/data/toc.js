@@ -41,16 +41,15 @@ export const TOC = [
   {
     part: 'Part D: Applied',
     items: [
-      { n: '16', title: 'Worked Example', file: '16-worked-example.html' },
-      { n: '17', title: "Signs You're Doing It Wrong", file: '17-signs-doing-it-wrong.html' },
-      { n: '18', title: 'Applied to Tracker', file: '18-applied-to-tracker.html' },
+      { n: '16', title: "Signs You're Doing It Wrong", file: '16-signs-doing-it-wrong.html' },
+      { n: '17', title: 'Applied to Tracker', file: '17-applied-to-tracker.html' },
     ],
   },
   {
     part: 'Appendix',
     items: [
-      { n: '19', title: 'New Primitives', file: '19-new-primitives.html' },
-      { n: '20', title: 'References', file: '20-references.html' },
+      { n: '18', title: 'New Primitives', file: '18-new-primitives.html' },
+      { n: '19', title: 'References', file: '19-references.html' },
     ],
   },
 ];

@@ -9,7 +9,7 @@ import CompareCol from '../../components/CompareCol.astro';
 ---
 
 <GuidePage title="Signs You're Doing It Wrong - App Router Guide" root='..'>
-  <div class='kicker'>Chapter 17 · Part D: Applied</div>
+  <div class='kicker'>Chapter 16 · Part D: Applied</div>
   <h1>Signs You're Doing It Wrong</h1>
   <p class='lede'>
     A field guide to the tells. If you catch yourself doing one of these, you've probably drifted
@@ -19,13 +19,13 @@ import CompareCol from '../../components/CompareCol.astro';
 
   <p>
     These are smells, not sins. Every one of them has a legitimate exception, and every one of them
-    has a real example in <a href='18-applied-to-tracker.html'>§18</a>, because we are all of them
+    has a real example in <a href='17-applied-to-tracker.html'>§17</a>, because we are all of them
     today. The point of a checklist is speed: something feels off, you scan, you find the row, you
     follow the link. Read it that way. But before the list, the single reframe that makes most of it
     unnecessary.
   </p>
 
-  <h2 id='the-question'>17.1 One question underneath all of them</h2>
+  <h2 id='the-question'>16.1 One question underneath all of them</h2>
   <p>
     Almost every sign below is a symptom of asking the wrong question first. The instinct we carry
     from years of client React is:
@@ -181,7 +181,7 @@ flowchart TB
     </Fragment>
   </Diagram>
 
-  <h2 id='questions'>17.2 The questions to keep asking</h2>
+  <h2 id='questions'>16.2 The questions to keep asking</h2>
   <p>
     Make these reflexive. If you ask them honestly on every component, most of the signs below never
     get a chance to appear.
@@ -213,7 +213,7 @@ flowchart TB
     </li>
   </ul>
 
-  <h2 id='boundary'>17.3 The boundary is in the wrong place</h2>
+  <h2 id='boundary'>16.3 The boundary is in the wrong place</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -265,7 +265,7 @@ flowchart TB
     </tbody>
   </table>
 
-  <h2 id='fetching'>17.4 Data is fetched the wrong way</h2>
+  <h2 id='fetching'>16.4 Data is fetched the wrong way</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -291,7 +291,7 @@ flowchart TB
           A server action replaces the hand-written POST endpoint and gives you end-to-end type
           safety and cache revalidation for free. Fixed in
           <a href='05-client-server-boundaries.html#self-contained'>§5.7</a> and
-          <a href='19-new-primitives.html#use-server'>§19</a>.
+          <a href='18-new-primitives.html#use-server'>§18</a>.
         </td>
       </tr>
       <tr>
@@ -301,7 +301,7 @@ flowchart TB
           before paint, not bounce it through a route handler after hydration. Fixed in <a
             href='04-ssr.html'>§4</a
           >; seen in the wild in
-          <a href='18-applied-to-tracker.html#finding-1'>§18</a>. <em>Exception:</em> reads genuinely
+          <a href='17-applied-to-tracker.html#finding-1'>§17</a>. <em>Exception:</em> reads genuinely
           first needed after an interaction.
         </td>
       </tr>
@@ -316,7 +316,7 @@ flowchart TB
     </tbody>
   </table>
 
-  <h2 id='wiring'>17.5 Components are wired together that shouldn't be</h2>
+  <h2 id='wiring'>16.5 Components are wired together that shouldn't be</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -356,7 +356,7 @@ flowchart TB
     </tbody>
   </table>
 
-  <h2 id='loading'>17.6 Loading states and containers are misplaced</h2>
+  <h2 id='loading'>16.6 Loading states and containers are misplaced</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -420,7 +420,7 @@ flowchart TB
     </tbody>
   </table>
 
-  <h2 id='url-state'>17.7 State is living where the URL should own it</h2>
+  <h2 id='url-state'>16.7 State is living where the URL should own it</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -452,7 +452,7 @@ flowchart TB
     </tbody>
   </table>
 
-  <h2 id='bundle'>17.8 Too much JavaScript ships on first render</h2>
+  <h2 id='bundle'>16.8 Too much JavaScript ships on first render</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -488,7 +488,7 @@ flowchart TB
     <p>
       Don't treat it as a purity test. Treat it as a set of tripwires: when you catch yourself doing
       one, stop and ask the question from
-      <a href='#the-question'>§17.1</a> before you write the next line. Sometimes the honest answer lands
+      <a href='#the-question'>§16.1</a> before you write the next line. Sometimes the honest answer lands
       you on the exception, and that's fine, the exceptions are real and named on purpose. But most of
       the time the tripwire is telling you the truth, and the fix is one link away. The goal isn't zero
       client components; it's that every one of them is a decision you could defend out loud.

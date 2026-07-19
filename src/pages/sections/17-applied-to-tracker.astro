@@ -9,7 +9,7 @@ import CompareCol from '../../components/CompareCol.astro';
 ---
 
 <GuidePage title='Applied to Tracker - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 18 · Part D: Applied</div>
+  <div class='kicker'>Chapter 17 · Part D: Applied</div>
   <h1>Applied to Tracker</h1>
   <p class='lede'>
     Everything before this chapter was the model. This chapter is the mirror: a July 2026 audit of
@@ -17,7 +17,7 @@ import CompareCol from '../../components/CompareCol.astro';
     lives.
   </p>
 
-  <h2 id='why'>18.1 Why we audited our own code</h2>
+  <h2 id='why'>17.1 Why we audited our own code</h2>
   <p>
     The audit exists to answer one question: how far does our actual usage of the App Router diverge
     from the model React 19 and the App Router require in order to work well? Not the model this
@@ -44,7 +44,7 @@ import CompareCol from '../../components/CompareCol.astro';
     </p>
   </Callout>
 
-  <h2 id='verdict'>18.2 The verdict</h2>
+  <h2 id='verdict'>17.2 The verdict</h2>
   <p>
     <strong>Our apps are SPAs wearing an App Router costume.</strong> The Next server is used almost exclusively
     to serve an empty shell and proxy API calls; nearly all data fetching, authorization, and loading-state
@@ -292,7 +292,7 @@ flowchart TB
     is <strong>a choice, not a constraint</strong>, which is exactly why it is fixable.
   </p>
 
-  <h2 id='numbers'>18.3 The numbers</h2>
+  <h2 id='numbers'>17.3 The numbers</h2>
   <p>
     Counted across the monorepo on 2026-07-08, all six apps, Next.js 16. The
     <code>"use client"</code> column reads "directive files / total source files".
@@ -400,7 +400,7 @@ flowchart TB
     </p>
   </Callout>
 
-  <h2 id='findings'>18.4 The findings</h2>
+  <h2 id='findings'>17.4 The findings</h2>
   <p>
     Eight findings, each with representative evidence and a pointer to the chapter that covers the
     correct pattern. File paths and counts are from the full audit; this is the condensed version.
@@ -541,17 +541,17 @@ flowchart TB
       >§8.3</a
     >). No server actions despite dozens of form mutations. No
     <code>not-found.tsx</code> outside the roots. These are not exotic extras; they are the primitives
-    Part B and <a href='19-new-primitives.html'>§19</a> are about, and their absence is why the apps re-implement
+    Part B and <a href='18-new-primitives.html'>§18</a> are about, and their absence is why the apps re-implement
     what the framework provides.
   </p>
   <p>
     <strong>Where the fix lives:</strong> parallel routes and <code>default.tsx</code> (<a
       href='12-blocking-requests.html#parallel-routes'>§12.3</a
     >), server actions (<a href='05-client-server-boundaries.html#self-contained'>§5.7</a>,
-    <a href='19-new-primitives.html'>§19</a>).
+    <a href='18-new-primitives.html'>§18</a>).
   </p>
 
-  <h2 id='path'>18.5 The path out</h2>
+  <h2 id='path'>17.5 The path out</h2>
   <p>
     The fixes are ordered so that each one makes the next cheaper: server reads make leaf boundaries
     natural, leaf boundaries make streaming possible, streaming makes the hand-rolled state
@@ -660,7 +660,7 @@ flowchart TB
       ·
       <a href='https://react.dev/reference/rsc/use-client' target='_blank' rel='noopener'
         >React: "use client"</a
-      >. Full list in <a href='20-references.html'>§20</a>.
+      >. Full list in <a href='19-references.html'>§19</a>.
     </p>
   </GoDeeper>
 </GuidePage>

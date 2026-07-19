@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-19T17:59:33.142Z",
+  "updatedAt": "2026-07-19T20:18:11.558Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -1010,14 +1010,13 @@
         "tag": "figure",
         "snippet": "The same three reads, four shapes Client waterfall profile org id dashboard 3 serial round"
       },
-      "resolution": "Labels and row titles are now centered on each row's bar-group center via dominant-baseline (all four rows). Parallel server vs parallel client are now visibly different: the client lane pays a gray \"JS + hydrate\" block before any query can start and its query bars are longer (full browser-to-server round trips), with two-line annotations naming both costs; the server lane's bars are shorter (queries run next to the data) with annotations for request-time start and streaming into reserved space. Mermaid twin synced (hydrate-first node fanning to the three client queries); caption expanded with the not-the-same-thing argument.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "Labels and row titles are now centered on each row's bar-group center via dominant-baseline (all four rows). Parallel server vs parallel client are now visibly different: the client lane pays a gray \"JS + hydrate\" block before any query can start and its query bars are longer (full browser-to-server round trips), with two-line annotations naming both costs; the server lane's bars are shorter (queries run next to the data) with annotations for request-time start and streaming into reserved space. Mermaid twin synced (hydrate-first node fanning to the three client queries); caption expanded with the not-the-same-thing argument."
     },
     {
       "id": "nmrs3mj3j",
       "page": "index.html",
       "ts": "2026-07-19T17:57:56.143Z",
-      "status": "open",
+      "status": "resolved",
       "text": "I have to add this note up here because I can't add it on the individual TOC items because they are links (we should see if there is a way to fix that so I can select a link block without navigating instead of adding a note to it).  But, we need to remove the draft status from all the pages in the TOC.  Draft should no longer exist anywhere except at the top right of the page ONLY WHEN RUNNING THE DEV SERVER but never in the built output.  Then, what I want to do is just remove the \"Worked Example\" page - I don't think we need it anymore and it's blank.  LEts just delete it and adjust all references/tocs/numbers - everything that needs changing due to its removal.",
       "target": {
         "anchor": null,
@@ -1026,7 +1025,26 @@
         ],
         "tag": "h1",
         "snippet": "The App Router Guide"
-      }
+      },
+      "resolution": "All done. (1) Note mode can now select TOC rows and sidebar links without navigating (they are selectable blocks; any other link click while armed is swallowed). (2) \"draft pending\" labels removed from the index TOC (the §15 one was stale anyway); the DRAFT badge itself was already dev-server-only and stripped from builds - verified again. (3) Worked Example deleted: file removed, chapters 17-20 renumbered to 16-19 (files, kickers, heading numbers, index + sidebar TOCs, every § reference and href guide-wide); the one §16 content link (§11 stacked-tables) now points at §9's flex-grow frame. Link/anchor/TOC-parity gates all pass.",
+      "resolvedAt": "2026-07-19"
+    },
+    {
+      "id": "nmrs8jdb7",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-19T20:15:26.755Z",
+      "status": "resolved",
+      "text": "lets say the centralized API is a step down on the platform side for a single application - including a note as to why and saying that we now require a standardized error/response communication protocol so that the logic can respond appropriately based on an understanding of exactly what happened.  obviously type safety loss too.  But it should say that a centralized API has some merit, particularly in polyglot repos or situations where business logic needs to be centralized across many different products. Even then though - you can still centralize business logic without an HTTP wire directly.  General thing though is we should lighten up on how the centralized API is bad and just say it's more difficult on the platofmr side,  but the kicker should be the proxy which is the worst of both worlds.",
+      "target": {
+        "anchor": "actions-central-api",
+        "path": [
+          93
+        ],
+        "tag": "p",
+        "snippet": "So the ranking is a gradient, not a binary. The ORM inside the action is the optimum: fast"
+      },
+      "resolution": "Reworked the centralized-API passage: it is now \"a step down on the platform side\" for a single app, with the why spelled out (a standardized error/response protocol must be built and maintained so callers know exactly what happened; type safety ends at the HTTP boundary), its merits stated (polyglot repos, business logic centralized across many products), the note that logic can be centralized without an HTTP wire (shared server-side package), and the proxy recast as the kicker: the worst of both worlds. Also added the follow-up passage: the HTTP API is close to the thing this architecture was built to eliminate, the UI is your API, and microfrontends as a type-safe way to centralize (with the not-React flexibility caveat).",
+      "resolvedAt": "2026-07-19"
     }
   ]
 }

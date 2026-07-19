@@ -10,7 +10,7 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='New Primitives - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 19 · Appendix</div>
+  <div class='kicker'>Chapter 18 · Appendix</div>
   <h1>New Primitives</h1>
   <p class='lede'>
     The reference catalog behind <a href='01-introduction.html#direction'>§1</a>'s direction of
@@ -44,7 +44,7 @@ import Snippet from '../../components/Snippet.astro';
     entry links there instead of repeating the doctrine.
   </p>
 
-  <h2 id='map'>19.1 The map</h2>
+  <h2 id='map'>18.1 The map</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -192,14 +192,14 @@ import Snippet from '../../components/Snippet.astro';
     </tbody>
   </table>
 
-  <h2 id='actions'>19.2 Actions and mutations</h2>
+  <h2 id='actions'>18.2 Actions and mutations</h2>
 
   <h3 id='use-server'>Server Functions (<code>"use server"</code>)</h3>
   <p>
     A server function is an async function that runs on the server but is
     <strong>callable from client code as if it were local</strong>. React serializes the call across
     the network; Next.js wires it to an endpoint automatically. This is the primitive that makes our
-    73 pass-through proxy handlers (<a href='18-applied-to-tracker.html#finding-1'>§18</a>)
+    73 pass-through proxy handlers (<a href='17-applied-to-tracker.html#finding-1'>§17</a>)
     unnecessary for mutations: no route handler, no manual fetch, and end-to-end type safety,
     because the function's signature <em>is</em> the contract.
   </p>
@@ -379,7 +379,7 @@ import Snippet from '../../components/Snippet.astro';
     >.
   </p>
 
-  <h2 id='async'>19.3 Async UI and transitions</h2>
+  <h2 id='async'>18.3 Async UI and transitions</h2>
 
   <h3 id='use'><code>use()</code></h3>
   <p>
@@ -551,7 +551,7 @@ import Snippet from '../../components/Snippet.astro';
     </p>
   </Callout>
 
-  <h2 id='utilities'>19.4 Utilities</h2>
+  <h2 id='utilities'>18.4 Utilities</h2>
 
   <h3 id='use-effect-event'><code>useEffectEvent</code></h3>
   <p>
@@ -559,7 +559,7 @@ import Snippet from '../../components/Snippet.astro';
     the latest props and state, but is not a dependency, so the effect stops re-running (and
     re-connecting, re-subscribing, re-firing) when those values change. Stable as of React 19.2. It
     is a scalpel for the few legitimate effects that remain after <a
-      href='18-applied-to-tracker.html#finding-3'>§18's Finding 3</a
+      href='17-applied-to-tracker.html#finding-3'>§17's Finding 3</a
     > is fixed; it is not a license to write more effects.
   </p>
   <Snippet>
@@ -705,7 +705,7 @@ import Snippet from '../../components/Snippet.astro';
     >.
   </p>
 
-  <h2 id='compiler'>19.5 The React Compiler</h2>
+  <h2 id='compiler'>18.5 The React Compiler</h2>
   <p>
     The compiler (1.0, October 2025) memoizes automatically at build time: it analyzes component
     code and skips re-renders that provably change nothing, which is the work
@@ -746,7 +746,7 @@ import Snippet from '../../components/Snippet.astro';
       ·
       <a href='https://nextjs.org/docs/app/api-reference/functions' target='_blank' rel='noopener'
         >Next.js: API reference</a
-      >. Full list in <a href='20-references.html'>§20</a>.
+      >. Full list in <a href='19-references.html'>§19</a>.
     </p>
   </GoDeeper>
 </GuidePage>

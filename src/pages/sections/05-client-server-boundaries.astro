@@ -2021,7 +2021,7 @@ flowchart TB
     <a href='#self-contained'>§5.7</a>'s button called a server action and moved on. It is worth
     stopping on what that server action actually is, because it is the single biggest lever for
     pulling mutations back across the boundary, and the reason the 73 pass-through proxy handlers
-    the audit found (<a href='18-applied-to-tracker.html#finding-1'>§18</a>) are unnecessary.
+    the audit found (<a href='17-applied-to-tracker.html#finding-1'>§17</a>) are unnecessary.
   </p>
   <p>
     A server action is a <strong>typed remote procedure call</strong>. When you mark an async
@@ -2033,7 +2033,7 @@ flowchart TB
     to the server and back with no schema to hand-maintain and no client to keep in sync. The API
     surface (the directive,
     <code>useActionState</code>, <code>useFormStatus</code>, <code>&lt;Form&gt;</code>) is
-    catalogued in <a href='19-new-primitives.html#actions'>§19.2</a> and the form-side flow gets
+    catalogued in <a href='18-new-primitives.html#actions'>§18.2</a> and the form-side flow gets
     <a href='#forms'>§5.11</a>; what matters here is the architecture.
     <Chip k='next' />
     <Chip k='critical' />
@@ -2223,7 +2223,7 @@ flowchart LR
     typed value you handle precisely: the record does not exist, the user is not allowed, a
     constraint failed, each one distinct and catchable at the call site. Route that same mutation
     through a Next.js API route that proxies to another HTTP service (the Tracker pattern from
-    <a href='18-applied-to-tracker.html#finding-1'>§18</a>) and every one of those distinct failures
+    <a href='17-applied-to-tracker.html#finding-1'>§17</a>) and every one of those distinct failures
     is flattened into a status code on the way out and reconstituted on the way back. You also
     inherit a second set of failure modes that have nothing to do with your domain: network errors,
     timeouts, retries, serialization mismatches. Each middleman is one more place the types are lost
@@ -2313,14 +2313,44 @@ flowchart LR
   </Snippet>
 
   <p>
-    So the ranking is a gradient, not a binary. The ORM inside the action is the optimum: fastest,
-    most flexible, typed end to end, and free of an API whose shape is coupled to a UI. A
-    centralized API called directly from the action is a legitimate step down, taken for
-    organizational reasons, and the action's job becomes translating its generic responses into
-    per-interaction answers. The proxy (your own API route forwarding to the real backend) is the
-    only indefensible rung: server actions make it structurally unnecessary, and it costs a hop of
-    latency, a layer of error ambiguity, and the types, while providing nothing the direct call
-    doesn't.
+    Be precise about what kind of step down this is: for a single application, the centralized API
+    is <strong>a step down on the platform side</strong>, not a wrong architecture. The HTTP
+    boundary erases types, so the contract has to be rebuilt by hand: the platform now needs a <strong
+      >standardized error and response protocol</strong
+    > that every endpoint follows and every caller parses, purely so the calling logic can understand
+    <em>exactly what happened</em> (not-found vs forbidden vs conflict vs validation) and respond
+    appropriately. That protocol is real, ongoing engineering, and it is the thing <code
+      >findUnique</code
+    > returning a typed <code>null</code> gives you for free.
+  </p>
+  <p>
+    And the centralized API has real merit where the organization calls for it: in polyglot repos, or
+    wherever business logic must be shared across many products and runtimes, one backend serving
+    them all is often the right call, and the protocol work is simply its price. Worth remembering
+    even then: <strong>centralizing business logic does not require an HTTP wire.</strong> A shared
+    server-side package imported by every app that needs it centralizes the code while keeping the
+    types, and it's often the better first reach when all the consumers are TypeScript. So the
+    gradient reads: the ORM inside the action is the optimum for an app that owns its data; the
+    centralized API is more platform work, taken on for organizational reasons that are often good
+    ones. The kicker is the <strong>proxy</strong> (your own API route forwarding to the real
+    backend): the worst of both worlds. It pays the full protocol-and-types cost of the HTTP layer <em
+      >and</em
+    > adds a hop of latency and a second error surface, while providing nothing the direct call doesn't.
+  </p>
+  <p>
+    Step back far enough and a deeper point comes into view. The HTTP API between a UI and its data
+    is not just a cost to be managed; it is close to <strong>the thing this architecture was built
+    to eliminate</strong>. Server components and server actions exist to bring the data layer and
+    the business logic to where they are used, directly at the UI layer: the component awaits the
+    query, the action runs the mutation, and the rendered result is the contract (<a
+      href='04-ssr.html#api-is-html'>§4.2</a
+    >: the API is your HTML). <strong>The UI is your API.</strong> That reframes the centralization
+    question too: if business logic must be shared across products, one way to share it is not a
+    data API at all, but <em>microfrontends</em>: centrally owned, data-connected components that
+    other apps compose in. What crosses that boundary is finished, typed UI rather than raw JSON,
+    which makes it a dramatically more type-safe API surface than a data layer. The honest trade is
+    flexibility: the moment a consumer is not React (a mobile app, a partner integration, another
+    stack), the component stops being consumable and the data API earns its place back.
   </p>
 
   <Callout kind='voice' title='Fewer middlemen'>
@@ -2464,7 +2494,7 @@ flowchart LR
     action writing the URL.</strong> Both get pending state from the same shared button, both work
     before hydration, and neither needs an API route, an <code>onSubmit</code>, or a byte of
     hand-rolled fetch code. The per-primitive reference entries (signatures, options, doc links)
-    stay in <a href='19-new-primitives.html'>§19</a>.
+    stay in <a href='18-new-primitives.html'>§18</a>.
   </p>
 
   <h2 id='rules'>The rules</h2>
@@ -2576,7 +2606,7 @@ flowchart LR
         rel='noopener'>Server and Client Components</a
       >
       (composition patterns, third-party wrappers, context providers). Full list in
-      <a href='20-references.html'>§20</a>.
+      <a href='19-references.html'>§19</a>.
     </p>
   </GoDeeper>
 </GuidePage>

@@ -546,7 +546,7 @@ flowchart TB
 
   <p>
     This is why the audit's blanket <code>export const dynamic = "force-dynamic"</code> plus
-    <code>no-store</code> everywhere (<a href='18-applied-to-tracker.html#finding-7'>§18</a>) is so
+    <code>no-store</code> everywhere (<a href='17-applied-to-tracker.html#finding-7'>§17</a>) is so
     costly: it tells this extended <code>fetch</code> to skip the Data Cache on every call, throwing away
     a layer the framework hands you for free. The habit to build is the inverse: cache by default with
     a declared <code>revalidate</code> and
@@ -601,7 +601,7 @@ flowchart TB
     a key is stale and every reader of that key updates itself. Passing new data to <code
       >mutate</code
     > paints it optimistically and revalidates in the background, which pairs naturally with
-    <a href='19-new-primitives.html#use-optimistic'>§19's <code>useOptimistic</code></a> for action-driven
+    <a href='18-new-primitives.html#use-optimistic'>§18's <code>useOptimistic</code></a> for action-driven
     writes.
   </p>
 
@@ -802,7 +802,7 @@ flowchart TB
         rel='noopener'>Next.js: Migrating to Cache Components</a
       >
       · <a href='https://swr.vercel.app' target='_blank' rel='noopener'>SWR docs</a>. Full list in <a
-        href='20-references.html'>§20</a
+        href='19-references.html'>§19</a
       >.
     </p>
   </GoDeeper>

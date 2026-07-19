@@ -49,16 +49,15 @@ const TOC = [
   {
     part: 'Part D: Applied',
     items: [
-      { n: '16', title: 'Worked Example', file: '16-worked-example.html' },
-      { n: '17', title: "Signs You're Doing It Wrong", file: '17-signs-doing-it-wrong.html' },
-      { n: '18', title: 'Applied to Tracker', file: '18-applied-to-tracker.html' },
+      { n: '16', title: "Signs You're Doing It Wrong", file: '16-signs-doing-it-wrong.html' },
+      { n: '17', title: 'Applied to Tracker', file: '17-applied-to-tracker.html' },
     ],
   },
   {
     part: 'Appendix',
     items: [
-      { n: '19', title: 'New Primitives', file: '19-new-primitives.html' },
-      { n: '20', title: 'References', file: '20-references.html' },
+      { n: '18', title: 'New Primitives', file: '18-new-primitives.html' },
+      { n: '19', title: 'References', file: '19-references.html' },
     ],
   },
 ];
@@ -402,7 +401,8 @@ const TOC = [
   const KEY = 'arg-notes-v1';
   const page = location.pathname.split('/').pop() || 'index.html';
   const BLOCKS =
-    'figure.diagram, pre.code, table, .callout, .compare, .goal-card, li, p, h1, h2, h3';
+    'figure.diagram, pre.code, table, .callout, .compare, .goal-card, li, p, h1, h2, h3, ' +
+    'a.toc-row, #side-toc a';
 
   function load() {
     try {
@@ -543,7 +543,15 @@ const TOC = [
       if (!armed) return;
       if (e.target.closest('.draft-tools, .notes-panel, .note-dialog, .note-pin')) return;
       const block = e.target.closest(BLOCKS);
-      if (!block) return;
+      if (!block) {
+        /* Never navigate while note mode is armed: links without a
+           selectable block just swallow the click. */
+        if (e.target.closest('a')) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       setArmed(false);
