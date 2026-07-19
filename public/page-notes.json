@@ -934,7 +934,7 @@
       "id": "nmrrz4jrr",
       "page": "01-introduction.html",
       "ts": "2026-07-19T15:51:58.743Z",
-      "status": "open",
+      "status": "resolved",
       "text": "what does \"the first crack in every component fends for itself\" mean?",
       "target": {
         "anchor": "direction",
@@ -943,7 +943,9 @@
         ],
         "tag": "figure",
         "snippet": "The client era: the browser earns every pixel May 2013 React is open-sourced components + "
-      }
+      },
+      "resolution": "Reworded the Suspense (Oct 2018) subline to be self-explanatory: \"components stop hand-rolling isLoading: the tree, not each component, coordinates waiting\". The old phrasing (\"the first crack in every component fends for itself\") meant that before Suspense each component tracked its own isLoading and rendered its own spinner in isolation; Suspense was the first primitive to break that model. Mermaid twin synced.",
+      "resolvedAt": "2026-07-19"
     }
   ]
 }

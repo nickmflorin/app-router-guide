@@ -204,8 +204,7 @@ import CompareCol from '../../components/CompareCol.astro';
         Suspense arrives (React 16.6)
       </text>
       <text x='140' y='196' font-size='9.5' fill='#666666'>
-        async UI becomes the framework's problem: the first crack in "every component fends for
-        itself"
+        components stop hand-rolling isLoading: the tree, not each component, coordinates waiting
       </text>
 
       <!-- era 2 spine + header -->
@@ -290,7 +289,7 @@ flowchart TB
     E1("May 2013 · React is open-sourced<br/>components + the virtual DOM; the ecosystem goes client"):::neutral
     E1 --> E2("2015 · The SPA toolchain hardens<br/>Redux, client routers, fetch-in-effect: empty div + bundle"):::neutral
     E2 --> E3("Oct 2016 · Next.js 1.0<br/>server rendering as a framework default; the counter-current begins"):::cyan
-    E3 --> E4("Oct 2018 · Suspense arrives, React 16.6<br/>async UI becomes the framework's problem"):::cyan
+    E3 --> E4("Oct 2018 · Suspense arrives, React 16.6<br/>the tree, not each component, coordinates waiting"):::cyan
   end
   linkStyle default stroke:#737373,stroke-width:1.5px
   style ERA1 fill:#ffffff,stroke:#e0e0e0,color:#8a5a00,rx:8px,ry:8px

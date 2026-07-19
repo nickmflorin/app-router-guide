@@ -56,9 +56,10 @@ clarification before proceeding.
 
 ## Random Tidbits
 
-- [ ] Suspense arrives (React 16.6) async UI becomes the framework's problem: the first crack in
+- [x] Suspense arrives (React 16.6) async UI becomes the framework's problem: the first crack in
       "every component fends for itself" - I don't understand what this means on the timeline
-      elaborate.
+      elaborate. (Done 2026-07-19: subline now reads "components stop hand-rolling isLoading: the
+      tree, not each component, coordinates waiting".)
 - [x] Further elaboration on how "use client" is a "last resort" and should be avoided as much as
       possible. It is not a preference, it is a requirement for using React 19 and the App Router,
       and deviation from that will make things very difficult. Treating everything that cannot be
