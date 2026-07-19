@@ -215,7 +215,9 @@ import CompareCol from '../../components/CompareCol.astro';
   </svg>
 
 <pre slot="mermaid" is:raw>
-%%{init: {"theme": "base", "themeVariables": {
+%%{init: {"theme": "base",
+  "flowchart": {"nodeSpacing": 26, "rankSpacing": 34, "padding": 8},
+  "themeVariables": {
   "fontFamily": "Inter, system-ui, sans-serif", "fontSize": "13px",
   "lineColor": "#737373", "edgeLabelBackground": "#ffffff",
   "primaryColor": "#eaf3fe", "primaryBorderColor": "#0070f3", "primaryTextColor": "#0757ba",
@@ -473,7 +475,9 @@ One request. The server resolves everything knowable, streams structure immediat
   </svg>
 
 <pre slot="mermaid" is:raw>
-%%{init: {"theme": "base", "themeVariables": {
+%%{init: {"theme": "base",
+  "flowchart": {"nodeSpacing": 26, "rankSpacing": 18, "padding": 8},
+  "themeVariables": {
   "fontFamily": "Inter, system-ui, sans-serif", "fontSize": "13px",
   "lineColor": "#737373", "edgeLabelBackground": "#ffffff",
   "primaryColor": "#eaf3fe", "primaryBorderColor": "#0070f3", "primaryTextColor": "#0757ba",
@@ -487,7 +491,7 @@ flowchart TB
     A4 --> A5["fetch page data"]:::amber
     A5 --> A6["content visible: T₅"]:::green
   end
-  N1["T₅: five serialized steps - spinners at each step ·<br/>layout shifts as each lands · repeats on every navigation"]:::rednote
+  N1["T₅: five serialized steps · spinners at each step · layout shifts as each lands · repeats on every navigation"]:::rednote
   subgraph SF["Server-first page (same data)"]
     direction LR
     B1["server: fetch in parallel + render"]:::blue

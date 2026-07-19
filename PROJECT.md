@@ -102,6 +102,15 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   worked example: page header + data table (parallel routes, containers in layout, suspense
   placement, deferred values, flex-grow scroll, deduped queries).
 
+- 2026-07-19: **Mermaid twins (pilot, per Nick).** Every Diagram may carry a `mermaid` slot
+  (<pre slot="mermaid" is:raw> next to the SVG); Diagram.astro hides it in a <template
+  data-mermaid> (invisible in HTML), build_md.py extracts it as a ```mermaid fence + caption
+  blockquote. STYLE RULES for twins: guide palette via init themeVariables (blue #eaf3fe/#0070f3,
+  green #e7f5ee/#2ea06d, amber #fdf3e3/#b45309 + stroke-dasharray for suspended/unknown, cyan
+  #e0f5f9/#0891b2, neutral white; Inter 13px); NO box shadows ever; minimize dead white space:
+  set "flowchart": {"nodeSpacing": ~26, "rankSpacing": 18-34, "padding": 8} in init, prefer
+  single-line labels over <br/> when width allows. Keep the twin in sync when an SVG changes.
+  Chapter 3 done as pilot; remaining 38 diagrams pending Nick's go.
 - 2026-07-18: **Sidebar search added.** `scripts/build_search_index.py` (now part of `npm run
   build`, after relativize) parses built pages into build/output/app-router-guide_html/assets/search-index.js
   (window.ARG_SEARCH_INDEX; a script tag, not fetch, so file:// works). nav.js renders a search
