@@ -114,9 +114,10 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   suspended/unknown, cyan #e0f5f9/#0891b2/#0e7490), linkStyle default
   stroke:#737373,stroke-width:1.5px, style statements on subgraphs incl. rx:8px,ry:8px
   (rounded clusters). Node shape ROUNDED: ("label") not ["label"]. NO floating
-  annotation/caption nodes (their position and width are renderer-dependent): fold lane
-  annotations into subgraph titles, longer commentary belongs in the figcaption (build_md
-  renders it as a blockquote under the fence). Renderer-injected chrome (VS Code preview adds
+  annotation/caption nodes, and cluster titles SHORT (one line, roughly 25 chars max;
+  previewers wrap long titles INTO the nodes without reserving height). ALL commentary and
+  annotations belong in the figcaption (build_md renders it as a blockquote under the fence,
+  plain markdown, renders correctly everywhere). Renderer-injected chrome (VS Code preview adds
   node shadows, default spacing applies) is outside our control: acceptable; GitHub renders
   flat. Keep the twin in sync when the SVG changes. Chapter 3 = pilot; 38 remaining.
   - 2026-07-18: **Sidebar search added.** `scripts/build_search_index.py` (now part of `npm run

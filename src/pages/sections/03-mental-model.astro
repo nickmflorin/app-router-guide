@@ -470,7 +470,7 @@ One request. The server resolves everything knowable, streams structure immediat
 
 <pre slot="mermaid" is:raw>
 flowchart TB
-  subgraph SPA["SPA-style page (client-fetch chain): five serialized steps, repeated on every navigation"]
+  subgraph SPA["SPA-style page"]
     direction LR
     A1("HTML shell"):::neutral --> A2("download + parse JS"):::neutral
     A2 --> A3("hydrate"):::neutral
@@ -478,7 +478,7 @@ flowchart TB
     A4 --> A5("fetch page data"):::amber
     A5 --> A6("content visible: T₅"):::green
   end
-  subgraph SF["Server-first page (same data): parallel on the server, one round trip"]
+  subgraph SF["Server-first page"]
     direction LR
     B1("server: fetch in parallel + render"):::blue
     B1 --> B2("content visible: T₁"):::green
@@ -498,9 +498,10 @@ flowchart TB
 </pre>
 
 <Fragment slot="caption">
-The same page, same data, two architectures. The SPA chain serializes five round-trips
-    before anything meaningful paints, and pays them again on every hard navigation. The
-    server-first version parallelizes on the server and paints real content in one.
+The same page, same data, two architectures. The SPA chain serializes five steps
+    (with a spinner at each and a layout shift as each lands) before anything meaningful
+    paints, and pays them again on every hard navigation. The server-first version
+    parallelizes on the server and paints real content in one round trip.
 </Fragment>
 </Diagram>
 
