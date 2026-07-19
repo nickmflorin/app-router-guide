@@ -944,10 +944,14 @@ table.tbl td .chip {
   font-size: 44px;
 }
 .toc-grid {
-  margin-top: 8px;
+  margin-top: 0;
 }
 .toc-part {
   margin: 26px 0;
+}
+/* the Contents heading provides the spacing; the first part shouldn't add more */
+.toc-grid .toc-part:first-child {
+  margin-top: 2px;
 }
 .toc-part .part-name {
   font-size: 13px;
@@ -1013,8 +1017,8 @@ a.toc-row .soon {
   grid-template-columns: 1fr 1fr;
   gap: 22px;
   margin: 20px 0;
-  /* boxes size to their own content instead of stretching to the taller one */
-  align-items: start;
+  /* boxes stretch to matching heights; rows pack at the top of each */
+  align-items: stretch;
 }
 /* Each box is a two-column grid: the chip column sizes itself to the widest
    chip in THAT box, so every description starts on one shared left edge
