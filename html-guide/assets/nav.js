@@ -157,6 +157,13 @@ const TOC = [
       <div class="side-search">
         <input id="side-search-input" type="search" placeholder="Search the guide&hellip;  /"
           autocomplete="off" spellcheck="false" aria-label="Search the guide">
+        <button id="side-search-clear" class="side-search-clear" type="button"
+          aria-label="Clear search" hidden>
+          <svg viewBox="0 0 14 14" width="13" height="13" aria-hidden="true">
+            <path d="M 2.5 2.5 L 11.5 11.5 M 11.5 2.5 L 2.5 11.5"
+              stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+          </svg>
+        </button>
       </div>
       <div id="side-search-results" hidden></div>`;
     html += '<div id="side-toc">';
@@ -301,7 +308,22 @@ const TOC = [
         items[active].scrollIntoView({ block: 'nearest' });
       };
 
-      searchInput.addEventListener('input', () => render(searchInput.value.trim()));
+      const clearBtn = document.getElementById('side-search-clear');
+      const syncClear = () => {
+        if (clearBtn) clearBtn.hidden = !searchInput.value;
+      };
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          searchInput.value = '';
+          render('');
+          syncClear();
+          searchInput.focus();
+        });
+      }
+      searchInput.addEventListener('input', () => {
+        render(searchInput.value.trim());
+        syncClear();
+      });
       searchInput.addEventListener('keydown', e => {
         if (e.key === 'ArrowDown') {
           e.preventDefault();
@@ -316,6 +338,7 @@ const TOC = [
         } else if (e.key === 'Escape') {
           searchInput.value = '';
           render('');
+          syncClear();
           searchInput.blur();
         }
       });

@@ -113,6 +113,7 @@ body {
 }
 /* ---------- sidebar search ---------- */
 .side-search {
+  position: relative;
   margin: 2px 0 10px;
 }
 .side-search input {
@@ -120,12 +121,43 @@ body {
   box-sizing: border-box;
   font: inherit;
   font-size: 13px;
-  padding: 7px 10px;
+  padding: 7px 32px 7px 10px;
   color: var(--fg);
   background: var(--surface);
   border: 1px solid var(--border-strong);
   border-radius: 8px;
   outline: none;
+}
+/* the browser's own clear affordance is replaced by our button */
+.side-search input::-webkit-search-cancel-button,
+.side-search input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+/* MUI-style icon button: quiet gray glyph, faded circular hover backdrop */
+.side-search-clear {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--faint);
+  cursor: pointer;
+}
+.side-search-clear:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--muted);
+}
+.side-search-clear:active {
+  background: rgba(0, 0, 0, 0.1);
 }
 .side-search input:focus {
   border-color: var(--accent);
