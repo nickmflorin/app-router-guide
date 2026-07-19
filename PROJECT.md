@@ -6,7 +6,7 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 
 ## Artifacts (in order)
 
-1. **HTML guide** (`build/app-router-guide_html/` — index.html + sections/\*.html, shared styles in assets/) — the
+1. **HTML guide** (`build/output/app-router-guide_html/` — index.html + sections/\*.html, shared styles in assets/) — the
    canonical document. Styled, browser-renderable, native SVG/HTML diagrams. **We iterate on this
    alone until Nick explicitly says to start deriving other artifacts.**
 2. Markdown document — GENERATED (2026-07-19) deterministically from (1) by scripts/build_md.py,
@@ -17,31 +17,31 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 
 ## ASTRO MIGRATION (2026-07-17, per Nick: Astro 6 + Tailwind 4 hybrid; Phase 1 in progress)
 
-- **Source of truth is moving to `src/`** (Astro pages/components/layouts). `build/app-router-guide_html/` becomes
-  BUILD OUTPUT (`npm run build`, outDir build/app-router-guide_html, build.format 'file' so URLs/filenames are
+- **Source of truth is moving to `src/`** (Astro pages/components/layouts). `build/output/app-router-guide_html/` becomes
+  BUILD OUTPUT (`npm run build`, outDir build/output/app-router-guide_html, build.format 'file' so URLs/filenames are
   unchanged; compressHTML off). Until the first successful build verifies parity, the committed
-  build/app-router-guide_html pages remain canonical; after that, NEVER hand-edit build/app-router-guide_html.
+  build/output/app-router-guide_html pages remain canonical; after that, NEVER hand-edit build/output/app-router-guide_html.
 - Components: Chip (k=react|next|critical|very|imp), Callout (kind,title), GoDeeper, Diagram
   (default slot = svg, named slot caption), Compare + CompareCol (kind,label). Layout:
   GuidePage.astro (title, root='.'|'..', cover). Chrome (sidebar/pager/code-wrap/DRAFT/annotations)
   still runtime via public/assets/nav.js in Phase 1.
 - Static assets live in `public/assets/` (style.css, nav.js, logomark.svg) → copied into
-  build/app-router-guide_html/assets at build.
+  build/output/app-router-guide_html/assets at build.
 - **.astro authoring gotchas:** braces in text are Astro expressions → literal { } in prose/inline
   code must be &#123;/&#125;; pre.code blocks carry `is:raw` (converter added them; keep the
   attribute on new code blocks). Prettier needs prettier-plugin-astro configured (add `plugins:
   ['prettier-plugin-astro']` to .prettierrc.yaml AFTER npm install).
-- scripts/migrate_to_astro.py = the one-time converter (re-runnable, reads build/app-router-guide_html → writes
+- scripts/migrate_to_astro.py = the one-time converter (re-runnable, reads build/output/app-router-guide_html → writes
   src/pages). scripts/verify_build.py = post-build parity diff vs git ref.
 - **Workflow after parity: edit src/, `npm run build`, then run svg_lint + verification against the
-  built build/app-router-guide_html** (the linter parses figure.diagram, which only exists post-build). Artifact
-  bundler still reads build/app-router-guide_html → unchanged.
+  built build/output/app-router-guide_html** (the linter parses figure.diagram, which only exists post-build). Artifact
+  bundler still reads build/output/app-router-guide_html → unchanged.
 - **PHASE 1 COMPLETE (2026-07-17): build verified, `PARITY OK` against pre-migration pages.**
-  SOURCE OF TRUTH IS NOW `src/` - never hand-edit build/app-router-guide_html/ (astro build clears and
+  SOURCE OF TRUTH IS NOW `src/` - never hand-edit build/output/app-router-guide_html/ (astro build clears and
   regenerates it; it stays git-tracked as the distributable). Edit loop: edit src/ → astro
-  build → svg_lint + checks against built build/app-router-guide_html → build_artifact.py when pushing.
+  build → svg_lint + checks against built build/output/app-router-guide_html → build_artifact.py when pushing.
   pnpm supportedArchitectures(darwin+linux/arm64) keeps node_modules usable from the sandbox.
-  build/app-router-guide_html/ is prettierignored.
+  build/output/app-router-guide_html/ is prettierignored.
 - **PHASE 2 WIRED (2026-07-17), conversion NOT started (per Nick: wire and stop).**
   src/styles/tailwind.css imports theme.css layer(theme) + utilities.css (unlayered, NO
   preflight - preflight would restyle the guide before conversion). Guide palette exposed as
@@ -57,10 +57,10 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 
 - `src/` — THE SOURCE OF TRUTH since the Astro migration: pages/, components/, layouts/, data/toc.js,
   styles/. All authoring happens here. Static assets in `public/assets/`.
-- `build/` — ALL build outputs (2026-07-19 reorg; build/app-router-guide_html/ and markdown-guide/ DELETED):
+- `build/` — README.md (COMMITTED, survives builds: explains each distributable so Nick can zip build/ and send it) + `output/` (GITIGNORED, regenerated): ALL build outputs (2026-07-19 reorg; build/output/app-router-guide_html/ and markdown-guide/ DELETED):
   `app-router-guide_html/` (astro outDir: the multi-page site, FINAL, draft layer stripped),
   `app-router-guide.html` (single-file distributable, built by build_artifact.py --final),
-  `artifact.html` (Cowork DRAFT preview, build_artifact.py without flags), and later
+  `output/artifact.html` (Cowork DRAFT preview, build_artifact.py without flags), and
   `app-router-guide_md/` + `app-router-guide.md` (markdown: deterministic conversion via
   scripts/build_md.py from the built html; content-only, generated TOC atop index.md,
   .md#anchor cross-links with <a id> heading anchors, chNN- namespacing in the single file;
@@ -73,10 +73,10 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   legend; formerly nick-notes.md), audit.md (recraft codebase audit), references.md (external
   sources ledger).
 - `scripts/` — svg_lint.py, postbuild_relativize.py, build_search_index.py, build_artifact.py,
-  build_dist.py; all read/write build/app-router-guide_html/. migrate_to_astro.py and
+  build_dist.py; all read/write build/output/app-router-guide_html/. migrate_to_astro.py and
   verify_build.py (one-time Phase-1 tools) were deleted 2026-07-19; recover from git history if
   ever needed. `node_modules/`, package.json (prettier), .prettierrc.yaml, .vscode at root.
-- Internal relative paths inside build/app-router-guide_html (../assets/…) were unaffected by the move; scripts were
+- Internal relative paths inside build/output/app-router-guide_html (../assets/…) were unaffected by the move; scripts were
   repointed. Future slide deck gets its own top-level folder (e.g. `slide-deck/`).
 
 ## Decisions log
@@ -103,13 +103,13 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   placement, deferred values, flex-grow scroll, deduped queries).
 
 - 2026-07-18: **Sidebar search added.** `scripts/build_search_index.py` (now part of `npm run
-  build`, after relativize) parses built pages into build/app-router-guide_html/assets/search-index.js
+  build`, after relativize) parses built pages into build/output/app-router-guide_html/assets/search-index.js
   (window.ARG_SEARCH_INDEX; a script tag, not fetch, so file:// works). nav.js renders a search
   input above the TOC: as-you-type results replace the TOC list (chapter, heading, highlighted
   snippet, link to page#anchor), arrow-key + Enter navigation, "/" focuses, Esc clears. Sidebar
   scroll position also persists across navigations (sessionStorage). Search works in the
-  build/app-router-guide_html folder distribution; the single-file artifact bundle does NOT have search yet.
-- 2026-07-18: **Draft layer is DEV-ONLY (per Nick).** The built build/app-router-guide_html/ is FINAL, never a
+  build/output/app-router-guide_html folder distribution; the single-file artifact bundle does NOT have search yet.
+- 2026-07-18: **Draft layer is DEV-ONLY (per Nick).** The built build/output/app-router-guide_html/ is FINAL, never a
   draft: nav.js gates the entire annotation module (DRAFT badge, note mode, pins, panel,
   ledger auto-sync) behind a localhost check, AND the module + draft-tools CSS are physically
   stripped from the BUILT assets: postbuild_relativize.py removes everything between

@@ -1,6 +1,6 @@
-# Generated output — never hand-edited, rebuilt by scripts/build_artifact.py.
-build/
 node_modules/
-
-# BUILT OUTPUT since the Astro migration (npm run build); never hand-edited.
 build/
+.astro/
+PROJECT.md
+pnpm-lock.yaml
+__pycache__

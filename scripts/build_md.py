@@ -24,7 +24,7 @@ import sys
 from html.parser import HTMLParser
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SITE = os.path.join(ROOT, "build", "app-router-guide_html")
+SITE = os.path.join(ROOT, "build", "output", "app-router-guide_html")
 
 VOID = {"br", "hr", "img", "meta", "link", "input",
         "circle", "line", "rect", "path", "marker", "use", "text"}
@@ -431,7 +431,7 @@ def convert_page(path, page, link_map, anchor):
 
 
 def build_folder():
-    outdir = os.path.join(ROOT, "build", "app-router-guide_md")
+    outdir = os.path.join(ROOT, "build", "output", "app-router-guide_md")
     os.makedirs(outdir, exist_ok=True)
 
     def link_map(href):
@@ -502,7 +502,7 @@ def build_file():
         parts.append("\n\n".join(blocks))
 
     doc = "\n\n---\n\n".join(parts) + "\n"
-    out = os.path.join(ROOT, "build", "app-router-guide.md")
+    out = os.path.join(ROOT, "build", "output", "app-router-guide.md")
     with open(out, "w") as f:
         f.write(doc)
     print(f"markdown file: {len(doc) // 1024} KB -> build/output/app-router-guide.md")
