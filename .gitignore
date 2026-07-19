@@ -1,6 +1,5 @@
 .DS_Store
 _to_delete/
-build/
 node_modules/
 .astro/
 **/__pycache__/
