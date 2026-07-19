@@ -87,6 +87,8 @@ clarification before proceeding.
       layout shift. Tie together with TTI and why its a dead metric. (**Partially done**)
 - [x] Rename Tracker references to Tracker
 - [x] Importance of 1 component per file.
+- [ ] We need to have a section that should be used to show the importance of keeping things like a
+      dropdown trigger and dropdown in parallel and not as a child.
 
 ## Page Content to Add or Modify
 

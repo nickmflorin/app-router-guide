@@ -918,7 +918,7 @@
       "id": "nmrryjwhe",
       "page": "15-component-breakdown.html",
       "ts": "2026-07-19T15:35:55.442Z",
-      "status": "open",
+      "status": "resolved",
       "text": "I think it might make sense to make this example a little more complex and consider the fact that ProgramCardMenu is a floating element that only opens when a button is clicked.  Is there a way we can show that here too?  Please confirm with me before updating the example - I want to see what you do before you commit it.",
       "target": {
         "anchor": "worked",
@@ -928,7 +928,9 @@
         ],
         "tag": "pre",
         "snippet": "ProgramCard.tsx - server: frame renders immediately, reserves spaceexport function Program"
-      }
+      },
+      "resolution": "Approved proposal applied. The menu is now two files: ProgramCardMenu.tsx (the trigger; the card's only first-paint JS) and ProgramCardMenuPanel.tsx (the floating layer, conditionally mounted AND dynamically imported, so its render and its download are both deferred to the first click). Folder tree grown to five files; captions and the \"count what the split bought\" paragraph updated with the double-deferral point and §7/§7.3 links.",
+      "resolvedAt": "2026-07-19"
     },
     {
       "id": "nmrrz4jrr",

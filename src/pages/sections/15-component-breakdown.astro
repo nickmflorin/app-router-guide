@@ -111,7 +111,8 @@ import Snippet from '../../components/Snippet.astro';
 ├── ProgramCard.tsx               <span class="tok-com">server: the known frame</span>
 ├── ProgramCardStats.tsx          <span class="tok-com">server, async: one data question</span>
 ├── ProgramCardStatsSkeleton.tsx  <span class="tok-com">the fallback, colocated (§10)</span>
-└── ProgramCardMenu.tsx           <span class="tok-com">client: the only interactivity</span></pre>
+├── ProgramCardMenu.tsx           <span class="tok-com">client: the trigger, the only first-paint JS</span>
+└── ProgramCardMenuPanel.tsx      <span class="tok-com">client: the floating layer, loaded on demand</span></pre>
   </Snippet>
 
   <Snippet>
@@ -155,31 +156,72 @@ import Snippet from '../../components/Snippet.astro';
   <Snippet>
     <pre
       class='code'
-      is:raw><span class="filename">ProgramCardMenu.tsx - client: the interaction atom</span><span class="tok-dir">"use client"</span>;
+      is:raw><span class="filename">ProgramCardMenu.tsx - client: the trigger is the card's entire first-paint cost</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
+
+<span class="tok-kw">const</span> ProgramCardMenuPanel = <span class="tok-fn">dynamic</span>(() =&gt;
+  <span class="tok-kw">import</span>(<span class="tok-str">"./ProgramCardMenuPanel"</span>).<span class="tok-fn">then</span>((m) =&gt; m.ProgramCardMenuPanel)
+);
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramCardMenu</span>({ programId }: { programId: number }) {
+  <span class="tok-kw">const</span> [open, setOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">IconButton</span> <span class="tok-prop">aria-label</span>=<span class="tok-str">"Program actions"</span> <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">setOpen</span>((o) =&gt; !o)} /&gt;
+      <span class="tok-com">{/* Nothing below exists - as DOM or as JS - until the first click. */}</span>
+      {open &amp;&amp; &lt;<span class="tok-fn">ProgramCardMenuPanel</span> <span class="tok-prop">programId</span>={programId} <span class="tok-prop">onClose</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">false</span>)} /&gt;}
+    &lt;/&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The menu is a floating element that is closed by default, which makes it the purest case of
+      the <a href='07-bundle-size-code-splitting.html'>§7</a> test: it is not needed on first
+      render. So it is deferred twice. The conditional mount defers its <em>render</em> until the
+      click, and <code>dynamic</code> (<a href='07-bundle-size-code-splitting.html#heavyweight'
+        >§7.3</a
+      >) defers its <em>download</em> until the same click. The trigger button above is the only
+      code in the card's first-paint bundle.
+    </CodeCaption>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code'
+      is:raw><span class="filename">ProgramCardMenuPanel.tsx - client: the floating layer, mounted and downloaded on demand</span><span class="tok-dir">"use client"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramCardMenuPanel</span>({
+  programId,
+  onClose,
+}: {
+  programId: number;
+  onClose: () =&gt; void;
+}) {
   <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
   <span class="tok-kw">return</span> (
-    &lt;<span class="tok-fn">Menu</span> <span class="tok-prop">disabled</span>={isPending}&gt;
+    &lt;<span class="tok-fn">Popover</span> <span class="tok-prop">onClose</span>={onClose}&gt;
       &lt;<span class="tok-fn">MenuItem</span>
+        <span class="tok-prop">disabled</span>={isPending}
         <span class="tok-prop">onSelect</span>={() =&gt;
           <span class="tok-fn">startTransition</span>(<span class="tok-kw">async</span> () =&gt; {
             <span class="tok-kw">const</span> { error } = <span class="tok-kw">await</span> <span class="tok-fn">archiveProgram</span>(programId);
             <span class="tok-kw">if</span> (error) toast.<span class="tok-fn">error</span>(error);
+            <span class="tok-kw">else</span> <span class="tok-fn">onClose</span>();
           })
         }
       &gt;
         Archive
       &lt;/<span class="tok-fn">MenuItem</span>&gt;
-    &lt;/<span class="tok-fn">Menu</span>&gt;
+    &lt;/<span class="tok-fn">Popover</span>&gt;
   );
 }</pre>
     <CodeCaption>
-      The only <code>"use client"</code> in the folder, and it is the self-contained leaf of
+      Still the self-contained leaf of
       <a href='05-client-server-boundaries.html#self-contained'>§5.7</a>: it knows a name (<code
         >programId</code
-      >), fires an action, and holds zero references to its surroundings. The card's JS cost is this
-      file and nothing else.
+      >), fires an action, and holds zero references to its surroundings. Splitting it from its
+      trigger is not ceremony. This file is a separate chunk that most visitors never download,
+      because most visits never open the menu.
     </CodeCaption>
   </Snippet>
 
@@ -188,10 +230,11 @@ import Snippet from '../../components/Snippet.astro';
     >), the stats stream into reserved space without moving anything (<a
       href='09-containers-content-shifting.html'>§9</a
     >,
-    <a href='10-suspense-streaming.html'>§10</a>), the menu is the entire bundle cost (<a
+    <a href='10-suspense-streaming.html'>§10</a>), the menu trigger is the entire first-paint
+    bundle cost and the panel behind it downloads only for users who open it (<a
       href='07-bundle-size-code-splitting.html'>§7</a
     >), the data question dedupes with every other asker (<a href='14-dedupe-caching.html'>§14</a>),
-    and all four files are independently portable (<a href='13-minimize-the-wires.html#portability'
+    and all five files are independently portable (<a href='13-minimize-the-wires.html#portability'
       >§13.5</a
     >). None of that is achievable while the card is one component, because every one of those
     behaviors attaches to a component boundary.
