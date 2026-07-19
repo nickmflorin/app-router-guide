@@ -1013,6 +1013,8 @@ a.toc-row .soon {
   grid-template-columns: 1fr 1fr;
   gap: 22px;
   margin: 20px 0;
+  /* boxes size to their own content instead of stretching to the taller one */
+  align-items: start;
 }
 /* Each box is a two-column grid: the chip column sizes itself to the widest
    chip in THAT box, so every description starts on one shared left edge
@@ -1027,6 +1029,8 @@ a.toc-row .soon {
   column-gap: 14px;
   row-gap: 12px;
   align-content: start;
+  /* chips keep their natural height instead of stretching to the row's */
+  align-items: start;
 }
 .legend .legend-box h4 {
   grid-column: 1 / -1;
