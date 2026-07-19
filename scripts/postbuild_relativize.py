@@ -31,3 +31,17 @@ ledger = os.path.join(OUT, 'page-notes.json')
 if os.path.exists(ledger):
     os.remove(ledger)
     print('page-notes.json stripped from build output')
+
+# Strip the dev-only draft layer (annotation module in nav.js, draft-tools
+# styles in style.css) from the BUILT copies. The source files in public/
+# keep the code between /* @dev-only:start */ ... /* @dev-only:end */
+# markers; the dev server serves those, the distributable never sees them.
+DEV_BLOCK = re.compile(r'/\* @dev-only:start \*/.*?/\* @dev-only:end \*/\n?', re.S)
+for rel in ('assets/nav.js', 'assets/style.css'):
+    p = os.path.join(OUT, rel)
+    s = open(p).read()
+    stripped, n = DEV_BLOCK.subn('', s)
+    if n == 0:
+        raise SystemExit(f'ERROR: no @dev-only markers found in {rel}; refusing to ship unstripped')
+    open(p, 'w').write(stripped)
+    print(f'dev-only draft layer stripped from {rel} ({n} block(s), {len(s) - len(stripped)} bytes)')

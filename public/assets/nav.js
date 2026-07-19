@@ -381,6 +381,7 @@ const TOC = [
   }
 })();
 
+/* @dev-only:start */
 /* ------------------------------------------------------------------------
    Draft annotation layer - LOCAL DEV ONLY.
 
@@ -863,3 +864,4 @@ const TOC = [
   renderPins();
   window.addEventListener('load', () => setTimeout(renderPins, 250));
 })();
+/* @dev-only:end */

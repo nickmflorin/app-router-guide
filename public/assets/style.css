@@ -411,6 +411,7 @@ code {
   border-color: #cde0fb;
 }
 
+/* @dev-only:start */
 /* ---------- draft tools: badge + annotation layer (remove when the guide ships) ---------- */
 .draft-tools {
   position: fixed;
@@ -602,6 +603,7 @@ body.note-mode .content-inner {
   padding: 6px 14px;
 }
 
+/* @dev-only:end */
 /* ---------- callouts ---------- */
 .callout {
   border: 1px solid var(--border);

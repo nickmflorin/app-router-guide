@@ -102,8 +102,11 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   html-guide folder distribution; the single-file artifact bundle does NOT have search yet.
 - 2026-07-18: **Draft layer is DEV-ONLY (per Nick).** The built html-guide/ is FINAL, never a
   draft: nav.js gates the entire annotation module (DRAFT badge, note mode, pins, panel,
-  ledger auto-sync) behind a localhost check, and postbuild_relativize.py strips
-  page-notes.json from the build output (also gitignored there). The working ledger stays at
+  ledger auto-sync) behind a localhost check, AND the module + draft-tools CSS are physically
+  stripped from the BUILT assets: postbuild_relativize.py removes everything between
+  /* @dev-only:start */ ... /* @dev-only:end */ markers in nav.js and style.css (keep the
+  markers intact when editing those files; the build FAILS if they go missing) and deletes
+  page-notes.json from the output (also gitignored there). The working ledger stays at
   public/page-notes.json; the notes workflow only exists on the astro dev server.
 - 2026-07-18: **Inserted new chapter §11 "Designing for the Unknown" (Part B), per Nick.** Full
   restructuring-rule pass: old §11-19 shifted to §12-20; files renamed 11-19 -> 12-20; toc.js,
