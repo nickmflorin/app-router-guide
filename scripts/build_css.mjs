@@ -18,7 +18,8 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const ENTRY = path.join(ROOT, 'src', 'styles', 'style.scss');
 const OUT = path.join(ROOT, 'public', 'assets', 'style.css');
-const BANNER = '/* GENERATED from src/styles/style.scss by scripts/build_css.mjs - do not edit. */\n';
+const BANNER =
+  '/* GENERATED from src/styles/style.scss by scripts/build_css.mjs - do not edit. */\n';
 
 async function compileWithSass() {
   const sass = await import('sass');
@@ -35,12 +36,14 @@ function compileFallback() {
       const p = path.join(ROOT, 'src', 'styles', 'partials', `_${use[1]}.scss`);
       let css = fs.readFileSync(p, 'utf8');
       // the fallback only understands the plain-CSS subset of SCSS
-      const scssOnly = css.match(/^\s*(\$[\w-]+\s*:|@(mixin|include|extend|if|each|function)\b)|[^&]&[\s.:#[]/m);
+      const scssOnly = css.match(
+        /^\s*(\$[\w-]+\s*:|@(mixin|include|extend|if|each|function)\b)|[^&]&[\s.:#[]/m,
+      );
       if (scssOnly) {
         console.error(
           `error: ${path.basename(p)} uses SCSS syntax (${scssOnly[0].trim()}); ` +
             'the plain-CSS fallback cannot compile it. Run npm install so the ' +
-            'real sass compiler is available.'
+            'real sass compiler is available.',
         );
         process.exit(1);
       }

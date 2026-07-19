@@ -174,13 +174,13 @@ import Snippet from '../../components/Snippet.astro';
 }</pre>
     <CodeCaption>
       The menu is a floating element that is closed by default, which makes it the purest case of
-      the <a href='07-bundle-size-code-splitting.html'>§7</a> test: it is not needed on first
-      render. So it is deferred twice. The conditional mount defers its <em>render</em> until the
-      click, and <code>dynamic</code> (<a href='07-bundle-size-code-splitting.html#heavyweight'
-        >§7.3</a
-      >) defers its <em>download</em> until the same click. The trigger button above is the only
-      code in the card's first-paint bundle. The general trigger/panel split, including how to keep
-      it under a UI library's compound API, is
+      the <a href='07-bundle-size-code-splitting.html'>§7</a> test: it is not needed on first render.
+      So it is deferred twice. The conditional mount defers its <em>render</em> until the click, and <code
+        >dynamic</code
+      > (<a href='07-bundle-size-code-splitting.html#heavyweight'>§7.3</a>) defers its <em
+        >download</em
+      > until the same click. The trigger button above is the only code in the card's first-paint bundle.
+      The general trigger/panel split, including how to keep it under a UI library's compound API, is
       <a href='07-bundle-size-code-splitting.html#triggers'>§7.4</a>.
     </CodeCaption>
   </Snippet>
@@ -229,8 +229,8 @@ import Snippet from '../../components/Snippet.astro';
     >), the stats stream into reserved space without moving anything (<a
       href='09-containers-content-shifting.html'>§9</a
     >,
-    <a href='10-suspense-streaming.html'>§10</a>), the menu trigger is the entire first-paint
-    bundle cost and the panel behind it downloads only for users who open it (<a
+    <a href='10-suspense-streaming.html'>§10</a>), the menu trigger is the entire first-paint bundle
+    cost and the panel behind it downloads only for users who open it (<a
       href='07-bundle-size-code-splitting.html'>§7</a
     >), the data question dedupes with every other asker (<a href='14-dedupe-caching.html'>§14</a>),
     and all five files are independently portable (<a href='13-minimize-the-wires.html#portability'

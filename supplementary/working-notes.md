@@ -21,12 +21,12 @@ clarification before proceeding.
       the dom tree, spinners showing on top of spinners, etc. etc **Elaborate**
 - [x] Server should be source of truth - everything should point back to the server as much as it
       can. **Elaborate**
-- [ ] **What we lose when we go through HTTP middleman (Expand more on this)**
+- [x] **What we lose when we go through HTTP middleman (Expand more on this)**
 
 ## Tentative (DO NOT AUTOMATICALLY ADDRESS ANYTHING IN THIS SECTION)
 
 - [ ] Reducing dead whitespace, particularly in diagrams.
-- [ ] less spacing under page header description
+- [x] less spacing under page header description
 - [x] Any code snippet that shows a bad pattern should have a red x in the top right corner or left
       corner whichever makes more sense, next to or in line with the file name. Same thing with good
       patterns but with green check marks. (Done 2026-07-19: v-good/v-bad/v-warn classes on pre.code
@@ -84,9 +84,9 @@ clarification before proceeding.
       content area is the same height as the sub parts. same thing with the Wholesale: one fused
       client component.
 - [x] Containers live in the scaffold - section needs a diagram that shows the content inside the
-      layout changing when route changes but not the layout. (Done 2026-07-19: §9.4 got a
-      two-panel route-change diagram: blue scaffold identical on both sides, green rows swapped,
-      "navigate" arrow between; mermaid twin included.)
+      layout changing when route changes but not the layout. (Done 2026-07-19: §9.4 got a two-panel
+      route-change diagram: blue scaffold identical on both sides, green rows swapped, "navigate"
+      arrow between; mermaid twin included.)
 - [x] Consider moving explanation of perceived performance up, tie it together with cumulative
       layout shift. Tie together with TTI and why its a dead metric. (**Partially done**)
 - [x] Rename Tracker references to Tracker
@@ -195,15 +195,15 @@ folded into the existing "Server-first is not optional" alert.)
 - [x] Elaborate on security and why it is better to ship HTML and not the JS that is used to
       generate the HTML. (**Partially done**)
 - [x] Elaborate on how with NextJS, the API is your HTML. The server returns HTML not the data that
-      is used to generate HTML. (Done 2026-07-19: new §4.2 subsection "The API is your HTML":
-      the contract is rendered output (HTML / RSC payload), what the parallel-JSON-product world
-      costs, ties to §5.8 actions and the §18 audit finding.)
+      is used to generate HTML. (Done 2026-07-19: new §4.2 subsection "The API is your HTML": the
+      contract is rendered output (HTML / RSC payload), what the parallel-JSON-product world costs,
+      ties to §5.8 actions and the §18 audit finding.)
 - [x] Simplicity (Done 2026-07-19: all three woven into §4.2's Simplicity subsection: an
       "environment" paragraph (server = serial, one machine you own; client = someone else's
-      computer with their network/browser/CPU/firewall/ad blocker as correctness inputs), a
-      "guess, or hide" paragraph (fallback values vs revealing nothing, with the profile-bio
-      height example), and a voice callout: "But client-side rendering is simpler" - it seems
-      simpler until the bar is a professional, stable, predictable product. No videos used.)
+      computer with their network/browser/CPU/firewall/ad blocker as correctness inputs), a "guess,
+      or hide" paragraph (fallback values vs revealing nothing, with the profile-bio height
+      example), and a voice callout: "But client-side rendering is simpler" - it seems simpler until
+      the bar is a professional, stable, predictable product. No videos used.)
   - [x] Backend vs. Client Side - backend is serial, you know what things are each step of the way.
         You're not worried about user events, timing, network requests, latency, ad blockers, etc.
   - [x] General note about how client side stuff is always more complicated than backend because you
@@ -228,14 +228,14 @@ folded into the existing "Server-first is not optional" alert.)
 
 - [x] Extending examples of containers with loading states to also include empty states or other
       feedback. (Checked 2026-07-19: covered by §10.6's TableContainer example (skeleton / empty
-      state / rows inside one container, refresh indicator) and the full state-space table
-      including the error row.)
+      state / rows inside one container, refresh indicator) and the full state-space table including
+      the error row.)
 - [x] Discuss how skeletons should not be used to replace entire content unless that content is
       fundamentally not known on first render. Things that can be rendered on the screen even if
-      data is still loading should always be on the screen (like Form inputs, buttons, etc.)
-      (Done 2026-07-19: new §10.4 bullet "A skeleton stands in for the unknown, and only the
-      unknown" - form inputs/buttons/headings render real and interactive from first paint; ties
-      to §7.2 fusion and §17's sign.)
+      data is still loading should always be on the screen (like Form inputs, buttons, etc.) (Done
+      2026-07-19: new §10.4 bullet "A skeleton stands in for the unknown, and only the unknown" -
+      form inputs/buttons/headings render real and interactive from first paint; ties to §7.2 fusion
+      and §17's sign.)
 
 ### Client Boundaries
 
@@ -317,9 +317,9 @@ load-on-open drawer example). The React-cache + SWR code both live in §13.2/§1
 - [x] Should probably discuss use transitions at some point
 - [x] **Expanding on habits** you keep to include other things like prop drilling, dependent
       components, containers and space allocation. Auth on the frontend. (Done 2026-07-19: §3's
-      "Habit you keep / Tool you lose" table gained four rows: prop drilling, dependent
-      components (enabled: chains), content that brings its own container/sizing, and
-      auth-in-the-browser vs cookie-carried identity.)
+      "Habit you keep / Tool you lose" table gained four rows: prop drilling, dependent components
+      (enabled: chains), content that brings its own container/sizing, and auth-in-the-browser vs
+      cookie-carried identity.)
 - [x] Expand on "decouple the parts" so its also about allowing client boundaries to be pushed
       further down and isolated inside of smaller more granular pieces.
 - [x] Content about how Vercel and React are working together and how React 19 and app router have
@@ -400,8 +400,8 @@ sections.)
       server-actions section rather than a separate page: the function-valued action prop (and
       pre-hydration replay), useActionState (result-as-state worked form), useFormStatus (shared
       SubmitButton leaf, §13 tie), and next/form's string-vs-function actions with a
-      server-component search form; closes with the mutation-vs-navigation decision rule. §19
-      keeps the reference entries.)
+      server-component search form; closes with the mutation-vs-navigation decision rule. §19 keeps
+      the reference entries.)
 
 ### Resources
 

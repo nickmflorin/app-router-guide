@@ -518,18 +518,17 @@ flowchart LR
   <p>
     Every floating element - a dropdown menu, a popover, a dialog, a drawer - is closed on first
     render by definition. The button that opens it is on screen from the first paint. That is the
-    <a href='#tax'>§7.1</a> question answered twice, in opposite directions, by two things that sit
-    an inch apart in the same mock. The structural consequence:
-    <strong
-      >the trigger and the panel it opens should be separate components, side by side,</strong
-    > so the trigger can ship in the first-paint bundle while the panel's import is deferred until someone
-    actually clicks. <a href='15-component-breakdown.html#worked'>§15.2</a>'s card menu is exactly this
-    shape: a trigger file that owns the open state, and a panel file behind a dynamic import.
+    <a href='#tax'>§7.1</a> question answered twice, in opposite directions, by two things that sit an
+    inch apart in the same mock. The structural consequence:
+    <strong>the trigger and the panel it opens should be separate components, side by side,</strong> so
+    the trigger can ship in the first-paint bundle while the panel's import is deferred until someone
+    actually clicks. <a href='15-component-breakdown.html#worked'>§15.2</a>'s card menu is exactly
+    this shape: a trigger file that owns the open state, and a panel file behind a dynamic import.
   </p>
   <p>
     The shape that quietly fights this is the compound-component API most UI libraries document,
-    because it nests the trigger <em>inside</em> the floating component. Tracker's action menus
-    follow it faithfully:
+    because it nests the trigger <em>inside</em> the floating component. Tracker's action menus follow
+    it faithfully:
   </p>
 
   <Snippet>
@@ -600,8 +599,8 @@ flowchart LR
 }</pre>
     <CodeCaption>
       The root and trigger stay inline: they are cheap and genuinely needed at first paint. The
-      panel becomes a controlled, conditionally rendered sibling, so <code>dynamic</code> is never
-      even asked for its module until the first open.
+      panel becomes a controlled, conditionally rendered sibling, so <code>dynamic</code> is never even
+      asked for its module until the first open.
     </CodeCaption>
   </Snippet>
 
@@ -621,9 +620,9 @@ flowchart LR
 }</pre>
     <CodeCaption>
       The compound API still works: the panel renders inside the same <code>DropdownMenu</code> root,
-      so the library's context reaches it. Only the import graph changed - and for the sheet version
-      of this pattern, this file is where the form library, the schema, and the sheet body live,
-      which is precisely the weight the button no longer carries.
+      so the library's context reaches it. Only the import graph changed - and for the sheet version of
+      this pattern, this file is where the form library, the schema, and the sheet body live, which is
+      precisely the weight the button no longer carries.
     </CodeCaption>
   </Snippet>
 
@@ -632,8 +631,8 @@ flowchart LR
     almost always invisible (they are small relative to what they saved, and the fetch races the
     user's hand), but it is the same trade as <a href='#heavyweight'>§7.3</a>: don't split a
     three-line panel out of reflex, split when the panel has weight. Second, when you design your
-    <em>own</em> trigger-plus-floating components, bake the seam into the API from the start: a
-    trigger that owns the open state and mounts a lazy panel, as in
+    <em>own</em> trigger-plus-floating components, bake the seam into the API from the start: a trigger
+    that owns the open state and mounts a lazy panel, as in
     <a href='15-component-breakdown.html#worked'>§15.2</a>, rather than a component that needs the
     panel's module just to render the button. It is <a href='#wholesale'>§7.2</a>'s lesson rotated
     ninety degrees: don't weld the always-visible to the almost-never-visible.

@@ -886,6 +886,24 @@ flowchart LR
     <tbody>
       <tr>
         <td>
+          <strong>Components are as isolated and encapsulated as humanly possible.</strong> A component
+          owns its own data, its own state, and its own behavior; nothing outside it needs to know how
+          it works, and it needs to know nothing about its surroundings beyond the names it's given.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
+          <strong>The wires connecting components are minimized, always.</strong> Every prop, callback,
+          and shared-state link is a dependency to justify; when in doubt, cut the wire and let the cache,
+          the URL, or the component's own question replace it.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
           <strong>Never pass a child anything the parent doesn't itself need.</strong>
           Identity, slots, and parent-owned config are the exceptions.
         </td>
