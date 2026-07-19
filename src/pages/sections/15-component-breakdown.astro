@@ -75,9 +75,8 @@ import Snippet from '../../components/Snippet.astro';
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-bad'
       is:raw><span class="filename">ProgramCard.tsx - one component, three capabilities welded together</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramCard</span>({ programId }: { programId: number }) {
   <span class="tok-kw">const</span> { data, isLoading } = <span class="tok-fn">useProgramStats</span>(programId);
   <span class="tok-kw">const</span> [menuOpen, setMenuOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
@@ -106,7 +105,7 @@ import Snippet from '../../components/Snippet.astro';
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">components/programs/card/ - one capability per file</span>card/
 ├── ProgramCard.tsx               <span class="tok-com">server: the known frame</span>
 ├── ProgramCardStats.tsx          <span class="tok-com">server, async: one data question</span>
@@ -117,7 +116,7 @@ import Snippet from '../../components/Snippet.astro';
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">ProgramCard.tsx - server: frame renders immediately, reserves space</span><span class="tok-kw">export function</span> <span class="tok-fn">ProgramCard</span>({ programId }: { programId: number }) {
   <span class="tok-kw">return</span> (
     &lt;section <span class="tok-prop">className</span>=<span class="tok-str">"card"</span>&gt;
@@ -141,7 +140,7 @@ import Snippet from '../../components/Snippet.astro';
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">ProgramCardStats.tsx - server, async: exactly one question</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramCardStats</span>({ programId }: { programId: number }) {
   <span class="tok-com">// React.cache'd (§14): duplicate askers collapse into one execution.</span>
   <span class="tok-kw">const</span> stats = <span class="tok-kw">await</span> <span class="tok-fn">getProgramStats</span>(programId);
@@ -155,9 +154,8 @@ import Snippet from '../../components/Snippet.astro';
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">ProgramCardMenu.tsx - client: the trigger is the card's entire first-paint cost</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
 
 <span class="tok-kw">const</span> ProgramCardMenuPanel = <span class="tok-fn">dynamic</span>(() =&gt;
@@ -189,9 +187,8 @@ import Snippet from '../../components/Snippet.astro';
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">ProgramCardMenuPanel.tsx - client: the floating layer, mounted and downloaded on demand</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramCardMenuPanel</span>({
   programId,
   onClose,

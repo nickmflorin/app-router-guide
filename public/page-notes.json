@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-19T16:29:33.031Z",
+  "updatedAt": "2026-07-19T17:34:51.303Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -929,8 +929,7 @@
         "tag": "pre",
         "snippet": "ProgramCard.tsx - server: frame renders immediately, reserves spaceexport function Program"
       },
-      "resolution": "Approved proposal applied. The menu is now two files: ProgramCardMenu.tsx (the trigger; the card's only first-paint JS) and ProgramCardMenuPanel.tsx (the floating layer, conditionally mounted AND dynamically imported, so its render and its download are both deferred to the first click). Folder tree grown to five files; captions and the \"count what the split bought\" paragraph updated with the double-deferral point and §7/§7.3 links.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "Approved proposal applied. The menu is now two files: ProgramCardMenu.tsx (the trigger; the card's only first-paint JS) and ProgramCardMenuPanel.tsx (the floating layer, conditionally mounted AND dynamically imported, so its render and its download are both deferred to the first click). Folder tree grown to five files; captions and the \"count what the split bought\" paragraph updated with the double-deferral point and §7/§7.3 links."
     },
     {
       "id": "nmrrz4jrr",
@@ -946,8 +945,53 @@
         "tag": "figure",
         "snippet": "The client era: the browser earns every pixel May 2013 React is open-sourced components + "
       },
-      "resolution": "Reworded the Suspense (Oct 2018) subline to be self-explanatory: \"components stop hand-rolling isLoading: the tree, not each component, coordinates waiting\". The old phrasing (\"the first crack in every component fends for itself\") meant that before Suspense each component tracked its own isLoading and rendered its own spinner in isolation; Suspense was the first primitive to break that model. Mermaid twin synced.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "Reworded the Suspense (Oct 2018) subline to be self-explanatory: \"components stop hand-rolling isLoading: the tree, not each component, coordinates waiting\". The old phrasing (\"the first crack in every component fends for itself\") meant that before Suspense each component tracked its own isLoading and rendered its own spinner in isolation; Suspense was the first primitive to break that model. Mermaid twin synced."
+    },
+    {
+      "id": "nmrs2qhwo",
+      "page": "14-dedupe-caching.html",
+      "ts": "2026-07-19T17:33:01.608Z",
+      "status": "open",
+      "text": "please bold \"we are not building that app\"",
+      "target": {
+        "anchor": "swr-vs-query",
+        "path": [
+          32
+        ],
+        "tag": "p",
+        "snippet": "We are not building that app, and that is the whole argument. Next.js Very important In th"
+      }
+    },
+    {
+      "id": "nmrs2rkio",
+      "page": "14-dedupe-caching.html",
+      "ts": "2026-07-19T17:33:51.648Z",
+      "status": "open",
+      "text": "we should mention that swr was designed specifically for next",
+      "target": {
+        "anchor": "swr-vs-query",
+        "path": [
+          33
+        ],
+        "tag": "p",
+        "snippet": "The tiebreaker is alignment. SWR is built and maintained by Vercel, the same team that shi"
+      }
+    },
+    {
+      "id": "nmrs2s5d1",
+      "page": "14-dedupe-caching.html",
+      "ts": "2026-07-19T17:34:18.661Z",
+      "status": "open",
+      "text": "pleaes include a coe snippet here too that shows a stubbed out drawer that makes the client side request with swr",
+      "target": {
+        "anchor": "when-client",
+        "path": [
+          38,
+          0
+        ],
+        "tag": "pre",
+        "snippet": "components/programs/RowActions.tsx\"use client\";import { useState } from \"react\";import dyn"
+      }
     }
   ]
 }

@@ -181,7 +181,7 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">app/programs/[programId]/reports/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ReportsPage</span>({ params, searchParams }: <span class="tok-fn">PageProps</span>) {
   <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
   <span class="tok-kw">const</span> { q = <span class="tok-str">""</span>, page = <span class="tok-str">"1"</span> } = <span class="tok-kw">await</span> searchParams;
@@ -238,9 +238,8 @@ flowchart LR
     <CompareCol kind='bad' label='✕ Tabs in state: the smell'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-bad'
           is:raw><span class="filename">ProgramView.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramView</span>() {
   <span class="tok-kw">const</span> [tab, setTab] = <span class="tok-fn">useState</span>(<span class="tok-str">"reports"</span>);
 
@@ -266,7 +265,7 @@ flowchart LR
     <CompareCol kind='good' label='✓ Tabs as route segments'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">the route structure</span>app/
 └── programs/
     └── [programId]/
@@ -308,9 +307,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">components/program/ProgramTabs.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> { usePathname } <span class="tok-kw">from</span> <span class="tok-str">"next/navigation"</span>;
 
 <span class="tok-com">/* A tab bar is a row of links. Active state comes from the URL, so it
@@ -386,9 +384,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">ViewTabs.tsx (inner; the baked-in Suspense wrapper of §5.6 is omitted)</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export function</span> <span class="tok-fn">ViewTabsInner</span>() {
   <span class="tok-kw">const</span> searchParams = <span class="tok-fn">useSearchParams</span>();
   <span class="tok-kw">const</span> router = <span class="tok-fn">useRouter</span>();
@@ -452,7 +449,7 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">app/(dashboard)/layout.tsx</span><span class="tok-kw">import</span> { cookies } <span class="tok-kw">from</span> <span class="tok-str">"next/headers"</span>;
 
 <span class="tok-kw">export default async function</span> <span class="tok-fn">DashboardLayout</span>({ children }: <span class="tok-fn">LayoutProps</span>) {

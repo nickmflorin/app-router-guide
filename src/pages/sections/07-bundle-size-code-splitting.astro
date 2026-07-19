@@ -240,7 +240,7 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">app/reports/hours/page.tsx (server component)</span><span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
 <span class="tok-kw">export default function</span> <span class="tok-fn">HoursPage</span>() {
@@ -486,7 +486,7 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-warn'
       is:raw><span class="filename">components/reports/HoursGrid.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
 
@@ -534,9 +534,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-bad'
       is:raw><span class="filename">OrgActionsMenu.tsx - the panel rides in the button's bundle</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> {
   Button,
   DropdownMenu,
@@ -579,9 +578,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">OrgActionsMenu.tsx - the trigger owns the state; the panel is a deferred sibling</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
 <span class="tok-kw">import</span> { Button, DropdownMenu, DropdownMenuTrigger } <span class="tok-kw">from</span> <span class="tok-str">"@tracker/ui"</span>;
 
@@ -609,9 +607,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">OrgActionsMenuPanel.tsx - everything the closed menu doesn't need</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> { DropdownMenuContent, DropdownMenuItem } <span class="tok-kw">from</span> <span class="tok-str">"@tracker/ui"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">OrgActionsMenuPanel</span>({ org }: { org: Organization }) {
@@ -656,9 +653,8 @@ flowchart LR
     <CompareCol kind='bad' label='✕ Barrel: one name pulls the whole package'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-bad'
           is:raw><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui"</span>;</pre>
         <CodeCaption>
           Pulling from the @/ui barrel adds the whole library to this route's graph: Button drags in
@@ -669,9 +665,8 @@ flowchart LR
     <CompareCol kind='good' label='✓ Direct: one name pulls one module'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">components/Toolbar.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> { Button } <span class="tok-kw">from</span> <span class="tok-str">"@/ui/button"</span>;</pre>
         <CodeCaption>
           Imports only Button's module; nothing else in @/ui joins this route's bundle.

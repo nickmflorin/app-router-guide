@@ -336,7 +336,7 @@ flowchart TB
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">data/programs.ts</span><span class="tok-kw">import</span> { cache } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 <span class="tok-com">// This import turns any leak into a client bundle into a build error.</span>
 <span class="tok-kw">import</span> <span class="tok-str">"server-only"</span>;
@@ -368,7 +368,7 @@ flowchart TB
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">data/templates.ts</span><span class="tok-kw">import</span> { cacheLife, cacheTag } <span class="tok-kw">from</span> <span class="tok-str">"next/cache"</span>;
 
 <span class="tok-kw">export async function</span> <span class="tok-fn">getFormTemplates</span>() {
@@ -383,7 +383,7 @@ flowchart TB
   </Snippet>
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">actions/templates.ts</span><span class="tok-dir">"use server"</span>;
 <span class="tok-kw">import</span> { revalidateTag } <span class="tok-kw">from</span> <span class="tok-str">"next/cache"</span>;
 
@@ -419,9 +419,8 @@ flowchart TB
     <CompareCol kind='bad' label='✕ Hand-rolled: no dedupe layer exists'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-bad'
           is:raw><span class="filename">every component, separately</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">const</span> [program, setProgram] = <span class="tok-fn">useState</span>(<span class="tok-kw">null</span>);
 <span class="tok-kw">const</span> [isLoading, setIsLoading] = <span class="tok-fn">useState</span>(<span class="tok-kw">true</span>);
 <span class="tok-fn">useEffect</span>(() =&gt; {
@@ -439,9 +438,8 @@ flowchart TB
     <CompareCol kind='good' label='✓ Shared hook: the key IS the dedupe'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">hooks/useProgram.ts</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> useSWR <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">useProgram</span>(id: <span class="tok-fn">string</span>) {
@@ -526,7 +524,7 @@ flowchart TB
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">data/stats.ts</span><span class="tok-kw">export async function</span> <span class="tok-fn">getPublicStats</span>() {
   <span class="tok-kw">const</span> res = <span class="tok-kw">await</span> <span class="tok-fn">fetch</span>(<span class="tok-str">`${API_URL}/stats`</span>, {
     <span class="tok-com">// Cache the result and treat it as fresh for an hour.</span>
@@ -568,7 +566,7 @@ flowchart TB
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">hooks/useJobStatus.ts</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> useSWR <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
 
@@ -676,7 +674,7 @@ flowchart TB
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">components/programs/RowActions.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 <span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;

@@ -345,8 +345,16 @@ class Converter:
         lang = "text" if ("├──" in code or "└──" in code) else "tsx"
         out = []
         if filename:
-            out.append(f"**`{filename}`**" if " " not in filename
-                       else f"**{filename}**")
+            # verdict badge from the pre's v-* class (matches the HTML header badge)
+            badge = ""
+            if n.has("v-good"):
+                badge = " ✓"
+            elif n.has("v-bad"):
+                badge = " ✕"
+            elif n.has("v-warn"):
+                badge = " ⚠︎"
+            name_md = f"**`{filename}`**" if " " not in filename else f"**{filename}**"
+            out.append(name_md + badge)
         out.append(f"```{lang}\n{code}\n```")
         return out
 

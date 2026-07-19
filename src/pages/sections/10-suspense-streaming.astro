@@ -209,7 +209,6 @@ flowchart LR
         <pre
           class='code'
           is:raw><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">function</span> <span class="tok-fn">Comments</span>({ commentsPromise }) {
   <span class="tok-com">/* Suspends until the promise (started on the server) resolves. */</span>
   <span class="tok-kw">const</span> comments = <span class="tok-fn">use</span>(commentsPromise);
@@ -224,7 +223,6 @@ flowchart LR
         <pre
           class='code'
           is:raw><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">function</span> <span class="tok-fn">ProgramStats</span>({ programId }) {
   <span class="tok-com">/* No isLoading flag: the hook suspends, the boundary shows the fallback. */</span>
   <span class="tok-kw">const</span> { data } = <span class="tok-fn">useSWR</span>([<span class="tok-str">"stats"</span>, programId], fetcher, { <span class="tok-prop">suspense</span>: <span class="tok-kw">true</span> });
@@ -255,7 +253,6 @@ flowchart LR
         <pre
           class='code'
           is:raw><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">function</span> <span class="tok-fn">SearchInputInner</span>() {
   <span class="tok-com">/* Must render under a Suspense boundary; §5.6 bakes it into the component. */</span>
   <span class="tok-kw">const</span> params = <span class="tok-fn">useSearchParams</span>();
@@ -806,7 +803,7 @@ flowchart TB
     <CompareCol kind='bad' label='✕ Component owns its loading state'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-bad'
           is:raw><span class="filename">ProgramStats.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramStats</span>({ programId }) {
   <span class="tok-kw">const</span> { data, isLoading } = <span class="tok-fn">useProgram</span>(programId);
@@ -822,7 +819,7 @@ flowchart TB
     <CompareCol kind='good' label='✓ Boundary owns it: component just renders'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">ProgramStats.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramStats</span>({ programId }) {
   <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> <span class="tok-fn">getProgram</span>(programId);
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">StatsRow</span> <span class="tok-prop">stats</span>={program.stats} /&gt;;
@@ -830,7 +827,7 @@ flowchart TB
       </Snippet>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">page.tsx - the composer decides</span>&lt;<span class="tok-fn">StatsContainer</span>&gt;
   &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
     &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={id} /&gt;
@@ -1015,7 +1012,7 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">app/reports/page.tsx - server: the URL is the input</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ searchParams }) {
   <span class="tok-kw">const</span> { q = <span class="tok-str">""</span> } = <span class="tok-kw">await</span> searchParams;
   <span class="tok-kw">return</span> (
@@ -1049,7 +1046,7 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">ReportRows.tsx - server: only ever renders finished knowledge</span><span class="tok-kw">export async function</span> <span class="tok-fn">ReportRows</span>({ query }) {
   <span class="tok-com">// The data layer call is cached and deduped (§14).</span>
   <span class="tok-kw">const</span> rows = <span class="tok-kw">await</span> <span class="tok-fn">getReportRows</span>(query);
@@ -1064,7 +1061,7 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">QueryTransition.tsx - client: one transition, shared by the leaves</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">const</span> Ctx = <span class="tok-fn">createContext</span>({ isPending: <span class="tok-kw">false</span>, update: (fn: () =&gt; <span class="tok-kw">void</span>) =&gt; {} });
 <span class="tok-kw">export const</span> <span class="tok-fn">useQueryTransition</span> = () =&gt; <span class="tok-fn">use</span>(Ctx);
@@ -1079,7 +1076,7 @@ flowchart LR
     <CompareCol kind='good' label='✓ SearchInput: client leaf, owns the URL'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">SearchInput.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">export function</span> <span class="tok-fn">SearchInput</span>() {
   <span class="tok-kw">const</span> params = <span class="tok-fn">useSearchParams</span>();
@@ -1107,7 +1104,7 @@ flowchart LR
     <CompareCol kind='good' label='✓ StaleContent: client shell, dims what passes through'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">StaleContent.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">export function</span> <span class="tok-fn">StaleContent</span>({ children }) {
   <span class="tok-kw">const</span> { isPending } = <span class="tok-fn">useQueryTransition</span>();
@@ -1153,9 +1150,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">ProgramFilter.tsx - client: search-as-you-type over client data</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramFilter</span>({ programs }) {
   <span class="tok-kw">const</span> [query, setQuery] = <span class="tok-fn">useState</span>(<span class="tok-str">""</span>);
 
@@ -1400,7 +1396,7 @@ flowchart LR
     <CompareCol kind='bad' label='✕ One chain, three welded questions'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-bad'
           is:raw><span class="filename">the classic: every branch misbehaves</span><span class="tok-kw">const</span> { data = [], isLoading } = <span class="tok-fn">useReportRows</span>(q);
 
 <span class="tok-com">/* On every refetch, real content is replaced
@@ -1419,7 +1415,7 @@ flowchart LR
     <CompareCol kind='good' label='✓ Three independent decisions'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">status decorates; knowledge decides</span><span class="tok-kw">const</span> { data, isValidating } = <span class="tok-fn">useReportRows</span>(q);
 <span class="tok-kw">const</span> hasData = data !== <span class="tok-kw">undefined</span>;
 
@@ -1735,9 +1731,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">SortSelect.tsx - client leaf: a router write that keeps the table alive</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export function</span> <span class="tok-fn">SortSelect</span>({ current }: { current: string }) {
   <span class="tok-kw">const</span> router = <span class="tok-fn">useRouter</span>();
   <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
@@ -1781,9 +1776,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">ProgramSearch.tsx - client: urgent keystroke, non-urgent filter</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramSearch</span>({ all }: { all: <span class="tok-fn">Program</span>[] }) {
   <span class="tok-kw">const</span> [query, setQuery] = <span class="tok-fn">useState</span>(<span class="tok-str">""</span>);
   <span class="tok-kw">const</span> [results, setResults] = <span class="tok-fn">useState</span>(all);
@@ -1832,9 +1826,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">ArchiveButton.tsx - client leaf: an async action</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export function</span> <span class="tok-fn">ArchiveButton</span>({ programId }: { programId: number }) {
   <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
 

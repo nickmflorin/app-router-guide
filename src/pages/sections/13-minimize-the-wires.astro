@@ -317,7 +317,7 @@ flowchart TB
     <CompareCol kind='bad' label='✕ Parent as data router'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-bad'
           is:raw><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
   <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
   <span class="tok-com">// This fetches the union of every child's needs.</span>
@@ -343,7 +343,7 @@ flowchart TB
     <CompareCol kind='good' label='✓ Independent children, deduped data layer'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
   <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
   <span class="tok-com">// The only wire is identity.</span>
@@ -357,7 +357,7 @@ flowchart TB
       </Snippet>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">components/program/ProgramHeader.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramHeader</span>({ programId }) {
   <span class="tok-com">/* It asks for itself; the dedupe layer
      makes this free (§14). */</span>
@@ -554,9 +554,8 @@ flowchart TB
     <CompareCol kind='bad' label='✕ Reports up through a wire'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-bad'
           is:raw><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({
   programId,
   onSuccess,
@@ -581,9 +580,8 @@ flowchart TB
     <CompareCol kind='good' label="✓ Invalidates the data's name">
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">function</span> <span class="tok-fn">PublishButton</span>({ programId }: <span class="tok-fn">Props</span>) {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Button</span>
@@ -828,7 +826,7 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">app/programs/page.tsx - a server page slots BOTH kinds into a client shell</span><span class="tok-kw">export default function</span> <span class="tok-fn">Page</span>() {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">ResizableSplit</span>
@@ -848,9 +846,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">components/layout/ResizableSplit.tsx - client shell with two slots</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export function</span> <span class="tok-fn">ResizableSplit</span>({ left, right }: <span class="tok-fn">ResizableSplitProps</span>) {
   <span class="tok-kw">const</span> [ratio, setRatio] = <span class="tok-fn">useState</span>(<span class="tok-str">0.3</span>);
   <span class="tok-kw">return</span> (

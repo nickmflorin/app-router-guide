@@ -27,9 +27,11 @@ clarification before proceeding.
 
 - [ ] Reducing dead whitespace, particularly in diagrams.
 - [ ] less spacing under page header description
-- [ ] Any code snippet that shows a bad pattern should have a red x in the top right corner or left
+- [x] Any code snippet that shows a bad pattern should have a red x in the top right corner or left
       corner whichever makes more sense, next to or in line with the file name. Same thing with good
-      patterns but with green check marks.
+      patterns but with green check marks. (Done 2026-07-19: v-good/v-bad/v-warn classes on pre.code
+      render a green check / red x / amber ! chip at the right edge of the filename bar; all 87
+      verdict snippets classified; markdown output carries the same badge after the filename.)
 - [ ] Diagrams or gifs/references pointing to the video that shows Suspense as an analogy for
       version control.
 

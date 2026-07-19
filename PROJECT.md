@@ -286,6 +286,16 @@ home per technique + cross-references).
   the leftover height and the caption stays pinned 6px beneath it, so caption bottoms align
   flush with the neighboring column's bottom (per Nick: symmetry, never dead white space
   below a column). li > .snippet gets the tighter list margin.
+- **Snippet verdict badges (per Nick, 2026-07-19):** every pre.code whose snippet expresses a
+  verdict carries a class: `v-good` (green check chip: the way to do it), `v-bad` (red x chip:
+  the wrong way), `v-warn` (amber ! chip: an option, but not the ideal one, e.g. lazy-loading a
+  wholesale grid, the context-provider approach). CSS renders the chip at the right edge of the
+  filename bar (::after in _snippet-container.scss). Purely illustrative/reference snippets
+  (§19 primitives catalog, headerless mini-snippets) stay unbadged. build_md.py appends the
+  matching glyph (✓ / ✕ / ⚠︎) after the bold filename line in markdown output. Snippets inside
+  Compare columns get badges too (matching the column's kind).
+- **No blank line after "use client"/"use server" in snippets (per Nick, 2026-07-19):** the
+  directive line is immediately followed by the next code line; swept guide-wide.
 - **NO EM DASHES, ever (per Nick, 2026-07-16).** The document must contain zero U+2014 characters.
   Use commas, colons, semicolons, parentheses, or split the sentence; plain hyphens are allowed
   where a compound or short-label separator reads naturally. En dashes (U+2013) for numeric ranges

@@ -649,9 +649,8 @@ flowchart TB
     <CompareCol kind='bad' label='✕ Wrapper converts its contents'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-bad'
           is:raw><span class="filename">CollapsibleSection.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-com">/* Importing it drags it across the boundary:
    ActivityFeed is client code now, fetch and all. */</span>
 <span class="tok-kw">import</span> { ActivityFeed } <span class="tok-kw">from</span> <span class="tok-str">"./ActivityFeed"</span>;
@@ -670,7 +669,7 @@ flowchart TB
     <CompareCol kind='good' label='✓ Wrapper receives server-rendered children'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">CollapsibleSection.tsx: client shell, knows nothing</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">export function</span> <span class="tok-fn">CollapsibleSection</span>({ children }) {
   <span class="tok-kw">const</span> [open, setOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">true</span>);
@@ -684,7 +683,7 @@ flowchart TB
       </Snippet>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">page.tsx: server composes through the shell</span>&lt;<span class="tok-fn">CollapsibleSection</span>&gt;
   <span class="tok-com">{/* ActivityFeed stays a server component; it
       fetches, renders, and ships 0 KB of JS; it
@@ -800,9 +799,8 @@ flowchart TB
     <CompareCol kind='bad' label='✕ Fused: configured with data + functions'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-bad'
           is:raw><span class="filename">app layout (forced client)</span><span class="tok-dir">"use client"</span>;
-
 &lt;<span class="tok-fn">Sidebar</span>
   <span class="tok-prop">items</span>={[
     {
@@ -822,7 +820,7 @@ flowchart TB
     <CompareCol kind='good' label='✓ Composed: structure + leaf items'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">app layout (stays server)</span>&lt;<span class="tok-fn">Sidebar</span>&gt;
   &lt;<span class="tok-fn">SidebarLinkItem</span> <span class="tok-prop">href</span>=<span class="tok-str">"/home"</span> <span class="tok-prop">icon</span>={&lt;<span class="tok-fn">HomeIcon</span> /&gt;}&gt;
     Home
@@ -851,7 +849,7 @@ flowchart TB
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">packages/ui/sidebar/Sidebar.tsx: structure, no directive</span><span class="tok-kw">export function</span> <span class="tok-fn">Sidebar</span>({ children }: { children: React.ReactNode }) {
   <span class="tok-kw">return</span> &lt;nav <span class="tok-prop">className</span>=<span class="tok-str">"sidebar"</span>&gt;{children}&lt;/nav&gt;;
 }</pre>
@@ -862,7 +860,7 @@ flowchart TB
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">packages/ui/sidebar/SidebarLinkItem.tsx: navigation, no directive</span><span class="tok-kw">export function</span> <span class="tok-fn">SidebarLinkItem</span>({ href, icon, children }: <span class="tok-fn">SidebarLinkItemProps</span>) {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Link</span> <span class="tok-prop">href</span>={href} <span class="tok-prop">className</span>=<span class="tok-str">"sidebar-item"</span>&gt;
@@ -879,9 +877,8 @@ flowchart TB
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">packages/ui/sidebar/SidebarButtonItem.tsx: the interactive leaf, own file</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export function</span> <span class="tok-fn">SidebarButtonItem</span>({ icon, onClick, children }: <span class="tok-fn">SidebarButtonItemProps</span>) {
   <span class="tok-kw">return</span> (
     &lt;button <span class="tok-prop">className</span>=<span class="tok-str">"sidebar-item"</span> <span class="tok-prop">onClick</span>={onClick}&gt;
@@ -921,9 +918,8 @@ flowchart TB
     <CompareCol kind='bad' label='✕ Imported directly: the composite goes client'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-bad'
           is:raw><span class="filename">ProgramPicker.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> Select <span class="tok-kw">from</span> <span class="tok-str">"react-select"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramPicker</span>({ programs }) {
@@ -945,9 +941,8 @@ flowchart TB
     <CompareCol kind='good' label='✓ Internalized: the third-party part is the leaf'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">ui/Select.tsx, then ProgramPicker.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export</span> { <span class="tok-kw">default as</span> Select } <span class="tok-kw">from</span> <span class="tok-str">"react-select"</span>;</pre>
         <CodeCaption>
           The third-party component is internalized once, behind our own client file: this wrapper
@@ -956,7 +951,7 @@ flowchart TB
       </Snippet>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">ProgramPicker.tsx: no directive</span><span class="tok-kw">import</span> { Select } <span class="tok-kw">from</span> <span class="tok-str">"@/ui/Select"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramPicker</span>({ programs }) {
@@ -1016,9 +1011,8 @@ flowchart TB
   </p>
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">SearchInput.tsx: the boundary is part of the component's public shape</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export function</span> <span class="tok-fn">SearchInput</span>(props: <span class="tok-fn">SearchInputProps</span>) {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">SearchInputSkeleton</span> /&gt;}&gt;
@@ -1067,9 +1061,8 @@ flowchart TB
     <CompareCol kind='bad' label='✕ The page owns the interaction'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-bad'
           is:raw><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-com">/* One button's mechanics hoisted the whole
    page into the client. */</span>
 <span class="tok-kw">export default function</span> <span class="tok-fn">ProgramPage</span>() {
@@ -1097,7 +1090,7 @@ flowchart TB
     <CompareCol kind='good' label='✓ The leaf owns the interaction'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">app/programs/[id]/page.tsx</span><span class="tok-com">/* Server component: no "use client",
    no handlers, no loading flags. */</span>
 <span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramPage</span>(
@@ -1128,9 +1121,8 @@ flowchart TB
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">components/program/PublishButton.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> { useTransition } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
 <span class="tok-com">/* Yes, a client component can import a server action. The "use server"
@@ -1193,9 +1185,8 @@ flowchart TB
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">components/program/DeleteProgramButton.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
 
 <span class="tok-com">/* The dialog's JavaScript isn't needed until the button is clicked, so it
@@ -1250,9 +1241,8 @@ flowchart TB
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-warn'
       is:raw><span class="filename">The context approach: workable, but note what it costs</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">const</span> { refetch } = <span class="tok-fn">useRefetch</span>();
 
 <span class="tok-kw">return</span> (
@@ -1292,9 +1282,8 @@ flowchart TB
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">actions/programs.ts</span><span class="tok-dir">"use server"</span>;
-
 <span class="tok-kw">import</span> { revalidateTag } <span class="tok-kw">from</span> <span class="tok-str">"next/cache"</span>;
 
 <span class="tok-kw">export async function</span> <span class="tok-fn">publishProgram</span>(id: <span class="tok-kw">string</span>) {
@@ -1491,9 +1480,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">components/table/SearchInput.tsx (inner; see §5.6 for the baked-in boundary)</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">function</span> <span class="tok-fn">SearchInputInner</span>() {
   <span class="tok-kw">const</span> router = <span class="tok-fn">useRouter</span>();
   <span class="tok-kw">const</span> searchParams = <span class="tok-fn">useSearchParams</span>();
@@ -1543,9 +1531,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">components/program/ProgramDrawer.tsx</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> useSWR <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramDrawer</span>({ programId, onClose }: <span class="tok-fn">ProgramDrawerProps</span>) {
@@ -1571,9 +1558,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">components/program/PublishButton.tsx (SWR flavor)</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">import</span> { mutate } <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">PublishButton</span>({ programId }: { programId: <span class="tok-kw">string</span> }) {
@@ -1620,9 +1606,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-bad'
       is:raw><span class="filename">The shape to fear: three jobs in one hook</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export function</span> <span class="tok-fn">useProgramsManager</span>() {
   <span class="tok-kw">const</span> [programs, setPrograms] = <span class="tok-fn">useState</span>&lt;<span class="tok-fn">Program</span>[]&gt;();
   <span class="tok-kw">const</span> [isLoading, setIsLoading] = <span class="tok-fn">useState</span>(<span class="tok-kw">true</span>);
@@ -1662,9 +1647,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-bad'
       is:raw><span class="filename">app/programs/page.tsx: the component spelling</span><span class="tok-dir">"use client"</span>;
-
 <span class="tok-kw">export default function</span> <span class="tok-fn">ProgramsPage</span>() {
   <span class="tok-com">/* Fetches #1, #2, and #3, none of which the page itself renders. It is
      collecting cargo on behalf of components two and three levels down. */</span>
@@ -2259,7 +2243,7 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">app/programs/actions.ts - Prisma, no API in between</span><span class="tok-dir">"use server"</span>;
 <span class="tok-kw">import</span> { prisma } <span class="tok-kw">from</span> <span class="tok-str">"@/lib/db"</span>;
 
@@ -2302,9 +2286,8 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">app/programs/actions.ts - centralized API, called directly</span><span class="tok-dir">"use server"</span>;
-
 <span class="tok-kw">export async function</span> <span class="tok-fn">archiveProgram</span>(id: number) {
   <span class="tok-kw">const</span> res = <span class="tok-kw">await</span> <span class="tok-fn">fetch</span>(<span class="tok-str">`${API_URL}/programs/${id}/archive`</span>, {
     <span class="tok-prop">method</span>: <span class="tok-str">"POST"</span>,

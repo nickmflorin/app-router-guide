@@ -204,7 +204,7 @@ flowchart LR
     <CompareCol kind='bad' label='✕ Serialized: wait is the sum'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-bad'
           is:raw><span class="filename">page.tsx</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
   <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
 
@@ -221,7 +221,7 @@ flowchart LR
     <CompareCol kind='good' label='✓ Parallel: wait is the max'>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">page.tsx: siblings parallelize naturally</span><span class="tok-kw">export default async function</span> <span class="tok-fn">Page</span>({ params }) {
   <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
 
@@ -239,7 +239,7 @@ flowchart LR
       </Snippet>
       <Snippet>
         <pre
-          class='code'
+          class='code v-good'
           is:raw><span class="filename">when one component needs several answers</span><span class="tok-kw">const</span> [program, stats] = <span class="tok-kw">await</span> <span class="tok-fn">Promise.all</span>([
   <span class="tok-fn">getProgram</span>(id),
   <span class="tok-fn">getStats</span>(id),
@@ -274,7 +274,7 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">ProgramManagerCard.tsx - the chain waits here, not at the page</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramManagerCard</span>({ programId }) {
   <span class="tok-com">/* getUser genuinely depends on the program's answer. Because the chain
      lives in this leaf, only this card pays for two round trips - the page,
@@ -665,7 +665,7 @@ flowchart LR
 
   <Snippet>
     <pre
-      class='code'
+      class='code v-good'
       is:raw><span class="filename">app/programs/[id]/layout.tsx - slots arrive as props</span><span class="tok-kw">export default function</span> <span class="tok-fn">ProgramLayout</span>({ children, header, summary }) {
   <span class="tok-kw">return</span> (
     &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex h-full flex-col"</span>&gt;
