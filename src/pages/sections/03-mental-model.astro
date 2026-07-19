@@ -216,31 +216,32 @@ import CompareCol from '../../components/CompareCol.astro';
 
 <pre slot="mermaid" is:raw>
 %%{init: {"theme": "base",
-  "flowchart": {"nodeSpacing": 26, "rankSpacing": 34, "padding": 8},
+  "themeCSS": ".flowchart-link{stroke-width:1.5px;} .marker{transform:scale(0.7);transform-box:fill-box;transform-origin:center;}",
+  "flowchart": {"nodeSpacing": 26, "rankSpacing": 34, "padding": 12},
   "themeVariables": {
   "fontFamily": "Inter, system-ui, sans-serif", "fontSize": "13px",
   "lineColor": "#737373", "edgeLabelBackground": "#ffffff",
   "primaryColor": "#eaf3fe", "primaryBorderColor": "#0070f3", "primaryTextColor": "#0757ba",
   "clusterBkg": "#fafafa", "clusterBorder": "#eaeaea"}}}%%
 flowchart LR
-  B["Browser"]:::neutral
+  B("Browser"):::neutral
   subgraph S["Server"]
     direction TB
-    S1["render server components"]:::bluesub
-    S2["await data: parallel, deduped"]:::bluesub
-    S3["suspend the not-yet-known"]:::bluesub
+    S1("render server components"):::bluesub
+    S2("await data: parallel, deduped"):::bluesub
+    S3("suspend the not-yet-known"):::bluesub
   end
   subgraph R["Streamed response"]
     direction TB
-    R1["HTML: structure + known content"]:::green
-    R2["fallbacks in reserved containers"]:::amberdash
-    R3["RSC payload + JS for client leaves"]:::blue
+    R1("HTML: structure + known content"):::green
+    R2("fallbacks in reserved containers"):::amberdash
+    R3("RSC payload + JS for client leaves"):::blue
   end
   B -->|"GET /programs/42"| S
   S --> R
-  R --> P1["first paint: real content,<br/>stable layout"]:::green
-  P1 --> P2["suspended regions stream in,<br/>replacing fallbacks in place"]:::amberdash
-  P2 --> P3["leaves hydrate,<br/>page is interactive"]:::cyan
+  R --> P1("first paint: real content,<br/>stable layout"):::green
+  P1 --> P2("suspended regions stream in,<br/>replacing fallbacks in place"):::amberdash
+  P2 --> P3("leaves hydrate,<br/>page is interactive"):::cyan
   style S fill:#eaf3fe,stroke:#0070f3,color:#0757ba
   style R fill:#ffffff,stroke:#d4d4d4,color:#171717
   classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
@@ -476,7 +477,8 @@ One request. The server resolves everything knowable, streams structure immediat
 
 <pre slot="mermaid" is:raw>
 %%{init: {"theme": "base",
-  "flowchart": {"nodeSpacing": 26, "rankSpacing": 18, "padding": 8},
+  "themeCSS": ".flowchart-link{stroke-width:1.5px;} .marker{transform:scale(0.7);transform-box:fill-box;transform-origin:center;}",
+  "flowchart": {"nodeSpacing": 26, "rankSpacing": 18, "padding": 12},
   "themeVariables": {
   "fontFamily": "Inter, system-ui, sans-serif", "fontSize": "13px",
   "lineColor": "#737373", "edgeLabelBackground": "#ffffff",
@@ -485,19 +487,19 @@ One request. The server resolves everything knowable, streams structure immediat
 flowchart TB
   subgraph SPA["SPA-style page (client-fetch chain)"]
     direction LR
-    A1["HTML shell"]:::neutral --> A2["download + parse JS"]:::neutral
-    A2 --> A3["hydrate"]:::neutral
-    A3 --> A4["fetch /users/me"]:::amber
-    A4 --> A5["fetch page data"]:::amber
-    A5 --> A6["content visible: T₅"]:::green
+    A1("HTML shell"):::neutral --> A2("download + parse JS"):::neutral
+    A2 --> A3("hydrate"):::neutral
+    A3 --> A4("fetch /users/me"):::amber
+    A4 --> A5("fetch page data"):::amber
+    A5 --> A6("content visible: T₅"):::green
   end
-  N1["T₅: five serialized steps · spinners at each step · layout shifts as each lands · repeats on every navigation"]:::rednote
+  N1("T₅: five serialized steps · spinners at each step · layout shifts as each lands · repeats on every navigation"):::rednote
   subgraph SF["Server-first page (same data)"]
     direction LR
-    B1["server: fetch in parallel + render"]:::blue
-    B1 --> B2["content visible: T₁"]:::green
-    B2 --> B3["slow regions stream in"]:::amberdash
-    B3 --> B4["leaves hydrate"]:::cyan
+    B1("server: fetch in parallel + render"):::blue
+    B1 --> B2("content visible: T₁"):::green
+    B2 --> B3("slow regions stream in"):::amberdash
+    B3 --> B4("leaves hydrate"):::cyan
   end
   SPA ~~~ N1
   N1 ~~~ SF

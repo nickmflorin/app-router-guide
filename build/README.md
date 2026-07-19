@@ -22,6 +22,10 @@ the content is identical across all of them.
 
 ## One note on diagrams
 
-The HTML forms contain the guide's diagrams. The Markdown forms do not yet: where a diagram belongs
-you'll find a placeholder comment describing what it shows. If diagrams matter to you, read an HTML
-form.
+The HTML forms contain the guide's original diagrams. In the Markdown forms, those diagrams are
+converted to Mermaid charts. The conversion is not perfect: Mermaid lays things out its own way, so
+proportions, positioning, and some visual detail differ from the originals, and a few diagrams
+don't translate at all (you'll find a comment describing what the figure shows in their place).
+The Mermaid versions are viewable and genuinely useful, especially for automated agents consuming
+the Markdown, but they are not direct one-to-one translations. When a diagram's exact layout
+matters, treat the HTML forms as the authoritative rendering.

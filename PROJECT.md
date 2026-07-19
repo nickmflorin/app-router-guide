@@ -64,8 +64,8 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   `app-router-guide_md/` + `app-router-guide.md` (markdown: deterministic conversion via
   scripts/build_md.py from the built html; content-only, generated TOC atop index.md,
   .md#anchor cross-links with <a id> heading anchors, chNN- namespacing in the single file;
-  DIAGRAMS ARE NOT CONVERTED YET: each becomes an html-comment placeholder carrying its
-  figcaption for a future AI-assisted Mermaid pass).
+  diagrams convert via authored mermaid twins where present, placeholder comments otherwise;
+  build/README.md tells recipients the mermaid versions are approximations, not 1-1).
   `npm run dist [-- --output=html|md|all --packaging=folder|file|all]` orchestrates
   (scripts/build_dist.py; defaults all/all; "module" aliases "folder"). Never hand-edit;
   git-tracked so outputs stay shareable without building.
@@ -108,8 +108,12 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   blockquote. STYLE RULES for twins: guide palette via init themeVariables (blue #eaf3fe/#0070f3,
   green #e7f5ee/#2ea06d, amber #fdf3e3/#b45309 + stroke-dasharray for suspended/unknown, cyan
   #e0f5f9/#0891b2, neutral white; Inter 13px); NO box shadows ever; minimize dead white space:
-  set "flowchart": {"nodeSpacing": ~26, "rankSpacing": 18-34, "padding": 8} in init, prefer
-  single-line labels over <br/> when width allows. Keep the twin in sync when an SVG changes.
+  set "flowchart": {"nodeSpacing": ~26, "rankSpacing": 18-34, "padding": 12} in init, prefer
+  single-line labels over <br/> when width allows. Node shape is ROUNDED: use ("label") not
+  ["label"] (matches the HTML border radii); themeCSS shrinks arrowheads + thins links
+  (".flowchart-link{stroke-width:1.5px;} .marker{transform:scale(0.7);...}"; caret-style heads
+  are not achievable in mermaid, scaled triangles are the closest). Renderers that strip
+  themeCSS (some hosts) fall back to default arrows: acceptable. Keep the twin in sync when an SVG changes.
   Chapter 3 done as pilot; remaining 38 diagrams pending Nick's go.
 - 2026-07-18: **Sidebar search added.** `scripts/build_search_index.py` (now part of `npm run
   build`, after relativize) parses built pages into build/output/app-router-guide_html/assets/search-index.js
