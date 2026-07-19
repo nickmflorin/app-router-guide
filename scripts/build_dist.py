@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Build the guide's distributables into build/.
+Build the guide's distributables into build/output/.
 
     python3 scripts/build_dist.py [--output=all] [--packaging=all]
     npm run dist [-- --output=html --packaging=file]
@@ -11,6 +11,8 @@ Build the guide's distributables into build/.
 
 Output layout:
     build/
+    ├── README.md                 what this folder contains (committed, survives builds)
+    └── output/                   generated, gitignored:
     ├── app-router-guide_html/   html + folder: the browsable multi-page site
     ├── app-router-guide.html    html + file:   one self-contained document
     ├── app-router-guide_md/     md + folder:   multi-page markdown docs
@@ -76,17 +78,17 @@ def main():
     built, skipped = [], []
 
     if "html" in formats:
-        # The full pipeline: astro build (outDir = build/app-router-guide_html),
+        # The full pipeline: astro build (outDir = build/output/app-router-guide_html),
         # relativize + strip draft layer, regenerate the search index. The
         # folder form falls straight out of this; the file form bundles it.
         run(["npm", "run", "build"])
         if "folder" in packagings:
-            built.append("build/app-router-guide_html/  (multi-page site)")
+            built.append("build/output/app-router-guide_html/  (multi-page site)")
         if "file" in packagings:
             run([sys.executable, "scripts/build_artifact.py", "--final",
-                 "--out", "build/app-router-guide.html"])
-            prettify("build/app-router-guide.html")
-            built.append("build/app-router-guide.html   (single file)")
+                 "--out", "build/output/app-router-guide.html"])
+            prettify("build/output/app-router-guide.html")
+            built.append("build/output/app-router-guide.html   (single file)")
 
     if "md" in formats:
         # md is derived from the built html site; make sure it exists/is fresh.
@@ -95,13 +97,13 @@ def main():
         run([sys.executable, "scripts/build_md.py",
              "--packaging", ",".join(packagings)])
         if "folder" in packagings:
-            prettify("build/app-router-guide_md/**/*.md")
+            prettify("build/output/app-router-guide_md/**/*.md")
         if "file" in packagings:
-            prettify("build/app-router-guide.md")
+            prettify("build/output/app-router-guide.md")
         if "folder" in packagings:
-            built.append("build/app-router-guide_md/    (multi-page markdown)")
+            built.append("build/output/app-router-guide_md/    (multi-page markdown)")
         if "file" in packagings:
-            built.append("build/app-router-guide.md     (single-file markdown)")
+            built.append("build/output/app-router-guide.md     (single-file markdown)")
 
     print("\ndist summary")
     for b in built:

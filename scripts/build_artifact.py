@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
 Bundle the multi-page guide into ONE self-contained HTML file for publishing
-as a Claude artifact (build/artifact.html).
+as a Claude artifact (build/output/artifact.html).
 
-- Parses the TOC from build/app-router-guide_html/assets/nav.js (single source of truth), so section
+- Parses the TOC from build/output/app-router-guide_html/assets/nav.js (single source of truth), so section
   renumbers propagate automatically.
 - Each page becomes a <section class="chapter"> shown/hidden by a tiny hash
   router (#ch5, #ch5-refresh, #cover), preserving the multi-page feel.
@@ -14,7 +14,7 @@ as a Claude artifact (build/artifact.html).
   logic from nav.js is reproduced; DRAFT badge included.
 
 Run:  python3 scripts/build_artifact.py
-Then publish/update the Claude artifact from build/artifact.html.
+Then publish/update the Claude artifact from build/output/artifact.html.
 """
 import argparse
 import base64
@@ -38,7 +38,7 @@ def read(p):
 
 
 # ---------- TOC from nav.js ----------
-nav = read("build/app-router-guide_html/assets/nav.js")
+nav = read("build/output/app-router-guide_html/assets/nav.js")
 groups = []
 # Tolerant of prettier's formatting: single or double quotes, multi-line
 # objects, trailing commas.
@@ -82,11 +82,11 @@ def namespace(content, tag):
 
 chapters_html = []
 
-cover = namespace(extract_inner(read("build/app-router-guide_html/index.html")), "cover")
+cover = namespace(extract_inner(read("build/output/app-router-guide_html/index.html")), "cover")
 chapters_html.append(f'<section class="chapter" id="cover"><div class="content-inner cover">{cover}</div></section>')
 
 for idx, item in enumerate(flat):
-    raw = read(f'build/app-router-guide_html/sections/{item["file"]}')
+    raw = read(f'build/output/app-router-guide_html/sections/{item["file"]}')
     inner = namespace(extract_inner(raw), f'ch{item["n"]}')
     prev_i = flat[idx - 1] if idx > 0 else None
     next_i = flat[idx + 1] if idx + 1 < len(flat) else None
@@ -101,7 +101,7 @@ for idx, item in enumerate(flat):
     )
 
 # ---------- sidebar ----------
-logo_uri = "data:image/svg+xml;base64," + base64.b64encode(read("build/app-router-guide_html/assets/logomark.svg").encode()).decode()
+logo_uri = "data:image/svg+xml;base64," + base64.b64encode(read("build/output/app-router-guide_html/assets/logomark.svg").encode()).decode()
 side = [f'<a class="brand" href="#cover" title="Back to the table of contents">'
         f'<div style="display:flex;align-items:center;justify-content:center;gap:4px;">'
         f'<img class="mark" src="{logo_uri}" alt="Craft Education"></div>'
@@ -191,7 +191,7 @@ script = r"""
 
 # Draft mode needs the UNSTRIPPED css (public/) so the DRAFT badge stays
 # styled; final mode uses the built css, which has the draft layer removed.
-css = read("build/app-router-guide_html/assets/style.css") if ARGS.final else read("public/assets/style.css")
+css = read("build/output/app-router-guide_html/assets/style.css") if ARGS.final else read("public/assets/style.css")
 extra_css = """
 :root { color-scheme: light; }
 section.chapter { display: none; }
@@ -227,8 +227,8 @@ doc = f"""<!DOCTYPE html>
 </html>
 """
 
-os.makedirs(os.path.join(ROOT, "build"), exist_ok=True)
-out = os.path.join(ROOT, ARGS.out) if ARGS.out else os.path.join(ROOT, "build", "artifact.html")
+os.makedirs(os.path.join(ROOT, "build", "output"), exist_ok=True)
+out = os.path.join(ROOT, ARGS.out) if ARGS.out else os.path.join(ROOT, "build", "output", "artifact.html")
 with open(out, "w") as f:
     f.write(doc)
 

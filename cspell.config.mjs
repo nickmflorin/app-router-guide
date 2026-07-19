@@ -9,6 +9,7 @@ const DefaultGlobs = [
   '**/.next/**',
   '**/coverage/**',
   'package.json',
+  '.astro',
   'pnpm-lock.yaml',
   '**/.prettierignore',
 ];

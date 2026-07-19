@@ -3,7 +3,7 @@
 Diagram geometry linter for the App Router Guide.
 
 MANDATORY: run after ANY diagram add or edit (see PROJECT.md).
-    python3 scripts/svg_lint.py [file.html ...]     (default: build/app-router-guide_html/sections/*.html)
+    python3 scripts/svg_lint.py [file.html ...]     (default: build/output/app-router-guide_html/sections/*.html)
 
 Checks every <svg> inside figure.diagram for the failure classes Nick has
 flagged repeatedly:
@@ -205,5 +205,5 @@ def main(files):
 if __name__ == '__main__':
     # Resolve relative to the repo root so the linter works from any cwd.
     _root = __import__('os').path.dirname(__import__('os').path.dirname(__import__('os').path.abspath(__file__)))
-    files = sys.argv[1:] or sorted(glob.glob(__import__('os').path.join(_root, 'build/app-router-guide_html/sections/*.html')))
+    files = sys.argv[1:] or sorted(glob.glob(__import__('os').path.join(_root, 'build/output/app-router-guide_html/sections/*.html')))
     sys.exit(main(files))

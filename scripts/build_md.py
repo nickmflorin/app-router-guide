@@ -4,10 +4,10 @@ Deterministic HTML -> Markdown conversion of the built guide.
 
     python3 scripts/build_md.py [--packaging folder,file]
 
-Reads build/app-router-guide_html/ (the FINAL multi-page site) and writes:
-    build/app-router-guide_md/     folder form: index.md + NN-slug.md, flat,
+Reads build/output/app-router-guide_html/ (the FINAL multi-page site) and writes:
+    build/output/app-router-guide_md/     folder form: index.md + NN-slug.md, flat,
                                    cross-linked via relative .md#anchor links
-    build/app-router-guide.md      file form: one document, anchors namespaced
+    build/output/app-router-guide.md      file form: one document, anchors namespaced
                                    per chapter (chNN-...) like the html bundle
 
 Content only: no sidebar, no pager, no search, no draft layer (the html input
@@ -458,7 +458,7 @@ def build_folder():
         blocks = convert_page(os.path.join(SITE, "sections", it["file"]), md_name, link_map, anchor)
         blocks.insert(0, "[← Contents](index.md)")
         write_md(os.path.join(outdir, md_name), blocks)
-    print(f"markdown folder: {len(FLAT) + 1} files -> build/app-router-guide_md/")
+    print(f"markdown folder: {len(FLAT) + 1} files -> build/output/app-router-guide_md/")
 
 
 def build_file():
@@ -505,7 +505,7 @@ def build_file():
     out = os.path.join(ROOT, "build", "app-router-guide.md")
     with open(out, "w") as f:
         f.write(doc)
-    print(f"markdown file: {len(doc) // 1024} KB -> build/app-router-guide.md")
+    print(f"markdown file: {len(doc) // 1024} KB -> build/output/app-router-guide.md")
 
 
 def write_md(path, blocks):
@@ -519,7 +519,7 @@ def main():
     args = ap.parse_args()
     packs = [p.strip() for p in args.packaging.split(",")]
     if not os.path.isdir(SITE):
-        sys.exit("error: build/app-router-guide_html/ not found; run the html build first")
+        sys.exit("error: build/output/app-router-guide_html/ not found; run the html build first")
     if "folder" in packs or "all" in packs:
         build_folder()
     if "file" in packs or "all" in packs:

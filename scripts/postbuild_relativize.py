@@ -8,7 +8,7 @@ import os
 import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT = os.path.join(ROOT, 'build/app-router-guide_html')
+OUT = os.path.join(ROOT, 'build/output/app-router-guide_html')
 
 for dirpath, _, files in os.walk(OUT):
     depth = os.path.relpath(dirpath, OUT)
