@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-20T01:22:15.515Z",
+  "updatedAt": "2026-07-20T01:26:40.874Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -1316,7 +1316,23 @@
         "tag": "figure",
         "snippet": "Route change: the layout holds, the content swaps /programs/42/report Program header (layo"
       },
-      "resolution": "§9.4 gained the sibling twin of the route-change figure: a prose paragraph on route groups (siblings are the reason to reach for the group, not to skip the shared layout; leverage the common layout maximally, never repeat it per sibling page), a (program)/ file-tree snippet (layout.tsx + learners/evaluators/levels pages), and a near-identical two-panel diagram: /learners to /evaluators, identical blue group-layout scaffold with the tab bar, active tab moving (pathname-derived), only the green table content swapping. Mermaid twin included; caption names the wrong version (chrome repeated inside each sibling page, rebuilt on every navigation).",
+      "resolution": "§9.4 gained the sibling twin of the route-change figure: a prose paragraph on route groups (siblings are the reason to reach for the group, not to skip the shared layout; leverage the common layout maximally, never repeat it per sibling page), a (program)/ file-tree snippet (layout.tsx + learners/evaluators/levels pages), and a near-identical two-panel diagram: /learners to /evaluators, identical blue group-layout scaffold with the tab bar, active tab moving (pathname-derived), only the green table content swapping. Mermaid twin included; caption names the wrong version (chrome repeated inside each sibling page, rebuilt on every navigation)."
+    },
+    {
+      "id": "nmrsjjvhq",
+      "page": "13-minimize-the-wires.html",
+      "ts": "2026-07-20T01:23:46.094Z",
+      "status": "resolved",
+      "text": "somewhere on this page, not sure where, can we add a web browser diagram view of a page layout inside an app layout where the page-level header and the page level content area each fetch differnt properties on the same model (like a program) - but also a lot of the same properties.  so the header neesd name, status, etc. and the content area needs description, status, etc - so there's overlap, but the different in data isn't particularly performant intensive to query.  and in that case you want each to fetch using the same server side or client side query even if its fetching redundant data for one of the two because they are deduped and result in 1 query overall and that 1 query can serve each separately to decouple the components.  Pleae ask questions if this doens't make sense",
+      "target": {
+        "anchor": null,
+        "path": [
+          1
+        ],
+        "tag": "h1",
+        "snippet": "Minimize the Wires"
+      },
+      "resolution": "Added at the end of §13.2 (the repetition-over-dependency home): a paragraph naming the over-fetching instinct and the rule (when the field difference is cheap, both regions call the same canonical query, redundant fields and all), plus a browser-view diagram: app layout shell containing ProgramHeader (needs name/status) and ProgramDetails (needs description/status), both arrows converging on one getProgram(42) box (asked twice, React.cache() runs once) down to the database (1 query, total), with the closing line \"the overlap is free; the decoupling is the point\". Mermaid twin included; caption covers the two-narrow-queries alternative and the client-side SWR-key equivalent.",
       "resolvedAt": "2026-07-19"
     }
   ]

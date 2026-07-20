@@ -388,6 +388,166 @@ flowchart TB
     </p>
   </Callout>
 
+  <p>
+    One instinct still fights this: the components don't need the <em>same</em> data, so sharing one
+    query feels wasteful. Picture the page-level header and the page-level content area of a program
+    page. The header needs <code>name</code> and <code>status</code>; the content area needs
+    <code>description</code> and <code>status</code>. Overlapping, but not identical, and the old
+    instinct says either drill one fetch down from the page or write two narrow queries so nobody
+    over-fetches. Resist both.
+    <Chip k='next' />
+    <Chip k='very' /> When the difference between the fields is not meaningfully more expensive to
+    query (and for columns on the same row, it almost never is), both components should call
+    <strong>the same canonical query</strong>, redundant fields and all. Dedupe collapses the two
+    calls into one execution, so the page pays for one query either way; the redundancy costs
+    nothing, and what it buys is the decoupling: each region asks for itself, neither knows the
+    other exists, and no wire or bespoke per-component query has to be maintained.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 284'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker
+          id='aShq'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#737373'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
+        Two page regions, one canonical query
+      </text>
+
+      <!-- browser mockup -->
+      <!-- data-lint-ignore: browser scene - chrome bar sits above the content grid -->
+      <rect
+        data-lint-ignore='scene'
+        x='20'
+        y='26'
+        width='380'
+        height='252'
+        rx='8'
+        fill='#ffffff'
+        stroke='#c9c9c9'></rect>
+      <circle cx='38' cy='40' r='4' fill='#c9c9c9'></circle>
+      <circle cx='52' cy='40' r='4' fill='#c9c9c9'></circle>
+      <rect x='64' y='32' width='180' height='16' rx='8' fill='#f2f2f2' stroke='#e0e0e0'></rect>
+      <text x='74' y='44' font-size='9' fill='#737373'>…/programs/42</text>
+      <rect x='32' y='56' width='356' height='210' rx='6' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text x='44' y='70' font-size='9' fill='#737373'>app layout (shell)</text>
+      <rect x='44' y='80' width='332' height='40' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='56' y='95' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+        ProgramHeader
+      </text>
+      <text x='56' y='109' font-size='8.5' fill='#527dad' dominant-baseline='central'>
+        needs: name · status
+      </text>
+      <rect x='44' y='128' width='332' height='126' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='56' y='143' font-size='9.5' fill='#157a4c' dominant-baseline='central'>
+        ProgramDetails
+      </text>
+      <text x='56' y='157' font-size='8.5' fill='#3e7d5c' dominant-baseline='central'>
+        needs: description · status
+      </text>
+      <rect x='56' y='170' width='308' height='9' rx='3' fill='#cfe9dd'></rect>
+      <rect x='56' y='186' width='308' height='9' rx='3' fill='#cfe9dd'></rect>
+      <rect x='56' y='202' width='236' height='9' rx='3' fill='#cfe9dd'></rect>
+      <rect x='56' y='218' width='308' height='9' rx='3' fill='#cfe9dd'></rect>
+      <rect x='56' y='234' width='268' height='9' rx='3' fill='#cfe9dd'></rect>
+
+      <!-- both regions ask the same question -->
+      <path
+        d='M 376 100 L 440 100 L 440 114 L 472 114'
+        fill='none'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#aShq)'></path>
+      <path
+        d='M 376 150 L 440 150 L 440 136 L 472 136'
+        fill='none'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#aShq)'></path>
+
+      <rect
+        x='476'
+        y='96'
+        width='224'
+        height='58'
+        rx='8'
+        fill='#eaf3fe'
+        stroke='#0070f3'
+        stroke-width='1.5'></rect>
+      <text x='588' y='116' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+        getProgram(42)
+      </text>
+      <text x='588' y='132' font-size='9' fill='#527dad' text-anchor='middle'>
+        asked twice · React.cache(): runs once
+      </text>
+
+      <line
+        x1='588'
+        y1='154'
+        x2='588'
+        y2='192'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#aShq)'></line>
+
+      <rect x='518' y='196' width='140' height='40' rx='8' fill='#ffffff' stroke='#b45309'></rect>
+      <text x='588' y='212' font-size='10' fill='#8a5a00' text-anchor='middle'>database</text>
+      <text x='588' y='227' font-size='9' fill='#8f6b2e' text-anchor='middle'>1 query, total</text>
+
+      <text x='560' y='262' font-size='9.5' fill='#0f7b48' text-anchor='middle' font-weight='500'>
+        the overlap is free; the decoupling is the point
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart LR
+  subgraph PG["/programs/42"]
+    direction TB
+    hh("ProgramHeader<br/>needs: name · status"):::blue
+    cc("ProgramDetails<br/>needs: description · status"):::green
+  end
+  hh --> Q("getProgram(42)<br/>asked twice · React.cache(): runs once"):::blue
+  cc --> Q
+  Q --> DB("database · 1 query, total"):::amber
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style PG fill:#ffffff,stroke:#e0e0e0,color:#171717,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+</pre>
+
+    <Fragment slot='caption'>
+      Two regions of the same page, needing overlapping-but-different fields of the same program.
+      Each calls the one canonical <code>getProgram(42)</code> and reads the fields it cares about;
+      the cache collapses the two calls into a single execution, so the database sees one query
+      either way. Writing two narrow queries (or drilling one fetch down from the page) would save
+      nothing measurable and cost the independence: with the shared query, either region can move,
+      stream, or disappear without the other noticing. The same logic holds client-side with a
+      shared SWR key (<a href='14-dedupe-caching.html#client'>§14.3</a>).
+    </Fragment>
+  </Diagram>
+
   <h2 id='streaming'>13.3 Independence changes how the page streams</h2>
   <p>
     Wiring isn't just a maintenance cost; it determines where your Suspense boundaries
