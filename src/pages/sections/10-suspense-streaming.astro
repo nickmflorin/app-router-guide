@@ -208,7 +208,11 @@ flowchart LR
     interactive. When React renders the next UI, it works on a <em>branch</em>: if something
     suspends, the branch simply stays unmerged while the data loads, and <code>main</code> is
     untouched. When the branch finally completes, it merges: one atomic commit, never a
-    half-finished merge.
+    half-finished merge. And note which git operation maps to which React phase: the <em>branch
+    work</em> is rendering (speculative, in memory, free to take as long as the data takes), and the
+    <em>merge</em> is the commit. Because the commit is flat, the new UI appears all at once: not a
+    header, then rows, then a footer trickling onto the screen, but one instantaneous swap of
+    finished work.
   </p>
 
   <Diagram>
@@ -241,8 +245,11 @@ flowchart LR
       </text>
 
       <!-- FRAME 1 -->
-      <text x='24' y='52' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
-        main is the screen
+      <text x='24' y='41' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        the committed UI, on screen
+      </text>
+      <text x='24' y='55' font-size='9' fill='#737373' dominant-baseline='central'>
+        (analog: the main branch)
       </text>
       <line x1='185' y1='56' x2='305' y2='56' stroke='#c9c9c9' stroke-width='1.5'></line>
       <circle cx='205' cy='56' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
@@ -257,8 +264,11 @@ flowchart LR
       </text>
 
       <!-- FRAME 2 -->
-      <text x='24' y='114' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
-        a branch for the next UI
+      <text x='24' y='103' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        the next UI renders in memory
+      </text>
+      <text x='24' y='117' font-size='9' fill='#737373' dominant-baseline='central'>
+        (analog: a work branch forks)
       </text>
       <line x1='185' y1='118' x2='305' y2='118' stroke='#c9c9c9' stroke-width='1.5'></line>
       <circle cx='205' cy='118' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
@@ -281,8 +291,11 @@ flowchart LR
       </text>
 
       <!-- FRAME 3 -->
-      <text x='24' y='176' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
-        main keeps moving
+      <text x='24' y='165' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        the current UI keeps working
+      </text>
+      <text x='24' y='179' font-size='9' fill='#737373' dominant-baseline='central'>
+        (analog: main keeps moving)
       </text>
       <line x1='185' y1='180' x2='345' y2='180' stroke='#c9c9c9' stroke-width='1.5'></line>
       <circle cx='205' cy='180' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
@@ -306,8 +319,11 @@ flowchart LR
       </text>
 
       <!-- FRAME 4: the branch completes; HEAD points at the finished tree -->
-      <text x='24' y='238' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
-        the branch completes
+      <text x='24' y='227' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        the render completes in memory
+      </text>
+      <text x='24' y='241' font-size='9' fill='#737373' dominant-baseline='central'>
+        (analog: HEAD at the branch)
       </text>
       <line x1='185' y1='242' x2='345' y2='242' stroke='#c9c9c9' stroke-width='1.5'></line>
       <circle cx='205' cy='242' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
@@ -335,8 +351,11 @@ flowchart LR
       </text>
 
       <!-- FRAME 5: merged and flattened onto one line -->
-      <text x='24' y='300' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
-        merge: flat again
+      <text x='24' y='289' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        commit: it all appears at once
+      </text>
+      <text x='24' y='303' font-size='9' fill='#737373' dominant-baseline='central'>
+        (analog: merge; history is flat)
       </text>
       <line x1='185' y1='304' x2='405' y2='304' stroke='#c9c9c9' stroke-width='1.5'></line>
       <circle cx='205' cy='304' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
@@ -360,11 +379,11 @@ flowchart LR
 flowchart LR
   subgraph VC["Suspense as version control"]
     direction LR
-    v1("main: committed UI on screen"):::green
-    v1 --> v2("branch: next UI renders in memory<br/>suspends waiting for data"):::amberdash
-    v2 --> v3("main keeps moving:<br/>old UI stays interactive"):::green
-    v3 --> v4("branch completes: a finished tree<br/>in memory; HEAD points at it"):::blue
-    v4 --> v5("merge, flattened into main<br/>one atomic commit: appears whole"):::green
+    v1("the committed UI, on screen<br/>analog: the main branch"):::green
+    v1 --> v2("the next UI renders in memory, suspends<br/>analog: a work branch forks"):::amberdash
+    v2 --> v3("the current UI keeps working<br/>analog: main keeps moving"):::green
+    v3 --> v4("the render completes in memory<br/>analog: HEAD at the finished branch"):::blue
+    v4 --> v5("commit: it all appears at once<br/>analog: merge, history is flat"):::green
   end
   linkStyle default stroke:#737373,stroke-width:1.5px
   style VC fill:#ffffff,stroke:#e0e0e0,color:#171717,rx:8px,ry:8px
@@ -515,73 +534,99 @@ flowchart LR
 
   <Diagram>
     <svg
-      viewBox='0 0 720 261'
+      viewBox='0 0 720 276'
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
-      <text x='14' y='10.28' font-size='10.5' fill='#b3261e' font-weight='500'>
-        Blocking SSR: response waits for the slowest fetch
+      <text x='14' y='10' font-size='10.5' fill='#b3261e' font-weight='500'>
+        Blocking SSR: the response waits for the slowest fetch
       </text>
+      <!-- vitals markers (behind the tiles) -->
+      <line x1='518' y1='30' x2='518' y2='96' stroke='#c9c9c9' stroke-dasharray='3 3'></line>
+      <text x='522' y='27' font-size='8.5' fill='#737373'>TTFB: late</text>
+      <line x1='648' y1='30' x2='648' y2='96' stroke='#c9c9c9' stroke-dasharray='3 3'></line>
+      <text x='644' y='27' font-size='8.5' fill='#737373' text-anchor='end'>FCP: late</text>
       <!-- lane 1 -->
-      <rect x='90' y='24.28' width='150' height='24' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='165' y='40.28' font-size='10' fill='#8a5a00' text-anchor='middle'>
+      <rect x='90' y='34' width='150' height='24' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text x='165' y='50' font-size='10' fill='#8a5a00' text-anchor='middle'>
         fetch program (fast)
       </text>
-      <rect x='90' y='54.28' width='330' height='24' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='255' y='70.28' font-size='10' fill='#8a5a00' text-anchor='middle'>
+      <rect x='90' y='64' width='330' height='24' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text x='255' y='80' font-size='10' fill='#8a5a00' text-anchor='middle'>
         fetch report rows (slow)
       </text>
-      <rect x='424' y='39.28' width='90' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='469' y='55.28' font-size='10' fill='#0757ba' text-anchor='middle'> render all </text>
-      <rect x='518' y='39.28' width='120' height='24' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
-      <text x='578' y='55.28' font-size='10' fill='#157a4c' text-anchor='middle'>
-        send: first paint
+      <rect x='424' y='49' width='90' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='469' y='65' font-size='10' fill='#0757ba' text-anchor='middle'> render all </text>
+      <rect x='518' y='49' width='130' height='24' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='583' y='65' font-size='10' fill='#157a4c' text-anchor='middle'>
+        send: the whole page
       </text>
-      <line x1='638' y1='32.28' x2='638' y2='86.28' stroke='#2ea06d' stroke-dasharray='3 3'></line>
-      <text x='638' y='100.28' font-size='10' fill='#157a4c' text-anchor='middle'>
-        user sees anything: late
+      <text x='82' y='51' font-size='10' fill='#737373' text-anchor='end'>server</text>
+      <text x='360' y='110' font-size='9.5' fill='#b0483e' text-anchor='middle'>
+        first paint is the whole page at once, and it happens after everything
       </text>
-      <text x='82' y='41.28' font-size='10' fill='#737373' text-anchor='end'>server</text>
 
-      <line x1='14' y1='122.28' x2='706' y2='122.28' stroke='#e0e0e0'></line>
+      <line x1='14' y1='124' x2='706' y2='124' stroke='#e0e0e0'></line>
 
-      <text x='14' y='148.28' font-size='10.5' fill='#157a4c' font-weight='500'>
-        Streaming SSR: response starts immediately, regions arrive by readiness
+      <text x='14' y='140' font-size='10.5' fill='#157a4c' font-weight='500'>
+        Streaming SSR: the response starts immediately, regions arrive by readiness
       </text>
-      <!-- shell chunk -->
-      <rect x='90' y='162.28' width='110' height='24' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
-      <text x='145' y='178.28' font-size='10' fill='#157a4c' text-anchor='middle'>
+      <!-- vitals + swap markers (behind the tiles) -->
+      <line x1='202' y1='158' x2='202' y2='250' stroke='#c9c9c9' stroke-dasharray='3 3'></line>
+      <text x='206' y='155' font-size='8.5' fill='#737373'>TTFB · FCP: immediately</text>
+      <line x1='542' y1='158' x2='542' y2='250' stroke='#c9c9c9' stroke-dasharray='3 3'></line>
+      <text x='546' y='155' font-size='8.5' fill='#737373'>header is real</text>
+      <!-- row: shell -->
+      <rect x='90' y='162' width='110' height='24' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='145' y='178' font-size='10' fill='#157a4c' text-anchor='middle'>
         shell + fallbacks
       </text>
-      <line x1='202' y1='155.28' x2='202' y2='224.28' stroke='#2ea06d' stroke-dasharray='3 3'
-      ></line>
-      <text x='212' y='171.28' font-size='10' fill='#157a4c'>
-        first paint: structure, header,
+      <text x='212' y='172' font-size='9.5' fill='#157a4c'>
+        send: first paint, but only the shell + fallbacks:
       </text>
-      <text x='212' y='185.28' font-size='10' fill='#157a4c'> containers, skeletons in place </text>
-      <!-- parallel fetches -->
-      <rect x='90' y='198.28' width='150' height='24' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='165' y='214.28' font-size='10' fill='#8a5a00' text-anchor='middle'>
+      <text x='212' y='185' font-size='9.5' fill='#3e7d5c'>
+        structure, containers, skeletons in place
+      </text>
+      <text x='82' y='179' font-size='10' fill='#737373' text-anchor='end'>server</text>
+      <!-- row: program -->
+      <rect x='90' y='196' width='150' height='24' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text x='165' y='212' font-size='10' fill='#8a5a00' text-anchor='middle'>
         fetch program (fast)
       </text>
-      <rect x='244' y='198.28' width='86' height='24' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='287' y='214.28' font-size='10' fill='#8a5a00' text-anchor='middle'>
+      <rect x='244' y='196' width='96' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='292' y='212' font-size='10' fill='#0757ba' text-anchor='middle'>
+        render header
+      </text>
+      <rect x='344' y='196' width='90' height='24' rx='5' fill='#d8e8fc' stroke='#0070f3'></rect>
+      <text x='389' y='212' font-size='10' fill='#23507f' text-anchor='middle'>
         chunk: header
       </text>
-      <rect x='90' y='234.28' width='330' height='24' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='255' y='250.28' font-size='10' fill='#8a5a00' text-anchor='middle'>
+      <rect x='438' y='196' width='104' height='24' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='490' y='212' font-size='10' fill='#157a4c' text-anchor='middle'>
+        swap: header in
+      </text>
+      <text x='550' y='206' font-size='9' fill='#3e7d5c'>rendered on the server, streamed,</text>
+      <text x='550' y='218' font-size='9' fill='#3e7d5c'>swapped; rows skeleton still shows</text>
+      <!-- row: report rows -->
+      <rect x='90' y='230' width='330' height='24' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text x='255' y='246' font-size='10' fill='#8a5a00' text-anchor='middle'>
         fetch report rows (slow)
       </text>
-      <rect x='424' y='234.28' width='86' height='24' rx='5' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='467' y='250.28' font-size='10' fill='#8a5a00' text-anchor='middle'>
+      <rect x='424' y='230' width='90' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='469' y='246' font-size='10' fill='#0757ba' text-anchor='middle'>
+        render table
+      </text>
+      <rect x='518' y='230' width='84' height='24' rx='5' fill='#d8e8fc' stroke='#0070f3'></rect>
+      <text x='560' y='246' font-size='10' fill='#23507f' text-anchor='middle'>
         chunk: table
       </text>
-      <text x='82' y='179.28' font-size='10' fill='#737373' text-anchor='end'>server</text>
-      <text x='524' y='214.28' font-size='10' fill='#737373'>
-        each region swaps in as it's ready;
+      <rect x='606' y='230' width='94' height='24' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='653' y='246' font-size='10' fill='#157a4c' text-anchor='middle'>
+        swap: table in
       </text>
-      <text x='524' y='228.28' font-size='10' fill='#737373'>
-        the fast never wait for the slow
+      <text x='360' y='272' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
+        the table too is rendered server-side, streamed as a chunk, and swapped into its reserved
+        slot
       </text>
     </svg>
 
@@ -595,7 +640,7 @@ flowchart LR
     BB("fetch report rows (slow)"):::amber
     BA --> BR("render all"):::blue
     BB --> BR
-    BR --> BP("send: first paint, late<br/>the whole page waited on the slowest fetch"):::red
+    BR --> BP("send: the whole page at once<br/>TTFB and FCP both wait on the slowest fetch"):::red
   end
   linkStyle default stroke:#737373,stroke-width:1.5px
   style BK fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
@@ -606,20 +651,28 @@ flowchart LR
 flowchart LR
   subgraph ST["Streaming SSR"]
     direction LR
-    SA("shell + fallbacks<br/>first paint: structure, header, skeletons"):::green
-    SA -->|"fast fetch resolves"| SC("chunk: header"):::blue
-    SC -->|"slow fetch resolves"| SD("chunk: table"):::blue
+    SA("send: shell + fallbacks<br/>first paint too, but only the known: TTFB + FCP immediate"):::green
+    SA --> SB("fetch program resolves<br/>header rendered on the server"):::blue
+    SB --> SC("chunk streams: header swaps in<br/>rows skeleton still visible"):::bluesub
+    SC --> SD("fetch rows resolves: table rendered,<br/>streamed, swapped into its slot"):::green
   end
   linkStyle default stroke:#737373,stroke-width:1.5px
   style ST fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
   classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
   classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef bluesub fill:#d8e8fc,stroke:#0070f3,color:#23507f
 </pre>
 
     <Fragment slot='caption'>
-      Recreated from the Next.js docs' streaming illustration: same fetches, same durations;
-      blocking SSR gates the whole page on the slowest fetch, while streaming sends the known shell
-      at once and fills each suspended region by readiness.
+      Recreated from the Next.js docs' streaming illustration: same fetches, same durations. Both
+      lanes have a "first paint"; the difference is what it contains and when it happens. Blocking
+      SSR paints once, the whole page, after the slowest fetch (TTFB and FCP both land at the far
+      right). Streaming paints the shell and fallbacks immediately (TTFB and FCP at the far left),
+      then each region follows the same pipeline: rendered on the server when its fetch resolves,
+      streamed to the browser as a chunk, and swapped into its reserved slot, the fast header first
+      (with the rows skeleton still showing), the slow table when it's ready. TTI is deliberately
+      not marked: it depends on hydration, and <a href='04-ssr.html#tti'>§4.3</a> explains why it
+      stopped being a useful milestone.
     </Fragment>
   </Diagram>
 
@@ -952,16 +1005,23 @@ flowchart TB
 
   <h3 id='fallback-trade'>Every boundary is a decision: an unblocked paint, for a fallback</h3>
   <p>
-    A Suspense boundary is not free structure; it is a trade, and it helps to name both sides of it. <strong
-      >What you buy:</strong
-    > the page stops waiting for that region's data. The server ships the shell the moment it is ready,
-    the browser paints it, and the slow region streams into its slot later; without the boundary, that
-    one fetch holds the entire response hostage (the <a href='#streaming'>first diagram above</a>).
-    <strong>What you pay:</strong> something must now occupy that region's space in the meantime. A boundary
-    forces a fallback into existence, and the fallback is real UI: it has to reserve honest dimensions
-    (<a href='09-containers-content-shifting.html'>§9</a>), look intentional next to finished
-    content, and hand off to the real thing in a seamless swap.
+    A Suspense boundary is not free structure; it is a trade, and it helps to name both sides of it.
   </p>
+  <ol>
+    <li>
+      <strong>What you buy:</strong> the page stops waiting for that region's data. The server ships
+      the shell the moment it is ready, the browser paints it, and the slow region streams into its
+      slot later; without the boundary, that one fetch holds the entire response hostage (the <a
+        href='#streaming'>first diagram above</a
+      >).
+    </li>
+    <li>
+      <strong>What you pay:</strong> something must now occupy that region's space in the meantime. A
+      boundary forces a fallback into existence, and the fallback is real UI: it has to reserve honest
+      dimensions (<a href='09-containers-content-shifting.html'>§9</a>), look intentional next to
+      finished content, and hand off to the real thing in a seamless swap.
+    </li>
+  </ol>
   <p>
     That makes "should this suspend?" a per-region judgment call, not a rule you can apply
     mechanically. Most of the time the answer is yes: suspend and stream, because one slow fetch

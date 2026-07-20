@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-20T01:30:59.688Z",
+  "updatedAt": "2026-07-20T16:59:25.122Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -1348,8 +1348,58 @@
         "tag": "figure",
         "snippet": "app/programs/[id]/ └── layout.tsx └── @header/ └── H page.tsx └── @summary/ └── S page.tsx"
       },
-      "resolution": "Tree spacing normalized: the green children row moved up so its pill sits the same 12px below the preceding row as every other pill; the nested H/S pills tucked in (x 86 -> 74) so the gap after the tree glyph matches the green row's; the tree box height trimmed 224 -> 204 to remove the bottom dead space.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "Tree spacing normalized: the green children row moved up so its pill sits the same 12px below the preceding row as every other pill; the nested H/S pills tucked in (x 86 -> 74) so the gap after the tree glyph matches the green row's; the tree box height trimmed 224 -> 204 to remove the bottom dead space."
+    },
+    {
+      "id": "nmrtgorwq",
+      "page": "10-suspense-streaming.html",
+      "ts": "2026-07-20T16:51:22.058Z",
+      "status": "resolved",
+      "text": "to make this diagram more clear, in the bottom half, can we show a dotted line at after chunk: header with the text on it that indicates that at that point, the server has rendered the program view that depends on fetch program and then streams it to the client and the skeleton is swapped.  indicating that the skeleton for the fetch report rows would still be visible though.  then at the end of the chunk: table t should say that the table content is rendered server side streamed to the client and swapped.  In general, this diagram is useful but it can be even more useful.  If we - for instance, indicate that the send: first paint for the top half is for the whole page and the shell + fallbacks on the bottom half is actually the send: first paint BUT that it is just limited to the shell/fallbacks, that would also help enormously.  It would also be cool if we could show vertical dotted lines that are light gray but labeled at the top for when certain vitals are finished.  So the FCP, TTI, things like that.  Time to first bytes if applicable.  IT may also help to show more stages on each row of tiles, so we can show blue after chunk:header that is like render header and then one after that says its swapped in for hte suspense, same thing with the bottom one fetch report rows.  Just more detail we can add here that would help",
+      "target": {
+        "anchor": "streaming",
+        "path": [
+          19
+        ],
+        "tag": "figure",
+        "snippet": "Blocking SSR: response waits for the slowest fetch fetch program (fast) fetch report rows "
+      },
+      "resolution": "Streaming timeline reworked: both lanes now carry light-gray dotted vitals markers labeled at the top (blocking: TTFB late + FCP late at the far right; streaming: TTFB + FCP immediately at the shell send). The blocking send tile is \"send: the whole page\" with a sub-line that first paint is everything at once, after everything; the streaming shell line now says \"send: first paint, but only the shell + fallbacks\". Each streaming region gained the full pipeline as stages: fetch, render (blue), chunk (light blue), swap (green), with a dotted marker after the header swap (\"header is real\") annotated that the header was rendered server-side, streamed, swapped while the rows skeleton still shows, and a closing line making the same point for the table. TTI deliberately not marked; the caption explains why and links §4.3's dead-metric argument. Mermaid twin synced.",
+      "resolvedAt": "2026-07-20"
+    },
+    {
+      "id": "nmrtgu7rr",
+      "page": "10-suspense-streaming.html",
+      "ts": "2026-07-20T16:55:35.895Z",
+      "status": "resolved",
+      "text": "can we try to use details from the original example that talk about how this relates to the committing of the UI and not necessarily the render, and how the commit happens flat so it all appears as once I thnk?  Idk - please look at that video again and see if there are more details in there that would make this clearer.  Also - for the bold black text on the left column, lets try to write that text from the point of view of the streaming feature first, like instead of 'main keeps moving' it should be 'UI continues committing or rendering or whatever' (whatever is correct) but then in parantehsis underneath it can say (analog: other people keep committing to main) or something like that",
+      "target": {
+        "anchor": "under-the-hood",
+        "path": [
+          10
+        ],
+        "tag": "figure",
+        "snippet": "Suspense, as version control: five frames main is the screen main the committed UI: what t"
+      },
+      "resolution": "Left labels rewritten feature-first with the git analogy in parentheses underneath: \"the committed UI, on screen (analog: the main branch)\", \"the next UI renders in memory (analog: a work branch forks)\", \"the current UI keeps working (analog: main keeps moving)\", \"the render completes in memory (analog: HEAD at the branch)\", \"commit: it all appears at once (analog: merge; history is flat)\". The prose now maps the operations explicitly per the talk: branch work = rendering (speculative, in memory), merge = the commit, and because the commit is flat the new UI appears all at once rather than trickling in. Twin synced.",
+      "resolvedAt": "2026-07-20"
+    },
+    {
+      "id": "nmrtgxbbq",
+      "page": "10-suspense-streaming.html",
+      "ts": "2026-07-20T16:58:00.470Z",
+      "status": "resolved",
+      "text": "would be helpful if the what you buy and what you pay were two items in a list 1, 2 (1. **What you buy**: ...) etc.",
+      "target": {
+        "anchor": "fallback-trade",
+        "path": [
+          25
+        ],
+        "tag": "p",
+        "snippet": "A Suspense boundary is not free structure; it is a trade, and it helps to name both sides "
+      },
+      "resolution": "What you buy / What you pay are now a numbered list with bold lead-ins.",
+      "resolvedAt": "2026-07-20"
     }
   ]
 }
