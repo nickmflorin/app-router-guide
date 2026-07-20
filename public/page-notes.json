@@ -1402,7 +1402,7 @@
       "id": "nmrth1wdt",
       "page": "15-component-breakdown.html",
       "ts": "2026-07-20T17:01:34.385Z",
-      "status": "open",
+      "status": "resolved",
       "text": "lets try to add a warning panel/alert right above 15.1 that basically says that the app router and react 19 fundamentally change how you break apart the UI, where you draw the boundary lines between different components, where you put those components and how you split them up, how you import those components, what their dependencies are, etc. it should hammer home the point that when and how something is treated as a component is a highly technical design question and not a design/UX question .  It should basicaly just hammer on the point that this changes how you break things apart and the decisions there are important and technical.",
       "target": {
         "anchor": null,
@@ -1411,7 +1411,9 @@
         ],
         "tag": "h1",
         "snippet": "Component Breakdown"
-      }
+      },
+      "resolution": "Warning callout added directly above 15.1: the App Router and React 19 fundamentally change how a UI gets broken into components (boundary lines, placement, splitting, imports, dependencies), each decision carries architectural weight (server render, streaming, caching, bundle), and when/how something is treated as a component is a highly technical design question, not a visual/UX one.",
+      "resolvedAt": "2026-07-20"
     },
     {
       "id": "nmrth7baj",

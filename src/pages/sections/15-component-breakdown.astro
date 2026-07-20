@@ -18,6 +18,20 @@ import Snippet from '../../components/Snippet.astro';
     what holds the whole scheme together.
   </p>
 
+  <Callout kind='warn' title='This changes how you break things apart'>
+    <p>
+      Read this chapter as a warning as much as a guide. The App Router and React 19 <strong
+        >fundamentally change how a UI gets broken into components</strong
+      >: where the boundary lines are drawn, where each component lives, how a feature is split up,
+      how the pieces are imported, and what each piece is allowed to depend on. Every one of those
+      decisions now carries architectural weight: it determines what can render on the server, what
+      can stream, what can be cached, and what ships to the browser. Which means <strong
+        >when and how something is treated as a component is a highly technical design question</strong
+      >, not a visual or UX one. "It looks like one thing in the mock" has never been a weaker
+      argument for making it one component than it is in this stack.
+    </p>
+  </Callout>
+
   <h2 id='axes'>15.1 The axes of a split have changed</h2>
   <p>
     Traditional React taught one decomposition instinct: split by <em>visual shape and reuse</em>. A
