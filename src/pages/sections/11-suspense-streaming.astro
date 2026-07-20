@@ -1025,6 +1025,101 @@ flowchart TB
     into a single delayed response.
   </p>
 
+  <Diagram>
+    <svg
+      viewBox='0 0 720 134'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
+        The HTML stream, chunk by chunk
+      </text>
+      <rect x='70' y='32' width='180' height='22' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text
+        x='160'
+        y='43'
+        font-size='9'
+        fill='#157a4c'
+        text-anchor='middle'
+        dominant-baseline='central'>chunk 0 · the static shell</text>
+      <text x='70' y='68' font-size='8.5' fill='#3e7d5c' dominant-baseline='central'>
+        layout, nav, containers, every fallback
+      </text>
+      <text x='70' y='81' font-size='8.5' fill='#3e7d5c' dominant-baseline='central'>
+        first paint; CSS/JS discovery starts here
+      </text>
+      <line
+        x1='254'
+        y1='43'
+        x2='286'
+        y2='43'
+        stroke='#c9c9c9'
+        stroke-width='1.5'
+        stroke-dasharray='3 3'></line>
+      <rect x='290' y='32' width='180' height='22' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text
+        x='380'
+        y='43'
+        font-size='9'
+        fill='#0757ba'
+        text-anchor='middle'
+        dominant-baseline='central'>chunk · the header resolves</text>
+      <text x='290' y='68' font-size='8.5' fill='#527dad' dominant-baseline='central'>
+        hidden HTML + a tiny inline script
+      </text>
+      <text x='290' y='81' font-size='8.5' fill='#527dad' dominant-baseline='central'>
+        swaps the fallback, before hydration
+      </text>
+      <line
+        x1='474'
+        y1='43'
+        x2='506'
+        y2='43'
+        stroke='#c9c9c9'
+        stroke-width='1.5'
+        stroke-dasharray='3 3'></line>
+      <rect x='510' y='32' width='180' height='22' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text
+        x='600'
+        y='43'
+        font-size='9'
+        fill='#0757ba'
+        text-anchor='middle'
+        dominant-baseline='central'>chunk · the table resolves</text>
+      <text x='510' y='68' font-size='8.5' fill='#527dad' dominant-baseline='central'>
+        each boundary streams independently,
+      </text>
+      <text x='510' y='81' font-size='8.5' fill='#527dad' dominant-baseline='central'>
+        in whatever order the data finishes
+      </text>
+      <text x='360' y='112' font-size='9.5' fill='#737373' text-anchor='middle'>
+        riding along the whole way: the component payload React later hydrates from
+      </text>
+      <text x='360' y='128' font-size='9' fill='#737373' text-anchor='middle'>
+        on client navigations only that payload travels: no HTML at all (§4.5)
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart LR
+  c0("chunk 0 · the static shell<br/>layout, nav, containers, every fallback<br/>first paint; CSS/JS discovery starts"):::green
+  c0 --> c1("chunk · the header resolves<br/>hidden HTML + inline script<br/>swaps the fallback, before hydration"):::blue
+  c1 --> c2("chunk · the table resolves<br/>each boundary streams independently"):::blue
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+</pre>
+
+    <Fragment slot='caption'>
+      One response, arriving in pieces. The first chunk is the whole static shell, which is why
+      TTFB and FCP stop depending on data; every later chunk is a resolved boundary's HTML plus the
+      inline script that swaps it into place, no bundle or hydration required. The component
+      payload rides alongside for hydration, and on client-side navigations it travels alone.
+    </Fragment>
+  </Diagram>
+
   <h3 id='pass-promises'>Keep the shell static: pass promises, not awaits</h3>
   <p>
     The size of that instantly-sent shell is decided by one habit.
@@ -1142,6 +1237,23 @@ flowchart TB
     independent regions never wait on each other.
   </p>
 
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">nesting as an ordering tool - details always reveal before notes</span>&lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">DetailsSkeleton</span> /&gt;}&gt;
+  &lt;<span class="tok-fn">ProgramDetails</span> <span class="tok-prop">programId</span>={programId} /&gt;
+  <span class="tok-com">{/* Nested: this boundary isn't even visible until details resolve. */}</span>
+  &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">NotesSkeleton</span> /&gt;}&gt;
+    &lt;<span class="tok-fn">ProgramNotes</span> <span class="tok-prop">programId</span>={programId} /&gt;
+  &lt;/<span class="tok-fn">Suspense</span>&gt;
+&lt;/<span class="tok-fn">Suspense</span>&gt;</pre>
+    <CodeCaption>
+      If the notes resolve first, they wait: the outer boundary holds both until the details are in,
+      then the inner boundary takes over for the notes alone. The reveal order is guaranteed by
+      structure, not by racing fetches.
+    </CodeCaption>
+  </Snippet>
+
   <h3 id='http-contract'>The HTTP contract: the status code ships with the first chunk</h3>
   <p>
     Streaming has one hard constraint worth internalizing.
@@ -1196,6 +1308,29 @@ flowchart TB
     <code>&lt;script&gt;</code> tags, so CSS, fonts, and JS start downloading during server think
     time instead of after it: streaming buys back the network idle that blocking rendering wastes.
   </p>
+
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">the LCP element lives in the shell, above the boundaries</span>&lt;main&gt;
+  <span class="tok-com">{/* Preloaded from the first chunk; painted with the shell. */}</span>
+  &lt;<span class="tok-fn">Image</span> <span class="tok-prop">src</span>={hero} <span class="tok-prop">preload</span> <span class="tok-prop">alt</span>=<span class="tok-str">"Program cover"</span> /&gt;
+  &lt;h1&gt;Program overview&lt;/h1&gt;
+
+  <span class="tok-com">{/* Only the data-dependent region streams. */}</span>
+  &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
+    &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={programId} /&gt;
+  &lt;/<span class="tok-fn">Suspense</span>&gt;
+&lt;/main&gt;</pre>
+    <CodeCaption>
+      The hero image and heading are the page's largest paint, so they sit in the shell where the
+      first chunk delivers them; <code>preload</code> puts a <code>&lt;link rel="preload"&gt;</code>
+      in the head so the browser starts fetching the image before its tag even streams by. Wrap the
+      same hero in the stats' boundary and LCP would inherit the stats query's latency for no
+      reason.
+    </CodeCaption>
+  </Snippet>
 
   <h3 id='fallback-trade'>Every boundary is a decision: an unblocked paint, for a fallback</h3>
   <p>
