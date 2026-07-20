@@ -324,7 +324,214 @@ flowchart LR
     </CodeCaption>
   </Snippet>
 
-  <h2 id='worked'>6.4 Worked example: the table that outgrew its URL</h2>
+
+  <h2 id='auth-chain'>6.4 Case study: the auth chain that blocked every page</h2>
+  <p>
+    The clearest real instance of this pattern isn't a table at all; it's authentication. Every hard
+    navigation in the <code>ojl-tracker</code> app used to render <em>nothing</em> until a serial
+    chain of client-side providers resolved: first the Auth0 client asked <code>/api/auth/me</code>
+    who the user was; only after that resolved did the authenticated-user GraphQL query fire; only
+    after <em>that</em> (plus a client-environment fetch) did the feature-flag provider initialize
+    against its CDN. Each gate rendered a full-page loading screen while it waited, and each waited
+    on the previous, so a cold load spent seconds inside the chain before the page shell appeared:
+    hard-navigation TTI ran seconds long while soft navigations took a few hundred milliseconds, a
+    split that averages quietly hide. It is <a href='13-blocking-requests.html#csr-depth'>§13.5</a>'s
+    serial-by-structure waterfall, wearing auth clothing.
+  </p>
+  <p>
+    The tell, and the reason this is a bootstrap case study, is that
+    <strong>every fact in that chain was already known to the server.</strong> The session is
+    validated server-side before the page is even allowed to render; the authenticated user (role,
+    permissions, identity) falls out of the same session parse; and the feature-flag service can run
+    as a server-side singleton whose rulesets stay fresh in memory, making per-request flag state a
+    synchronous, CPU-only computation. The waterfall existed purely because those questions were
+    being asked <em>from the browser</em>. So the fix was to stop asking: parse the session once per
+    request, compute the flag state against the in-memory rules, and hand all three (Auth0 user,
+    authenticated user, flag state) to the providers as props. Each provider initializes
+    synchronously from its prop and renders its children immediately: no auth round trip, no
+    blocking query, no CDN init, no loading screen. The page pre-renders completely, and
+    hard-navigation TTI collapses to the soft-navigation number.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 152'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
+        The auth chain, before and after bootstrapping
+      </text>
+
+      <!-- LANE 1: the gate chain -->
+      <text
+        x='12'
+        y='44'
+        font-size='10.5'
+        fill='#b3261e'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        The gate chain
+      </text>
+      <text x='12' y='57' font-size='9' fill='#b0483e' dominant-baseline='central'>
+        (each blocks the next)
+      </text>
+      <rect x='175' y='36' width='80' height='18' rx='3' fill='#f5f5f5' stroke='#c9c9c9'></rect>
+      <text
+        x='215'
+        y='45'
+        font-size='9'
+        fill='#525252'
+        text-anchor='middle'
+        dominant-baseline='central'>JS + hydrate</text>
+      <rect x='259' y='36' width='100' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text
+        x='309'
+        y='45'
+        font-size='9'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'>auth0 session</text>
+      <rect x='363' y='36' width='110' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text
+        x='418'
+        y='45'
+        font-size='9'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'>user query (GraphQL)</text>
+      <rect x='477' y='36' width='100' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text
+        x='527'
+        y='45'
+        font-size='9'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'>flags init (CDN)</text>
+      <rect x='581' y='36' width='100' height='18' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text
+        x='631'
+        y='45'
+        font-size='9'
+        fill='#0757ba'
+        text-anchor='middle'
+        dominant-baseline='central'>page renders</text>
+      <text x='360' y='78' font-size='9.5' fill='#b0483e' text-anchor='middle'>
+        a full-page loader covers the whole chain: seconds of TTI on every hard navigation
+      </text>
+
+      <!-- LANE 2: bootstrapped -->
+      <text
+        x='12'
+        y='112'
+        font-size='10.5'
+        fill='#157a4c'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        Bootstrapped
+      </text>
+      <text x='12' y='125' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+        (the server already knew)
+      </text>
+      <rect x='175' y='104' width='190' height='18' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text
+        x='270'
+        y='113'
+        font-size='9'
+        fill='#0757ba'
+        text-anchor='middle'
+        dominant-baseline='central'>server: session + user + flags</text>
+      <rect x='369' y='104' width='110' height='18' rx='3' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text
+        x='424'
+        y='113'
+        font-size='9'
+        fill='#157a4c'
+        text-anchor='middle'
+        dominant-baseline='central'>paint: complete</text>
+      <line
+        x1='483'
+        y1='113'
+        x2='527'
+        y2='113'
+        stroke='#c9c9c9'
+        stroke-width='1.5'
+        stroke-dasharray='3 3'></line>
+      <text x='505' y='101' font-size='8.5' fill='#737373' text-anchor='middle'>idle</text>
+      <rect x='531' y='104' width='160' height='18' rx='3' fill='#e0f5f9' stroke='#0891b2'></rect>
+      <text
+        x='611'
+        y='113'
+        font-size='9'
+        fill='#0e7490'
+        text-anchor='middle'
+        dominant-baseline='central'>twins wake: validate + subscribe</text>
+      <text x='360' y='146' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
+        no auth round trip, no blocking query, no CDN init: the loader is gone
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart LR
+  subgraph GC["The gate chain (before)"]
+    direction LR
+    a1("JS + hydrate"):::neutral --> a2("auth0 session"):::amber
+    a2 --> a3("user query (GraphQL)"):::amber
+    a3 --> a4("flags init (CDN)"):::amber
+    a4 --> a5("page renders · seconds of TTI"):::blue
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style GC fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef neutral fill:#f5f5f5,stroke:#c9c9c9,color:#525252
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+%%split%%
+flowchart LR
+  subgraph BC["Bootstrapped (after)"]
+    direction LR
+    b1("server: session + user + flags<br/>one pass, already known"):::blue
+    b1 --> b2("paint: complete<br/>the loader is gone"):::green
+    b2 -->|"idle"| b3("twins wake:<br/>validate + subscribe"):::cyan
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style BC fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+</pre>
+
+    <Fragment slot='caption'>
+      The real chain from the <code>ojl-tracker</code> auth and page-loading work, condensed. Before:
+      four serialized client-side gates, each showing a full-page loading screen, all resolving facts
+      the server had already established. After: one server pass computes the session, the
+      authenticated user, and the feature-flag state; providers initialize synchronously from props;
+      the page pre-renders whole. The client twins wake on idle to validate and subscribe, exactly
+      the shape of <a href='#pattern'>§6.2</a>.
+    </Fragment>
+  </Diagram>
+
+  <p>
+    And here the "why keep the client query at all?" question gets its sharpest answer:
+    <strong>liveness.</strong>
+    <Chip k='react' />
+    <Chip k='very' /> The bootstrapped user provider's GraphQL query wakes on idle and then <em
+      >stays subscribed</em
+    >. Because it is a live citizen of the GraphQL cache, automatic invalidation does the refreshing:
+    when any mutation during the session touches the user's profile, the cache invalidates the
+    relevant typename, the subscribed query refires on its own, and the user in context updates
+    everywhere, with no callback, no manual refetch, no wiring (<a
+      href='14-minimize-the-wires.html#callbacks'>§14.4</a
+    >). The same holds for any bootstrapped GraphQL hook: the server seed buys the complete paint,
+    and the idle-woken subscription buys automatic refetch whenever the data changes on the server
+    or as a result of a client action. Drop the client query and the bootstrap goes stale; drop the
+    bootstrap and the paint goes back behind the loader. The pattern needs both halves.
+  </p>
+
+  <h2 id='worked'>6.5 Worked example: the table that outgrew its URL</h2>
   <p>
     Now the case this pattern earns its keep on. A reports table renders a lot of data and carries
     complex filters, free-text search, pagination, and multi-column ordering, a query shape that is
@@ -540,7 +747,7 @@ flowchart LR
     </Fragment>
   </Diagram>
 
-  <h2 id='caveat'>6.5 The honest caveat: this is a pages-router pattern at heart</h2>
+  <h2 id='caveat'>6.6 The honest caveat: this is a pages-router pattern at heart</h2>
   <p>
     Be clear-eyed about the lineage.
     <Chip k='next' />

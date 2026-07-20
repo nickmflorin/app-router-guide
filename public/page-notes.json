@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-20T17:11:55.043Z",
+  "updatedAt": "2026-07-20T19:45:13.842Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -1412,8 +1412,7 @@
         "tag": "h1",
         "snippet": "Component Breakdown"
       },
-      "resolution": "Warning callout added directly above 15.1: the App Router and React 19 fundamentally change how a UI gets broken into components (boundary lines, placement, splitting, imports, dependencies), each decision carries architectural weight (server render, streaming, caching, bundle), and when/how something is treated as a component is a highly technical design question, not a visual/UX one.",
-      "resolvedAt": "2026-07-20"
+      "resolution": "Warning callout added directly above 15.1: the App Router and React 19 fundamentally change how a UI gets broken into components (boundary lines, placement, splitting, imports, dependencies), each decision carries architectural weight (server render, streaming, caching, bundle), and when/how something is treated as a component is a highly technical design question, not a visual/UX one."
     },
     {
       "id": "nmrth7baj",
@@ -1429,8 +1428,37 @@
         "tag": "h1",
         "snippet": "Server-Side Rendering"
       },
-      "resolution": "New chapter §6 \"Bootstrapping the First Paint\" inserted after §5 (chapters 6-19 renumbered to 7-20 across files, kickers, headings, TOCs, index, and every § ref/href; README/project-instruction chapter counts updated). Built from the real ojl-tracker patterns (useIsIdle, BootstrappedAuthenticatedUserProvider, ProgramProvider, assignedPrograms/organizationPrograms pages): 6.1 the gap (state that won't fit a URL; the client-fetch surrender), 6.2 the three-move pattern (server seeds -> idle-paused client twin -> client ownership after interactions) with a three-lane timeline diagram, 6.3 the mechanics (useIsIdle + provider snippets, incl. the deep-equal detail and the 5s user-provider deferral), 6.4 the worked example (filter/search/sort/pagination table: server-sourced default view, complete first paint, keyed client refetch after interactions) with two-panel diagram, 6.5 the hammered caveat (pages-router pattern at heart; the App Router's native answer is URL state + RSC-payload re-render of just the affected region; decision order: URL state first), rules table + GoDeeper (MDN requestIdleCallback added to the references ledger).",
-      "resolvedAt": "2026-07-20"
+      "resolution": "New chapter §6 \"Bootstrapping the First Paint\" inserted after §5 (chapters 6-19 renumbered to 7-20 across files, kickers, headings, TOCs, index, and every § ref/href; README/project-instruction chapter counts updated). Built from the real ojl-tracker patterns (useIsIdle, BootstrappedAuthenticatedUserProvider, ProgramProvider, assignedPrograms/organizationPrograms pages): 6.1 the gap (state that won't fit a URL; the client-fetch surrender), 6.2 the three-move pattern (server seeds -> idle-paused client twin -> client ownership after interactions) with a three-lane timeline diagram, 6.3 the mechanics (useIsIdle + provider snippets, incl. the deep-equal detail and the 5s user-provider deferral), 6.4 the worked example (filter/search/sort/pagination table: server-sourced default view, complete first paint, keyed client refetch after interactions) with two-panel diagram, 6.5 the hammered caveat (pages-router pattern at heart; the App Router's native answer is URL state + RSC-payload re-render of just the affected region; decision order: URL state first), rules table + GoDeeper (MDN requestIdleCallback added to the references ledger)."
+    },
+    {
+      "id": "nmrtmqia1",
+      "page": "01-introduction.html",
+      "ts": "2026-07-20T19:40:40.585Z",
+      "status": "open",
+      "text": "we don't need to say this is a confession.  lets focus more here on the fact that this document is created from stitching together official documentation for next and react and then elaborating on it and explaining what those things mean in more detail.  it should talk about how the document expands on important design patterns that are mentioned briefly or without much detail at times in docs, and it should talk about how it includes design patterns that will naturally come out if you start working with the app router over time (using it tthe right way) only to realize those design patterns were mentioned or are used elsewhere - focusing on how using the app router the right way will cause those patterns to naturally surface but i want to save them the time",
+      "target": {
+        "anchor": "what-this-is",
+        "path": [
+          9
+        ],
+        "tag": "p",
+        "snippet": "A confession about scope: this document is maybe ninety percent stitched together from the"
+      }
+    },
+    {
+      "id": "nmrtmv5qj",
+      "page": "01-introduction.html",
+      "ts": "2026-07-20T19:44:17.611Z",
+      "status": "open",
+      "text": "can we move this section to the top?",
+      "target": {
+        "anchor": "direction",
+        "path": [
+          29
+        ],
+        "tag": "h2",
+        "snippet": "The stakes"
+      }
     }
   ]
 }
