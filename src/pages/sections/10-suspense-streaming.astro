@@ -213,12 +213,31 @@ flowchart LR
 
   <Diagram>
     <svg
-      viewBox='0 0 720 256'
+      viewBox='0 0 720 318'
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
+      <defs>
+        <marker
+          id='aVC'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='5'
+          markerHeight='5'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#0070f3'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
       <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
-        Suspense, as version control: four frames
+        Suspense, as version control: five frames
       </text>
 
       <!-- FRAME 1 -->
@@ -286,24 +305,53 @@ flowchart LR
         this is exactly what a transition preserves (§10.7)
       </text>
 
-      <!-- FRAME 4 -->
+      <!-- FRAME 4: the branch completes; HEAD points at the finished tree -->
       <text x='12' y='238' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
-        ④ data resolves: merge
+        ④ the branch completes
       </text>
       <line x1='185' y1='242' x2='345' y2='242' stroke='#c9c9c9' stroke-width='1.5'></line>
       <circle cx='205' cy='242' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
       <circle cx='245' cy='242' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
       <circle cx='285' cy='242' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
-      <line x1='285' y1='242' x2='305' y2='222' stroke='#c9c9c9' stroke-width='1.5'></line>
-      <circle cx='305' cy='222' r='6' fill='#eaf3fe' stroke='#0070f3' stroke-width='1.5'></circle>
-      <line x1='305' y1='222' x2='325' y2='242' stroke='#c9c9c9' stroke-width='1.5'></line>
+      <line x1='285' y1='242' x2='325' y2='222' stroke='#c9c9c9' stroke-width='1.5'></line>
+      <circle cx='325' cy='222' r='6' fill='#eaf3fe' stroke='#0070f3' stroke-width='1.5'></circle>
       <circle cx='325' cy='242' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
-      <text x='410' y='236' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
-        the branch completes and merges into main
+      <text x='368' y='222' font-size='8.5' fill='#0757ba' font-weight='500' dominant-baseline='central'>
+        HEAD
       </text>
-      <text x='410' y='249' font-size='9' fill='#527dad' dominant-baseline='central'>
+      <line
+        x1='362'
+        y1='222'
+        x2='336'
+        y2='222'
+        stroke='#0070f3'
+        stroke-width='1.2'
+        marker-end='url(#aVC)'></line>
+      <text x='430' y='236' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+        the data landed: a finished tree exists in memory
+      </text>
+      <text x='430' y='249' font-size='9' fill='#527dad' dominant-baseline='central'>
+        HEAD points at what the screen should become
+      </text>
+
+      <!-- FRAME 5: merged and flattened onto one line -->
+      <text x='12' y='300' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        ⑤ merge: flat again
+      </text>
+      <line x1='185' y1='304' x2='405' y2='304' stroke='#c9c9c9' stroke-width='1.5'></line>
+      <circle cx='205' cy='304' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
+      <circle cx='241' cy='304' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
+      <circle cx='277' cy='304' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
+      <circle cx='313' cy='304' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
+      <circle cx='349' cy='304' r='6' fill='#eaf3fe' stroke='#0070f3' stroke-width='1.5'></circle>
+      <circle cx='385' cy='304' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
+      <text x='430' y='298' font-size='9.5' fill='#157a4c' dominant-baseline='central'>
         one atomic commit: the new UI appears whole
       </text>
+      <text x='430' y='311' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+        history is a single line again, as if it was always main
+      </text>
+
     </svg>
 
     <pre
@@ -315,7 +363,8 @@ flowchart LR
     v1("main: committed UI on screen"):::green
     v1 --> v2("branch: next UI renders in memory<br/>suspends waiting for data"):::amberdash
     v2 --> v3("main keeps moving:<br/>old UI stays interactive"):::green
-    v3 --> v4("data resolves: branch merges<br/>one atomic commit, appears whole"):::blue
+    v3 --> v4("branch completes: a finished tree<br/>in memory; HEAD points at it"):::blue
+    v4 --> v5("merge, flattened into main<br/>one atomic commit: appears whole"):::green
   end
   linkStyle default stroke:#737373,stroke-width:1.5px
   style VC fill:#ffffff,stroke:#e0e0e0,color:#171717,rx:8px,ry:8px
@@ -331,7 +380,10 @@ flowchart LR
       >, a little after the 29-minute mark, and it repays watching in full. Committed UI is <code
         >main</code
       >; a render attempt is an unmerged branch that can wait on data without touching the screen;
-      resolution is a merge, atomic by construction. One footnote the analogy needs: when there is
+      resolution is two distinct moments: first the branch <em>completes</em> (a finished tree exists in
+      memory, and HEAD points at what the screen should become), then the merge flattens it into <code
+        >main</code
+      > in one atomic commit. One footnote the analogy needs: when there is
       no old screen worth keeping (a first load), the boundary commits its <em>fallback</em> to
       <code>main</code> while the branch works, which is the streaming story of
       <a href='#streaming'>§10.2</a>; on navigations, transitions (<a href='#transitions'>§10.7</a
