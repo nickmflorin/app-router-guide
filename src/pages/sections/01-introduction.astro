@@ -16,6 +16,60 @@ import CompareCol from '../../components/CompareCol.astro';
     miniature, and what it costs us when we do.
   </p>
 
+  <h2 id='stakes'>The stakes</h2>
+  <p>
+    The architecture and approach you use <em>now</em> sets the stage for the rest of the product's life.
+    That's not a platitude; it's the compounding math of a codebase. Every new page copies the patterns
+    of the page before it. Every hook written around a client-side fetch becomes a dependency of the next
+    feature. Conventions harden in months; unwinding them takes years.
+  </p>
+  <p>
+    I say this as someone who has tried to refactor ojl-tracker out of exactly these problems,
+    repeatedly. It is a never-ending battle, and the debt was cheapest on the day it was created. We
+    do not want a re-Tracker: imagine how much more confusing the Slack channels, the product names,
+    and the team names would become.
+  </p>
+
+  <Callout kind='alert' title='Server-first is not optional'>
+    <p>
+      Let's be unambiguous about this, because everything else in the guide depends on it. A
+      server-first mentality is
+      <strong
+        >not a preference, not a style, and not one architecture among several we could reasonably
+        choose</strong
+      >. It is the operating assumption of React 19 and the App Router: the contract every primitive
+      in this stack is built against. Every one of them assumes you are already thinking this way,
+      so when you aren't, nothing throws an error; it just quietly works worse. The framework
+      doesn't offer "SPA mode" as a supported alternative; it offers silence. Build against the
+      grain and nothing stops you: the page renders, the demo works, the sprint closes. What you've
+      actually done is taken out a loan no one issues a statement for.
+    </p>
+    <p>
+      So the question is
+      <strong
+        >never whether building the old way will cause problems, only when they surface, and how
+        much product is sitting on top of them by then</strong
+      >. And when they surface, the menu is short and every item on it is expensive: hand-roll
+      custom machinery that dampens the symptoms without ever eliminating them; accept the
+      degradation as a permanent casualty and ship around it; retroactively refactor large portions
+      of the UI, which is an order of magnitude harder than building it correctly was; or rewrite.
+      There is no fifth option where it quietly works out. The mental-model shift this guide
+      describes is the requirement; the only choice we get is whether we make it now, deliberately
+      and cheaply, or later, under duress, at whatever the price has grown to.
+    </p>
+  </Callout>
+
+  <Callout kind='voice' title='The good news'>
+    <p>
+      You're smart, and you'll figure this out. None of this is beyond anyone on this team: it's a
+      mental-model swap, not a skill gap. But it has to be deliberate: if we keep building into this
+      thing without understanding how the technology wants to be used, we will end up in a world of
+      pain that gets harder to escape every sprint. The whole point of this document is to make the
+      deliberate path the easy one.
+    </p>
+  </Callout>
+
+
   <h2 id='dont-fight'>Don't fight the framework</h2>
   <p>
     Next.js is not a rendering engine you bolt a React app onto. It is an opinionated architecture
@@ -66,17 +120,24 @@ import CompareCol from '../../components/CompareCol.astro';
 
   <h2 id='what-this-is'>What this is, and why I wrote it</h2>
   <p>
-    A confession about scope: this document is maybe ninety percent stitched together from the
-    official Next.js and React documentation, reorganized and elaborated, and about ten percent
-    things I have learned the hard way about what works and what doesn't. The Next.js docs in
-    particular have a habit of dropping a genuinely load-bearing idea in a single sentence,
-    somewhere near the end of a paragraph, and then moving on without ever explaining the why, the
-    how, or what it looks like in real code. This guide is my attempt to slow down on exactly those
-    sentences: to take the ones that matter most and expand them into concrete examples and design
-    patterns you can actually reach for.
+    Start with what this document is made of. It is stitched together from the official Next.js
+    and React documentation, reorganized and then elaborated: taking what the docs say and
+    explaining what those things actually mean, in more detail, with concrete code and diagrams.
+    The docs mention genuinely important design patterns briefly, sometimes in a single sentence
+    near the end of a paragraph, without the why, the how, or an example. This guide slows down on
+    exactly those and expands them into patterns you can actually build from.
   </p>
   <p>
-    The ten percent is the part I care about most. I started wrestling with the App Router back in
+    The rest of it is a second kind of pattern: the ones the docs never quite name. Work with the
+    App Router the right way for long enough (server as the default, the client only where it's
+    earned) and a set of design patterns starts surfacing on its own, through nothing but
+    repetition and correction. Then comes the strange part: once they've surfaced, you start
+    recognizing them everywhere: half-described in the docs, embedded in other codebases, implied
+    by API shapes that suddenly make sense. Those patterns are written down here up front, because
+    the surfacing takes months and the reading takes an evening.
+  </p>
+  <p>
+    That second kind is the part I care about most. I started wrestling with the App Router back in
     2021, and it was a long, unglamorous slog of trial and error before I understood how it actually
     wants to be used. Most of the patterns in this guide are the residue of that process: the things
     I wish someone had handed me up front, instead of making me find them one painful refactor at a
@@ -479,59 +540,6 @@ flowchart TB
     than a decade. Adopting server-first in 2026 isn't early adoption; by the platform's own
     telling, we're late to the memo.
   </p>
-
-  <h2 id='stakes'>The stakes</h2>
-  <p>
-    The architecture and approach you use <em>now</em> sets the stage for the rest of the product's life.
-    That's not a platitude; it's the compounding math of a codebase. Every new page copies the patterns
-    of the page before it. Every hook written around a client-side fetch becomes a dependency of the next
-    feature. Conventions harden in months; unwinding them takes years.
-  </p>
-  <p>
-    I say this as someone who has tried to refactor ojl-tracker out of exactly these problems,
-    repeatedly. It is a never-ending battle, and the debt was cheapest on the day it was created. We
-    do not want a re-Tracker: imagine how much more confusing the Slack channels, the product names,
-    and the team names would become.
-  </p>
-
-  <Callout kind='alert' title='Server-first is not optional'>
-    <p>
-      Let's be unambiguous about this, because everything else in the guide depends on it. A
-      server-first mentality is
-      <strong
-        >not a preference, not a style, and not one architecture among several we could reasonably
-        choose</strong
-      >. It is the operating assumption of React 19 and the App Router: the contract every primitive
-      in this stack is built against. Every one of them assumes you are already thinking this way,
-      so when you aren't, nothing throws an error; it just quietly works worse. The framework
-      doesn't offer "SPA mode" as a supported alternative; it offers silence. Build against the
-      grain and nothing stops you: the page renders, the demo works, the sprint closes. What you've
-      actually done is taken out a loan no one issues a statement for.
-    </p>
-    <p>
-      So the question is
-      <strong
-        >never whether building the old way will cause problems, only when they surface, and how
-        much product is sitting on top of them by then</strong
-      >. And when they surface, the menu is short and every item on it is expensive: hand-roll
-      custom machinery that dampens the symptoms without ever eliminating them; accept the
-      degradation as a permanent casualty and ship around it; retroactively refactor large portions
-      of the UI, which is an order of magnitude harder than building it correctly was; or rewrite.
-      There is no fifth option where it quietly works out. The mental-model shift this guide
-      describes is the requirement; the only choice we get is whether we make it now, deliberately
-      and cheaply, or later, under duress, at whatever the price has grown to.
-    </p>
-  </Callout>
-
-  <Callout kind='voice' title='The good news'>
-    <p>
-      You're smart, and you'll figure this out. None of this is beyond anyone on this team: it's a
-      mental-model swap, not a skill gap. But it has to be deliberate: if we keep building into this
-      thing without understanding how the technology wants to be used, we will end up in a world of
-      pain that gets harder to escape every sprint. The whole point of this document is to make the
-      deliberate path the easy one.
-    </p>
-  </Callout>
 
   <h2 id='how-organized'>How this guide is organized</h2>
   <p>
