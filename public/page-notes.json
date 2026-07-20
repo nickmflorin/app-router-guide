@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-20T01:26:40.874Z",
+  "updatedAt": "2026-07-20T01:30:59.688Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -1332,7 +1332,23 @@
         "tag": "h1",
         "snippet": "Minimize the Wires"
       },
-      "resolution": "Added at the end of §13.2 (the repetition-over-dependency home): a paragraph naming the over-fetching instinct and the rule (when the field difference is cheap, both regions call the same canonical query, redundant fields and all), plus a browser-view diagram: app layout shell containing ProgramHeader (needs name/status) and ProgramDetails (needs description/status), both arrows converging on one getProgram(42) box (asked twice, React.cache() runs once) down to the database (1 query, total), with the closing line \"the overlap is free; the decoupling is the point\". Mermaid twin included; caption covers the two-narrow-queries alternative and the client-side SWR-key equivalent.",
+      "resolution": "Added at the end of §13.2 (the repetition-over-dependency home): a paragraph naming the over-fetching instinct and the rule (when the field difference is cheap, both regions call the same canonical query, redundant fields and all), plus a browser-view diagram: app layout shell containing ProgramHeader (needs name/status) and ProgramDetails (needs description/status), both arrows converging on one getProgram(42) box (asked twice, React.cache() runs once) down to the database (1 query, total), with the closing line \"the overlap is free; the decoupling is the point\". Mermaid twin included; caption covers the two-narrow-queries alternative and the client-side SWR-key equivalent."
+    },
+    {
+      "id": "nmrsjq5ml",
+      "page": "12-blocking-requests.html",
+      "ts": "2026-07-20T01:28:39.165Z",
+      "status": "resolved",
+      "text": "nit but on the top left, there's too much space above the green page.tsx tile and the page.tsx yellow and blue tiles there is too much space to the left of them after the folder symbol.  try to make them consistent across the board and reduce dead space",
+      "target": {
+        "anchor": "parallel-routes",
+        "path": [
+          15
+        ],
+        "tag": "figure",
+        "snippet": "app/programs/[id]/ └── layout.tsx └── @header/ └── H page.tsx └── @summary/ └── S page.tsx"
+      },
+      "resolution": "Tree spacing normalized: the green children row moved up so its pill sits the same 12px below the preceding row as every other pill; the nested H/S pills tucked in (x 86 -> 74) so the gap after the tree glyph matches the green row's; the tree box height trimmed 224 -> 204 to remove the bottom dead space.",
       "resolvedAt": "2026-07-19"
     }
   ]
