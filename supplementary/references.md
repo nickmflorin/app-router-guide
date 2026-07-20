@@ -29,6 +29,9 @@ Every external source used in the guide. Rendered at the bottom of all derived d
   - instant loading states / streaming
 - [File conventions: error.js](https://nextjs.org/docs/app/api-reference/file-conventions/error) -
   error boundaries per segment
+- [Streaming (guide)](https://nextjs.org/docs/app/guides/streaming) - the two streams, static
+  shell, promise-passing, HTTP contract, vitals, and buffering pitfalls; source for the §11.2
+  deep subsections; companion demo at streaming-demo.labs.vercel.dev.
 - [Parallel Routes](https://nextjs.org/docs/app/api-reference/file-conventions/parallel-routes) -
   slots, default.js, independent loading/error per slot
 - [Intercepting Routes](https://nextjs.org/docs/app/api-reference/file-conventions/intercepting-routes)

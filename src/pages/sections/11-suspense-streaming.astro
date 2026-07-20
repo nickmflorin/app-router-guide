@@ -682,9 +682,10 @@ flowchart LR
   </p>
   <ul>
     <li>
-      <strong><code>loading.tsx</code> is a route-level Suspense boundary</strong> the framework wires
-      up for you: it wraps the page and shows instantly on navigation. Use it for the route transition,
-      but treat it as the coarsest tool: a whole-page skeleton is exactly the page-level skeleton to avoid
+            <strong><code>loading.tsx</code> is a route-level Suspense boundary</strong> the framework wires
+      up for you: it wraps the page, shows instantly on navigation, and is even <em>prefetched</em>
+      along with the route so the fallback can appear before the server responds at all. Use it for
+      the route transition, but treat it as the coarsest tool: a whole-page skeleton is exactly the page-level skeleton to avoid
       (<a href='#skeletons'>§11.4</a>). Prefer a
       <code>loading.tsx</code> that renders the page's known scaffold, with granular boundaries inside
       the page doing the real work.
@@ -1002,6 +1003,199 @@ flowchart TB
       page itself knows about none of it.
     </Fragment>
   </Diagram>
+
+  <h3 id='wire'>What actually travels down the wire</h3>
+  <p>
+    Two streams cooperate during an initial load, and knowing them makes the rest of this section
+    mechanical rather than magical. The <strong>HTML stream</strong> carries the page the user sees:
+    the <strong>static shell</strong> (layouts, navigation, containers, every Suspense fallback)
+    goes out in the first chunk, and as each suspended server component resolves, React streams its
+    finished HTML in a hidden node along with a tiny inline script that <strong>swaps it into the
+    fallback's slot immediately</strong>, before the page's JavaScript bundle has loaded and without
+    waiting for hydration. Alongside it rides the <strong>component payload</strong> (<a
+      href='04-ssr.html#routing'>§4.5</a
+    >'s RSC payload), the serialized tree React later hydrates from; on client-side navigations,
+    <em>only</em> the payload travels, no HTML at all. One practical consequence is worth having
+    seen once: in DevTools, a streaming page shows an early time-to-first-byte followed by a long
+    content-download phase, and the raw response is literally the shell, then <code
+      >&lt;div hidden&gt;</code
+    > chunks arriving one boundary at a time. If a page you expected to stream arrives as one late
+    lump instead, suspect the pipes: reverse proxies (nginx buffers by default), CDNs, serverless
+    platforms without response streaming, and even compression layers can buffer the chunks back
+    into a single delayed response.
+  </p>
+
+  <h3 id='pass-promises'>Keep the shell static: pass promises, not awaits</h3>
+  <p>
+    The size of that instantly-sent shell is decided by one habit.
+    <Chip k='next' />
+    <Chip k='critical' /> Every request-time access (<code>params</code>, <code>searchParams</code>,
+    <code>cookies()</code>, <code>headers()</code>, a data fetch) that you <code>await</code> at the
+    top of a layout or page makes <em>everything below that point</em> dynamic: it all leaves the
+    shell and waits with you. The fix is the same push-down instinct as
+    <a href='05-client-server-boundaries.html#push-down'>§5.3</a>, applied to awaits:
+    <strong>start the work where it's convenient, but resolve it only inside the boundary that
+    needs it</strong>. These APIs return promises precisely so the promise can travel.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/(program)/layout.tsx - start the work, don't await it</span><span class="tok-kw">import</span> { cookies } <span class="tok-kw">from</span> <span class="tok-str">"next/headers"</span>;
+
+<span class="tok-kw">export default function</span> <span class="tok-fn">ProgramLayout</span>({ children }: { children: <span class="tok-fn">ReactNode</span> }) {
+  <span class="tok-com">/* Not awaited: the layout, nav, and children all stay in the static
+     shell. Only UserMenu suspends, inside its own boundary. */</span>
+  <span class="tok-kw">const</span> cookieStore = <span class="tok-fn">cookies</span>();
+  <span class="tok-kw">return</span> (
+    &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"frame"</span>&gt;
+      &lt;<span class="tok-fn">Nav</span>&gt;
+        &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">UserMenuSkeleton</span> /&gt;}&gt;
+          &lt;<span class="tok-fn">UserMenu</span> <span class="tok-prop">cookiePromise</span>={cookieStore} /&gt;
+        &lt;/<span class="tok-fn">Suspense</span>&gt;
+      &lt;/<span class="tok-fn">Nav</span>&gt;
+      {children}
+    &lt;/div&gt;
+  );
+}</pre>
+    <CodeCaption>
+      One <code>await cookies()</code> at the top of this layout would have pulled the entire route,
+      children included, out of the static shell. Passing the promise down confines the dynamic
+      access to the one component that genuinely needs it; the frame prerenders and ships instantly.
+    </CodeCaption>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/programs/[programId]/page.tsx - unwrap the promise inline, inside the boundary</span><span class="tok-kw">export default function</span> <span class="tok-fn">ProgramPage</span>({ params }: { params: <span class="tok-fn">Promise</span>&lt;{ programId: <span class="tok-kw">string</span> }&gt; }) {
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">ProgramHero</span> /&gt;
+      &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">StatsSkeleton</span> /&gt;}&gt;
+        {params.<span class="tok-fn">then</span>(({ programId }) =&gt; (
+          &lt;<span class="tok-fn">ProgramStats</span> <span class="tok-prop">programId</span>={programId} /&gt;
+        ))}
+      &lt;/<span class="tok-fn">Suspense</span>&gt;
+    &lt;/&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The page never awaits <code>params</code>, so the hero paints in the shell; the inline <code
+        >.then()</code
+      > defers the access to inside the boundary while keeping <code>ProgramStats</code> simple: it
+      receives a plain string, not a promise.
+    </CodeCaption>
+  </Snippet>
+
+  <h3 id='promises-as-props'>Streaming across the boundary: promises as props</h3>
+  <p>
+    The same trick crosses into client components. A server component can <strong>start</strong> a
+    fetch and hand the unresolved promise to a client component as a prop; the promise can pass
+    through as many layers as needed, and only the component that finally reads it with <code
+      >use()</code
+    > (<a href='19-new-primitives.html'>§19</a>) needs a Suspense boundary above it. This is the
+    right shape when the <em>rendering</em> genuinely needs the client (a chart library, a canvas)
+    but the <em>data</em> has no business being fetched from the browser:
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/reports/page.tsx - the fetch starts on the server; the client only reads it</span><span class="tok-kw">export default function</span> <span class="tok-fn">ReportsPage</span>() {
+  <span class="tok-com">/* Started during server render, not awaited: the page doesn't block. */</span>
+  <span class="tok-kw">const</span> statsPromise = <span class="tok-fn">getStats</span>();
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">ChartSkeleton</span> /&gt;}&gt;
+      &lt;<span class="tok-fn">StatsChart</span> <span class="tok-prop">dataPromise</span>={statsPromise} /&gt;
+    &lt;/<span class="tok-fn">Suspense</span>&gt;
+  );
+}</pre>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">StatsChart.tsx - a client leaf that suspends on a server-started fetch</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { use } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">StatsChart</span>({ dataPromise }: { dataPromise: <span class="tok-fn">Promise</span>&lt;<span class="tok-fn">Stats</span>&gt; }) {
+  <span class="tok-kw">const</span> stats = <span class="tok-fn">use</span>(dataPromise);
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">Chart</span> <span class="tok-prop">data</span>={stats} /&gt;;
+}</pre>
+    <CodeCaption>
+      The fallback ships with the shell; when the server-side fetch resolves, the finished result
+      streams in and the chart hydrates with its data already present. No client fetch, no client
+      loading state, no waterfall. When several components across a subtree need the same promise,
+      hand it to a context provider once and let each of them <code>use()</code> it from context.
+    </CodeCaption>
+  </Snippet>
+
+  <h3 id='progressive-reveal'>Progressive reveal with nested boundaries</h3>
+  <p>
+    Sibling boundaries resolve independently; <strong>nested</strong> boundaries resolve in
+    layers, and that ordering is a design tool. Put the reviews boundary <em>inside</em> the
+    product-details boundary and the page reveals itself outside-in: details first, reviews after,
+    never reviews-before-details no matter which fetch wins the race. Use nesting when one region's
+    content is meaningless without another's (a comments list before the post it belongs to reads
+    as broken); use siblings (<a href='13-blocking-requests.html'>§13</a>) everywhere else, so
+    independent regions never wait on each other.
+  </p>
+
+  <h3 id='http-contract'>The HTTP contract: the status code ships with the first chunk</h3>
+  <p>
+    Streaming has one hard constraint worth internalizing.
+    <Chip k='next' />
+    <Chip k='very' /> The moment the first chunk is sent, the response's status code and headers are
+    committed: the server said <code>200 OK</code> and cannot take it back. A <code>notFound()</code>
+    that fires mid-stream can't become a real 404 (Next injects a <code>noindex</code> meta tag into
+    the stream instead), and a <code>redirect()</code> mid-stream degrades to a client-side redirect
+    rather than an HTTP one. The practical rule: anything that should produce a <em>real</em> status
+    code (a 404 for a record that doesn't exist, an auth redirect) belongs <strong>before the first
+    boundary</strong>, as a fast check ahead of the slow work:
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/programs/[programId]/page.tsx - real 404s happen before the stream starts</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramPage</span>({ params }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
+
+  <span class="tok-com">/* A fast existence check, before any Suspense boundary: this can
+     still be a real HTTP 404. */</span>
+  <span class="tok-kw">if</span> (!(<span class="tok-kw">await</span> <span class="tok-fn">programExists</span>(programId))) <span class="tok-fn">notFound</span>();
+
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">ProgramSkeleton</span> /&gt;}&gt;
+      &lt;<span class="tok-fn">ProgramContent</span> <span class="tok-prop">programId</span>={programId} /&gt;
+    &lt;/<span class="tok-fn">Suspense</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The cheap question (does this exist?) is answered before streaming begins, so crawlers and
+      caches see an honest status code; the expensive question (what's in it?) streams behind the
+      boundary. Errors thrown <em>after</em> streaming starts are still contained: the nearest <code
+        >error.tsx</code
+      > renders in place of the failed region and the rest of the page stands.
+    </CodeCaption>
+  </Snippet>
+
+  <h3 id='streaming-vitals'>Streaming and the vitals</h3>
+  <p>
+    The vitals story rounds this out, because boundary placement moves real numbers. TTFB and FCP
+    decouple from data (the <a href='#streaming'>lane diagram above</a>); CLS is
+    <a href='10-containers-content-shifting.html'>§10</a>'s territory (fallback and content share
+    one honest footprint). Two more deserve a sentence each. <strong>LCP:</strong> if the page's
+    largest element (a hero, the main heading) sits inside a Suspense boundary, it cannot paint
+    until that boundary resolves; keep LCP elements in the shell, above the boundaries, and preload
+    LCP images so the browser starts fetching them from the first chunk. <strong>INP:</strong> each
+    boundary is also a <em>hydration unit</em>. React hydrates streamed regions independently and
+    prioritizes whatever the user is touching, so granular boundaries break hydration into small
+    tasks that keep the main thread responsive, where a boundary-less page hydrates as one long
+    blocking pass. And the shell's first chunk carries the page's <code>&lt;link&gt;</code> and
+    <code>&lt;script&gt;</code> tags, so CSS, fonts, and JS start downloading during server think
+    time instead of after it: streaming buys back the network idle that blocking rendering wastes.
+  </p>
 
   <h3 id='fallback-trade'>Every boundary is a decision: an unblocked paint, for a fallback</h3>
   <p>
@@ -2221,6 +2415,13 @@ flowchart LR
 
   <GoDeeper>
     <p>
+      <a href='https://nextjs.org/docs/app/guides/streaming' target='_blank' rel='noopener'
+        >Next.js: Streaming</a
+      >
+      (the two streams, the HTTP contract, vitals, and infra buffering, with a
+      <a href='https://streaming-demo.labs.vercel.dev/' target='_blank' rel='noopener'
+        >live companion demo</a
+      >) ·
       React 19 docs:
       <a href='https://react.dev/reference/react/Suspense' target='_blank' rel='noopener'
         >&lt;Suspense&gt;</a
