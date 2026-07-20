@@ -2335,6 +2335,129 @@ flowchart LR
     protocol-and-types cost of the HTTP layer <em>and</em> adds a hop of latency and a second error surface,
     while providing nothing the direct call doesn't.
   </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 258'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
+        Every middleman multiplies the error surface, and hides the layer beneath it
+      </text>
+
+      <!-- LAYER 1: the ORM -->
+      <text
+        x='12'
+        y='48'
+        font-size='10.5'
+        fill='#157a4c'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        1 · the data layer
+      </text>
+      <text x='12' y='61' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+        (the ORM, direct)
+      </text>
+      <rect x='190' y='32' width='200' height='44' rx='6' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='202' y='47' font-size='8.5' fill='#157a4c' dominant-baseline='central'>
+        null, or the record?
+      </text>
+      <text x='202' y='61' font-size='8.5' fill='#157a4c' dominant-baseline='central'>
+        allowed, readonly, or invalid input?
+      </text>
+      <text x='402' y='54' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+        a handful of cases: typed, distinct, exhaustive
+      </text>
+
+      <!-- LAYER 2: + one HTTP API -->
+      <text
+        x='12'
+        y='118'
+        font-size='10.5'
+        fill='#8a5a00'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        2 · + an HTTP API
+      </text>
+      <text x='12' y='131' font-size='9' fill='#8f6b2e' dominant-baseline='central'>
+        (types end at the wire)
+      </text>
+      <rect x='190' y='94' width='340' height='58' rx='6' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text x='202' y='108' font-size='8.5' fill='#8a5a00' dominant-baseline='central'>
+        everything above, plus:
+      </text>
+      <text x='202' y='122' font-size='8.5' fill='#8a5a00' dominant-baseline='central'>
+        network error · timeout · 404: bad route, or missing record?
+      </text>
+      <text x='202' y='136' font-size='8.5' fill='#8a5a00' dominant-baseline='central'>
+        unparseable JSON · unexpected shape · a status with no body
+      </text>
+      <text x='542' y='123' font-size='9' fill='#8f6b2e' dominant-baseline='central'>
+        every case now arrives as
+      </text>
+      <text x='542' y='136' font-size='9' fill='#8f6b2e' dominant-baseline='central'>
+        untyped bytes to re-interpret
+      </text>
+
+      <!-- LAYER 3: + a proxy -->
+      <text
+        x='12'
+        y='196'
+        font-size='10.5'
+        fill='#b3261e'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        3 · + a proxy
+      </text>
+      <text x='12' y='209' font-size='9' fill='#b0483e' dominant-baseline='central'>
+        (a layer that hides layers)
+      </text>
+      <rect x='190' y='170' width='490' height='58' rx='6' fill='#fdecea' stroke='#d93025'></rect>
+      <text x='202' y='184' font-size='8.5' fill='#b3261e' dominant-baseline='central'>
+        everything above, doubled: two networks, two timeout budgets, two JSON contracts, plus:
+      </text>
+      <text x='202' y='198' font-size='8.5' fill='#b3261e' dominant-baseline='central'>
+        did the proxy fail, or the upstream? whose 500 is this? whose 404?
+      </text>
+      <text x='202' y='212' font-size='8.5' fill='#b3261e' dominant-baseline='central'>
+        translate the upstream's codes through, or pass them along blind?
+      </text>
+      <text x='360' y='252' font-size='9.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+        each layer widens the surface and blurs the one beneath: more cases, less type safety
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart TB
+  E1("1 · the data layer, direct<br/>null or the record? allowed, readonly, invalid?<br/>a handful of cases: typed, distinct, exhaustive"):::green
+  E1 --> E2("2 · + an HTTP API<br/>everything above + network errors, timeouts, ambiguous 404s,<br/>unparseable JSON, unexpected shapes, statuses with no body"):::amber
+  E2 --> E3("3 · + a proxy<br/>everything above doubled + whose failure? whose 500?<br/>translate codes through, or pass them blind?"):::red
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef red fill:#fdecea,stroke:#d93025,color:#b3261e
+</pre>
+
+    <Fragment slot='caption'>
+      The conditional surface a caller must handle, layer by layer. Against the data layer directly,
+      the cases are few, typed, and distinct: a <code>null</code>, a permission, a validation error,
+      each individually addressable. Add one HTTP layer and every one of those cases must be
+      re-encoded into status codes and JSON and re-interpreted on the other side, alongside a whole
+      new family of failures the wire itself invents. Add a proxy and the surface roughly doubles
+      again while going opaque: the caller can no longer even tell <em>which layer</em> failed
+      without forensics. This compounding is precisely the thing the App Router, and Next.js
+      generally, set out to eliminate: run the logic next to the data (<a href='#actions-orm'
+        >above</a
+      >), and the surface stays at row one.
+    </Fragment>
+  </Diagram>
+
   <p>
     Step back far enough and a deeper point comes into view. The HTTP API between a UI and its data
     is not just a cost to be managed; it is <strong

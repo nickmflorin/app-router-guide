@@ -747,15 +747,16 @@ flowchart LR
     </Fragment>
   </Diagram>
 
-  <h2 id='caveat'>6.6 The honest caveat: this is a pages-router pattern at heart</h2>
+  <h2 id='caveat'>6.6 The honest caveat: more applicable in the pages-router era</h2>
   <p>
-    Be clear-eyed about the lineage.
+    Be clear-eyed about the era this comes from.
     <Chip k='next' />
-    <Chip k='critical' /> Bootstrapping grew up in the pages router, where <code
+    <Chip k='critical' /> Bootstrapping was <em>the</em> tool of the pages-router era, when <code
       >getServerSideProps</code
     > was the only way to put server data in the first paint and the client cache was the only thing
-    that could react to an interaction. It still works, and <code>ojl-tracker</code> still runs on it
-    well. But the App Router's <em>native</em> answer to "the view changed" is better when you can use
+    that could react to an interaction. It remains fully applicable in the App Router (nothing about
+    it broke), and <code>ojl-tracker</code> still runs on it well; it is simply <em>needed less
+    often</em> now, because the App Router covers more of its old territory natively. But the App Router's <em>native</em> answer to "the view changed" is better when you can use
     it: put the state in the URL (<a href='09-server-resolvable-state.html'>§9</a>), and a change
     re-renders <strong>only the affected region on the server</strong>, streaming a fresh RSC
     payload for just what changed (<a href='04-ssr.html#routing'>§4.5</a>) instead of re-running a

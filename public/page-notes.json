@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-20T19:45:13.842Z",
+  "updatedAt": "2026-07-20T19:53:45.382Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -1444,8 +1444,7 @@
         "tag": "p",
         "snippet": "A confession about scope: this document is maybe ninety percent stitched together from the"
       },
-      "resolution": "Rewritten without the confession framing, as two paragraphs: (1) the document is stitched from the official Next.js/React docs and elaborated, expanding the design patterns the docs mention briefly or without much detail into things you can build from; (2) the second kind of pattern: work with the App Router the right way long enough and design patterns surface on their own, and once surfaced you start recognizing them half-described in the docs and embedded elsewhere; written down up front \"because the surfacing takes months and the reading takes an evening.\" The following paragraph's \"ten percent\" opener adjusted to match.",
-      "resolvedAt": "2026-07-20"
+      "resolution": "Rewritten without the confession framing, as two paragraphs: (1) the document is stitched from the official Next.js/React docs and elaborated, expanding the design patterns the docs mention briefly or without much detail into things you can build from; (2) the second kind of pattern: work with the App Router the right way long enough and design patterns surface on their own, and once surfaced you start recognizing them half-described in the docs and embedded elsewhere; written down up front \"because the surfacing takes months and the reading takes an evening.\" The following paragraph's \"ten percent\" opener adjusted to match."
     },
     {
       "id": "nmrtmv5qj",
@@ -1461,7 +1460,40 @@
         "tag": "h2",
         "snippet": "The stakes"
       },
-      "resolution": "\"The stakes\" (both paragraphs plus the server-first-is-not-optional and good-news callouts) moved to the top of §1, ahead of \"Don't fight the framework\". All anchors intact.",
+      "resolution": "\"The stakes\" (both paragraphs plus the server-first-is-not-optional and good-news callouts) moved to the top of §1, ahead of \"Don't fight the framework\". All anchors intact."
+    },
+    {
+      "id": "nmrtn0szs",
+      "page": "06-bootstrapping-first-paint.html",
+      "ts": "2026-07-20T19:48:41.032Z",
+      "status": "resolved",
+      "text": "lets make this less of a \"pages router pattenr at heart\" but more of a \"more applicable in the pages router era\"",
+      "target": {
+        "anchor": "worked",
+        "path": [
+          25
+        ],
+        "tag": "h2",
+        "snippet": "6.6 The honest caveat: this is a pages-router pattern at heart"
+      },
+      "resolution": "§6.6 reframed: heading is now \"The honest caveat: more applicable in the pages-router era\", and the prose says bootstrapping was THE tool of that era, remains fully applicable in the App Router (nothing broke), and is simply needed less often because the App Router covers more of its old territory natively.",
+      "resolvedAt": "2026-07-20"
+    },
+    {
+      "id": "nmrtn2xmb",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-20T19:50:20.339Z",
+      "status": "resolved",
+      "text": "can we show a diagram in here somewhere that sort of shows the possible error/response cases growing each time we add a new middleman? like it doubles conditional checks each time. Like the first layer is the db layer and the error/conditional surface is smallest, is it null or non null, does it allow updates or is it readonly, etc. but then we add an HTTP man and then we have a much larger error surface, network errors, is the 404 because the route is invalid or the object doesn't exist?  what happens if there is a timeout?  What happens if the JSON cannot be parsed?  What happens if the JSON is unexpected or invalid?  What happens if its a a response that has a 404 but no JSON response, or a 401 with no json response when we expected a code?  etc. -> and then when we add a third layer, a third proxy - it blinds it even more - even if we are proxying directly through, what happens if the proxy fails and not the underlying API?  is it an internal server error if the underlying API fails or do we have to map/translate the response/codes/errors through?  Basically just showing a surface that grows as each layer is added, and a surface that hides the underlying and makes it more opaque with less direct type saftety each time.  It should mention that this was the main thing that the app router was supposed to solve, and next in general.",
+      "target": {
+        "anchor": "god-components",
+        "path": [
+          81
+        ],
+        "tag": "h2",
+        "snippet": "5.10 Server actions and the HTTP middleman"
+      },
+      "resolution": "New diagram in §5.10 between the gradient paragraphs and the step-back passage: three stacked layers whose boxes literally widen: (1) the data layer direct (null or the record? allowed/readonly/invalid? typed, distinct, exhaustive), (2) + an HTTP API (everything above plus network errors, timeouts, 404 bad-route-or-missing-record ambiguity, unparseable JSON, unexpected shapes, statuses with no body; every case arriving as untyped bytes), (3) + a proxy (everything doubled: two networks, two timeout budgets, two JSON contracts, plus whose failure/whose 500/translate-or-pass-blind), with the closing line that each layer widens the surface and blurs the one beneath. Caption states this compounding is precisely what the App Router and Next generally set out to eliminate: run the logic next to the data and the surface stays at row one. Mermaid twin included.",
       "resolvedAt": "2026-07-20"
     }
   ]
