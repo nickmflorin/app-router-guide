@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-20T01:14:59.827Z",
+  "updatedAt": "2026-07-20T01:22:15.515Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -1267,8 +1267,7 @@
         "tag": "p",
         "snippet": "Step back far enough and a deeper point comes into view. The HTTP API between a UI and its"
       },
-      "resolution": "Hedge removed: the passage now says the HTTP API between a UI and its data \"is exactly the thing this architecture was built to eliminate\" (bolded).",
-      "resolvedAt": "2026-07-19"
+      "resolution": "Hedge removed: the passage now says the HTTP API between a UI and its data \"is exactly the thing this architecture was built to eliminate\" (bolded)."
     },
     {
       "id": "nmrsj40gh",
@@ -1284,8 +1283,7 @@
         "tag": "figure",
         "snippet": "Suspense, as version control: five frames ① main is the screen main the committed UI: what"
       },
-      "resolution": "All five right-column annotations now share one left edge (x=460); left labels moved in to x=24 and the longest annotation shortened so the panel's left/right padding reads close to even; circled numbers removed from the frame labels.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "All five right-column annotations now share one left edge (x=460); left labels moved in to x=24 and the longest annotation shortened so the panel's left/right padding reads close to even; circled numbers removed from the frame labels."
     },
     {
       "id": "nmrsj8b93",
@@ -1302,7 +1300,23 @@
         "tag": "li",
         "snippet": "React / Next.js: whether the practice applies to any React app or is specific to (or drama"
       },
-      "resolution": "The scope-chip legend in §1 now includes the UI/UX chip alongside React/Next, described as a concern that spans design and engineering, linking §11. Also fixed a stale mention of the deleted Worked Example chapter in the same paragraph.",
+      "resolution": "The scope-chip legend in §1 now includes the UI/UX chip alongside React/Next, described as a concern that spans design and engineering, linking §11. Also fixed a stale mention of the deleted Worked Example chapter in the same paragraph."
+    },
+    {
+      "id": "nmrsjdjig",
+      "page": "09-containers-content-shifting.html",
+      "ts": "2026-07-20T01:18:50.632Z",
+      "status": "resolved",
+      "text": "I would like to also add a nearly identical example here that shows how a layout for a route group in nextjs or a series of routes doesn't rerender when the route changes by non-dynamic params.  So like if we have /learners and /evaluators and /levels, and each one shows the program header with a tab for hte active page, and the content area is a table for each, we use a route group so that the layout persists between them as the layout si defined for the route group.  just because they're siblings and not children does not mean they should not use a common layout - in fact the common layout should be leveraged aas much as humanly possible and not redundantly repeated between sibling branches",
+      "target": {
+        "anchor": "layouts",
+        "path": [
+          21
+        ],
+        "tag": "figure",
+        "snippet": "Route change: the layout holds, the content swaps /programs/42/report Program header (layo"
+      },
+      "resolution": "§9.4 gained the sibling twin of the route-change figure: a prose paragraph on route groups (siblings are the reason to reach for the group, not to skip the shared layout; leverage the common layout maximally, never repeat it per sibling page), a (program)/ file-tree snippet (layout.tsx + learners/evaluators/levels pages), and a near-identical two-panel diagram: /learners to /evaluators, identical blue group-layout scaffold with the tab bar, active tab moving (pathname-derived), only the green table content swapping. Mermaid twin included; caption names the wrong version (chrome repeated inside each sibling page, rebuilt on every navigation).",
       "resolvedAt": "2026-07-19"
     }
   ]
