@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-19T23:13:06.802Z",
+  "updatedAt": "2026-07-20T01:14:59.827Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -1186,8 +1186,7 @@
         "tag": "h2",
         "snippet": "10.1 How Suspense actually works"
       },
-      "resolution": "Per your finished thought: §10.1 gained an \"Under the hood: rendering is speculative, committing is atomic\" subsection: the throw-a-thenable mechanism, the attempt-not-commitment point (suspended component is never mounted: no DOM, no effects, no lifecycle; the attempt is discarded and the subtree re-renders from scratch on resolve), and the render-vs-commit two-phase model. Then the Beyond React 16 version-control analogy as a four-frame git-graph diagram (main on screen; branch suspends unmerged; main keeps moving; data resolves and merges atomically) with mermaid twin; the caption credits and links the talk at the ~29min mark and adds the fallback/transition footnotes. A GIF is not feasible in the SVG+markdown pipeline, so it is a multi-frame static diagram. Talk added to the references ledger.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "Per your finished thought: §10.1 gained an \"Under the hood: rendering is speculative, committing is atomic\" subsection: the throw-a-thenable mechanism, the attempt-not-commitment point (suspended component is never mounted: no DOM, no effects, no lifecycle; the attempt is discarded and the subtree re-renders from scratch on resolve), and the render-vs-commit two-phase model. Then the Beyond React 16 version-control analogy as a four-frame git-graph diagram (main on screen; branch suspends unmerged; main keeps moving; data resolves and merges atomically) with mermaid twin; the caption credits and links the talk at the ~29min mark and adds the fallback/transition footnotes. A GIF is not feasible in the SVG+markdown pipeline, so it is a multi-frame static diagram. Talk added to the references ledger."
     },
     {
       "id": "nmrscoy0w",
@@ -1204,8 +1203,7 @@
         "tag": "p",
         "snippet": "Here is the mindset that makes all of this click. If you treat every type coercion as the "
       },
-      "resolution": "The mindset callout is now three paragraphs: the TypeScript coercion model, then useEffect on its own (wince at every effect, stretch the muscles that find another way, and you get better at React itself as its design patterns surface), then \"use client\" separately (avoid it like the plague and the server-first paths and React 19 / App Router patterns emerge naturally through the trial and error of avoidance).",
-      "resolvedAt": "2026-07-19"
+      "resolution": "The mindset callout is now three paragraphs: the TypeScript coercion model, then useEffect on its own (wince at every effect, stretch the muscles that find another way, and you get better at React itself as its design patterns surface), then \"use client\" separately (avoid it like the plague and the server-first paths and React 19 / App Router patterns emerge naturally through the trial and error of avoidance)."
     },
     {
       "id": "nmrseqjch",
@@ -1221,8 +1219,7 @@
         "tag": "p",
         "snippet": "The honest comparison first, because TanStack Query is an excellent library and the more p"
       },
-      "resolution": "§14.6 reframed as \"SWR vs TanStack Query\": TanStack acknowledged as more popular, more powerful, fully App Router compatible, and the right general-audience default; the architectural point is now explicit that NEITHER is the primary data fetching means (server owns that; client fetching is the §14.7 interaction-born residue); within that small role SWR gets a mild nod for surface fit, 4KB vs 13KB, and Vercel/Next alignment, with the caveat that neither choice is wrong.",
-      "resolvedAt": "2026-07-19"
+      "resolution": "§14.6 reframed as \"SWR vs TanStack Query\": TanStack acknowledged as more popular, more powerful, fully App Router compatible, and the right general-audience default; the architectural point is now explicit that NEITHER is the primary data fetching means (server owns that; client fetching is the §14.7 interaction-born residue); within that small role SWR gets a mild nod for surface fit, 4KB vs 13KB, and Vercel/Next alignment, with the caveat that neither choice is wrong."
     },
     {
       "id": "nmrseshkr",
@@ -1238,8 +1235,7 @@
         "tag": "h2",
         "snippet": "17.1 Why we audited our own code"
       },
-      "resolution": "Guide-wide first-person sweep: ~40 organizational uses of we/our/us removed across 16 pages (the audit chapter now reads \"Why the codebase was audited\" / \"the repo's actual usage\" / \"The apps are SPAs...\"; \"our codebase\" is now \"the Tracker codebase\"; \"our house recommendation\" is \"the house recommendation\"; index TOC blurbs depersonalized, etc.). Kept: quoted developer inner monologue (\"how do I get data into my components?\"), the Jobs quote, and didactic universal \"we\" in questions like \"do we have data?\" where impersonal phrasing would flatten the prose. §1 intentionally still first-person pending your call (asked in chat).",
-      "resolvedAt": "2026-07-19"
+      "resolution": "Guide-wide first-person sweep: ~40 organizational uses of we/our/us removed across 16 pages (the audit chapter now reads \"Why the codebase was audited\" / \"the repo's actual usage\" / \"The apps are SPAs...\"; \"our codebase\" is now \"the Tracker codebase\"; \"our house recommendation\" is \"the house recommendation\"; index TOC blurbs depersonalized, etc.). Kept: quoted developer inner monologue (\"how do I get data into my components?\"), the Jobs quote, and didactic universal \"we\" in questions like \"do we have data?\" where impersonal phrasing would flatten the prose. §1 intentionally still first-person pending your call (asked in chat)."
     },
     {
       "id": "nmrseuop5",
@@ -1255,7 +1251,58 @@
         "tag": "p",
         "snippet": "The tiebreaker is alignment. SWR is built and maintained by Vercel, the same team that shi"
       },
-      "resolution": "Research reported in chat and approved: not fundamentally better suited, a mild tiebreaker (both fully App Router compatible; TanStack ~12M weekly downloads and growing faster, stronger mutations/devtools, slightly more hydration ceremony; SWR ~4KB, small surface, Vercel co-maintained and designed for use with Next). §14.6 rewritten on that agreed basis.",
+      "resolution": "Research reported in chat and approved: not fundamentally better suited, a mild tiebreaker (both fully App Router compatible; TanStack ~12M weekly downloads and growing faster, stronger mutations/devtools, slightly more hydration ceremony; SWR ~4KB, small surface, Vercel co-maintained and designed for use with Next). §14.6 rewritten on that agreed basis."
+    },
+    {
+      "id": "nmrsj3b9i",
+      "page": "05-client-server-boundaries.html",
+      "ts": "2026-07-20T01:10:53.382Z",
+      "status": "resolved",
+      "text": "lets say \"it is the exact same thing this architecture was meant to elminate or whatever\" be more concrete here",
+      "target": {
+        "anchor": "actions-central-api",
+        "path": [
+          95
+        ],
+        "tag": "p",
+        "snippet": "Step back far enough and a deeper point comes into view. The HTTP API between a UI and its"
+      },
+      "resolution": "Hedge removed: the passage now says the HTTP API between a UI and its data \"is exactly the thing this architecture was built to eliminate\" (bolded).",
+      "resolvedAt": "2026-07-19"
+    },
+    {
+      "id": "nmrsj40gh",
+      "page": "10-suspense-streaming.html",
+      "ts": "2026-07-20T01:11:26.033Z",
+      "status": "resolved",
+      "text": "lets make sure the text on the right column is all left aligned with the text above and below.  I would also like to make sure the padding on the overall diagram panel is even left and right - or closer to even, given that the text on the right is NOT right aligned it can't be exact but should appear close.  Also - lets remove the circled numbers before the left bold black text - just the text is fine",
+      "target": {
+        "anchor": "under-the-hood",
+        "path": [
+          10
+        ],
+        "tag": "figure",
+        "snippet": "Suspense, as version control: five frames ① main is the screen main the committed UI: what"
+      },
+      "resolution": "All five right-column annotations now share one left edge (x=460); left labels moved in to x=24 and the longest annotation shortened so the panel's left/right padding reads close to even; circled numbers removed from the frame labels.",
+      "resolvedAt": "2026-07-19"
+    },
+    {
+      "id": "nmrsj8b93",
+      "page": "01-introduction.html",
+      "ts": "2026-07-20T01:14:46.647Z",
+      "status": "resolved",
+      "text": "doesn't include the UI/UX scope here",
+      "target": {
+        "anchor": "how-organized",
+        "path": [
+          37,
+          0
+        ],
+        "tag": "li",
+        "snippet": "React / Next.js: whether the practice applies to any React app or is specific to (or drama"
+      },
+      "resolution": "The scope-chip legend in §1 now includes the UI/UX chip alongside React/Next, described as a concern that spans design and engineering, linking §11. Also fixed a stale mention of the deleted Worked Example chapter in the same paragraph.",
       "resolvedAt": "2026-07-19"
     }
   ]

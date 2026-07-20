@@ -241,24 +241,24 @@ flowchart LR
       </text>
 
       <!-- FRAME 1 -->
-      <text x='12' y='52' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
-        ① main is the screen
+      <text x='24' y='52' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        main is the screen
       </text>
       <line x1='185' y1='56' x2='305' y2='56' stroke='#c9c9c9' stroke-width='1.5'></line>
       <circle cx='205' cy='56' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
       <circle cx='245' cy='56' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
       <circle cx='285' cy='56' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
       <text x='330' y='56' font-size='9' fill='#737373' dominant-baseline='central'>main</text>
-      <text x='410' y='50' font-size='9.5' fill='#157a4c' dominant-baseline='central'>
+      <text x='460' y='50' font-size='9.5' fill='#157a4c' dominant-baseline='central'>
         the committed UI: what the user sees
       </text>
-      <text x='410' y='63' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+      <text x='460' y='63' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
         every commit here was a finished render
       </text>
 
       <!-- FRAME 2 -->
-      <text x='12' y='114' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
-        ② a branch for the next UI
+      <text x='24' y='114' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        a branch for the next UI
       </text>
       <line x1='185' y1='118' x2='305' y2='118' stroke='#c9c9c9' stroke-width='1.5'></line>
       <circle cx='205' cy='118' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
@@ -273,16 +273,16 @@ flowchart LR
         stroke='#b45309'
         stroke-width='1.5'
         stroke-dasharray='4 3'></circle>
-      <text x='410' y='112' font-size='9.5' fill='#8a5a00' dominant-baseline='central'>
+      <text x='460' y='112' font-size='9.5' fill='#8a5a00' dominant-baseline='central'>
         the render attempt suspends waiting for data
       </text>
-      <text x='410' y='125' font-size='9' fill='#8f6b2e' dominant-baseline='central'>
+      <text x='460' y='125' font-size='9' fill='#8f6b2e' dominant-baseline='central'>
         unmerged work in memory: nothing reaches the screen
       </text>
 
       <!-- FRAME 3 -->
-      <text x='12' y='176' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
-        ③ main keeps moving
+      <text x='24' y='176' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        main keeps moving
       </text>
       <line x1='185' y1='180' x2='345' y2='180' stroke='#c9c9c9' stroke-width='1.5'></line>
       <circle cx='205' cy='180' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
@@ -298,16 +298,16 @@ flowchart LR
         stroke-width='1.5'
         stroke-dasharray='4 3'></circle>
       <circle cx='325' cy='180' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
-      <text x='410' y='174' font-size='9.5' fill='#157a4c' dominant-baseline='central'>
+      <text x='460' y='174' font-size='9.5' fill='#157a4c' dominant-baseline='central'>
         the old UI stays alive and interactive meanwhile
       </text>
-      <text x='410' y='187' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+      <text x='460' y='187' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
         this is exactly what a transition preserves (§10.7)
       </text>
 
       <!-- FRAME 4: the branch completes; HEAD points at the finished tree -->
-      <text x='12' y='238' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
-        ④ the branch completes
+      <text x='24' y='238' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        the branch completes
       </text>
       <line x1='185' y1='242' x2='345' y2='242' stroke='#c9c9c9' stroke-width='1.5'></line>
       <circle cx='205' cy='242' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
@@ -327,16 +327,16 @@ flowchart LR
         stroke='#0070f3'
         stroke-width='1.2'
         marker-end='url(#aVC)'></line>
-      <text x='430' y='236' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+      <text x='460' y='236' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
         the data landed: a finished tree exists in memory
       </text>
-      <text x='430' y='249' font-size='9' fill='#527dad' dominant-baseline='central'>
+      <text x='460' y='249' font-size='9' fill='#527dad' dominant-baseline='central'>
         HEAD points at what the screen should become
       </text>
 
       <!-- FRAME 5: merged and flattened onto one line -->
-      <text x='12' y='300' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
-        ⑤ merge: flat again
+      <text x='24' y='300' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        merge: flat again
       </text>
       <line x1='185' y1='304' x2='405' y2='304' stroke='#c9c9c9' stroke-width='1.5'></line>
       <circle cx='205' cy='304' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
@@ -345,11 +345,11 @@ flowchart LR
       <circle cx='313' cy='304' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
       <circle cx='349' cy='304' r='6' fill='#eaf3fe' stroke='#0070f3' stroke-width='1.5'></circle>
       <circle cx='385' cy='304' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
-      <text x='430' y='298' font-size='9.5' fill='#157a4c' dominant-baseline='central'>
+      <text x='460' y='298' font-size='9.5' fill='#157a4c' dominant-baseline='central'>
         one atomic commit: the new UI appears whole
       </text>
-      <text x='430' y='311' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
-        history is a single line again, as if it was always main
+      <text x='460' y='311' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+        history is one line again, as if it was always main
       </text>
 
     </svg>
