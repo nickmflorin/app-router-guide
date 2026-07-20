@@ -1,0 +1,635 @@
+---
+import GuidePage from '../../layouts/GuidePage.astro';
+import Chip from '../../components/Chip.astro';
+import Callout from '../../components/Callout.astro';
+import GoDeeper from '../../components/GoDeeper.astro';
+import Diagram from '../../components/Diagram.astro';
+import CodeCaption from '../../components/CodeCaption.astro';
+import Snippet from '../../components/Snippet.astro';
+---
+
+<GuidePage title='Bootstrapping the First Paint - App Router Guide' root='..'>
+  <div class='kicker'>Chapter 6 · Part A: Maximize the Known</div>
+  <h1>Bootstrapping the First Paint</h1>
+  <p class='lede'>
+    Some views hinge on state that doesn't fit in a URL. That is not a license to client-fetch them
+    behind a skeleton: the server can still source the data and paint the page complete, with the
+    client's own fetching deferred until the browser is idle. This chapter is that pattern, where it
+    came from, and the honest caveat about when the App Router has a better answer.
+  </p>
+
+  <h2 id='problem'>6.1 The gap this fills</h2>
+  <p>
+    Part A's preferred shape is simple: put the view's inputs in the URL, resolve them on the
+    server, render finished HTML (<a href='09-server-resolvable-state.html'>§9</a>). But every real
+    application has a few views where that gets hard. Think of a large data table wearing every
+    feature at once: composite filters, free-text search, multi-column ordering, cursor-based
+    pagination, per-user view preferences. Some of that state is expressible in a URL and should be;
+    some of it is genuinely awkward there, whether because the state is too rich to serialize
+    cleanly, too transient to deserve history entries, or owned by client machinery (a grid library,
+    a saved-views system) that was never going to read <code>searchParams</code>.
+  </p>
+  <p>
+    The common surrender at that point is to hand the whole view to the client: fetch in a hook,
+    paint a skeleton first, content later. And that surrender gives up the one thing this entire
+    part of the guide exists to protect, the complete first paint. There is a middle path, and it
+    predates the App Router: <strong>bootstrap the view from the server, and defer the client's own
+    fetching until after the paint</strong>.
+  </p>
+
+  <h2 id='pattern'>6.2 The pattern: server seeds, client validates on idle</h2>
+  <p>The pattern has three moves, and the order is the point. <Chip k='react' /><Chip k='very' /></p>
+  <ol>
+    <li>
+      <strong>The server sources the data during the request.</strong> In the pages router this was
+      <code>getServerSideProps</code>; in the App Router it is simply a server component awaiting
+      the query. Either way, the initial view's data arrives as a prop, and the page renders
+      <em>everything</em> on the first paint: the table, its rows, its controls. No spinners, no
+      skeletons, nothing to swap.
+    </li>
+    <li>
+      <strong>The client's twin query exists but starts paused.</strong> The same data has a client
+      hook (SWR, TanStack Query, urql), because interactions will need it later, but on load it is
+      gated behind an idle signal: <code>requestIdleCallback</code> with a timeout fallback. The
+      second fetch never competes with the main thread while the page renders and hydrates; it fires
+      a few seconds later, quietly, because nothing needs it immediately.
+    </li>
+    <li>
+      <strong>Once awake, the client copy takes over.</strong> The component renders
+      <code>clientData ?? bootstrappedData</code>: the deferred fetch self-validates against the
+      server copy (catching accidental mismatches), and from then on the data is a live citizen of
+      the client cache. When state changes (a filter, a mutation, an invalidation), the hook refires
+      on its own, so everything born from an interaction refreshes client-side without ceremony.
+    </li>
+  </ol>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 208'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
+        Bootstrapped view: complete paint first, client fetching later
+      </text>
+
+      <!-- LANE 1: client-owned -->
+      <text
+        x='12'
+        y='48'
+        font-size='10.5'
+        fill='#b3261e'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        Client-owned view
+      </text>
+      <text x='12' y='61' font-size='9' fill='#b0483e' dominant-baseline='central'>
+        (fetch after mount)
+      </text>
+      <rect x='175' y='40' width='90' height='18' rx='3' fill='#f5f5f5' stroke='#c9c9c9'></rect>
+      <text
+        x='220'
+        y='49'
+        font-size='9'
+        fill='#525252'
+        text-anchor='middle'
+        dominant-baseline='central'>JS + hydrate</text>
+      <rect x='269' y='40' width='130' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text
+        x='334'
+        y='49'
+        font-size='9'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'>fetch the view's data</text>
+      <rect x='403' y='40' width='110' height='18' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text
+        x='458'
+        y='49'
+        font-size='9'
+        fill='#0757ba'
+        text-anchor='middle'
+        dominant-baseline='central'>content replaces it</text>
+      <text
+        x='530'
+        y='42'
+        font-size='9.5'
+        fill='#b3261e'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        first paint: a skeleton shell;
+      </text>
+      <text x='530' y='55' font-size='9' fill='#b0483e' dominant-baseline='central'>
+        content arrives later, in pieces
+      </text>
+
+      <!-- LANE 2: bootstrapped -->
+      <text
+        x='12'
+        y='110'
+        font-size='10.5'
+        fill='#157a4c'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        Bootstrapped view
+      </text>
+      <text x='12' y='123' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+        (server sources the data)
+      </text>
+      <rect x='175' y='102' width='160' height='18' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text
+        x='255'
+        y='111'
+        font-size='9'
+        fill='#0757ba'
+        text-anchor='middle'
+        dominant-baseline='central'>server: fetch + render the view</text>
+      <rect x='339' y='102' width='104' height='18' rx='3' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text
+        x='391'
+        y='111'
+        font-size='9'
+        fill='#157a4c'
+        text-anchor='middle'
+        dominant-baseline='central'>paint: complete</text>
+      <line
+        x1='447'
+        y1='111'
+        x2='501'
+        y2='111'
+        stroke='#c9c9c9'
+        stroke-width='1.5'
+        stroke-dasharray='3 3'></line>
+      <text x='474' y='99' font-size='8.5' fill='#737373' text-anchor='middle'>
+        browser idle
+      </text>
+      <rect x='505' y='102' width='140' height='18' rx='3' fill='#e0f5f9' stroke='#0891b2'></rect>
+      <text
+        x='575'
+        y='111'
+        font-size='9'
+        fill='#0e7490'
+        text-anchor='middle'
+        dominant-baseline='central'>client query unpauses</text>
+      <text x='530' y='134' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+        validates against the server copy
+      </text>
+      <text x='175' y='134' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+        zero spinners, zero skeletons; nothing on the page waits for the client
+      </text>
+
+      <!-- LANE 3: after an interaction -->
+      <text
+        x='12'
+        y='186'
+        font-size='10.5'
+        fill='#0e7490'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        Later: an interaction
+      </text>
+      <text x='12' y='199' font-size='9' fill='#3f8a99' dominant-baseline='central'>
+        (a filter, a mutation)
+      </text>
+      <rect x='175' y='178' width='110' height='18' rx='3' fill='#f5f5f5' stroke='#c9c9c9'></rect>
+      <text
+        x='230'
+        y='187'
+        font-size='9'
+        fill='#525252'
+        text-anchor='middle'
+        dominant-baseline='central'>state changes</text>
+      <rect x='289' y='178' width='160' height='18' rx='3' fill='#e0f5f9' stroke='#0891b2'></rect>
+      <text
+        x='369'
+        y='187'
+        font-size='9'
+        fill='#0e7490'
+        text-anchor='middle'
+        dominant-baseline='central'>client refetch: just this data</text>
+      <text
+        x='465'
+        y='180'
+        font-size='9.5'
+        fill='#0f7b48'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        the live hook refires on its own;
+      </text>
+      <text x='465' y='193' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+        from here on, this data is client-owned (§15.7)
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart LR
+  subgraph CO["Client-owned view"]
+    direction LR
+    c1("JS + hydrate"):::neutral --> c2("fetch the view's data"):::amber
+    c2 --> c3("content replaces the skeleton"):::blue
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style CO fill:#ffffff,stroke:#e0e0e0,color:#b3261e,rx:8px,ry:8px
+  classDef neutral fill:#f5f5f5,stroke:#c9c9c9,color:#525252
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+%%split%%
+flowchart LR
+  subgraph BS["Bootstrapped view"]
+    direction LR
+    b1("server: fetch + render the view"):::blue
+    b1 --> b2("paint: complete<br/>zero spinners, zero skeletons"):::green
+    b2 -->|"browser idle"| b3("client query unpauses<br/>validates against the server copy"):::cyan
+    b3 -->|"an interaction"| b4("client refetch: just this data<br/>the live hook refires on its own"):::cyan
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style BS fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+</pre>
+
+    <Fragment slot='caption'>
+      The trade the bootstrap makes. The client-owned lane pays for its flexibility at the worst
+      moment: the first paint. The bootstrapped lane pays later and off the critical path: the
+      server sources the data and paints the view complete, the client's twin query wakes only when
+      the browser is idle (validating against the copy it was seeded with), and from then on
+      interaction-driven changes refetch client-side like any live query.
+    </Fragment>
+  </Diagram>
+
+  <h2 id='mechanics'>6.3 The mechanics, in code</h2>
+  <p>
+    The idle gate is a few lines. The browser's own scheduler says when the main thread has settled;
+    a timeout guarantees it fires even on a busy page:
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">hooks/use-is-idle.ts - "the browser has settled down"</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">useIsIdle</span>({ timeout = <span class="tok-str">2000</span> } = {}) {
+  <span class="tok-kw">const</span> [isIdle, setIsIdle] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
+  <span class="tok-fn">useEffect</span>(() =&gt; {
+    <span class="tok-kw">const</span> handle = window.<span class="tok-fn">requestIdleCallback</span>(() =&gt; <span class="tok-fn">setIsIdle</span>(<span class="tok-kw">true</span>), { timeout });
+    <span class="tok-kw">return</span> () =&gt; window.<span class="tok-fn">cancelIdleCallback</span>(handle);
+  }, [timeout]);
+  <span class="tok-kw">return</span> isIdle;
+}</pre>
+    <CodeCaption>
+      The production version adds a <code>setTimeout</code> fallback for browsers without <code
+        >requestIdleCallback</code
+      > and a cancellation guard, but this is the whole idea: a boolean that flips once the browser has
+      nothing better to do (or the timeout passes), used to hold a query back from the critical path.
+    </CodeCaption>
+  </Snippet>
+
+  <p>
+    The provider is where the three moves meet. This is the shape <code>ojl-tracker</code> uses for
+    both the authenticated user and the program model: seeded from a server prop, refreshed by an
+    idle-deferred query, live thereafter:
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">ProgramProvider.tsx - seeded by the server, validated on idle, live afterward</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramProvider</span>({ bootstrappedProgram, programId, children }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">const</span> isIdle = <span class="tok-fn">useIsIdle</span>();
+
+  <span class="tok-com">/* Paused until idle: this request never competes with the first render.
+     Once it runs it stays live, so cache invalidation and state changes
+     refresh the program for the whole subtree. */</span>
+  <span class="tok-kw">const</span> { data } = <span class="tok-fn">useProgram</span>({ programId }, { <span class="tok-prop">pause</span>: !isIdle });
+
+  <span class="tok-com">/* The client copy wins once it exists; until then, the server copy
+     already painted everything. */</span>
+  <span class="tok-kw">const</span> program = data ?? bootstrappedProgram;
+
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">ProgramContext</span> <span class="tok-prop">value</span>={program}&gt;{children}&lt;/<span class="tok-fn">ProgramContext</span>&gt;;
+}</pre>
+    <CodeCaption>
+      Straight from the real pattern: the authenticated-user version defers five seconds and relies
+      on the query staying subscribed so profile edits during the session refresh the user in
+      context automatically. One practical detail worth copying: compare the two copies with a
+      deep-equality memo before swapping, so a byte-identical client response doesn't re-render the
+      subtree for nothing.
+    </CodeCaption>
+  </Snippet>
+
+  <h2 id='worked'>6.4 Worked example: the table that outgrew its URL</h2>
+  <p>
+    Now the case this pattern earns its keep on. A reports table renders a lot of data and carries
+    complex filters, free-text search, pagination, and multi-column ordering, a query shape that is
+    at times genuinely difficult to capture in a URL. The goal is unchanged from the rest of Part A:
+    <strong>a complete first paint</strong>, while still letting everything that depends on an
+    interaction refetch after that interaction occurs.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/reports/page.tsx - the server sources the default view</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ReportsPage</span>() {
+  <span class="tok-com">/* The default view's rows, fetched where the data lives (§4). The page
+     paints complete: toolbar, filters, rows, pagination, all real. */</span>
+  <span class="tok-kw">const</span> rows = <span class="tok-kw">await</span> <span class="tok-fn">getReportRows</span>(DEFAULT_QUERY);
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">ReportsTable</span> <span class="tok-prop">bootstrappedRows</span>={rows} <span class="tok-prop">defaultQuery</span>={DEFAULT_QUERY} /&gt;;
+}</pre>
+    <CodeCaption>
+      In the pages router this exact move was <code>getServerSideProps</code> handing props to the
+      page, which is where the pattern grew up; the App Router version is just a server component
+      awaiting the same query. Either way the client component below receives a fully-known first
+      view.
+    </CodeCaption>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">ReportsTable.tsx - complete on first paint, client-owned after interactions</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">ReportsTable</span>({ bootstrappedRows, defaultQuery }: <span class="tok-fn">Props</span>) {
+  <span class="tok-com">/* Filters, search, sort, page: the rich state that outgrew the URL. */</span>
+  <span class="tok-kw">const</span> [query, setQuery] = <span class="tok-fn">useState</span>(defaultQuery);
+  <span class="tok-kw">const</span> isIdle = <span class="tok-fn">useIsIdle</span>();
+  <span class="tok-kw">const</span> interacted = query !== defaultQuery;
+
+  <span class="tok-com">/* Paused until the browser is idle OR the user changes the query,
+     whichever comes first. Keyed by the query, so every interaction
+     refetches exactly this data and nothing else. */</span>
+  <span class="tok-kw">const</span> { data, isValidating } = <span class="tok-fn">useReportRows</span>(query, {
+    <span class="tok-prop">pause</span>: !isIdle &amp;&amp; !interacted,
+  });
+  <span class="tok-kw">const</span> rows = data ?? bootstrappedRows;
+
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">TableContainer</span> <span class="tok-prop">isRefreshing</span>={isValidating}&gt;
+      &lt;<span class="tok-fn">TableToolbar</span> <span class="tok-prop">query</span>={query} <span class="tok-prop">onChange</span>={setQuery} /&gt;
+      &lt;<span class="tok-fn">Rows</span> <span class="tok-prop">rows</span>={rows} /&gt;
+    &lt;/<span class="tok-fn">TableContainer</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Count the states the user never sees: no first-load skeleton (the bootstrap painted real
+      rows), no empty-state flash, no toolbar waiting on data it doesn't need. After the first
+      interaction the component behaves like any live client table: stale rows stay visible under a
+      refresh indicator (<a href='11-suspense-streaming.html#refetch'>§11.5</a>) while the keyed
+      query fetches the new page.
+    </CodeCaption>
+  </Snippet>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 286'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker
+          id='aBst'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#737373'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
+        The bootstrapped table: complete at t₀, client-refreshed after interactions
+      </text>
+
+      <!-- LEFT PANEL: first paint -->
+      <rect x='30' y='28' width='280' height='234' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='42' y='40' width='256' height='20' rx='6' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text
+        x='170'
+        y='50'
+        font-size='9.5'
+        fill='#0757ba'
+        text-anchor='middle'
+        dominant-baseline='central'>/reports · first paint</text>
+      <rect x='42' y='68' width='160' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='52' y='77' font-size='8.5' fill='#0757ba' dominant-baseline='central'>
+        filters · search · sort (real)
+      </text>
+      <rect x='210' y='68' width='88' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text
+        x='254'
+        y='77'
+        font-size='8.5'
+        fill='#0757ba'
+        text-anchor='middle'
+        dominant-baseline='central'>pagination</text>
+      <rect x='42' y='94' width='256' height='156' rx='6' fill='#ffffff' stroke='#0070f3'></rect>
+      <rect x='54' y='106' width='232' height='10' rx='4' fill='#cfe9dd'></rect>
+      <rect x='54' y='122' width='196' height='10' rx='4' fill='#cfe9dd'></rect>
+      <rect x='54' y='138' width='218' height='10' rx='4' fill='#cfe9dd'></rect>
+      <rect x='54' y='154' width='176' height='10' rx='4' fill='#cfe9dd'></rect>
+      <rect x='54' y='170' width='232' height='10' rx='4' fill='#cfe9dd'></rect>
+      <rect x='54' y='186' width='208' height='10' rx='4' fill='#cfe9dd'></rect>
+      <rect x='54' y='202' width='226' height='10' rx='4' fill='#cfe9dd'></rect>
+      <rect x='54' y='218' width='188' height='10' rx='4' fill='#cfe9dd'></rect>
+      <text x='54' y='240' font-size='9' fill='#157a4c'>real rows, bootstrapped by the server</text>
+      <text x='170' y='280' font-size='9.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+        no skeletons anywhere on the page
+      </text>
+
+      <!-- navigate arrow -->
+      <line
+        x1='318'
+        y1='145'
+        x2='398'
+        y2='145'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#aBst)'></line>
+      <text x='358' y='132' font-size='9.5' fill='#171717' text-anchor='middle' font-weight='500'>
+        filter applied
+      </text>
+
+      <!-- RIGHT PANEL: after interaction -->
+      <rect x='410' y='28' width='280' height='234' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='422' y='40' width='256' height='20' rx='6' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text
+        x='550'
+        y='50'
+        font-size='9.5'
+        fill='#0757ba'
+        text-anchor='middle'
+        dominant-baseline='central'>/reports · after the interaction</text>
+      <rect x='422' y='68' width='160' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='432' y='77' font-size='8.5' fill='#0757ba' dominant-baseline='central'>
+        filters: changed by the user
+      </text>
+      <rect x='590' y='68' width='88' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text
+        x='634'
+        y='77'
+        font-size='8.5'
+        fill='#0757ba'
+        text-anchor='middle'
+        dominant-baseline='central'>pagination</text>
+      <rect
+        x='422'
+        y='94'
+        width='256'
+        height='156'
+        rx='6'
+        fill='#ffffff'
+        stroke='#0891b2'
+        stroke-dasharray='6 4'></rect>
+      <rect x='434' y='106' width='226' height='10' rx='4' fill='#d2eef4'></rect>
+      <rect x='434' y='122' width='188' height='10' rx='4' fill='#d2eef4'></rect>
+      <rect x='434' y='138' width='214' height='10' rx='4' fill='#d2eef4'></rect>
+      <rect x='434' y='154' width='170' height='10' rx='4' fill='#d2eef4'></rect>
+      <rect x='434' y='170' width='226' height='10' rx='4' fill='#d2eef4'></rect>
+      <rect x='434' y='186' width='202' height='10' rx='4' fill='#d2eef4'></rect>
+      <text x='434' y='240' font-size='9' fill='#0e7490'>
+        stale rows held under a refresh indicator
+      </text>
+      <text x='550' y='280' font-size='9.5' fill='#0e7490' text-anchor='middle' font-weight='500'>
+        only the keyed client query refetches; the frame never moves
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart LR
+  subgraph FP["/reports · first paint"]
+    direction TB
+    f1("filters, search, sort, pagination:<br/>real controls"):::blue
+    f1 --> f2("real rows, bootstrapped by the server<br/>no skeletons anywhere"):::green
+  end
+  subgraph AI["after a filter is applied"]
+    direction TB
+    g1("controls: changed by the user"):::blue
+    g1 --> g2("stale rows under a refresh indicator<br/>only the keyed client query refetches"):::cyan
+  end
+  FP -->|"interaction"| AI
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style FP fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  style AI fill:#ffffff,stroke:#e0e0e0,color:#0e7490,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+</pre>
+
+    <Fragment slot='caption'>
+      Both halves of the bargain. At t₀ the page is complete because the server sourced the default
+      view: controls, rows, and pagination all real, nothing waiting on the client. After an
+      interaction, the already-live client query refetches exactly the keyed data while the stale
+      rows hold their ground under an indicator (<a href='11-suspense-streaming.html#refetch'
+        >§11.5</a
+      >); the frame, the controls, and the rest of the page are untouched.
+    </Fragment>
+  </Diagram>
+
+  <h2 id='caveat'>6.5 The honest caveat: this is a pages-router pattern at heart</h2>
+  <p>
+    Be clear-eyed about the lineage.
+    <Chip k='next' />
+    <Chip k='critical' /> Bootstrapping grew up in the pages router, where <code
+      >getServerSideProps</code
+    > was the only way to put server data in the first paint and the client cache was the only thing
+    that could react to an interaction. It still works, and <code>ojl-tracker</code> still runs on it
+    well. But the App Router's <em>native</em> answer to "the view changed" is better when you can use
+    it: put the state in the URL (<a href='09-server-resolvable-state.html'>§9</a>), and a change
+    re-renders <strong>only the affected region on the server</strong>, streaming a fresh RSC
+    payload for just what changed (<a href='04-ssr.html#routing'>§4.5</a>) instead of re-running a
+    whole page or maintaining a duplicate client data layer. One copy of the data, one place it is
+    fetched, shareable URLs, and no twin query to keep honest.
+  </p>
+  <p>
+    So the decision comes in this order. <strong>Default to URL state</strong>; most filter, sort,
+    and pagination state fits a URL more comfortably than the old instinct assumes, and it buys
+    shareability and back-button behavior for free. <strong>Reach for the bootstrap</strong> when
+    the state genuinely won't fit: too rich to serialize, too transient for history, or owned by
+    client machinery that can't read the URL. And when you do reach for it, keep the whole pattern:
+    server seed, idle-deferred twin, client ownership only after the first interaction. The bootstrap
+    without the idle gate is just a page that pays for its data twice at the worst moment; the idle
+    gate without the seed is just a slower skeleton.
+  </p>
+
+  <h2 id='rules'>The rules</h2>
+  <table class='tbl'>
+    <thead>
+      <tr>
+        <th>Rule</th>
+        <th>Scope</th>
+        <th>Importance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <strong>URL state first.</strong> Bootstrapping is for state that genuinely won't fit the
+          URL, not an alternative to trying.
+        </td>
+        <td><Chip k='next' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
+          When bootstrapping, <strong>the server sources the initial view</strong> and the page
+          paints complete: no spinners, no skeletons, nothing waiting on the client.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
+          The client's twin query <strong>starts paused and wakes on idle</strong>; it never
+          competes with the first render, and it validates against the server copy when it runs.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>
+          After the first interaction, <strong>the data is client-owned</strong>: the keyed, live
+          query refetches in response to state changes; the bootstrap is never consulted again.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>
+          Compare server and client copies with <strong>deep equality before swapping</strong>, so
+          an identical response doesn't re-render the subtree.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='imp' /></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <GoDeeper>
+    <p>
+      <a
+        href='https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback'
+        target='_blank'
+        rel='noopener'>MDN: requestIdleCallback</a
+      >
+      · <a href='09-server-resolvable-state.html'>§9</a> for the URL-state default this pattern is
+      the exception to · <a href='15-dedupe-caching.html#client'>§15.3</a> for the client data layer
+      the twin query lives in · <a href='04-ssr.html#routing'>§4.5</a> for the RSC-payload
+      re-rendering that makes URL state the App Router's native answer.
+    </p>
+  </GoDeeper>
+</GuidePage>

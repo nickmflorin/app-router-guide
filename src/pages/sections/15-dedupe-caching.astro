@@ -11,15 +11,15 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='Dedupe & Caching - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 14 · Part C: Decouple the Parts</div>
+  <div class='kicker'>Chapter 15 · Part C: Decouple the Parts</div>
   <h1>Dedupe &amp; Caching</h1>
   <p class='lede'>
-    <a href='13-minimize-the-wires.html'>§13</a> argued that components should ask for their own data
+    <a href='14-minimize-the-wires.html'>§14</a> argued that components should ask for their own data
     instead of being wired together, and that the repetition is free. This chapter is the receipts: the
     layers that collapse many identical questions into one real request, on the server and on the client.
   </p>
 
-  <h2 id='layers'>14.1 The layers</h2>
+  <h2 id='layers'>15.1 The layers</h2>
   <p>
     Think of every data access as a question (<code>getProgram(42)</code>) asked by whichever
     components need it, however many times they like. Between the question and the origin (your API,
@@ -322,7 +322,7 @@ flowchart TB
     </Fragment>
   </Diagram>
 
-  <h2 id='server'>14.2 The server data layer</h2>
+  <h2 id='server'>15.2 The server data layer</h2>
   <p>
     The pattern that makes all of Part C work:
     <strong
@@ -398,11 +398,11 @@ flowchart TB
     set a consistency token in the URL, doesn't orchestrate a
     <code>refetchAll()</code>. It invalidates the tag, and every component that reads
     <code>getFormTemplates()</code>, wherever it sits in the tree, gets fresh data on the next
-    render. That's <a href='13-minimize-the-wires.html#callbacks'>§13.4</a>'s "communicate through
+    render. That's <a href='14-minimize-the-wires.html#callbacks'>§14.4</a>'s "communicate through
     the cache" made concrete.
   </p>
 
-  <h2 id='client'>14.3 The client data layer</h2>
+  <h2 id='client'>15.3 The client data layer</h2>
   <p>
     Some data genuinely must load from the client: it only exists after an interaction, or it polls,
     or it's driven by rapidly-changing client state. For that:
@@ -466,7 +466,7 @@ flowchart TB
     </p>
   </Callout>
 
-  <h2 id='choosing'>14.4 Choosing the layer</h2>
+  <h2 id='choosing'>15.4 Choosing the layer</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -506,7 +506,7 @@ flowchart TB
     </tbody>
   </table>
 
-  <h2 id='extends-fetch'>14.5 How Next.js extends fetch</h2>
+  <h2 id='extends-fetch'>15.5 How Next.js extends fetch</h2>
   <p>
     One thing that trips people up: <code>fetch</code> on the server does not behave like
     <code>fetch</code> in the browser. Next.js replaces the global <code>fetch</code> with an extended
@@ -546,17 +546,17 @@ flowchart TB
 
   <p>
     This is why the audit's blanket <code>export const dynamic = "force-dynamic"</code> plus
-    <code>no-store</code> everywhere (<a href='17-applied-to-tracker.html#finding-7'>§17</a>) is so
+    <code>no-store</code> everywhere (<a href='18-applied-to-tracker.html#finding-7'>§18</a>) is so
     costly: it tells this extended <code>fetch</code> to skip the Data Cache on every call, throwing away
     a layer the framework hands you for free. The habit to build is the inverse: cache by default with
     a declared <code>revalidate</code> and
     <code>tags</code>, and reach for <code>no-store</code> only where the data is genuinely per-request.
     When you call through the database or an SDK instead of <code>fetch</code>, you don't get this
-    automatically, which is exactly why <a href='#server'>§14.2</a>'s
+    automatically, which is exactly why <a href='#server'>§15.2</a>'s
     <code>cache()</code> and <code>"use cache"</code> exist to fill the gap.
   </p>
 
-  <h2 id='swr-depth'>14.6 SWR, in more depth</h2>
+  <h2 id='swr-depth'>15.6 SWR, in more depth</h2>
   <p>
     On the client, the whole model rests on one idea:
     <strong>the key is the identity of the data.</strong> Two components that pass the same key read the
@@ -592,7 +592,7 @@ flowchart TB
     <strong>it never blanks the existing content to do so.</strong> The stale value stays on screen while
     the new one loads, and swaps in when it arrives. That is the stale-while-revalidate contract, and
     it is the client-side echo of the loading doctrine in <a
-      href='10-suspense-streaming.html#refetch'>§10</a
+      href='11-suspense-streaming.html#refetch'>§11</a
     >: revalidation is shown alongside content, never in place of it.
   </p>
   <p>
@@ -601,7 +601,7 @@ flowchart TB
     a key is stale and every reader of that key updates itself. Passing new data to <code
       >mutate</code
     > paints it optimistically and revalidates in the background, which pairs naturally with
-    <a href='18-new-primitives.html#use-optimistic'>§18's <code>useOptimistic</code></a> for action-driven
+    <a href='19-new-primitives.html#use-optimistic'>§19's <code>useOptimistic</code></a> for action-driven
     writes.
   </p>
 
@@ -625,16 +625,16 @@ flowchart TB
       >revalidateTag</code
     > (<a href='05-client-server-boundaries.html#server-actions'>§5.8</a>), and optimism is
     <code>useOptimistic</code>. Client fetching is reserved for the cases where server rendering is
-    genuinely impossible (<a href='#when-client'>§14.7</a>: data born from an interaction, opened on
+    genuinely impossible (<a href='#when-client'>§15.7</a>: data born from an interaction, opened on
     demand, or polled live). So the two libraries should be judged against that deliberately small
     job, not against the needs of an app they'd be carrying alone.
   </p>
   <p>
     Judged that way, <a href='https://swr.vercel.app' target='_blank' rel='noopener'>SWR</a> gets
     the nod, mildly, for fit and alignment rather than quality. Its small surface matches the small
-    job (the §14.7 cases are exactly what it covers, with little machinery left unused), it costs
+    job (the §15.7 cases are exactly what it covers, with little machinery left unused), it costs
     about 4&nbsp;KB gzipped against TanStack Query's ~13&nbsp;KB (<a
-      href='07-bundle-size-code-splitting.html'>§7</a
+      href='08-bundle-size-code-splitting.html'>§8</a
     >'s budget thinking), and it is built by Vercel with Next in mind: its defaults are designed
     against the App Router's behavior, its releases track Next's, and the Next.js docs use it in
     their own client-fetching examples. None of that makes SWR fundamentally better suited; both
@@ -643,7 +643,7 @@ flowchart TB
     small library for a small, deliberate role.
   </p>
 
-  <h2 id='when-client'>14.7 When client fetching is the right tool</h2>
+  <h2 id='when-client'>15.7 When client fetching is the right tool</h2>
   <p>
     Server-first does not mean the client never fetches. It means client fetching is a
     <em>deliberate</em> choice for the cases that genuinely call for it, not the default for everything.
@@ -707,7 +707,7 @@ flowchart TB
 <span class="tok-kw">import</span> { useDetails } <span class="tok-kw">from</span> <span class="tok-str">"@/hooks/useDetails"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">DetailsDrawer</span>({ id, onClose }: { id: <span class="tok-fn">string</span>; onClose: () =&gt; <span class="tok-kw">void</span> }) {
-  <span class="tok-com">// The shared SWR hook (§14.3): useSWR(`programs/${id}/details`, fetcher).</span>
+  <span class="tok-com">// The shared SWR hook (§15.3): useSWR(`programs/${id}/details`, fetcher).</span>
   <span class="tok-kw">const</span> { data, error, isLoading } = <span class="tok-fn">useDetails</span>(id);
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Drawer</span> <span class="tok-prop">onClose</span>={onClose}&gt;
@@ -722,16 +722,16 @@ flowchart TB
       The component mounts only after the click, so the SWR request starts at the exact moment the
       user asks for the content: nothing about it touches the first paint. Loading, error, and data
       states all live inside the panel, and because the hook is the shared one from
-      <a href='#client'>§14.3</a>, a second open (or any other component asking the same question)
+      <a href='#client'>§15.3</a>, a second open (or any other component asking the same question)
       hits the cache instead of the network. This drawer showing its own skeleton is fine by
-      <a href='10-suspense-streaming.html'>§10</a>'s rules: the panel is the container, and the
+      <a href='11-suspense-streaming.html'>§11</a>'s rules: the panel is the container, and the
       content was never known.
     </CodeCaption>
   </Snippet>
 
   <p>
     The test is the one from
-    <a href='08-server-resolvable-state.html#client-state'>§8.5</a>, applied to data: if the content
+    <a href='09-server-resolvable-state.html#client-state'>§9.5</a>, applied to data: if the content
     is part of what the page <em>is</em>, the server should fetch it; if it is something the page <em
       >does</em
     > in response to the user, a client hook is the right home. The failure mode the audit found is the
@@ -803,7 +803,7 @@ flowchart TB
         rel='noopener'>Next.js: Migrating to Cache Components</a
       >
       · <a href='https://swr.vercel.app' target='_blank' rel='noopener'>SWR docs</a>. Full list in <a
-        href='19-references.html'>§19</a
+        href='20-references.html'>§20</a
       >.
     </p>
   </GoDeeper>

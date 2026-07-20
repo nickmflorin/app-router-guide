@@ -11,7 +11,7 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='Containers & Content Shifting - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 9 · Part B: Contain the Unknown</div>
+  <div class='kicker'>Chapter 10 · Part B: Contain the Unknown</div>
   <h1>Containers &amp; Content Shifting</h1>
   <p class='lede'>
     Containers are the known half of "contain the unknown": they render immediately, they reserve
@@ -19,7 +19,7 @@ import Snippet from '../../components/Snippet.astro';
     on the page ever moves; get it wrong and every request landing is a small earthquake.
   </p>
 
-  <h2 id='cost'>9.1 What content shifting costs</h2>
+  <h2 id='cost'>10.1 What content shifting costs</h2>
   <p>
     Content shift is the page rearranging itself while the user is already using it. The costs are
     concrete: the paragraph they were reading jumps out from under their eyes; the button they were
@@ -352,7 +352,7 @@ flowchart LR
     </Fragment>
   </Diagram>
 
-  <h2 id='doctrine'>9.2 The container doctrine</h2>
+  <h2 id='doctrine'>10.2 The container doctrine</h2>
   <p>The fix is a strict separation of ownership. Split every uncertain region into two roles:</p>
   <ul>
     <li>
@@ -362,13 +362,13 @@ flowchart LR
       >. It is part of the scaffold, so it belongs with the structure (<a
         href='03-mental-model.html'>§3</a
       >'s app directory,
-      <a href='#layouts'>§9.4</a> below). <Chip k='react' />
+      <a href='#layouts'>§10.4</a> below). <Chip k='react' />
       <Chip k='critical' />
     </li>
     <li>
       <strong>The occupants are swapped inside it.</strong> First the fallback, then the content - both
       rendered <em>into</em> the container, both sized to fit the reservation. The Suspense boundary sits
-      just inside the container's walls (<a href='10-suspense-streaming.html'>§10</a>).
+      just inside the container's walls (<a href='11-suspense-streaming.html'>§11</a>).
     </li>
   </ul>
   <p>
@@ -469,7 +469,7 @@ flowchart LR
     </CompareCol>
   </Compare>
 
-  <h2 id='reserving'>9.3 Reserving space honestly</h2>
+  <h2 id='reserving'>10.3 Reserving space honestly</h2>
   <p>
     A reservation is a promise about the future: the container claims the space its content will
     need. The strategies, in order of preference:
@@ -704,7 +704,7 @@ flowchart LR
     give them reserved slots or overlay them; never insert them into the flow above existing content.
   </p>
 
-  <h2 id='layouts'>9.4 Containers live in the scaffold</h2>
+  <h2 id='layouts'>10.4 Containers live in the scaffold</h2>
   <p>
     Where should containers be rendered? As high as their stability allows, which usually means
     <strong>in the layout or page, as part of the app directory's scaffold</strong> (<a
@@ -1123,10 +1123,10 @@ flowchart LR
   </Diagram>
 
   <p>
-    This is also the bridge to <a href='12-blocking-requests.html'>§12</a>: once containers live in
+    This is also the bridge to <a href='13-blocking-requests.html'>§13</a>: once containers live in
     the layout, each one can be filled independently: its own data, its own Suspense boundary, its
     own error state. That's exactly what parallel routes formalize (<a
-      href='12-blocking-requests.html#parallel-routes'>§12.3</a
+      href='13-blocking-requests.html#parallel-routes'>§13.3</a
     >): slots in the layout's scaffold, filled as independent units.
   </p>
 
@@ -1217,7 +1217,7 @@ flowchart LR
       >. Field metric:
       <a href='https://web.dev/articles/cls' target='_blank' rel='noopener'
         >Cumulative Layout Shift (web.dev)</a
-      >. Full list in <a href='19-references.html'>§19</a>.
+      >. Full list in <a href='20-references.html'>§20</a>.
     </p>
   </GoDeeper>
 </GuidePage>

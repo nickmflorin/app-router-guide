@@ -10,7 +10,7 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='New Primitives - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 18 · Appendix</div>
+  <div class='kicker'>Chapter 19 · Appendix</div>
   <h1>New Primitives</h1>
   <p class='lede'>
     The reference catalog behind <a href='01-introduction.html#direction'>§1</a>'s direction of
@@ -44,7 +44,7 @@ import Snippet from '../../components/Snippet.astro';
     entry links there instead of repeating the doctrine.
   </p>
 
-  <h2 id='map'>18.1 The map</h2>
+  <h2 id='map'>19.1 The map</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -192,13 +192,13 @@ import Snippet from '../../components/Snippet.astro';
     </tbody>
   </table>
 
-  <h2 id='actions'>18.2 Actions and mutations</h2>
+  <h2 id='actions'>19.2 Actions and mutations</h2>
 
   <h3 id='use-server'>Server Functions (<code>"use server"</code>)</h3>
   <p>
     A server function is an async function that runs on the server but is
     <strong>callable from client code as if it were local</strong>. React serializes the call across
-    the network; Next.js wires it to an endpoint automatically. This is the primitive that makes the 73 pass-through proxy handlers (<a href='17-applied-to-tracker.html#finding-1'>§17</a>)
+    the network; Next.js wires it to an endpoint automatically. This is the primitive that makes the 73 pass-through proxy handlers (<a href='18-applied-to-tracker.html#finding-1'>§18</a>)
     unnecessary for mutations: no route handler, no manual fetch, and end-to-end type safety,
     because the function's signature <em>is</em> the contract.
   </p>
@@ -217,7 +217,7 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     The calling side, with its pending state, is the self-contained button pattern that
     <a href='05-client-server-boundaries.html#self-contained'>§5.7</a> owns; the post-mutation refresh
-    channel is <a href='14-dedupe-caching.html#server'>§14.2</a>'s invalidation story; the
+    channel is <a href='15-dedupe-caching.html#server'>§15.2</a>'s invalidation story; the
     architecture, and why to prefer actions over proxy routes, is the focus of <a
       href='05-client-server-boundaries.html#server-actions'>§5.10</a
     >. Docs:
@@ -238,7 +238,7 @@ import Snippet from '../../components/Snippet.astro';
     <strong>prefetching, client-side navigation, and progressive enhancement</strong>. Its behavior
     depends on the <code>action</code> prop: a <em>string</em> makes submission a GET navigation with
     the fields serialized into search params (the URL-writing search input of <a
-      href='08-server-resolvable-state.html#url-state'>§8.2</a
+      href='09-server-resolvable-state.html#url-state'>§9.2</a
     >, with the destination's <code>loading.tsx</code> prefetched); a <em>function</em> makes it an action-backed
     mutation form.
   </p>
@@ -312,7 +312,7 @@ import Snippet from '../../components/Snippet.astro';
     Reads <strong>the pending state of the nearest ancestor form</strong> from anywhere inside it. Its
     point is composition: a shared submit button can disable itself in any form it's dropped into, without
     a single prop being threaded to it (the
-    <a href='13-minimize-the-wires.html'>§13</a> spirit, applied to forms).
+    <a href='14-minimize-the-wires.html'>§14</a> spirit, applied to forms).
   </p>
   <Snippet>
     <pre
@@ -345,7 +345,7 @@ import Snippet from '../../components/Snippet.astro';
     runs. If the action fails, React reverts to the true value automatically; when revalidated data
     arrives, it confirms. Use it for cheap, likely-to-succeed writes where waiting even 300ms feels
     broken. Note how it fits the loading doctrine of
-    <a href='10-suspense-streaming.html#refetch'>§10</a>: the existing content is never replaced by
+    <a href='11-suspense-streaming.html#refetch'>§11</a>: the existing content is never replaced by
     a spinner; it just updates.
   </p>
   <Snippet>
@@ -378,7 +378,7 @@ import Snippet from '../../components/Snippet.astro';
     >.
   </p>
 
-  <h2 id='async'>18.3 Async UI and transitions</h2>
+  <h2 id='async'>19.3 Async UI and transitions</h2>
 
   <h3 id='use'><code>use()</code></h3>
   <p>
@@ -386,7 +386,7 @@ import Snippet from '../../components/Snippet.astro';
     <strong>suspending until it resolves</strong>. Its headline pattern: a server component
     <em>starts</em> a fetch without awaiting it, hands the promise across the boundary as a prop, and
     a client component reads it with <code>use()</code> under the Suspense boundary the server already
-    rendered (<a href='10-suspense-streaming.html'>§10</a>). The request begins on the server, the
+    rendered (<a href='11-suspense-streaming.html'>§11</a>). The request begins on the server, the
     HTML streams, and the client never runs a fetch-in-effect.
   </p>
   <Snippet>
@@ -431,10 +431,10 @@ import Snippet from '../../components/Snippet.astro';
     Marks an update as <strong>non-blocking and gives you its pending flag</strong>. In this stack
     it is the engine of the self-contained mutation button (<a
       href='05-client-server-boundaries.html#self-contained'>§5.7</a
-    >) and of no-fallback refinements (<a href='10-suspense-streaming.html#orthogonal'>§10</a>): the
+    >) and of no-fallback refinements (<a href='11-suspense-streaming.html#orthogonal'>§11</a>): the
     old UI stays interactive while the new state, or the server action, resolves. When to reach for
     it, and the three canonical uses, are covered in
-    <a href='10-suspense-streaming.html#transitions'>§10.7</a>.
+    <a href='11-suspense-streaming.html#transitions'>§11.7</a>.
   </p>
 
   <Snippet>
@@ -467,7 +467,7 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     Returns a copy of a value that <strong>lags behind on purpose</strong>, so urgent updates (the
     keystroke) outrun expensive ones (re-filtering a thousand-row table). This is the fix for the
-    table problem in <a href='10-suspense-streaming.html'>§10</a>: the input stays crisp, the table
+    table problem in <a href='11-suspense-streaming.html'>§11</a>: the input stays crisp, the table
     catches up when it can, and nothing flashes a spinner.
   </p>
   <Snippet>
@@ -499,7 +499,7 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     Hides a subtree <strong>without unmounting it</strong>: state, scroll position, and DOM survive,
     and hidden trees render at low priority. Before reaching for it, apply the
-    <a href='08-server-resolvable-state.html#tabs'>§8.3</a> ladder: tabs that represent
+    <a href='09-server-resolvable-state.html#tabs'>§9.3</a> ladder: tabs that represent
     <em>where the user is</em> belong in the URL. Activity is for the panels that genuinely remain client
     state (interaction, not identity) and are expensive to remount.
   </p>
@@ -541,7 +541,7 @@ import Snippet from '../../components/Snippet.astro';
       As of this writing, <code>&lt;ViewTransition&gt;</code> is available
       <strong>only in React's canary and experimental channels</strong>, not in stable React 19.2.
       It's in this catalog because it shows where the platform is going (animation as a tree
-      concern, like loading states in <a href='10-suspense-streaming.html'>§10</a>), not because it should ship yet. Watch the
+      concern, like loading states in <a href='11-suspense-streaming.html'>§11</a>), not because it should ship yet. Watch the
       <a href='https://react.dev/reference/react/ViewTransition' target='_blank' rel='noopener'
         >React: ViewTransition</a
       >
@@ -549,7 +549,7 @@ import Snippet from '../../components/Snippet.astro';
     </p>
   </Callout>
 
-  <h2 id='utilities'>18.4 Utilities</h2>
+  <h2 id='utilities'>19.4 Utilities</h2>
 
   <h3 id='use-effect-event'><code>useEffectEvent</code></h3>
   <p>
@@ -557,7 +557,7 @@ import Snippet from '../../components/Snippet.astro';
     the latest props and state, but is not a dependency, so the effect stops re-running (and
     re-connecting, re-subscribing, re-firing) when those values change. Stable as of React 19.2. It
     is a scalpel for the few legitimate effects that remain after <a
-      href='17-applied-to-tracker.html#finding-3'>§17's Finding 3</a
+      href='18-applied-to-tracker.html#finding-3'>§18's Finding 3</a
     > is fixed; it is not a license to write more effects.
   </p>
   <Snippet>
@@ -655,7 +655,7 @@ import Snippet from '../../components/Snippet.astro';
     Per-request memoization for server functions:
     <strong>same arguments, one execution, per request</strong>. It is the foundation of the server
     data layer, and it already has a full treatment in
-    <a href='14-dedupe-caching.html#server'>§14.2</a>; it appears here only so the catalog is
+    <a href='15-dedupe-caching.html#server'>§15.2</a>; it appears here only so the catalog is
     complete. Docs:
     <a href='https://react.dev/reference/react/cache' target='_blank' rel='noopener'>React: cache</a
     >.
@@ -679,7 +679,7 @@ import Snippet from '../../components/Snippet.astro';
   <span class="tok-com">// Must render inside a Link; true until the navigation commits.</span>
   <span class="tok-kw">const</span> { pending } = <span class="tok-fn">useLinkStatus</span>();
   <span class="tok-com">/* Fixed-size and always rendered, so toggling it never shifts layout
-     (the §9 container rule, at the scale of a dot). */</span>
+     (the §10 container rule, at the scale of a dot). */</span>
   <span class="tok-kw">return</span> &lt;span <span class="tok-prop">aria-hidden</span> <span class="tok-prop">className</span>={pending ? <span class="tok-str">"dot dot-pending"</span> : <span class="tok-str">"dot"</span>} /&gt;;
 }</pre>
   </Snippet>
@@ -703,7 +703,7 @@ import Snippet from '../../components/Snippet.astro';
     >.
   </p>
 
-  <h2 id='compiler'>18.5 The React Compiler</h2>
+  <h2 id='compiler'>19.5 The React Compiler</h2>
   <p>
     The compiler (1.0, October 2025) memoizes automatically at build time: it analyzes component
     code and skips re-renders that provably change nothing, which is the work
@@ -712,8 +712,8 @@ import Snippet from '../../components/Snippet.astro';
     <strong>new code should not hand-roll memoization</strong>; write plain idiomatic components and
     let the compiler prove what's stable. Second, the compiler rewards the exact discipline this
     guide teaches: small, decoupled components with narrow props (<a
-      href='13-minimize-the-wires.html'>§13</a
-    >, <a href='15-component-breakdown.html'>§15</a>) give it clean units to optimize, while God
+      href='14-minimize-the-wires.html'>§14</a
+    >, <a href='16-component-breakdown.html'>§16</a>) give it clean units to optimize, while God
     components (<a href='05-client-server-boundaries.html#god-components'>§5.9</a>) give it one
     giant opaque one. It changes none of the architecture in this guide; it removes the busywork
     that made bad architecture feel cheap. Docs:
@@ -744,7 +744,7 @@ import Snippet from '../../components/Snippet.astro';
       ·
       <a href='https://nextjs.org/docs/app/api-reference/functions' target='_blank' rel='noopener'
         >Next.js: API reference</a
-      >. Full list in <a href='19-references.html'>§19</a>.
+      >. Full list in <a href='20-references.html'>§20</a>.
     </p>
   </GoDeeper>
 </GuidePage>

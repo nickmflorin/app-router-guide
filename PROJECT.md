@@ -153,17 +153,17 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   markers intact when editing those files; the build FAILS if they go missing) and deletes
   page-notes.json from the output (also gitignored there). The working ledger stays at
   public/page-notes.json; the notes workflow only exists on the astro dev server.
-- 2026-07-18: **Inserted new chapter §11 "Designing for the Unknown" (Part B), per Nick.** Full
-  restructuring-rule pass: old §11-19 shifted to §12-20; files renamed 11-19 -> 12-20; toc.js,
+- 2026-07-18: **Inserted new chapter §12 "Designing for the Unknown" (Part B), per Nick.** Full
+  restructuring-rule pass: old §12-19 shifted to §13-20; files renamed 11-19 -> 12-20; toc.js,
   nav.js, index.astro, kickers, in-page N.M headings, and every cross-ref updated; verified
   (svg_lint CLEAN, link targets, kicker/heading-number invariant, HTML balance, TOC parity).
   Chapter content: stability as a cross-team goal (translate, never say "CLS" to design), comps
   are happy paths (the four state questions), stacked-tables worked example (50/50 + min-height
   failure diagrams, partitioned resolution diagram), unstable-pattern catalog + wizard-dialog
   diagram (per-step sizing vs one frame), seed-data discipline (skewed volumes 0/1/5/50/500).
-- 2026-07-17: **Inserted new chapter §7 "Bundle Size & Code Splitting" (Part A), per Nick.** Full
-  restructuring-rule pass: old §7-18 shifted to §8-19; files renamed 07-18 -> 08-19; new
-  07-bundle-size-code-splitting.html authored (wholesale-component trap + composed-table diagram,
+- 2026-07-17: **Inserted new chapter §8 "Bundle Size & Code Splitting" (Part A), per Nick.** Full
+  restructuring-rule pass: old §8-18 shifted to §9-19; files renamed 07-18 -> 08-19; new
+  08-bundle-size-code-splitting.html authored (wholesale-component trap + composed-table diagram,
   heavyweight imports/ojl-tracker lazy tables/light fallbacks, barrel files, cost-of-bloat table).
   nav.js, index.html, kickers, in-page N.M headings, and every cross-ref updated; verified
   (svg_lint, link targets, §-invariant, HTML balance). The 12 old-named section files were moved to
@@ -173,25 +173,25 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   "Read the docs" deepened with React-vs-Next docs; server-first point folded into the stakes
   alert).
 
-- 2026-07-17 (content pass 2026-07-17b): worked the working-notes [N] queue. §7 gained a
+- 2026-07-17 (content pass 2026-07-17b): worked the working-notes [N] queue. §8 gained a
   browser-frame layout diagram (wholesale vs composed table). §1 expanded ("What this is, and why I
-  wrote it" + deeper "Read the docs"). §14 Dedupe & Caching gained §14.5 how-Next-extends-fetch,
-  §14.6 SWR-in-depth, §14.7 when-client-fetching-is-right. §9.3 gained a reserving-space
-  before/after diagram. §10 gained a "Suspense is not server-only" callout. §12.4 gained a
-  client-waterfall timeline diagram. §18 gained an expanded useTransition entry and new §18.6
+  wrote it" + deeper "Read the docs"). §15 Dedupe & Caching gained §15.5 how-Next-extends-fetch,
+  §15.6 SWR-in-depth, §15.7 when-client-fetching-is-right. §10.3 gained a reserving-space
+  before/after diagram. §11 gained a "Suspense is not server-only" callout. §13.4 gained a
+  client-waterfall timeline diagram. §19 gained an expanded useTransition entry and new §19.6
   "Server actions and the HTTP middleman" (typed-RPC explainer + direct-vs-proxy diagram +
   fewer-middlemen principle). All [N] items in working-notes are now [x].
 - 2026-07-17 INCIDENT + RECOVERY: the device staging (read) channel returned stale cached copies
-  during the big renumber, so §1 and §16-§19 were shuffled in as their old stubs while the real
+  during the big renumber, so §1 and §17-§20 were shuffled in as their old stubs while the real
   content was moved to _to_delete/renumbered-old-sections/. Recovered all five by re-transforming
   the _to_delete originals / re-applying edits, working through the direct-disk (device_bash)
   channel, which is reliable. Lesson: do not trust device_stage_files reads this session; read and
   write via direct disk. The full guide re-verified (203 §-links, invariant, svg_lint, HTML).
 
 - 2026-07-17 (correction): the server-actions/HTTP-middleman and transitions deep dives were briefly
-  added to §18 New Primitives, then MOVED per Nick: §18 is a reference catalog only. The in-depth
+  added to §19 New Primitives, then MOVED per Nick: §19 is a reference catalog only. The in-depth
   discussions now live in the core: §5.10 "Server actions and the HTTP middleman" (diagram included)
-  and §10.7 "Transitions keep the old UI alive"; §18 entries link out to them.
+  and §11.7 "Transitions keep the old UI alive"; §19 entries link out to them.
 
 ## Approved document outline (2026-07-13)
 
@@ -211,32 +211,35 @@ home per technique + cross-references).
   scaffold, not routes"); 3.2 Why the old mental model bites later. (Old 3.1 moved to §1 on
   2026-07-16; anchors #rendering-model/#old-vs-new unchanged, #direction now lives in
   01-introduction.html.)
-- Part A — Maximize the Known: §4 Server-Side Rendering (added 2026-07-15: what SSR is; benefits
+- Part A — Maximize the Known: §6 Bootstrapping the First Paint (added 2026-07-20: server
+  seeds the view, idle-deferred client twin query, client ownership after interactions; from
+  the real ojl-tracker useIsIdle/BootstrappedAuthenticatedUserProvider/ProgramProvider
+  patterns; pages-router-at-heart caveat, URL state remains the default) · §4 Server-Side Rendering (added 2026-07-15: what SSR is; benefits
   incl. stability + simplicity/nested-spinner problem; perceived performance & streaming; cached
   page output; server vs client routing + RSC payload) · §5 Client/server boundaries (interactivity
-  to leaves, "use client", wrapping 3rd party, children pattern) · §6 First-render JS (dynamic
-  imports) · §7 Bundle Size & Code Splitting (wholesale-component/MUI-datagrid trap; heavyweight
-  imports + light fallbacks; barrel files; cost of bloat; NEW dedicated chapter 2026-07-17) · §8
+  to leaves, "use client", wrapping 3rd party, children pattern) · §7 First-render JS (dynamic
+  imports) · §8 Bundle Size & Code Splitting (wholesale-component/MUI-datagrid trap; heavyweight
+  imports + light fallbacks; barrel files; cost of bloat; NEW dedicated chapter 2026-07-17) · §9
   Server-resolvable state (URL, params, cookies; tabs-in-state smell; 8.4 URL writes w/
   transitions + useOptimistic tabs, added 2026-07-18)
-- Part B — Contain the Unknown: §9 Containers & content shifting (containers known/reserve space;
-  loading belongs to boundaries) · §10 Suspense & streaming (triggers, placement diagram,
-  loading/error files, useDeferredValue + table problem) · §12 Blocking requests (parallel fetching,
+- Part B — Contain the Unknown: §10 Containers & content shifting (containers known/reserve space;
+  loading belongs to boundaries) · §11 Suspense & streaming (triggers, placement diagram,
+  loading/error files, useDeferredValue + table problem) · §13 Blocking requests (parallel fetching,
   minimize fetch deps, parallel routes + default.tsx)
-- Part C — Decouple the Parts: §13 Minimize the wires · §14 Dedupe & caching (fetch dedupe, React
-  cache, "use cache"/cacheComponents, SWR) · §15 Component breakdown (one per file, portability)
-- Part D — Applied: §16 Signs You're Doing It Wrong (checklist, links back) · §17 Applied to
+- Part C — Decouple the Parts: §14 Minimize the wires · §15 Dedupe & caching (fetch dedupe, React
+  cache, "use cache"/cacheComponents, SWR) · §16 Component breakdown (one per file, portability)
+- Part D — Applied: §17 Signs You're Doing It Wrong (checklist, links back) · §18 Applied to
   Tracker (before/after from audit) (the Worked Example chapter was deleted 2026-07-19, never
   written)
-- §18 New Primitives (lower priority; details of Server Actions, form hooks, ViewTransition,
+- §19 New Primitives (lower priority; details of Server Actions, form hooks, ViewTransition,
   Activity, useEffectEvent, compiler)
-- §19 References
+- §20 References
 
 ## Working agreements (remember across sessions)
 
 - **NAMING (per Nick, 2026-07-18): the product is called "Tracker" everywhere a reader can
   see it** (sidebar, titles, prose: formal "Tracker"; filenames/slugs: lowercase "tracker",
-  e.g. 17-applied-to-tracker.html). The string "recraft" must NOT appear in guide content.
+  e.g. 18-applied-to-tracker.html). The string "recraft" must NOT appear in guide content.
   "recraft" remains ONLY as the actual repo/clone/PR name in internal notes: the local clone
   is still `~/ai/recraft`, and PR references (e.g. #1617) keep the real repo name.
 
@@ -272,7 +275,7 @@ home per technique + cross-references).
   rebuild needed for resolutions to reach the browser.
 - **One component per example file (per Nick, 2026-07-18):** snippets that represent files
   never show two exported components in one file; split into separate pres with their own
-  filename labels (matches the guide's own one-component-per-file rule in §15).
+  filename labels (matches the guide's own one-component-per-file rule in §16).
 - **Code references in prose/captions are ALWAYS <code>-wrapped (monospace), and a sentence
   never STARTS with a code reference** (lead with a plain English word: "Here onClick..." not
   "onClick..."). Per Nick, 2026-07-18.
@@ -295,7 +298,7 @@ home per technique + cross-references).
   the wrong way), `v-warn` (amber ! chip: an option, but not the ideal one, e.g. lazy-loading a
   wholesale grid, the context-provider approach). CSS renders the chip at the right edge of the
   filename bar (::after in _snippet-container.scss). Purely illustrative/reference snippets
-  (§18 primitives catalog, headerless mini-snippets) stay unbadged. build_md.py appends the
+  (§19 primitives catalog, headerless mini-snippets) stay unbadged. build_md.py appends the
   matching glyph (✓ / ✕ / ⚠︎) after the bold filename line in markdown output. Snippets inside
   Compare columns get badges too (matching the column's kind).
 - **No blank line after "use client"/"use server" in snippets (per Nick, 2026-07-19):** the
@@ -377,7 +380,7 @@ home per technique + cross-references).
 - Style/voice/visual template approved by Nick 2026-07-13 based on §1–§3.
 - **Every section must reference BOTH the Next.js docs AND the React 19 docs** (react.dev) in its
   "where to go deeper" links — not just Next.js. Log all in references.md.
-- Loading-state doctrine (Nick, for §10 and everywhere relevant): components never define their own
+- Loading-state doctrine (Nick, for §11 and everywhere relevant): components never define their own
   loading states; skeletons per server/client component (never page-level), never shown on refetch;
   SWR pattern = never replace existing content while revalidating, only indicate alongside stale
   content; `isLoading` is applied independently of data presence (no if-loading-else-if-data
@@ -429,30 +432,30 @@ right. Local clone at `~/ai/recraft`.
 - [x] Project scaffolding
 - [ ] Research pass: verify Next 16 / React 19.x current state
 - [ ] Guide skeleton (index.html, shared CSS, TOC)
-- [x] §1–§14 written (Foundation + all of Part A + all of Part B + Part C's §13–§14). §6
+- [x] §1–§15 written (Foundation + all of Part A + all of Part B + Part C's §14–§15). §7
       (2026-07-15): bundle=client module graphs, boundaries-before-dynamic(),
       dynamic()/ssr:false/top-level rule (verified vs current docs), handler-level await import(),
-      candidates table, bundle-bars diagram. §8 (2026-07-15): request carries
+      candidates table, bundle-bars diagram. §9 (2026-07-15): request carries
       path/params/query/cookies = the known; URL-decomposition diagram (chips→rendered page);
       replace-vs-push; tabs-are-routes ladder (segments > ?view= > state) w/ compare + ProgramTabs;
       cookies=viewer vs URL=view, localStorage flash; interaction-not-identity test.
-- [x] §7 Bundle Size & Code Splitting written + full renumber (2026-07-17).
-- [x] No stubs remain. §15 Component Breakdown written 2026-07-18; the Worked Example chapter
+- [x] §8 Bundle Size & Code Splitting written + full renumber (2026-07-17).
+- [x] No stubs remain. §16 Component Breakdown written 2026-07-18; the Worked Example chapter
   was DELETED (never written) 2026-07-19 per Nick, and chapters 17-20 renumbered to 16-19
   (16-signs-doing-it-wrong, 17-applied-to-tracker, 18-new-primitives, 19-references).
-- §5/§13 division of labor (2026-07-15, per Nick — deliberate overlap, examples repeated in both
+- §5/§14 division of labor (2026-07-15, per Nick — deliberate overlap, examples repeated in both
   contexts): §5.7–5.9 own the BOUNDARY story (self-contained mutation buttons w/ useTransition +
   server action; dialogs/floating elements live in the button that opens them; parent refresh via
   server truth: revalidateTag/Path + router.refresh, URL-write search inputs, SWR keyed mutate when
   parent is legitimately client; God component = whole tree forced CSR, server features literally
-  unavailable). §13.4 owns the WIRING story (onSuccess-callback vs invalidate-the-name compare; God
+  unavailable). §14.4 owns the WIRING story (onSuccess-callback vs invalidate-the-name compare; God
   hook = distribution network for one object's shape). Cross-linked both ways. God-hook example
   (useProgramsManager: fetch + UI state + callbacks in one) is GENERIC by request — inspired by
   recraft PR #1617's over-coupled providers but must never mirror that code recognizably (Nick
   doesn't want it obvious he's referencing a teammate's PR).
-- Part B division of labor: §9 owns container doctrine/shifting/sizing (flex-grow-scroll frame,
-  next/image, next/font); §10 owns Suspense mechanics + loading doctrine (8.4 slimmed to skeletons,
-  defers containers to §9); §12 owns blocking scope, parallel fetching, parallel routes +
+- Part B division of labor: §10 owns container doctrine/shifting/sizing (flex-grow-scroll frame,
+  next/image, next/font); §11 owns Suspense mechanics + loading doctrine (8.4 slimmed to skeletons,
+  defers containers to §10); §13 owns blocking scope, parallel fetching, parallel routes +
   default.tsx, client waterfalls.
 - [ ] Iteration with Nick (ongoing)
 - [ ] (LATER, on explicit go-ahead) Markdown → PDF → slide deck

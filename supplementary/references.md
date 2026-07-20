@@ -153,3 +153,4 @@ Every external source used in the guide. Rendered at the bottom of all derived d
 
 > To verify before publishing: exact URLs return 200; claims sourced to community posts should be
 > re-anchored to official docs where possible.
+- [requestIdleCallback (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback) - the idle gate behind §6's deferred client twin query.

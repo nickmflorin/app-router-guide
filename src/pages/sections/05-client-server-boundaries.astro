@@ -339,12 +339,12 @@ flowchart LR
         <td>
           <strong>Effects and lifecycle:</strong>
           <code>useEffect</code> (and it had better not be fetching;
-          <a href='10-suspense-streaming.html'>§10</a>)
+          <a href='11-suspense-streaming.html'>§11</a>)
         </td>
         <td>
           <strong>Reading route input:</strong>
           <code>params</code> and <code>searchParams</code> arrive as page props (<a
-            href='08-server-resolvable-state.html'>§8</a
+            href='09-server-resolvable-state.html'>§9</a
           >)
         </td>
       </tr>
@@ -706,7 +706,7 @@ flowchart TB
     because the query is expensive or rarely wanted, then by definition the data is being requested
     in response to an interaction, and interaction-driven fetching is client-side fetching: a client
     component that queries on open (SWR,
-    <a href='14-dedupe-caching.html#swr-depth'>§14.6</a>) behind the same shell. That is a
+    <a href='15-dedupe-caching.html#swr-depth'>§15.6</a>) behind the same shell. That is a
     legitimate trade, but make it deliberately: you are exchanging an instant open for a loading
     state the container now has to absorb.
   </p>
@@ -735,7 +735,7 @@ flowchart TB
       <code>"use client"; export &#123; Carousel &#125; from "acme-carousel";</code>. Now it has a
       declared boundary, and your import graph documents exactly where the client zone starts.
       Bonus: the wrapper is your seam for swapping the library later (<a
-        href='15-component-breakdown.html'>§15</a
+        href='16-component-breakdown.html'>§16</a
       >). Worked through with examples in
       <a href='#internalize-third-party'>the subsection below</a>.
     </li>
@@ -744,7 +744,7 @@ flowchart TB
       <Chip k='react' />
       <Chip k='very' />
       <code>import "server-only"</code> at the top of the data layer (<a
-        href='14-dedupe-caching.html'>§14</a
+        href='15-dedupe-caching.html'>§15</a
       >) turns "someone imported <code>data/programs.ts</code> from a client component" into a build error
       instead of a leaked API key. <code>client-only</code> exists for the reverse.
     </li>
@@ -759,7 +759,7 @@ flowchart TB
       <code>params</code> and <code>searchParams</code> arrive as server page props;
       <code>useParams</code>/<code>useSearchParams</code> in a client page is usually the
       <em>reason</em> the page went client in the first place (<a
-        href='08-server-resolvable-state.html'>§8</a
+        href='09-server-resolvable-state.html'>§9</a
       >). Same for cookies and headers: <code>next/headers</code>, on the server.
     </li>
     <li>
@@ -976,7 +976,7 @@ flowchart TB
   <p>
     One boundary case is mechanical enough to deserve its own pattern: it sits exactly at the
     intersection of this chapter and
-    <a href='08-server-resolvable-state.html'>§8</a> (the URL as state). A client component that calls
+    <a href='09-server-resolvable-state.html'>§9</a> (the URL as state). A client component that calls
     <code>useSearchParams()</code>
     <strong>must render inside a <code>&lt;Suspense&gt;</code> boundary.</strong>
     <Chip k='next' />
@@ -1028,7 +1028,7 @@ flowchart TB
     <CodeCaption>
       The exported component bakes its own <code>Suspense</code> boundary in, so no call site can forget
       it. The fallback mirrors the input's geometry (same reserved space, <a
-        href='09-containers-content-shifting.html'>§9</a
+        href='10-containers-content-shifting.html'>§10</a
       >), so nothing shifts when it resolves.
     </CodeCaption>
   </Snippet>
@@ -1036,12 +1036,12 @@ flowchart TB
     Two clarifications to keep the pattern honest. First, this applies to the
     <em>client</em> read: a server page reading <code>searchParams</code> from its props doesn't need
     this; the page is simply dynamic at that point, which is
-    <a href='08-server-resolvable-state.html'>§8</a>'s territory. Reach for the client read only in
+    <a href='09-server-resolvable-state.html'>§9</a>'s territory. Reach for the client read only in
     leaves that <em>write</em> the URL and need the live value interactively (filter inputs, sort toggles).
     Second, <code>useParams</code> and <code>usePathname</code> don't require this: route params and pathname
     are knowable from the route structure; it's specifically the query string that is per-request. See
     it in action in
-    <a href='10-suspense-streaming.html#refetch'>§10.5</a>'s worked example, where the boundary also
+    <a href='11-suspense-streaming.html#refetch'>§11.5</a>'s worked example, where the boundary also
     carries an explanatory comment.
   </p>
 
@@ -1112,7 +1112,7 @@ flowchart TB
     The button itself is small, boring, and completely portable. It calls a server action, and <code
       >useTransition</code
     > gives it a pending flag for the duration: its loading state, owned locally, exactly as the loading
-    doctrine demands (<a href='10-suspense-streaming.html#no-own-loading'>§10.3</a>; a <em
+    doctrine demands (<a href='11-suspense-streaming.html#no-own-loading'>§11.3</a>; a <em
       >pending interaction</em
     > indicator on the control is the legitimate kind of local loading state; it reserves no content space
     and replaces nothing):
@@ -1178,7 +1178,7 @@ flowchart TB
     Encapsulating the dialog also hands you a bundle win for free: since the dialog is invisible
     until its button is clicked, its JavaScript has no business in the first-render bundle. Load it
     with <code>next/dynamic</code> and render it conditionally: the chunk downloads on first open, and
-    until then the page carries only the button (<a href='06-first-render-js.html'>§6</a>'s subject,
+    until then the page carries only the button (<a href='07-first-render-js.html'>§7</a>'s subject,
     met here in its most common form):
   </p>
 
@@ -1189,7 +1189,7 @@ flowchart TB
 <span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
 
 <span class="tok-com">/* The dialog's JavaScript isn't needed until the button is clicked, so it
-   doesn't belong in the first-render bundle (§6). next/dynamic splits it
+   doesn't belong in the first-render bundle (§7). next/dynamic splits it
    into its own chunk, fetched on demand. */</span>
 <span class="tok-kw">const</span> ConfirmDialog = <span class="tok-fn">dynamic</span>(() =&gt;
   <span class="tok-kw">import</span>(<span class="tok-str">"@/components/dialogs/ConfirmDialog"</span>).<span class="tok-fn">then</span>((m) =&gt; m.ConfirmDialog)
@@ -1220,7 +1220,7 @@ flowchart TB
 
   <p>
     Look at the wire count. The parent hands each of these components an <code>id</code>: identity,
-    the one prop that's always legitimate (<a href='13-minimize-the-wires.html'>§13</a>). That is
+    the one prop that's always legitimate (<a href='14-minimize-the-wires.html'>§14</a>). That is
     the entire contract. No <code>onPublish</code>, no
     <code>isPublishing</code>, no <code>dialogOpen</code>, no refetch callback. Which raises the
     obvious question: when the action finishes and the page's data is stale,
@@ -1504,14 +1504,14 @@ flowchart LR
   </Snippet>
 
   <p>
-    This is the pattern <a href='10-suspense-streaming.html#refetch'>§10.5</a>'s worked example
+    This is the pattern <a href='11-suspense-streaming.html#refetch'>§11.5</a>'s worked example
     builds out in full (with the transition-based stale indicator), and
-    <a href='08-server-resolvable-state.html'>§8</a> makes the general case for the URL as state. Notice
+    <a href='09-server-resolvable-state.html'>§9</a> makes the general case for the URL as state. Notice
     what the two halves share:
     <strong
       >the leaf writes to shared infrastructure (the cache, the URL) and the parent re-renders
       because its <em>inputs</em> changed</strong
-    >, never because a child called it. That is also §13's core rule, seen from the boundary side.
+    >, never because a child called it. That is also §14's core rule, seen from the boundary side.
   </p>
 
   <h3 id='swr-refresh'>When the parent is legitimately client: the key is the contract</h3>
@@ -1542,7 +1542,7 @@ flowchart LR
 
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Drawer</span> <span class="tok-prop">onClose</span>={onClose}&gt;
-      <span class="tok-com">{/* Loading ⊥ data ⊥ empty, handled per §10.6; elided here. */}</span>
+      <span class="tok-com">{/* Loading ⊥ data ⊥ empty, handled per §11.6; elided here. */}</span>
       &lt;<span class="tok-fn">ProgramDetails</span> <span class="tok-prop">program</span>={program} <span class="tok-prop">isLoading</span>={isLoading} /&gt;
       &lt;<span class="tok-fn">PublishButton</span> <span class="tok-prop">programId</span>={programId} /&gt;
     &lt;/<span class="tok-fn">Drawer</span>&gt;
@@ -1589,7 +1589,7 @@ flowchart LR
     Server tag, URL param, SWR key: three spellings of one idea. The leaf and the parent agree on a <em
       >name</em
     > for the data, and communicate by invalidating the name. The refetch mechanics live in the infrastructure
-    (<a href='14-dedupe-caching.html'>§14</a>), not in a callback prop, so the boundary stays at the
+    (<a href='15-dedupe-caching.html'>§15</a>), not in a callback prop, so the boundary stays at the
     leaf no matter which spelling the page uses.
   </p>
 
@@ -1689,7 +1689,7 @@ flowchart LR
       >SectionLayout</code
     >, <code>ProgramsToolbar</code>, and
     <code>ProgramsTable</code> are its delivery routes (the coupling-layer autopsy of
-    <a href='13-minimize-the-wires.html#cost'>§13.1</a>, wearing its boundary costume). And the
+    <a href='14-minimize-the-wires.html#cost'>§14.1</a>, wearing its boundary costume). And the
     threading doesn't stop where the snippet does: <code>selectedId</code> rides through
     <code>ProgramsTable</code> into <code>Row</code> into <code>Cell</code>, coupling four
     signatures to one piece of state that exactly one of them reads.
@@ -1713,22 +1713,22 @@ flowchart LR
     </li>
     <li>
       <strong>No first-paint content, no cached pages.</strong> The data loads after hydration, so the
-      first response is a shell: nothing to stream (<a href='10-suspense-streaming.html#streaming'
-        >§10.2</a
+      first response is a shell: nothing to stream (<a href='11-suspense-streaming.html#streaming'
+        >§11.2</a
       >), nothing for the route cache to keep (<a href='04-ssr.html#page-cache'>§4.4</a>). Every
       visitor re-pays every fetch, forever.
     </li>
     <li>
       <strong>The timing problems return.</strong> Content depends on request ordering again: waterfalls
-      (<a href='12-blocking-requests.html#client'>§12.4</a>), nested spinners (<a
+      (<a href='13-blocking-requests.html#client'>§13.4</a>), nested spinners (<a
         href='04-ssr.html#simplicity'>§4.2</a
-      >), layout shift as each answer lands (<a href='09-containers-content-shifting.html'>§9</a>).
+      >), layout shift as each answer lands (<a href='10-containers-content-shifting.html'>§10</a>).
     </li>
     <li>
       <strong>Maximum wiring.</strong> Every consumer is coupled to the manager's return shape; every
       new feature threads more props and callbacks through components that don't use them. This half of
       the autopsy, the coupling half, is
-      <a href='13-minimize-the-wires.html#callbacks'>§13.4</a>'s subject.
+      <a href='14-minimize-the-wires.html#callbacks'>§14.4</a>'s subject.
     </li>
     <li>
       <strong>Refactor gravity.</strong> Children written against the manager's context can't be lifted
@@ -2020,7 +2020,7 @@ flowchart TB
     <a href='#self-contained'>§5.7</a>'s button called a server action and moved on. It is worth
     stopping on what that server action actually is, because it is the single biggest lever for
     pulling mutations back across the boundary, and the reason the 73 pass-through proxy handlers
-    the audit found (<a href='17-applied-to-tracker.html#finding-1'>§17</a>) are unnecessary.
+    the audit found (<a href='18-applied-to-tracker.html#finding-1'>§18</a>) are unnecessary.
   </p>
   <p>
     A server action is a <strong>typed remote procedure call</strong>. When you mark an async
@@ -2032,7 +2032,7 @@ flowchart TB
     to the server and back with no schema to hand-maintain and no client to keep in sync. The API
     surface (the directive,
     <code>useActionState</code>, <code>useFormStatus</code>, <code>&lt;Form&gt;</code>) is
-    catalogued in <a href='18-new-primitives.html#actions'>§18.2</a> and the form-side flow gets
+    catalogued in <a href='19-new-primitives.html#actions'>§19.2</a> and the form-side flow gets
     <a href='#forms'>§5.11</a>; what matters here is the architecture.
     <Chip k='next' />
     <Chip k='critical' />
@@ -2222,7 +2222,7 @@ flowchart LR
     typed value you handle precisely: the record does not exist, the user is not allowed, a
     constraint failed, each one distinct and catchable at the call site. Route that same mutation
     through a Next.js API route that proxies to another HTTP service (the Tracker pattern from
-    <a href='17-applied-to-tracker.html#finding-1'>§17</a>) and every one of those distinct failures
+    <a href='18-applied-to-tracker.html#finding-1'>§18</a>) and every one of those distinct failures
     is flattened into a status code on the way out and reconstituted on the way back. You also
     inherit a second set of failure modes that have nothing to do with your domain: network errors,
     timeouts, retries, serialization mismatches. Each middleman is one more place the types are lost
@@ -2359,7 +2359,7 @@ flowchart LR
       handle. And once the mutation lands, the parent refreshes through the cache, not a callback (<a
         href='#refresh'>§5.8</a
       >,
-      <a href='14-dedupe-caching.html#server'>§14.2</a>), so the write stays as decoupled as the
+      <a href='15-dedupe-caching.html#server'>§15.2</a>), so the write stays as decoupled as the
       read.
     </p>
   </Callout>
@@ -2446,7 +2446,7 @@ flowchart LR
     <CodeCaption>
       Write this once in the ui package and every form in the app gets a correct submit button by
       composition: it disables and spins during any submission, with zero wiring from the form above
-      it. This is <a href='13-minimize-the-wires.html'>§13</a>'s argument in form clothing. The one
+      it. This is <a href='14-minimize-the-wires.html'>§14</a>'s argument in form clothing. The one
       rule: it must render <em>inside</em> the form, because the hook reads the nearest enclosing one.
     </CodeCaption>
   </Snippet>
@@ -2460,7 +2460,7 @@ flowchart LR
     with the target route prefetched while the user is still typing. Give it a <strong
       >function</strong
     > and it behaves like the mutation form above. The string form is <a
-      href='08-server-resolvable-state.html'>§8</a
+      href='09-server-resolvable-state.html'>§9</a
     > arriving by another road: the form writes the URL, and the URL is the state.
   </p>
 
@@ -2482,7 +2482,7 @@ flowchart LR
       A search form with no client code of its own: the shell is a server component, and the only
       JavaScript on the page is the shared submit button. Before hydration it still works as a plain
       GET form. The page it lands on reads <code>searchParams</code> on the server (<a
-        href='08-server-resolvable-state.html'>§8</a
+        href='09-server-resolvable-state.html'>§9</a
       >), so the result is shareable, back-button-friendly, and server-rendered.
     </CodeCaption>
   </Snippet>
@@ -2493,8 +2493,8 @@ flowchart LR
       that changes what you're looking at is a string action writing the URL.</strong
     > Both get pending state from the same shared button, both work before hydration, and neither needs
     an API route, an <code>onSubmit</code>, or a byte of hand-rolled fetch code. The per-primitive
-    reference entries (signatures, options, doc links) stay in <a href='18-new-primitives.html'
-      >§18</a
+    reference entries (signatures, options, doc links) stay in <a href='19-new-primitives.html'
+      >§19</a
     >.
   </p>
 
@@ -2607,7 +2607,7 @@ flowchart LR
         rel='noopener'>Server and Client Components</a
       >
       (composition patterns, third-party wrappers, context providers). Full list in
-      <a href='19-references.html'>§19</a>.
+      <a href='20-references.html'>§20</a>.
     </p>
   </GoDeeper>
 </GuidePage>

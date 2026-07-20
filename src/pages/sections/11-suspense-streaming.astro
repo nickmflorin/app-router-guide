@@ -11,7 +11,7 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='Suspense & Streaming - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 10 · Part B: Contain the Unknown</div>
+  <div class='kicker'>Chapter 11 · Part B: Contain the Unknown</div>
   <h1>Suspense &amp; Streaming</h1>
   <p class='lede'>
     Loading is not a component concern. It's a structural one. Suspense moves "what shows while the page waits" out of components and into the tree, where the framework can stream around it. This
@@ -19,7 +19,7 @@ import Snippet from '../../components/Snippet.astro';
     follows from it.
   </p>
 
-  <h2 id='mechanism'>10.1 How Suspense actually works</h2>
+  <h2 id='mechanism'>11.1 How Suspense actually works</h2>
   <p>
     A <code>&lt;Suspense&gt;</code> boundary is a declaration about the tree:
     <em>"everything below this point may not be ready yet; here is what to show in its place."</em>
@@ -315,7 +315,7 @@ flowchart LR
         the old UI stays alive and interactive meanwhile
       </text>
       <text x='460' y='187' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
-        this is exactly what a transition preserves (§10.7)
+        this is exactly what a transition preserves (§11.7)
       </text>
 
       <!-- FRAME 4: the branch completes; HEAD points at the finished tree -->
@@ -405,7 +405,7 @@ flowchart LR
       > in one atomic commit. One footnote the analogy needs: when there is
       no old screen worth keeping (a first load), the boundary commits its <em>fallback</em> to
       <code>main</code> while the branch works, which is the streaming story of
-      <a href='#streaming'>§10.2</a>; on navigations, transitions (<a href='#transitions'>§10.7</a
+      <a href='#streaming'>§11.2</a>; on navigations, transitions (<a href='#transitions'>§11.7</a
       >) are what keep the old <code>main</code> checked out instead.
     </Fragment>
   </Diagram>
@@ -463,7 +463,7 @@ flowchart LR
     </li>
     <li>
       <strong><code>lazy()</code> components</strong> and dynamic imports while their code loads (<a
-        href='06-first-render-js.html'>§6</a
+        href='07-first-render-js.html'>§7</a
       >).
       <Snippet>
         <pre
@@ -517,11 +517,11 @@ flowchart LR
         >startTransition</code
       > updates keep the existing content visible while the new content prepares. React 19.2 further batches
       how server-streamed boundaries reveal. The fallback is a <em>first-render</em> device; everything
-      after first render should follow the stale-content rules in <a href='#skeletons'>§10.4</a>.
+      after first render should follow the stale-content rules in <a href='#skeletons'>§11.4</a>.
     </p>
   </Callout>
 
-  <h2 id='streaming'>10.2 Streaming: Suspense on the server</h2>
+  <h2 id='streaming'>11.2 Streaming: Suspense on the server</h2>
   <p>
     Without Suspense, server rendering is all-or-nothing: the response can't start until every fetch
     on the page finishes, so the slowest request sets the time-to-first-byte for the entire page.
@@ -529,7 +529,7 @@ flowchart LR
     containers, everything known) goes out immediately, and each suspended region follows as its
     data resolves, injected into its reserved slot without re-rendering anything around it. (Making
     the waits themselves small and parallel, rather than just streaming around them, is
-    <a href='12-blocking-requests.html'>§12</a>'s subject.)
+    <a href='13-blocking-requests.html'>§13</a>'s subject.)
   </p>
 
   <Diagram>
@@ -685,14 +685,14 @@ flowchart LR
       <strong><code>loading.tsx</code> is a route-level Suspense boundary</strong> the framework wires
       up for you: it wraps the page and shows instantly on navigation. Use it for the route transition,
       but treat it as the coarsest tool: a whole-page skeleton is exactly the page-level skeleton to avoid
-      (<a href='#skeletons'>§10.4</a>). Prefer a
+      (<a href='#skeletons'>§11.4</a>). Prefer a
       <code>loading.tsx</code> that renders the page's known scaffold, with granular boundaries inside
       the page doing the real work.
     </li>
     <li>
       <strong>Granular boundaries around each data-dependent region</strong>: one per self-fetching
-      component (<a href='13-minimize-the-wires.html#streaming'>§13.3</a>), placed inside the known
-      container (<a href='09-containers-content-shifting.html'>§9</a>). This is also what Partial
+      component (<a href='14-minimize-the-wires.html#streaming'>§14.3</a>), placed inside the known
+      container (<a href='10-containers-content-shifting.html'>§10</a>). This is also what Partial
       Prerendering builds on: with
       <code>cacheComponents</code>, everything outside your Suspense boundaries becomes the static
       shell served instantly, and the boundaries define exactly where dynamic content streams in.
@@ -858,7 +858,7 @@ flowchart LR
         &lt;Layout&gt;
       </text>
       <text x='692' y='50' font-size='8.5' fill='#527dad' text-anchor='end'>
-        the known scaffold (§9)
+        the known scaffold (§10)
       </text>
       <rect x='482' y='57' width='60' height='16' rx='4' fill='#fdecea' stroke='#b3261e'></rect>
       <text
@@ -920,7 +920,7 @@ flowchart LR
         &#125;&gt;
       </text>
       <text x='692' y='88' font-size='8.5' fill='#8a5a00' text-anchor='end'>
-        the unknown, contained (§10)
+        the unknown, contained (§11)
       </text>
       <rect x='352' y='95' width='58' height='16' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
       <text
@@ -982,7 +982,7 @@ flowchart LR
       slot='mermaid'
       is:raw>
 flowchart TB
-  subgraph L["Layout: the known scaffold (§9)"]
+  subgraph L["Layout: the known scaffold (§10)"]
     subgraph E["ErrorBoundary · error.tsx"]
       subgraph S["Suspense · loading.tsx"]
         PG("Page: your content,<br/>aware of neither"):::green
@@ -1018,7 +1018,7 @@ flowchart TB
     <li>
       <strong>What you pay:</strong> something must now occupy that region's space in the meantime. A
       boundary forces a fallback into existence, and the fallback is real UI: it has to reserve honest
-      dimensions (<a href='09-containers-content-shifting.html'>§9</a>), look intentional next to
+      dimensions (<a href='10-containers-content-shifting.html'>§10</a>), look intentional next to
       finished content, and hand off to the real thing in a seamless swap.
     </li>
   </ol>
@@ -1030,19 +1030,19 @@ flowchart TB
     advance, the swap will shift content no matter how careful the skeleton is; if the data resolves
     in a handful of milliseconds, the fallback is a flash of noise that was never worth painting. In
     those cases it is legitimate to let the server block on the fetch, provided the wait is kept
-    small and parallel (<a href='12-blocking-requests.html'>§12</a>).
+    small and parallel (<a href='13-blocking-requests.html'>§13</a>).
   </p>
   <Callout kind='voice' title='The two questions to ask per region'>
     <p>
       First: is this data slow enough, often enough, that the rest of the page should not wait for
       it? If no, block and render it finished. If yes: can I draw a fallback that reserves this
       region's true shape? If yes, suspend. If no, fix the container until the answer is yes (<a
-        href='09-containers-content-shifting.html'>§9</a
+        href='10-containers-content-shifting.html'>§10</a
       >); shipping the shift is not one of the options.
     </p>
   </Callout>
 
-  <h2 id='no-own-loading'>10.3 Components must not define their own loading states</h2>
+  <h2 id='no-own-loading'>11.3 Components must not define their own loading states</h2>
   <p>
     <Chip k='react' />
     <Chip k='critical' /> A component that owns its own loading indicator, whether that's a spinner, a
@@ -1109,9 +1109,9 @@ flowchart TB
     </CompareCol>
   </Compare>
 
-  <h2 id='skeletons'>10.4 Skeletons: scoped, colocated, structural</h2>
+  <h2 id='skeletons'>11.4 Skeletons: scoped, colocated, structural</h2>
   <p>
-    The container doctrine is <a href='09-containers-content-shifting.html'>§9</a>'s subject:
+    The container doctrine is <a href='10-containers-content-shifting.html'>§10</a>'s subject:
     containers known and immediate, fallback and content swapped inside them, one shared footprint,
     and neither occupant bringing its own chrome. All of it applies verbatim to fallbacks:
     <strong>the fallback is simply the container's first occupant.</strong>
@@ -1145,15 +1145,15 @@ flowchart TB
       screen from the first paint, not buried under a region-wide skeleton along with the parts that genuinely
       wait. A search input the user could already be typing into, hidden behind gray bars, is known content
       held hostage by unknown content: the same fusion mistake as <a
-        href='07-bundle-size-code-splitting.html#wholesale'>§7.2</a
+        href='08-bundle-size-code-splitting.html#wholesale'>§8.2</a
       >, drawn in fallback form. Draw the boundary tightly around the data; everything outside it
       renders real and interactive immediately. (This is one of <a
-        href='16-signs-doing-it-wrong.html'>§16</a
+        href='17-signs-doing-it-wrong.html'>§17</a
       >'s signs.)
     </li>
   </ul>
 
-  <h2 id='refetch'>10.5 Refetches show stale content, never fallbacks</h2>
+  <h2 id='refetch'>11.5 Refetches show stale content, never fallbacks</h2>
   <p>
     <Chip k='react' />
     <Chip k='critical' /> A skeleton answers the question "what goes here?", a question that's only ever
@@ -1289,7 +1289,7 @@ flowchart LR
   </h3>
   <p>
     The first bullet, the default case, assembled end to end. Notice it's the whole guide in one
-    example: the URL is the state (<a href='08-server-resolvable-state.html'>§8</a>), the input and
+    example: the URL is the state (<a href='09-server-resolvable-state.html'>§9</a>), the input and
     the dim-wrapper are client leaves (<a href='05-client-server-boundaries.html'>§5</a>), the rows
     are a server component fetching by <code>searchParams</code>, and the fallback appears exactly
     once:
@@ -1313,7 +1313,7 @@ flowchart LR
       &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">SearchInputSkeleton</span> /&gt;}&gt;
         &lt;<span class="tok-fn">SearchInput</span> /&gt;
       &lt;/<span class="tok-fn">Suspense</span>&gt;
-      <span class="tok-com">{/* The known container reserves the table's space (§9). */}</span>
+      <span class="tok-com">{/* The known container reserves the table's space (§10). */}</span>
       &lt;<span class="tok-fn">TableContainer</span>&gt;
         <span class="tok-com">{/* A client shell that dims; the server-rendered rows pass through as children. */}</span>
         &lt;<span class="tok-fn">StaleContent</span>&gt;
@@ -1333,11 +1333,11 @@ flowchart LR
     <pre
       class='code v-good'
       is:raw><span class="filename">ReportRows.tsx - server: only ever renders finished knowledge</span><span class="tok-kw">export async function</span> <span class="tok-fn">ReportRows</span>({ query }) {
-  <span class="tok-com">// The data layer call is cached and deduped (§14).</span>
+  <span class="tok-com">// The data layer call is cached and deduped (§15).</span>
   <span class="tok-kw">const</span> rows = <span class="tok-kw">await</span> <span class="tok-fn">getReportRows</span>(query);
 
   <span class="tok-com">/* The await above has finished by the time this renders, so "empty" here can
-     only mean finished-and-empty; the unknown case cannot reach this component (§10.6). */</span>
+     only mean finished-and-empty; the unknown case cannot reach this component (§11.6). */</span>
   <span class="tok-kw">if</span> (rows.length === <span class="tok-str">0</span>) <span class="tok-kw">return</span> &lt;<span class="tok-fn">EmptyState</span> <span class="tok-prop">query</span>={query} /&gt;;
 
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">Rows</span> <span class="tok-prop">rows</span>={rows} /&gt;;
@@ -1416,7 +1416,7 @@ flowchart LR
     render streams in and swaps. The skeleton appeared exactly once, at first load. And note what <code
       >ReportRows</code
     > gets for free by being a server component: it only ever runs when the data is <em>finished</em
-    >, so the unknown-vs-empty question (<a href='#orthogonal'>§10.6</a>) collapses: <code
+    >, so the unknown-vs-empty question (<a href='#orthogonal'>§11.6</a>) collapses: <code
       >undefined</code
     > can't reach it, and the empty check is honestly just "finished and empty." One caveat to keep it
     honest: don't put a
@@ -1475,7 +1475,7 @@ flowchart LR
     > and never gate content on it.)
   </p>
 
-  <h2 id='orthogonal'>10.6 Loading, data, and empty are three separate questions</h2>
+  <h2 id='orthogonal'>11.6 Loading, data, and empty are three separate questions</h2>
   <p>
     The deepest of the loading-state mistakes is structural: the
     <code>if (isLoading) … else if (!data) … else …</code> chain. It welds three independent questions
@@ -1987,7 +1987,7 @@ flowchart LR
     </Fragment>
   </Diagram>
 
-  <h2 id='transitions'>10.7 Transitions</h2>
+  <h2 id='transitions'>11.7 Transitions</h2>
   <p>
     Every state update in React is <em>urgent</em> by default: React drops what it is doing and re-renders
     to reflect it as fast as it can. <Chip k='react' />
@@ -2002,12 +2002,12 @@ flowchart LR
 
   <h3 id='transitions-stale'>Transitions keep the old UI alive</h3>
   <p>
-    The callout in <a href='#mechanism'>§10.1</a> noted that a boundary already showing content will not
+    The callout in <a href='#mechanism'>§11.1</a> noted that a boundary already showing content will not
     fall back to its skeleton when an update inside it suspends during a transition. That behavior is
-    how you get updates that don't flash, and it is the same doctrine as <a href='#refetch'>§10.5</a
+    how you get updates that don't flash, and it is the same doctrine as <a href='#refetch'>§11.5</a
     >, one level up: don't blank what you already have just because something newer is on the way.
     This is the reason writes to router-owned state, a navigation or a <code>searchParams</code> update
-    (<a href='08-server-resolvable-state.html#url-state'>§8.2</a>), belong in a transition: the
+    (<a href='09-server-resolvable-state.html#url-state'>§9.2</a>), belong in a transition: the
     current page stays live while the next view prepares, and the <code>isPending</code> flag from <code
       >useTransition</code
     > shows progress
@@ -2040,7 +2040,7 @@ flowchart LR
     <CodeCaption>
       While the server prepares the new rows, <code>isPending</code> is true: dim the table, disable the
       select, badge the header; the old UI never blanks. The end-to-end version of this pattern is the
-      <a href='#example-url-transition'>§10.5 example</a>.
+      <a href='#example-url-transition'>§11.5 example</a>.
     </CodeCaption>
   </Snippet>
 
@@ -2056,7 +2056,7 @@ flowchart LR
     <em>derived</em> state and the input updates normally. And when the value whose update you would defer
     is not yours to wrap (it arrives through props or a store),
     <code>useDeferredValue</code> is the same mechanism applied to a value instead of an update: the type-to-filter
-    example in <a href='#example-deferred'>§10.5</a>.
+    example in <a href='#example-deferred'>§11.5</a>.
   </p>
 
   <Snippet>
@@ -2103,7 +2103,7 @@ flowchart LR
       href='05-client-server-boundaries.html#server-actions'>§5.8</a
     >). Errors thrown inside an action surface to the nearest error boundary, and optimistic UI (<code
       >useOptimistic</code
-    >, <a href='08-server-resolvable-state.html#url-state'>§8.2</a>) reverts automatically when the
+    >, <a href='09-server-resolvable-state.html#url-state'>§9.2</a>) reverts automatically when the
     action fails. One sharp edge from the docs: after an <code>await</code>, further state updates
     inside the action must be wrapped in
     <code>startTransition</code> again, or they lose their transition marking.
@@ -2143,7 +2143,7 @@ flowchart LR
 
   <p>
     The API reference for <code>useTransition</code> and <code>useDeferredValue</code> is in
-    <a href='18-new-primitives.html#use-transition'>§18.3</a>; the caveat list lives in the
+    <a href='19-new-primitives.html#use-transition'>§19.3</a>; the caveat list lives in the
     <a href='https://react.dev/reference/react/startTransition' target='_blank' rel='noopener'
       >React docs</a
     >.
@@ -2252,7 +2252,7 @@ flowchart LR
         href='https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents'
         target='_blank'
         rel='noopener'>cacheComponents / PPR</a
-      >. Full list in <a href='19-references.html'>§19</a>.
+      >. Full list in <a href='20-references.html'>§20</a>.
     </p>
   </GoDeeper>
 </GuidePage>

@@ -11,16 +11,16 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='Bundle Size & Code Splitting - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 7 · Part A: Maximize the Known</div>
+  <div class='kicker'>Chapter 8 · Part A: Maximize the Known</div>
   <h1>Bundle Size &amp; Code Splitting</h1>
   <p class='lede'>
-    <a href='06-first-render-js.html'>§6</a> was about the mechanics of keeping JavaScript out of the
+    <a href='07-first-render-js.html'>§7</a> was about the mechanics of keeping JavaScript out of the
     first render. This chapter is about the judgment: which dependencies are worth their weight, why a
     single heavyweight component can undo the entire known/unknown split, and what all that shipped JavaScript
     actually costs the people using the app.
   </p>
 
-  <h2 id='tax'>7.1 The JavaScript you ship is a tax on the known</h2>
+  <h2 id='tax'>8.1 The JavaScript you ship is a tax on the known</h2>
   <p>
     Part A is about maximizing what the server can deliver as finished HTML. Every kilobyte of
     client JavaScript works against that goal from the other side: the browser has to download it,
@@ -39,7 +39,7 @@ import Snippet from '../../components/Snippet.astro';
     importing through barrel files that quietly negate tree-shaking.
   </p>
 
-  <h2 id='wholesale'>7.2 The wholesale-component trap</h2>
+  <h2 id='wholesale'>8.2 The wholesale-component trap</h2>
   <p>
     Here is the most instructive failure, because it shows how bundle size and the known/unknown
     thesis are the same problem. Picture a reports page with a data table. Look at what is actually
@@ -222,7 +222,7 @@ flowchart LR
       The same table, two architectures. On the left, a wholesale grid fuses the knowable frame to
       the unknowable rows, so nothing appears until the bundle and the data both arrive. On the
       right, the frame is server-rendered HTML that shows on the first byte, and a <a
-        href='10-suspense-streaming.html'>§10</a
+        href='11-suspense-streaming.html'>§11</a
       > boundary wraps only the rows. You cannot get the right-hand behavior out of the left-hand component.
     </Fragment>
   </Diagram>
@@ -457,12 +457,12 @@ flowchart LR
       region one blocked client component: the header above it can paint, but the table is blank
       until its bundle and data arrive. On the right, the toolbar, column headers, and footer are
       server HTML that shows instantly, and only the body rows sit behind a <a
-        href='10-suspense-streaming.html'>§10</a
+        href='11-suspense-streaming.html'>§11</a
       > boundary, streaming into space the frame already reserved.
     </Fragment>
   </Diagram>
 
-  <h2 id='heavyweight'>7.3 Heavyweight imports, and fallbacks that stay light</h2>
+  <h2 id='heavyweight'>8.3 Heavyweight imports, and fallbacks that stay light</h2>
   <p>
     Sometimes you genuinely need a heavy client component: a rich text editor, a charting library, a
     map, a spreadsheet grid whose interactivity you can't rebuild by hand. The rule there is not
@@ -473,12 +473,12 @@ flowchart LR
   </p>
   <p>
     The mechanics of the dynamic import (the <code>ssr: false</code> option, the top-level declaration
-    rule) live in <a href='06-first-render-js.html#dynamic'>§6.3</a>; what matters here is the
+    rule) live in <a href='07-first-render-js.html#dynamic'>§7.3</a>; what matters here is the
     fallback.
     <strong>The fallback must be lighter than the thing it stands in for.</strong> A common mistake is
     to hand the loading state another heavy component, or a spinner that itself pulls in an animation
     library. The fallback should be cheap, static markup that reserves the right space (<a
-      href='09-containers-content-shifting.html'>§9</a
+      href='10-containers-content-shifting.html'>§10</a
     >): a plain skeleton, sized to match.
   </p>
 
@@ -507,20 +507,20 @@ flowchart LR
       is still the second-best answer. It hides the weight; it doesn't remove it, and the user still
       pays the download the moment the component is needed. Whenever the frame is genuinely
       knowable, prefer the composed server-rendered table from
-      <a href='#wholesale'>§7.2</a> and reserve the heavy client component for the parts that truly need
+      <a href='#wholesale'>§8.2</a> and reserve the heavy client component for the parts that truly need
       its interactivity.
     </p>
   </Callout>
 
-  <h2 id='triggers'>7.4 The trigger ships; the panel waits</h2>
+  <h2 id='triggers'>8.4 The trigger ships; the panel waits</h2>
   <p>
     Every floating element - a dropdown menu, a popover, a dialog, a drawer - is closed on first
     render by definition. The button that opens it is on screen from the first paint. That is the
-    <a href='#tax'>§7.1</a> question answered twice, in opposite directions, by two things that sit an
+    <a href='#tax'>§8.1</a> question answered twice, in opposite directions, by two things that sit an
     inch apart in the same mock. The structural consequence:
     <strong>the trigger and the panel it opens should be separate components, side by side,</strong> so
     the trigger can ship in the first-paint bundle while the panel's import is deferred until someone
-    actually clicks. <a href='15-component-breakdown.html#worked'>§15.2</a>'s card menu is exactly
+    actually clicks. <a href='16-component-breakdown.html#worked'>§16.2</a>'s card menu is exactly
     this shape: a trigger file that owns the open state, and a panel file behind a dynamic import.
   </p>
   <p>
@@ -627,16 +627,16 @@ flowchart LR
   <p>
     Two judgment notes. First, the first open now pays the chunk's download; for panels this is
     almost always invisible (they are small relative to what they saved, and the fetch races the
-    user's hand), but it is the same trade as <a href='#heavyweight'>§7.3</a>: don't split a
+    user's hand), but it is the same trade as <a href='#heavyweight'>§8.3</a>: don't split a
     three-line panel out of reflex, split when the panel has weight. Second, when you design your
     <em>own</em> trigger-plus-floating components, bake the seam into the API from the start: a trigger
     that owns the open state and mounts a lazy panel, as in
-    <a href='15-component-breakdown.html#worked'>§15.2</a>, rather than a component that needs the
-    panel's module just to render the button. It is <a href='#wholesale'>§7.2</a>'s lesson rotated
+    <a href='16-component-breakdown.html#worked'>§16.2</a>, rather than a component that needs the
+    panel's module just to render the button. It is <a href='#wholesale'>§8.2</a>'s lesson rotated
     ninety degrees: don't weld the always-visible to the almost-never-visible.
   </p>
 
-  <h2 id='barrels'>7.5 Barrel files quietly defeat code splitting</h2>
+  <h2 id='barrels'>8.5 Barrel files quietly defeat code splitting</h2>
   <p>
     A barrel file is an <code>index.ts</code> that re-exports everything in a folder so callers can write
     <code>import &#123; Button &#125; from "@/ui"</code> instead of reaching into the specific module.
@@ -679,12 +679,12 @@ flowchart LR
     <strong>don't ship <code>index.ts</code> barrels for your own component libraries</strong>. This
     is also where bundle size meets component design: barrels tend to grow around files that hold
     too many components, which is the same instinct
-    <a href='15-component-breakdown.html'>§15</a>
+    <a href='16-component-breakdown.html'>§16</a>
     argues against. One component per file, imported directly, is both cleaner to read and cheaper to
     ship.
   </p>
 
-  <h2 id='cost'>7.6 What bloated pages actually cost</h2>
+  <h2 id='cost'>8.6 What bloated pages actually cost</h2>
   <p>
     It is worth being concrete about who pays, because "big bundle" sounds abstract and the costs
     are not. They land on the two groups that matter most: the people using the app and the people
@@ -788,7 +788,7 @@ flowchart LR
 
   <GoDeeper>
     <p>
-      <a href='06-first-render-js.html'>§6</a> for the dynamic-import mechanics ·
+      <a href='07-first-render-js.html'>§7</a> for the dynamic-import mechanics ·
       <a href='https://nextjs.org/docs/app/guides/lazy-loading' target='_blank' rel='noopener'
         >Next.js: Lazy Loading</a
       >
@@ -798,7 +798,7 @@ flowchart LR
       >
       (bundle analyzer, <code>optimizePackageImports</code>) ·
       <a href='https://react.dev/reference/react/lazy' target='_blank' rel='noopener'>React: lazy</a
-      >. Full list in <a href='19-references.html'>§19</a>.
+      >. Full list in <a href='20-references.html'>§20</a>.
     </p>
   </GoDeeper>
 </GuidePage>

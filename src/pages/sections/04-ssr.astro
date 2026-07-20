@@ -38,9 +38,9 @@ import Snippet from '../../components/Snippet.astro';
     <strong>everything the server can resolve arrives finished</strong>, and only the parts you
     explicitly carve out ever depend on the client. The rest of Part A is about keeping that
     carved-out surface small (<a href='05-client-server-boundaries.html'>§5</a>–<a
-      href='08-server-resolvable-state.html'>§8</a
-    >); Part B is about handling what remains (<a href='09-containers-content-shifting.html'>§9</a
-    >–<a href='12-blocking-requests.html'>§12</a>).
+      href='09-server-resolvable-state.html'>§9</a
+    >); Part B is about handling what remains (<a href='10-containers-content-shifting.html'>§10</a
+    >–<a href='13-blocking-requests.html'>§13</a>).
   </p>
 
   <h2 id='benefits'>4.2 What you get for it</h2>
@@ -81,7 +81,7 @@ import Snippet from '../../components/Snippet.astro';
         <td>
           Server components add <strong>zero bytes to the bundle</strong>: their code, their
           dependencies, their markdown parser, all of it stays behind. The client downloads markup,
-          not the machinery (<a href='06-first-render-js.html'>§6</a>).
+          not the machinery (<a href='07-first-render-js.html'>§7</a>).
         </td>
       </tr>
       <tr>
@@ -89,7 +89,7 @@ import Snippet from '../../components/Snippet.astro';
         <td>
           Rendered output is an artifact the framework can
           <strong>cache and reuse across users</strong>; see
-          <a href='#page-cache'>§4.4</a> and <a href='14-dedupe-caching.html'>§14</a>.
+          <a href='#page-cache'>§4.4</a> and <a href='15-dedupe-caching.html'>§15</a>.
         </td>
       </tr>
       <tr>
@@ -112,7 +112,7 @@ import Snippet from '../../components/Snippet.astro';
   <h3 id='stability'>Stability: the known arrives first, already placed</h3>
   <p>
     Content shifting happens when content arrives <em>late</em> and pushes its neighbors around (<a
-      href='09-containers-content-shifting.html'>§9</a
+      href='10-containers-content-shifting.html'>§10</a
     > is devoted to it). SSR attacks the problem at its root: whatever the server resolves is part of
     the
     <em>first paint</em>, already in its final position, at its final size. It cannot shift
@@ -127,7 +127,7 @@ import Snippet from '../../components/Snippet.astro';
       content that can no longer displace the page</strong
     >. The layout-shift surface of a page is, almost by definition, its unknown surface. Shrink the
     unknown and the shifting shrinks with it; what little remains gets contained inside reserved
-    containers (<a href='09-containers-content-shifting.html#reserving'>§9.3</a>) instead of being
+    containers (<a href='10-containers-content-shifting.html#reserving'>§10.3</a>) instead of being
     fixed after the fact.
   </p>
 
@@ -288,7 +288,7 @@ flowchart LR
   <p>
     Notice what the right side <em>doesn't have</em>: loading flags, fallback branches, effect
     dependencies, race-condition guards, "is it undefined because it's loading or because it's
-    empty" ambiguity (<a href='10-suspense-streaming.html#orthogonal'>§10.6</a>). That code was
+    empty" ambiguity (<a href='11-suspense-streaming.html#orthogonal'>§11.6</a>). That code was
     never simplified; it was never written. Multiply that by every data-bearing component on every
     page, and "simplicity" stops being an abstract virtue and becomes the difference between a
     codebase you can reason about and one you can't.
@@ -316,7 +316,7 @@ flowchart LR
     user stares at a blank region while content that was knowable sits hidden behind it). Both answers
     are ongoing work; each component that fetches must pick one and keep it correct. On the server, for
     everything resolvable at request time, the question is unaskable: the content arrives already the
-    size it is (<a href='09-containers-content-shifting.html'>§9</a> picks this up for the parts that
+    size it is (<a href='10-containers-content-shifting.html'>§10</a> picks this up for the parts that
     genuinely must wait).
   </p>
   <Callout kind='voice' title='"But client-side rendering is simpler"'>
@@ -472,9 +472,9 @@ flowchart LR
     <code>server-only</code> (<a href='05-client-server-boundaries.html#third-party'>§5.5</a>) turns
     any accidental attempt into a build error. Performance: those rendering libraries are precisely
     the heavyweight imports of
-    <a href='07-bundle-size-code-splitting.html'>§7</a>, and keeping them on the server is the
+    <a href='08-bundle-size-code-splitting.html'>§8</a>, and keeping them on the server is the
     single cheapest bundle-size win available, because the client downloads a few kilobytes of
-    markup instead of megabytes of machinery (<a href='06-first-render-js.html'>§6</a>). One
+    markup instead of megabytes of machinery (<a href='07-first-render-js.html'>§7</a>). One
     architectural fact, two benefits: expose the output, never the means of producing it.
   </p>
 
@@ -499,7 +499,7 @@ flowchart LR
     can change freely because nothing in the browser ever depended on it. (Mutations get the same collapse
     from server actions, <a href='05-client-server-boundaries.html#server-actions'>§5.8</a>: a typed
     call instead of a hand-built endpoint. Building JSON routes for your own pages' first-render
-    data is the pattern the audit flagged, <a href='17-applied-to-tracker.html'>§17</a>.)
+    data is the pattern the audit flagged, <a href='18-applied-to-tracker.html'>§18</a>.)
   </p>
 
   <h2 id='perceived'>4.3 Perceived performance, and where streaming fits</h2>
@@ -538,10 +538,10 @@ flowchart LR
     weakness: if the server waits for <em>all</em> data before sending anything, the slowest query gates
     the entire page. Streaming removes that gate: the server sends the known immediately (structure, containers,
     everything already resolved) and flushes the slow parts into their reserved slots as they finish,
-    over the same response (<a href='10-suspense-streaming.html#streaming'>§10.2</a>). Perceived
+    over the same response (<a href='11-suspense-streaming.html#streaming'>§11.2</a>). Perceived
     performance is governed by when the first meaningful content lands and whether the page holds
     still afterward; streaming makes the first independent of your slowest query, and containers (<a
-      href='09-containers-content-shifting.html'>§9</a
+      href='10-containers-content-shifting.html'>§10</a
     >) guarantee the second. That is the whole Part B playbook in one sentence, powered by the fact
     that rendering happens on a server that can flush incrementally.
   </p>
@@ -582,7 +582,7 @@ flowchart LR
     not yet hydrated, and none of the scaffolding that produced it. Fewer visible steps always reads
     as faster. The mechanics of holding still (containers, honest space reservation, CLS as a field
     metric) get a full chapter in
-    <a href='09-containers-content-shifting.html'>§9</a>; what belongs here is the perceptual claim:
+    <a href='10-containers-content-shifting.html'>§10</a>; what belongs here is the perceptual claim:
     a page that appears at once and never moves feels faster than one that assembles itself in front
     of the user, regardless of what the network tab says.
   </p>
@@ -604,7 +604,7 @@ flowchart LR
     <em>does</em> need request-time data, the modern model (Partial Prerendering /
     <code>cacheComponents</code>) caches the static shell and streams only the dynamic holes into
     it. The mechanics (<code>"use cache"</code>, revalidation, cache tags) live in
-    <a href='14-dedupe-caching.html'>§14</a>; what belongs here is the architectural point:
+    <a href='15-dedupe-caching.html'>§15</a>; what belongs here is the architectural point:
   </p>
   <p>
     <strong>Only server-rendered content can participate in this cache.</strong>
@@ -844,7 +844,7 @@ flowchart LR
     without building either by hand. But notice it's conditional: the seamless merge works because the
     server renders segments the router can splice. A page that client-fetches everything after mount gets
     neither benefit: its first visit is a shell, and its navigations re-run the whole fetch choreography
-    (<a href='12-blocking-requests.html#client'>§12.4</a>).
+    (<a href='13-blocking-requests.html#client'>§13.4</a>).
   </p>
 
   <h3 id='prefetching'>Links and prefetching</h3>
@@ -920,7 +920,7 @@ flowchart LR
     With the file present, the whole sequence inverts. The layouts and skeleton were partially
     prefetched, so the navigation <strong>commits immediately</strong>: the URL changes, the known
     structure paints on click, and the server's content streams into the reserved fallback when it
-    arrives (<a href='10-suspense-streaming.html#streaming'>§10.2</a>). The docs enumerate the
+    arrives (<a href='11-suspense-streaming.html#streaming'>§11.2</a>). The docs enumerate the
     benefits: immediate visual feedback, shared layouts that stay interactive while the route loads
     (the user can even interrupt the navigation and click elsewhere), better TTFB/FCP/TTI. But
     notice what the pattern <em>is</em>: contain-the-unknown, applied to navigation. The known part
@@ -935,7 +935,7 @@ flowchart LR
       >pending</code
     > flag for an immediate, debounced hint on the link itself. And prefetching can't start until
     <code>&lt;Link&gt;</code> hydrates (it is a client component), which is one more reason to keep first-render
-    JavaScript small (<a href='06-first-render-js.html'>§6</a>).
+    JavaScript small (<a href='07-first-render-js.html'>§7</a>).
   </p>
 
   <GoDeeper>
@@ -972,7 +972,7 @@ flowchart LR
       trap) ·
       <a href='https://nextjs.org/docs/app/guides/prefetching' target='_blank' rel='noopener'
         >Prefetching guide</a
-      >. Full list in <a href='19-references.html'>§19</a>.
+      >. Full list in <a href='20-references.html'>§20</a>.
     </p>
   </GoDeeper>
 </GuidePage>

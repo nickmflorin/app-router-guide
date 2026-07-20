@@ -11,7 +11,7 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='Server-Resolvable State - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 8 · Part A: Maximize the Known</div>
+  <div class='kicker'>Chapter 9 · Part A: Maximize the Known</div>
   <h1>Server-Resolvable State</h1>
   <p class='lede'>
     The first render is a function of the request. Nothing more. State the request carries (the URL,
@@ -21,7 +21,7 @@ import Snippet from '../../components/Snippet.astro';
   </p>
 
   <h2 id='principle'>
-    8.1 The principle: state the server can see is content the server can finish
+    9.1 The principle: state the server can see is content the server can finish
   </h2>
   <p>
     When a request arrives, the server knows exactly four kinds of state: the
@@ -167,7 +167,7 @@ flowchart LR
     </Fragment>
   </Diagram>
 
-  <h2 id='url-state'>8.2 The URL is the state manager</h2>
+  <h2 id='url-state'>9.2 The URL is the state manager</h2>
   <p>
     What belongs in it:
     <strong
@@ -199,7 +199,7 @@ flowchart LR
     The writing side you've already seen: an interactive leaf updates the query string with
     <code>router.replace()</code> inside a transition, and the server page re-renders with fresh rows:
     <a href='05-client-server-boundaries.html#refresh'>§5.8</a> has the search input, <a
-      href='10-suspense-streaming.html#refetch'>§10.5</a
+      href='11-suspense-streaming.html#refetch'>§11.5</a
     > builds the full table around it, and
     <a href='05-client-server-boundaries.html#searchparams-boundary'>§5.6</a> covers the Suspense boundary
     the reading leaf must carry. Two writing details worth pinning down:
@@ -223,7 +223,7 @@ flowchart LR
     </li>
   </ul>
 
-  <h2 id='tabs'>8.3 Tabs are routes in disguise</h2>
+  <h2 id='tabs'>9.3 Tabs are routes in disguise</h2>
   <p>
     The clearest instance of the whole principle, and the instinct most worth unlearning, is
     <strong>tabs held in <code>useState</code></strong>. A tab bar is a set of views with
@@ -231,7 +231,7 @@ flowchart LR
     answer, and holding it in memory forfeits everything at once: the link can't say which tab it
     points at, refresh snaps back to the default, the server can't render the active panel's
     content, and, since every panel must be reachable by a client-side click, <em>all</em> the panels
-    ship to the client, rendered or not (<a href='06-first-render-js.html'>§6</a>).
+    ship to the client, rendered or not (<a href='07-first-render-js.html'>§7</a>).
   </p>
 
   <Compare>
@@ -288,8 +288,8 @@ flowchart LR
             >page.tsx</code
           > is server-rendered, streamed, and prefetched by its Link, and each brings its own <code
             >loading.tsx</code
-          > and <code>error.tsx</code> boundaries (<a href='10-suspense-streaming.html#streaming'
-            >§10.2</a
+          > and <code>error.tsx</code> boundaries (<a href='11-suspense-streaming.html#streaming'
+            >§11.2</a
           >).
         </CodeCaption>
       </Snippet>
@@ -301,7 +301,7 @@ flowchart LR
     <code>&lt;Link&gt;</code> before the click (<a href='04-ssr.html#prefetching'>§4.5</a>), and
     addressable from anywhere. The layout (header, tab bar, containers) persists across switches
     without re-rendering (<a href='03-mental-model.html#rendering-model'>§3.1</a>,
-    <a href='09-containers-content-shifting.html#layouts'>§9.4</a>). The tab bar itself is a row of
+    <a href='10-containers-content-shifting.html#layouts'>§10.4</a>). The tab bar itself is a row of
     links; its only client concern is knowing which one is active:
   </p>
 
@@ -345,7 +345,7 @@ flowchart LR
     <Chip k='very' />
   </p>
 
-  <h2 id='url-writes'>8.4 Writing the URL: transitions, stale content, and optimistic tabs</h2>
+  <h2 id='url-writes'>9.4 Writing the URL: transitions, stale content, and optimistic tabs</h2>
   <p>
     Reading the URL is half the contract; the other half is writing it, because
     <strong>writing the URL is how a client leaf forces the server to re-render.</strong>
@@ -362,13 +362,13 @@ flowchart LR
     Three refinements turn that mechanic into UI that feels instant. First,
     <strong>wrap the write in a transition</strong>: the App Router treats navigations as
     transitions, so an already-revealed Suspense boundary keeps its current content instead of
-    re-showing a fallback (<a href='10-suspense-streaming.html#refetch'>§10.5</a>), and your own <code
+    re-showing a fallback (<a href='11-suspense-streaming.html#refetch'>§11.5</a>), and your own <code
       >useTransition</code
     > gives you <code>isPending</code> as the loading indicator. Second, <strong
       >show the stale content while the new render is in flight</strong
     >: dim it against <code>isPending</code>, or reach for
     <code>useDeferredValue</code> when the results are client-rendered; both worked examples live in <a
-      href='10-suspense-streaming.html#refetch'>§10.5</a
+      href='11-suspense-streaming.html#refetch'>§11.5</a
     >. Third, and this is the one that makes tabs feel native: <strong
       >update the selection optimistically.</strong
     >
@@ -423,17 +423,17 @@ flowchart LR
       reconciles with the URL-derived one automatically. If the navigation fails, React reverts the highlight
       for free. The interaction is never blocked by the page render; only the panel content waits, dimmed,
       per
-      <a href='10-suspense-streaming.html#refetch'>§10.5</a>.
+      <a href='11-suspense-streaming.html#refetch'>§11.5</a>.
     </CodeCaption>
   </Snippet>
   <p>
-    The result is the best of both worlds from <a href='#tabs'>§8.3</a>'s ladder: the URL stays the
+    The result is the best of both worlds from <a href='#tabs'>§9.3</a>'s ladder: the URL stays the
     source of truth (shareable, refresh-proof, server-rendered), and the interaction feels as
     immediate as any <code>useState</code> tab bar. The same recipe applies to any URL-backed control:
     filters, sort toggles, pagination, view switches.
   </p>
 
-  <h2 id='cookies'>8.5 Cookies: preferences that follow the user, not the URL</h2>
+  <h2 id='cookies'>9.5 Cookies: preferences that follow the user, not the URL</h2>
   <p>
     Some state should survive across pages and sessions but has no business in a link: the collapsed
     sidebar, a table-density preference, the dismissed-announcement flag, theme. Put those in <strong
@@ -472,13 +472,13 @@ flowchart LR
     with the link should get it. A collapsed sidebar is the viewer: it would be bizarre in a shared link.
   </p>
 
-  <h2 id='client-state'>8.6 What genuinely stays client state</h2>
+  <h2 id='client-state'>9.6 What genuinely stays client state</h2>
   <p>
     The point is not that <code>useState</code> is bad; it's that it should hold
     <strong>interaction</strong>, not <strong>identity</strong>. Ephemeral, mid-gesture,
     this-tab-only state is exactly what it's for: the text in an input <em>before</em> it's committed
     to the URL (the debounced draft in
-    <a href='10-suspense-streaming.html#refetch'>§10.5</a>), the open/closed flag of a dialog or
+    <a href='11-suspense-streaming.html#refetch'>§11.5</a>), the open/closed flag of a dialog or
     menu living in its leaf (<a href='05-client-server-boundaries.html#self-contained'>§5.7</a>),
     hover and focus, an in-flight optimistic value, a drag mid-drag.
     <Chip k='react' />
@@ -582,7 +582,7 @@ flowchart LR
         href='https://nextjs.org/docs/app/getting-started/linking-and-navigating'
         target='_blank'
         rel='noopener'>Linking and Navigating</a
-      >. Full list in <a href='19-references.html'>§19</a>.
+      >. Full list in <a href='20-references.html'>§20</a>.
     </p>
   </GoDeeper>
 </GuidePage>

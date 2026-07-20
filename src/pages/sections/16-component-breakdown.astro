@@ -9,7 +9,7 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='Component Breakdown - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 15 · Part C: Decouple the Parts</div>
+  <div class='kicker'>Chapter 16 · Part C: Decouple the Parts</div>
   <h1>Component Breakdown</h1>
   <p class='lede'>
     Every chapter so far has quietly been about where to draw component lines. This one makes it the
@@ -32,7 +32,7 @@ import Snippet from '../../components/Snippet.astro';
     </p>
   </Callout>
 
-  <h2 id='axes'>15.1 The axes of a split have changed</h2>
+  <h2 id='axes'>16.1 The axes of a split have changed</h2>
   <p>
     Traditional React taught one decomposition instinct: split by <em>visual shape and reuse</em>. A
     card here, a toolbar there, extract when you see it twice. Those considerations still exist, but
@@ -50,15 +50,15 @@ import Snippet from '../../components/Snippet.astro';
     <li>
       <strong>The data axis: one component per independent question.</strong> Each independent data need
       becomes its own <code>async</code> server component, because the component is the unit that can
-      await, suspend, and stream on its own (<a href='12-blocking-requests.html'>§12</a>,
-      <a href='13-minimize-the-wires.html'>§13</a>). Splitting by data is what makes parallelism and
+      await, suspend, and stream on its own (<a href='13-blocking-requests.html'>§13</a>,
+      <a href='14-minimize-the-wires.html'>§14</a>). Splitting by data is what makes parallelism and
       streaming fall out for free.
     </li>
     <li>
       <strong>The containment axis: frame or content.</strong> The known frame renders immediately and
       reserves space; the unknown content suspends inside it. If one component renders both, the frame
-      is hostage to the content's data (<a href='09-containers-content-shifting.html'>§9</a>,
-      <a href='10-suspense-streaming.html'>§10</a>).
+      is hostage to the content's data (<a href='10-containers-content-shifting.html'>§10</a>,
+      <a href='11-suspense-streaming.html'>§11</a>).
     </li>
   </ul>
   <p>
@@ -81,7 +81,7 @@ import Snippet from '../../components/Snippet.astro';
     </p>
   </Callout>
 
-  <h2 id='worked'>15.2 The same card, broken both ways</h2>
+  <h2 id='worked'>16.2 The same card, broken both ways</h2>
   <p>
     Here is the old-world version: one file, one component, visually faithful to the mock, and wrong
     on all three axes.
@@ -123,7 +123,7 @@ import Snippet from '../../components/Snippet.astro';
       is:raw><span class="filename">components/programs/card/ - one capability per file</span>card/
 ├── ProgramCard.tsx               <span class="tok-com">server: the known frame</span>
 ├── ProgramCardStats.tsx          <span class="tok-com">server, async: one data question</span>
-├── ProgramCardStatsSkeleton.tsx  <span class="tok-com">the fallback, colocated (§10)</span>
+├── ProgramCardStatsSkeleton.tsx  <span class="tok-com">the fallback, colocated (§11)</span>
 ├── ProgramCardMenu.tsx           <span class="tok-com">client: the trigger, the only first-paint JS</span>
 └── ProgramCardMenuPanel.tsx      <span class="tok-com">client: the floating layer, loaded on demand</span></pre>
   </Snippet>
@@ -156,7 +156,7 @@ import Snippet from '../../components/Snippet.astro';
     <pre
       class='code v-good'
       is:raw><span class="filename">ProgramCardStats.tsx - server, async: exactly one question</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramCardStats</span>({ programId }: { programId: number }) {
-  <span class="tok-com">// React.cache'd (§14): duplicate askers collapse into one execution.</span>
+  <span class="tok-com">// React.cache'd (§15): duplicate askers collapse into one execution.</span>
   <span class="tok-kw">const</span> stats = <span class="tok-kw">await</span> <span class="tok-fn">getProgramStats</span>(programId);
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">StatRow</span> <span class="tok-prop">stats</span>={stats} /&gt;;
 }</pre>
@@ -188,14 +188,14 @@ import Snippet from '../../components/Snippet.astro';
 }</pre>
     <CodeCaption>
       The menu is a floating element that is closed by default, which makes it the purest case of
-      the <a href='07-bundle-size-code-splitting.html'>§7</a> test: it is not needed on first render.
+      the <a href='08-bundle-size-code-splitting.html'>§8</a> test: it is not needed on first render.
       So it is deferred twice. The conditional mount defers its <em>render</em> until the click, and <code
         >dynamic</code
-      > (<a href='07-bundle-size-code-splitting.html#heavyweight'>§7.3</a>) defers its <em
+      > (<a href='08-bundle-size-code-splitting.html#heavyweight'>§8.3</a>) defers its <em
         >download</em
       > until the same click. The trigger button above is the only code in the card's first-paint bundle.
       The general trigger/panel split, including how to keep it under a UI library's compound API, is
-      <a href='07-bundle-size-code-splitting.html#triggers'>§7.4</a>.
+      <a href='08-bundle-size-code-splitting.html#triggers'>§8.4</a>.
     </CodeCaption>
   </Snippet>
 
@@ -241,19 +241,19 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     Count what the "awkward" split bought: the frame paints immediately (<a href='04-ssr.html'>§4</a
     >), the stats stream into reserved space without moving anything (<a
-      href='09-containers-content-shifting.html'>§9</a
+      href='10-containers-content-shifting.html'>§10</a
     >,
-    <a href='10-suspense-streaming.html'>§10</a>), the menu trigger is the entire first-paint bundle
+    <a href='11-suspense-streaming.html'>§11</a>), the menu trigger is the entire first-paint bundle
     cost and the panel behind it downloads only for users who open it (<a
-      href='07-bundle-size-code-splitting.html'>§7</a
-    >), the data question dedupes with every other asker (<a href='14-dedupe-caching.html'>§14</a>),
-    and all five files are independently portable (<a href='13-minimize-the-wires.html#portability'
-      >§13.5</a
+      href='08-bundle-size-code-splitting.html'>§8</a
+    >), the data question dedupes with every other asker (<a href='15-dedupe-caching.html'>§15</a>),
+    and all five files are independently portable (<a href='14-minimize-the-wires.html#portability'
+      >§14.5</a
     >). None of that is achievable while the card is one component, because every one of those
     behaviors attaches to a component boundary.
   </p>
 
-  <h2 id='catalog'>15.3 The pattern catalog</h2>
+  <h2 id='catalog'>16.3 The pattern catalog</h2>
   <p>
     The recurring shapes, in one place. Each is defined in depth in its home chapter; this table is
     the index you skim while decomposing a feature.
@@ -273,7 +273,7 @@ import Snippet from '../../components/Snippet.astro';
           Server component that renders chrome and reserves space; contains the unknown, never waits
           for it.
         </td>
-        <td><a href='09-containers-content-shifting.html'>§9</a></td>
+        <td><a href='10-containers-content-shifting.html'>§10</a></td>
       </tr>
       <tr>
         <td><strong>Async region</strong></td>
@@ -282,14 +282,14 @@ import Snippet from '../../components/Snippet.astro';
           and streaming.
         </td>
         <td>
-          <a href='10-suspense-streaming.html'>§10</a>,
-          <a href='12-blocking-requests.html'>§12</a>
+          <a href='11-suspense-streaming.html'>§11</a>,
+          <a href='13-blocking-requests.html'>§13</a>
         </td>
       </tr>
       <tr>
         <td><strong>Colocated skeleton</strong></td>
         <td> The async region's fallback, next to the component whose shape it mirrors. </td>
-        <td><a href='10-suspense-streaming.html#skeletons'>§10.4</a></td>
+        <td><a href='11-suspense-streaming.html#skeletons'>§11.4</a></td>
       </tr>
       <tr>
         <td><strong>Interaction leaf</strong></td>
@@ -310,7 +310,7 @@ import Snippet from '../../components/Snippet.astro';
         </td>
         <td>
           <a href='05-client-server-boundaries.html#children-pattern'>§5.4</a>,
-          <a href='13-minimize-the-wires.html#portability'>§13.5</a>
+          <a href='14-minimize-the-wires.html#portability'>§14.5</a>
         </td>
       </tr>
       <tr>
@@ -335,12 +335,12 @@ import Snippet from '../../components/Snippet.astro';
           Client component loaded on interaction via <code>dynamic()</code>; charts, editors,
           anything that shouldn't tax first render.
         </td>
-        <td><a href='07-bundle-size-code-splitting.html'>§7</a></td>
+        <td><a href='08-bundle-size-code-splitting.html'>§8</a></td>
       </tr>
     </tbody>
   </table>
 
-  <h2 id='sequence'>15.4 The decomposition sequence</h2>
+  <h2 id='sequence'>16.4 The decomposition sequence</h2>
   <p>Applied in order, the axes become a repeatable procedure for any page or feature:</p>
 
   <Diagram>
@@ -376,7 +376,7 @@ import Snippet from '../../components/Snippet.astro';
       <text x='126' y='37' font-size='9' fill='#527dad'>
         layout, containers, chrome: renders on the first byte
       </text>
-      <text x='516' y='30' font-size='9' fill='#737373'>§2, §9</text>
+      <text x='516' y='30' font-size='9' fill='#737373'>§2, §10</text>
       <line
         x1='305'
         y1='48'
@@ -393,7 +393,7 @@ import Snippet from '../../components/Snippet.astro';
       <text x='126' y='99' font-size='9' fill='#737373'>
         independent questions fetch in parallel, never chained
       </text>
-      <text x='516' y='92' font-size='9' fill='#737373'>§12, §13</text>
+      <text x='516' y='92' font-size='9' fill='#737373'>§13, §14</text>
       <line
         x1='305'
         y1='110'
@@ -410,7 +410,7 @@ import Snippet from '../../components/Snippet.astro';
       <text x='126' y='161' font-size='9' fill='#737373'>
         reserved container + Suspense + colocated skeleton
       </text>
-      <text x='516' y='154' font-size='9' fill='#737373'>§9, §10</text>
+      <text x='516' y='154' font-size='9' fill='#737373'>§10, §11</text>
       <line
         x1='305'
         y1='172'
@@ -427,7 +427,7 @@ import Snippet from '../../components/Snippet.astro';
       <text x='126' y='223' font-size='9' fill='#737373'>
         "use client" on interaction atoms; shells receive slots
       </text>
-      <text x='516' y='216' font-size='9' fill='#737373'>§5, §6</text>
+      <text x='516' y='216' font-size='9' fill='#737373'>§5, §7</text>
       <line
         x1='305'
         y1='234'
@@ -444,18 +444,18 @@ import Snippet from '../../components/Snippet.astro';
       <text x='126' y='285' font-size='9' fill='#3e7d5c'>
         the file is the unit of the boundary; splits stay cheap
       </text>
-      <text x='516' y='278' font-size='9' fill='#737373'>§7, §15.5</text>
+      <text x='516' y='278' font-size='9' fill='#737373'>§8, §16.5</text>
     </svg>
 
     <pre
       slot='mermaid'
       is:raw>
 flowchart TB
-  S1("1 · Draw the known frame<br/>layout, containers, chrome: renders on the first byte · §2, §9"):::blue
-  S1 --> S2("2 · One async component per data question<br/>independent questions fetch in parallel, never chained · §12, §13"):::neutral
-  S2 --> S3("3 · Contain each unknown<br/>reserved container + Suspense + colocated skeleton · §9, §10"):::neutral
-  S3 --> S4("4 · Push interactivity into leaves<br/>'use client' on interaction atoms; shells receive slots · §5, §6"):::neutral
-  S4 --> S5("5 · One component per file, always<br/>the file is the unit of the boundary; splits stay cheap · §7"):::green
+  S1("1 · Draw the known frame<br/>layout, containers, chrome: renders on the first byte · §2, §10"):::blue
+  S1 --> S2("2 · One async component per data question<br/>independent questions fetch in parallel, never chained · §13, §14"):::neutral
+  S2 --> S3("3 · Contain each unknown<br/>reserved container + Suspense + colocated skeleton · §10, §11"):::neutral
+  S3 --> S4("4 · Push interactivity into leaves<br/>'use client' on interaction atoms; shells receive slots · §5, §7"):::neutral
+  S4 --> S5("5 · One component per file, always<br/>the file is the unit of the boundary; splits stay cheap · §8"):::green
   linkStyle default stroke:#737373,stroke-width:1.5px
   classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
   classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
@@ -469,7 +469,7 @@ flowchart TB
     </Fragment>
   </Diagram>
 
-  <h2 id='one-per-file'>15.5 One component per file</h2>
+  <h2 id='one-per-file'>16.5 One component per file</h2>
   <p>
     This habit sounds like style guidance. In the App Router it is structural, because
     <strong
@@ -483,7 +483,7 @@ flowchart TB
     >). The moment a file holds two components, their fates are welded: a helper component sharing a
     file with an interactive one becomes client code it never asked to be; a server-able piece of UI
     stuck in a client file drags its imports into the bundle (<a
-      href='07-bundle-size-code-splitting.html'>§7</a
+      href='08-bundle-size-code-splitting.html'>§8</a
     >). One component per file means the import graph <em>is</em> the boundary map: you can read where
     the client zone starts from the filesystem.
   </p>
@@ -492,7 +492,7 @@ flowchart TB
     card, moving a leaf across the boundary, lazy-loading a heavyweight, swapping a shell: each is a
     file operation when components live alone, and an untangling when they don't. The
     awkward-at-first splits of
-    <a href='#axes'>§15.1</a> stay painless only under this rule; it is the difference between "decomposition is how the code gets written" and "decomposition is a refactor to schedule." The guide's own examples practice it
+    <a href='#axes'>§16.1</a> stay painless only under this rule; it is the difference between "decomposition is how the code gets written" and "decomposition is a refactor to schedule." The guide's own examples practice it
     everywhere: the sidebar split in
     <a href='05-client-server-boundaries.html#library-leaves'>§5.5</a>, the SWR pair in
     <a href='05-client-server-boundaries.html#swr-refresh'>§5.8</a>, the card above.
@@ -503,7 +503,7 @@ flowchart TB
       Skeletons live in their own files next to the component they mirror (importable by the frame
       without touching the async region). Barrel files that re-export server and client components
       together undo the legibility, and a barrel that pulls in a client module can widen what ships
-      (<a href='07-bundle-size-code-splitting.html'>§7</a>); import from the file, not the folder.
+      (<a href='08-bundle-size-code-splitting.html'>§8</a>); import from the file, not the folder.
       And a file that suddenly wants a second export is usually a component announcing it has grown
       a second capability: split it.
     </p>

@@ -7,11 +7,11 @@ import Diagram from '../../components/Diagram.astro';
 ---
 
 <GuidePage title='Designing for the Unknown - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 11 · Part B: Contain the Unknown</div>
+  <div class='kicker'>Chapter 12 · Part B: Contain the Unknown</div>
   <h1>Designing for the Unknown</h1>
   <p class='lede'>
-    Everything in <a href='09-containers-content-shifting.html'>§9</a> and
-    <a href='10-suspense-streaming.html'>§10</a> assumed the layout <em>can</em> be contained. That is
+    Everything in <a href='10-containers-content-shifting.html'>§10</a> and
+    <a href='11-suspense-streaming.html'>§11</a> assumed the layout <em>can</em> be contained. That is
     not an engineering given; it is decided earlier, in design. Some layouts are containable and some
     fight containment no matter how carefully they are implemented, which makes stability a cross-team goal:
     engineering, UX, and design deciding together what the page does while the data is still unknown.
@@ -36,7 +36,7 @@ import Diagram from '../../components/Diagram.astro';
     </p>
   </Callout>
 
-  <h2 id='shared-goal'>11.1 Stability is a cross-team goal</h2>
+  <h2 id='shared-goal'>12.1 Stability is a cross-team goal</h2>
   <p>
     Cumulative Layout Shift is the engineering measurement of a goal that is fundamentally shared: <strong
       >the page must not move under the user.</strong
@@ -68,7 +68,7 @@ import Diagram from '../../components/Diagram.astro';
     </p>
   </Callout>
 
-  <h2 id='happy-path'>11.2 The comp is a happy path</h2>
+  <h2 id='happy-path'>12.2 The comp is a happy path</h2>
   <p>
     A Figma comp is a snapshot of exactly one state: the <strong>happy path</strong>. The data has
     arrived, every region is populated, and the row counts were chosen so the composition looks
@@ -102,13 +102,13 @@ import Diagram from '../../components/Diagram.astro';
     <li>
       <strong>"What does this region show before its content is known?"</strong> Not "a spinner": what
       shape, what height, what happens to its neighbors while it waits (<a
-        href='10-suspense-streaming.html#fallback-trade'>§10.2</a
+        href='11-suspense-streaming.html#fallback-trade'>§11.2</a
       >).
     </li>
     <li>
       <strong>"What happens when the content is much smaller than this?"</strong> One row. Zero rows:
       the empty state is a designed state, not a gap (<a
-        href='10-suspense-streaming.html#orthogonal'>§10.6</a
+        href='11-suspense-streaming.html#orthogonal'>§11.6</a
       >).
     </li>
     <li>
@@ -118,12 +118,12 @@ import Diagram from '../../components/Diagram.astro';
     </li>
     <li>
       <strong>"Which of these regions arrive at different times?"</strong> Two regions that stream independently
-      (<a href='10-suspense-streaming.html'>§10</a>) will resolve in either order; the design has to
+      (<a href='11-suspense-streaming.html'>§11</a>) will resolve in either order; the design has to
       look intentional in both.
     </li>
   </ul>
   <p>
-    These questions are the channel from <a href='#shared-goal'>§11.1</a> in practice, and they flow both
+    These questions are the channel from <a href='#shared-goal'>§12.1</a> in practice, and they flow both
     ways. The more consistently they get asked, the more natural they become on both sides: engineers
     start noticing containment problems in mocks reflexively and raising them while the design is still
     cheap to change, and UX starts anticipating the unknown-size states in the compositions themselves,
@@ -131,7 +131,7 @@ import Diagram from '../../components/Diagram.astro';
     up thinking in states by default.
   </p>
 
-  <h2 id='stacked-tables'>11.3 The worked example: two stacked tables</h2>
+  <h2 id='stacked-tables'>12.3 The worked example: two stacked tables</h2>
   <p>
     Here is a common hard case, and it looks completely innocent in a comp: two tables stacked
     vertically inside the app chrome, say <em>Assignments</em> above
@@ -427,7 +427,7 @@ flowchart LR
       area (not necessarily 50/50: weighted by expected volume) and let each scroll <em
         >internally</em
       >. The frame never moves; only content inside each pane changes. This is the strongest
-      containment, built with <a href='09-containers-content-shifting.html'>§9</a>'s
+      containment, built with <a href='10-containers-content-shifting.html'>§10</a>'s
       flex-grow-and-scroll frame.
     </li>
     <li>
@@ -563,11 +563,11 @@ flowchart LR
     further upstream, where the composition never puts two unbounded regions on top of each other in
     the first place: tabs, a capped secondary list, a master-detail split. Engineering cannot get
     there alone, because "don't stack these" is a design decision; this is
-    <a href='#shared-goal'>§11.1's channel</a> paying for itself. When the conversation happens at mock
+    <a href='#shared-goal'>§12.1's channel</a> paying for itself. When the conversation happens at mock
     time, the answer is a better composition; when it happens at build time, the answer is a partition.
   </p>
 
-  <h2 id='hard-patterns'>11.4 Other patterns that fight containment</h2>
+  <h2 id='hard-patterns'>12.4 Other patterns that fight containment</h2>
   <p>
     Stacked unbounded regions are the most common offender, but the same analysis (walk the states,
     find who moves) catches a family of patterns worth recognizing on sight, in review, before they
@@ -810,7 +810,7 @@ flowchart LR
     </Fragment>
   </Diagram>
 
-  <h2 id='seed-data'>11.5 Seed data is part of the discipline</h2>
+  <h2 id='seed-data'>12.5 Seed data is part of the discipline</h2>
   <p>
     There is a development-side habit that keeps all of the above honest:
     <strong>test with data volumes that vary wildly.</strong>

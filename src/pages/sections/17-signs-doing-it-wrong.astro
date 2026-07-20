@@ -9,7 +9,7 @@ import CompareCol from '../../components/CompareCol.astro';
 ---
 
 <GuidePage title="Signs You're Doing It Wrong - App Router Guide" root='..'>
-  <div class='kicker'>Chapter 16 · Part D: Applied</div>
+  <div class='kicker'>Chapter 17 · Part D: Applied</div>
   <h1>Signs You're Doing It Wrong</h1>
   <p class='lede'>
     A field guide to the tells. If you catch yourself doing one of these, you've probably drifted
@@ -19,12 +19,12 @@ import CompareCol from '../../components/CompareCol.astro';
 
   <p>
     These are smells, not sins. Every one of them has a legitimate exception, and every one of them
-    has a real example in <a href='17-applied-to-tracker.html'>§17</a>, because every one of them lives somewhere in the Tracker codebase today. The point of a checklist is speed: something feels off, you scan, you find the row, you
+    has a real example in <a href='18-applied-to-tracker.html'>§18</a>, because every one of them lives somewhere in the Tracker codebase today. The point of a checklist is speed: something feels off, you scan, you find the row, you
     follow the link. Read it that way. But before the list, the single reframe that makes most of it
     unnecessary.
   </p>
 
-  <h2 id='the-question'>16.1 One question underneath all of them</h2>
+  <h2 id='the-question'>17.1 One question underneath all of them</h2>
   <p>
     Almost every sign below is a symptom of asking the wrong question first. The instinct carried over
     from years of client React is:
@@ -180,7 +180,7 @@ flowchart TB
     </Fragment>
   </Diagram>
 
-  <h2 id='questions'>16.2 The questions to keep asking</h2>
+  <h2 id='questions'>17.2 The questions to keep asking</h2>
   <p>
     Make these reflexive. If you ask them honestly on every component, most of the signs below never
     get a chance to appear.
@@ -212,7 +212,7 @@ flowchart TB
     </li>
   </ul>
 
-  <h2 id='boundary'>16.3 The boundary is in the wrong place</h2>
+  <h2 id='boundary'>17.3 The boundary is in the wrong place</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -238,7 +238,7 @@ flowchart TB
         <td>
           Especially in the app directory: it hides the boundary, blocks code splitting, and grows
           into a God component. One component per file, interactivity isolated. Fixed in <a
-            href='15-component-breakdown.html'>§15</a
+            href='16-component-breakdown.html'>§16</a
           >.
         </td>
       </tr>
@@ -248,7 +248,7 @@ flowchart TB
           That is the God component (or God hook): a single boundary that pulls the whole subtree
           client-side and couples everything to one object's shape. Fixed in
           <a href='05-client-server-boundaries.html#god-components'>§5.9</a> and
-          <a href='13-minimize-the-wires.html#callbacks'>§13.4</a>.
+          <a href='14-minimize-the-wires.html#callbacks'>§14.4</a>.
         </td>
       </tr>
       <tr>
@@ -264,7 +264,7 @@ flowchart TB
     </tbody>
   </table>
 
-  <h2 id='fetching'>16.4 Data is fetched the wrong way</h2>
+  <h2 id='fetching'>17.4 Data is fetched the wrong way</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -279,7 +279,7 @@ flowchart TB
           First-render data belongs on the server; the effect + state + isLoading triple is the tell
           you're rebuilding by hand what the framework does for free. Fixed in
           <a href='04-ssr.html'>§4</a> and
-          <a href='14-dedupe-caching.html#client'>§14.3</a>. <em>Exception:</em> data that only exists
+          <a href='15-dedupe-caching.html#client'>§15.3</a>. <em>Exception:</em> data that only exists
           after an interaction (search-as-you-type, autocomplete) does load client-side, but through a
           shared hook, never a raw effect.
         </td>
@@ -290,7 +290,7 @@ flowchart TB
           A server action replaces the hand-written POST endpoint and gives you end-to-end type
           safety and cache revalidation for free. Fixed in
           <a href='05-client-server-boundaries.html#self-contained'>§5.7</a> and
-          <a href='18-new-primitives.html#use-server'>§18</a>.
+          <a href='19-new-primitives.html#use-server'>§19</a>.
         </td>
       </tr>
       <tr>
@@ -300,7 +300,7 @@ flowchart TB
           before paint, not bounce it through a route handler after hydration. Fixed in <a
             href='04-ssr.html'>§4</a
           >; seen in the wild in
-          <a href='17-applied-to-tracker.html#finding-1'>§17</a>. <em>Exception:</em> reads genuinely
+          <a href='18-applied-to-tracker.html#finding-1'>§18</a>. <em>Exception:</em> reads genuinely
           first needed after an interaction.
         </td>
       </tr>
@@ -309,13 +309,13 @@ flowchart TB
         <td>
           Dependent, <code>enabled</code>-gated client queries serialize round-trips that a server
           component resolves in a single pass with <code>Promise.all</code>. Fixed in
-          <a href='12-blocking-requests.html#parallel'>§12.2</a>.
+          <a href='13-blocking-requests.html#parallel'>§13.2</a>.
         </td>
       </tr>
     </tbody>
   </table>
 
-  <h2 id='wiring'>16.5 Components are wired together that shouldn't be</h2>
+  <h2 id='wiring'>17.5 Components are wired together that shouldn't be</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -329,8 +329,8 @@ flowchart TB
         <td>
           Let each child ask for its own data; deduplication makes the repetition free, and the
           parent stops being a distribution hub. Fixed in
-          <a href='13-minimize-the-wires.html'>§13</a> and
-          <a href='14-dedupe-caching.html'>§14</a>.
+          <a href='14-minimize-the-wires.html'>§14</a> and
+          <a href='15-dedupe-caching.html'>§15</a>.
         </td>
       </tr>
       <tr>
@@ -338,7 +338,7 @@ flowchart TB
         <td>
           Passing anything through a parent that doesn't need it is a wire you will maintain forever
           for nothing. Components should take only what they themselves render. Fixed in <a
-            href='13-minimize-the-wires.html#repetition'>§13</a
+            href='14-minimize-the-wires.html#repetition'>§14</a
           >.
         </td>
       </tr>
@@ -349,13 +349,13 @@ flowchart TB
           instead (<code>revalidateTag</code>, <code>router.refresh</code>, SWR
           <code>mutate</code>) and every reader updates itself, no wire required. Fixed in
           <a href='05-client-server-boundaries.html#refresh'>§5.8</a> and
-          <a href='13-minimize-the-wires.html#callbacks'>§13.4</a>.
+          <a href='14-minimize-the-wires.html#callbacks'>§14.4</a>.
         </td>
       </tr>
     </tbody>
   </table>
 
-  <h2 id='loading'>16.6 Loading states and containers are misplaced</h2>
+  <h2 id='loading'>17.6 Loading states and containers are misplaced</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -369,7 +369,7 @@ flowchart TB
         <td>
           Components don't own loading states; the Suspense boundary above them does. A component
           that manages its own <code>isLoading</code> is doing the boundary's job badly. Fixed in <a
-            href='10-suspense-streaming.html#no-own-loading'>§10</a
+            href='11-suspense-streaming.html#no-own-loading'>§11</a
           >.
         </td>
       </tr>
@@ -379,9 +379,9 @@ flowchart TB
           The frame (card, table shell, page header) is known at first render and belongs outside
           the boundary, rendered on the server; only the unknown contents suspend. Putting the
           container in the fallback means it gets thrown away and rebuilt. Fixed in <a
-            href='09-containers-content-shifting.html#reserving'>§9</a
+            href='10-containers-content-shifting.html#reserving'>§10</a
           > and
-          <a href='10-suspense-streaming.html#skeletons'>§10</a>.
+          <a href='11-suspense-streaming.html#skeletons'>§11</a>.
         </td>
       </tr>
       <tr>
@@ -390,7 +390,7 @@ flowchart TB
           Same root cause, mirror image: the frame lives inside the child that suspends instead of
           in the layout, so it flickers in with the data instead of being there from the first byte.
           Fixed in
-          <a href='09-containers-content-shifting.html#doctrine'>§9</a>.
+          <a href='10-containers-content-shifting.html#doctrine'>§10</a>.
         </td>
       </tr>
       <tr>
@@ -399,7 +399,7 @@ flowchart TB
           If the box isn't rendered immediately and reserving accurate space for both the fallback
           and the real content, the page shifts when data lands. Reserve the space up front. Fixed
           in
-          <a href='09-containers-content-shifting.html#reserving'>§9</a>.
+          <a href='10-containers-content-shifting.html#reserving'>§10</a>.
         </td>
       </tr>
       <tr>
@@ -411,7 +411,7 @@ flowchart TB
           byte; the user is watching placeholders for things nobody had to wait for. Wholesale page
           skeletons need an exceptional reason to exist. Draw the boundary around the data, not
           around the region it happens to sit in. Fixed in <a
-            href='10-suspense-streaming.html#skeletons'>§10</a
+            href='11-suspense-streaming.html#skeletons'>§11</a
           > and
           <a href='04-ssr.html'>§4</a>.
         </td>
@@ -419,7 +419,7 @@ flowchart TB
     </tbody>
   </table>
 
-  <h2 id='url-state'>16.7 State is living where the URL should own it</h2>
+  <h2 id='url-state'>17.7 State is living where the URL should own it</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -433,7 +433,7 @@ flowchart TB
         <td>
           A tab is where the user is. That belongs in the route (a segment or a search param), not
           in client state that resets on reload and can't be linked to. Fixed in
-          <a href='08-server-resolvable-state.html#tabs'>§8.3</a>.
+          <a href='09-server-resolvable-state.html#tabs'>§9.3</a>.
         </td>
       </tr>
       <tr>
@@ -442,16 +442,16 @@ flowchart TB
           Reading <code>?x=</code> in a client component and conditionally rendering on it turns the URL
           into a client-state store the server can't use, and delays the content behind hydration. If
           output depends on the query string, resolve it on the server from the request. Fixed in
-          <a href='08-server-resolvable-state.html#url-state'>§8.2</a>.
+          <a href='09-server-resolvable-state.html#url-state'>§9.2</a>.
           <em>Exception:</em> genuinely ephemeral, client-only UI (an open menu, a hover state) that has
           no business in the URL at all, covered in
-          <a href='08-server-resolvable-state.html#client-state'>§8.5</a>.
+          <a href='09-server-resolvable-state.html#client-state'>§9.5</a>.
         </td>
       </tr>
     </tbody>
   </table>
 
-  <h2 id='bundle'>16.8 Too much JavaScript ships on first render</h2>
+  <h2 id='bundle'>17.8 Too much JavaScript ships on first render</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -465,7 +465,7 @@ flowchart TB
         <td>
           Charting libraries, rich-text editors, and date pickers pulled into the initial bundle
           inflate time-to-interactive for UI most users never touch on load. Fixed in
-          <a href='06-first-render-js.html#tax'>§6</a>.
+          <a href='07-first-render-js.html#tax'>§7</a>.
         </td>
       </tr>
       <tr>
@@ -475,7 +475,7 @@ flowchart TB
         <td>
           If it isn't on screen immediately (dialogs, drawers, below-the-fold panels), it should
           load on demand with <code>next/dynamic</code>, not sit in the bundle every visitor
-          downloads. Fixed in <a href='06-first-render-js.html#dynamic'>§6.3</a>.
+          downloads. Fixed in <a href='07-first-render-js.html#dynamic'>§7.3</a>.
           <em>Exception:</em> small modules that are needed right away, where a dynamic import only buys
           you an extra round-trip.
         </td>
@@ -487,7 +487,7 @@ flowchart TB
     <p>
       Don't treat it as a purity test. Treat it as a set of tripwires: when you catch yourself doing
       one, stop and ask the question from
-      <a href='#the-question'>§16.1</a> before you write the next line. Sometimes the honest answer lands
+      <a href='#the-question'>§17.1</a> before you write the next line. Sometimes the honest answer lands
       you on the exception, and that's fine, the exceptions are real and named on purpose. But most of
       the time the tripwire is telling you the truth, and the fix is one link away. The goal isn't zero
       client components; it's that every one of them is a decision you could defend out loud.

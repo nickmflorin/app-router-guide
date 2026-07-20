@@ -16,48 +16,49 @@ const TOC = [
     items: [
       { n: '4', title: 'Server-Side Rendering', file: '04-ssr.html' },
       { n: '5', title: 'Client/Server Boundaries', file: '05-client-server-boundaries.html' },
-      { n: '6', title: 'First-Render JavaScript', file: '06-first-render-js.html' },
+      { n: '6', title: 'Bootstrapping the First Paint', file: '06-bootstrapping-first-paint.html' },
+      { n: '7', title: 'First-Render JavaScript', file: '07-first-render-js.html' },
       {
-        n: '7',
+        n: '8',
         title: 'Bundle Size & Code Splitting',
-        file: '07-bundle-size-code-splitting.html',
+        file: '08-bundle-size-code-splitting.html',
       },
-      { n: '8', title: 'Server-Resolvable State', file: '08-server-resolvable-state.html' },
+      { n: '9', title: 'Server-Resolvable State', file: '09-server-resolvable-state.html' },
     ],
   },
   {
     part: 'Part B: Contain the Unknown',
     items: [
       {
-        n: '9',
+        n: '10',
         title: 'Containers & Content Shifting',
-        file: '09-containers-content-shifting.html',
+        file: '10-containers-content-shifting.html',
       },
-      { n: '10', title: 'Suspense & Streaming', file: '10-suspense-streaming.html' },
-      { n: '11', title: 'Designing for the Unknown', file: '11-designing-for-the-unknown.html' },
-      { n: '12', title: 'Blocking Requests', file: '12-blocking-requests.html' },
+      { n: '11', title: 'Suspense & Streaming', file: '11-suspense-streaming.html' },
+      { n: '12', title: 'Designing for the Unknown', file: '12-designing-for-the-unknown.html' },
+      { n: '13', title: 'Blocking Requests', file: '13-blocking-requests.html' },
     ],
   },
   {
     part: 'Part C: Decouple the Parts',
     items: [
-      { n: '13', title: 'Minimize the Wires', file: '13-minimize-the-wires.html' },
-      { n: '14', title: 'Dedupe & Caching', file: '14-dedupe-caching.html' },
-      { n: '15', title: 'Component Breakdown', file: '15-component-breakdown.html' },
+      { n: '14', title: 'Minimize the Wires', file: '14-minimize-the-wires.html' },
+      { n: '15', title: 'Dedupe & Caching', file: '15-dedupe-caching.html' },
+      { n: '16', title: 'Component Breakdown', file: '16-component-breakdown.html' },
     ],
   },
   {
     part: 'Part D: Applied',
     items: [
-      { n: '16', title: "Signs You're Doing It Wrong", file: '16-signs-doing-it-wrong.html' },
-      { n: '17', title: 'Applied to Tracker', file: '17-applied-to-tracker.html' },
+      { n: '17', title: "Signs You're Doing It Wrong", file: '17-signs-doing-it-wrong.html' },
+      { n: '18', title: 'Applied to Tracker', file: '18-applied-to-tracker.html' },
     ],
   },
   {
     part: 'Appendix',
     items: [
-      { n: '18', title: 'New Primitives', file: '18-new-primitives.html' },
-      { n: '19', title: 'References', file: '19-references.html' },
+      { n: '19', title: 'New Primitives', file: '19-new-primitives.html' },
+      { n: '20', title: 'References', file: '20-references.html' },
     ],
   },
 ];
