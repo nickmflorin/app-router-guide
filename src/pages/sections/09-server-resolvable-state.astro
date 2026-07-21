@@ -804,6 +804,26 @@ flowchart LR
     </Fragment>
   </Diagram>
 
+  <p>
+    Two of the diagram's labels are worth unpacking. <strong>Why the bar's re-render is cheap in
+    Approach 1 but not in Approach 4:</strong> in Approach 1 the bar is a small server-rendered row
+    of links that swaps in next to its sibling panel segment while the parent layout and the rest of
+    the tree stay untouched, so the work is bounded to the one segment that changed. In Approach 4
+    the tab is not a segment at all, so the router has nothing to swap surgically: the entire page
+    component re-executes on the server as a single unit, bar and panel and every param-dependent
+    branch together. Same word on the row, a far larger blast radius.
+  </p>
+  <p>
+    <strong>The difference between a segment swapping in and a slot swapping in:</strong> a segment
+    swap replaces the single active child segment beneath a persistent layout, which is ordinary
+    nested routing (a layout has exactly one active child at each level, and that child is what
+    changes). A slot swap navigates one named parallel-route slot (Approach 3's <code>@view</code>)
+    while the layout's other children and its sibling slots keep their own state and do not
+    re-render. That is precisely why Approach 3 can hold sibling state the others cannot: slots let
+    several regions sit side by side and navigate independently, whereas a plain segment is the
+    layout's one dynamic child.
+  </p>
+
   <table class='tbl'>
     <thead>
       <tr>

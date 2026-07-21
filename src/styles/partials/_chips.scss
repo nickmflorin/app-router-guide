@@ -19,6 +19,12 @@
   border-radius: 50%;
   background: currentColor;
 }
+/* Guarantee a gap between adjacent chips even when written with no
+   whitespace between them in the markup. Flex containers that already
+   space chips with `gap` opt out below. */
+.chip + .chip {
+  margin-left: 6px;
+}
 .chip-react {
   color: var(--react);
   background: var(--react-soft);

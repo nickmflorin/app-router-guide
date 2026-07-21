@@ -61,6 +61,10 @@ ul.goal-list li .g-chips {
   display: flex;
   gap: 6px;
 }
+/* gap already spaces these; drop the adjacent-chip margin */
+ul.goal-list li .g-chips .chip + .chip {
+  margin-left: 0;
+}
 ul.goal-list li .g-ref {
   font-size: 13px;
   white-space: nowrap;

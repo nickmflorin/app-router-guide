@@ -346,7 +346,7 @@
       "id": "nmruwlz00",
       "page": "06-bootstrapping-first-paint.html",
       "ts": "2026-07-21T17:04:51.312Z",
-      "status": "open",
+      "status": "resolved",
       "text": "the pills here dont have any space in between them",
       "target": {
         "anchor": "pattern",
@@ -355,13 +355,14 @@
         ],
         "tag": "p",
         "snippet": "The pattern has three moves, and the order is the point. ReactVery important"
-      }
+      },
+      "resolution": "Added a `.chip + .chip { margin-left: 6px }` rule so adjacent chips always have a gap even when written with no whitespace between them (as in \u00a76); flex chip rows that already use `gap` opt out."
     },
     {
       "id": "nmruwpr5n",
       "page": "09-server-resolvable-state.html",
       "ts": "2026-07-21T17:07:47.771Z",
-      "status": "open",
+      "status": "resolved",
       "text": "why is the rerender not cheap for the 4th case",
       "target": {
         "anchor": "tabs-param",
@@ -370,13 +371,14 @@
         ],
         "tag": "figure",
         "snippet": "What a tab click re-renders, per approach Layout Tab bar Panel 1 \u00b7 bar in each page (zero "
-      }
+      },
+      "resolution": "Added a paragraph after the diagram explaining why Approach 4 re-render is not cheap: the tab is not a route segment, so the router cannot swap surgically and the whole page component re-executes as one unit (bar + panel + every param-dependent branch), versus Approach 1 where only the small bar and its sibling panel segment swap under an untouched layout."
     },
     {
       "id": "nmruwq1ha",
       "page": "09-server-resolvable-state.html",
       "ts": "2026-07-21T17:08:01.150Z",
-      "status": "open",
+      "status": "resolved",
       "text": "whats the different between a segment swapping in and a slot swapping in",
       "target": {
         "anchor": "tabs-param",
@@ -385,7 +387,8 @@
         ],
         "tag": "figure",
         "snippet": "What a tab click re-renders, per approach Layout Tab bar Panel 1 \u00b7 bar in each page (zero "
-      }
+      },
+      "resolution": "Added a paragraph explaining segment swap vs slot swap: a segment swap replaces the single active child segment beneath a persistent layout (ordinary nested routing), while a slot swap navigates one named parallel-route slot while the layout other children and sibling slots keep their state, which is why Approach 3 can hold sibling state the others cannot."
     }
   ]
 }
