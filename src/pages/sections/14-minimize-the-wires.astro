@@ -548,6 +548,39 @@ flowchart LR
     </Fragment>
   </Diagram>
 
+  <p>
+    The same two regions also split cleanly along <em>route</em> lines. If the details region should
+    change with nested sub-views (activity, history, settings) while the header stays put, make the
+    regions <strong>parallel-route slots</strong> (<a
+      href='13-blocking-requests.html#parallel-routes'>§13.3</a
+    >): the layout renders <code>@header</code> and <code>@details</code> side by side, and
+    <code>@details</code> carries its own sub-routes, so a navigation swaps only that slot. The
+    dedupe holds across the split: both slots render in the same server request, so their <code
+      >getProgram(42)</code
+    > calls still collapse into one execution.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/programs/[programId]/ - the regions become slots; only @details navigates</span>[programId]/
+├── layout.tsx             <span class="tok-com">renders {header} + {details}</span>
+├── @header/
+│   ├── page.tsx           <span class="tok-com">getProgram(42): name · status</span>
+│   └── default.tsx
+└── @details/
+    ├── page.tsx           <span class="tok-com">getProgram(42): description · status</span>
+    ├── activity/page.tsx  <span class="tok-com">/programs/[id]/activity: only this slot changes</span>
+    └── default.tsx</pre>
+    <CodeCaption>
+      Navigating to a nested sub-view re-renders the <code>@details</code> subtree alone; the
+      header slot keeps its state on soft navigations (<a
+        href='13-blocking-requests.html#slot-subroutes'>§13.3</a
+      >) and falls back to its <code>default.tsx</code> on hard loads. Each slot still asks the
+      canonical question for itself, and the request-scoped cache still answers it once.
+    </CodeCaption>
+  </Snippet>
+
   <h2 id='streaming'>14.3 Independence changes how the page streams</h2>
   <p>
     Wiring isn't just a maintenance cost; it determines where your Suspense boundaries

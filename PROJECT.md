@@ -293,6 +293,9 @@ home per technique + cross-references).
 - **Diagram lane/panel title size is 10.5px (per Nick, 2026-07-19):** any SVG text acting as a
   lane/panel/section header (colored fill, font-weight 500) is font-size 10.5, never 11/11.5/12.
   Dark (#171717) item-level labels keep their own sizes. Normalized guide-wide 2026-07-19.
+- **No fragment roots in example snippets (per Nick, 2026-07-20):** layout/page examples return a
+  real container (usually a flex-col div; frames use max-h-full + overflow-hidden with children
+  implementing their own scroll), never a bare <>...</> at the root.
 - **Snippet verdict badges (per Nick, 2026-07-19):** every pre.code whose snippet expresses a
   verdict carries a class: `v-good` (green check chip: the way to do it), `v-bad` (red x chip:
   the wrong way), `v-warn` (amber ! chip: an option, but not the ideal one, e.g. lazy-loading a

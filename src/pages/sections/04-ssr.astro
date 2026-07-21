@@ -501,6 +501,18 @@ flowchart LR
     call instead of a hand-built endpoint. Building JSON routes for your own pages' first-render
     data is the pattern the audit flagged, <a href='18-applied-to-tracker.html'>§18</a>.)
   </p>
+  <p>
+    And there is a name for where this is heading. The pattern emerging across the ecosystem is
+    that <strong>the data layer is your server components</strong>: rather than a data API that
+    returns raw JSON for callers to render (client-side, or even server-side in a second pass),
+    teams increasingly encapsulate direct server data access <em>together with</em> the UI that
+    presents it, and expose those pieces as server-rendered components: microfrontends whose
+    contract is finished, typed UI. The HTTP data layer stops being the default integration point
+    between products; the component is, and the middleman surface it used to drag in (<a
+      href='05-client-server-boundaries.html#server-actions'>§5.10</a
+    >) never comes into existence. §5.10 also carries the honest caveat: the moment a consumer
+    isn't React, the raw-data API earns its place back.
+  </p>
 
   <h2 id='perceived'>4.3 Perceived performance, and where streaming fits</h2>
   <p>

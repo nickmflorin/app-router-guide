@@ -162,8 +162,12 @@ import CompareCol from '../../components/CompareCol.astro';
         RSC payload + JS for client leaves
       </text>
 
-      <!-- timeline -->
+      <!-- timeline: first paint, then streaming + hydration proceed together -->
       <line x1='10' y1='175' x2='710' y2='175' stroke='#d4d4d4' stroke-width='1'></line>
+      <line x1='320' y1='163' x2='660' y2='163' stroke='#c9c9c9' stroke-dasharray='3 3'></line>
+      <text x='490' y='156' font-size='9' fill='#737373' text-anchor='middle'>
+        concurrent, not sequential
+      </text>
       <circle cx='120' cy='175' r='5' fill='#157a4c'></circle>
       <text x='120' y='197' font-size='10.5' fill='#157a4c' text-anchor='middle'>
         first paint: real content,
@@ -180,10 +184,10 @@ import CompareCol from '../../components/CompareCol.astro';
       </text>
       <circle cx='600' cy='175' r='5' fill='#0891b2'></circle>
       <text x='600' y='197' font-size='10.5' fill='#0891b2' text-anchor='middle'>
-        leaves hydrate,
+        leaves hydrate as they arrive;
       </text>
       <text x='600' y='211' font-size='10.5' fill='#0891b2' text-anchor='middle'>
-        page is interactive
+        interactivity grows piece by piece
       </text>
     </svg>
 
@@ -208,7 +212,7 @@ flowchart LR
   S --> R
   R --> P1("first paint: real content,<br/>stable layout"):::green
   P1 --> P2("suspended regions stream in,<br/>replacing fallbacks in place"):::amberdash
-  P2 --> P3("leaves hydrate,<br/>page is interactive"):::cyan
+  P1 --> P3("leaves hydrate as they arrive:<br/>concurrent with the streaming"):::cyan
   linkStyle default stroke:#737373,stroke-width:1.5px
   style S fill:#eaf3fe,stroke:#0070f3,color:#0757ba,rx:8px,ry:8px
   style R fill:#ffffff,stroke:#d4d4d4,color:#171717,rx:8px,ry:8px
@@ -224,6 +228,12 @@ flowchart LR
       One request. The server resolves everything knowable, streams structure immediately, and the
       unknown fills in without moving anything. No client-side fetch chain, no
       spinner-then-layout-shift choreography.
+     Note the timeline's second half: this is what happens on the <em>first
+      page load</em>. After the first paint, the two remaining phases overlap rather than queue:
+      suspended regions keep streaming in from the server while the client leaves that have already
+      arrived hydrate and become interactive (selective hydration, <a
+        href='11-suspense-streaming.html#streaming-vitals'>§11.2</a>). The page doesn't wait to be
+      whole before it starts being interactive.
     </Fragment>
   </Diagram>
 
@@ -355,7 +365,7 @@ flowchart LR
       <rect x='498' y='286.64' width='110' height='24' rx='5' fill='#e0f5f9' stroke='#0891b2'
       ></rect>
       <text x='553' y='302.64' font-size='10' fill='#0e7490' text-anchor='middle'>
-        leaves hydrate
+        + leaves hydrate
       </text>
     </svg>
 
@@ -383,7 +393,7 @@ flowchart LR
     B1("server: fetch in parallel + render"):::blue
     B1 --> B2("content visible: T₁"):::green
     B2 --> B3("slow regions stream in"):::amberdash
-    B3 --> B4("leaves hydrate"):::cyan
+    B2 --> B4("leaves hydrate, concurrently"):::cyan
   end
   linkStyle default stroke:#737373,stroke-width:1.5px
   style SF fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px

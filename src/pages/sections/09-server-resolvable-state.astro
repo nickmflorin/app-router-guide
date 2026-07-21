@@ -340,10 +340,10 @@ flowchart LR
       is:raw><span class="filename">app/programs/[programId]/reports/page.tsx - the page declares its own identity</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ReportsPage</span>({ params }: <span class="tok-fn">Props</span>) {
   <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
   <span class="tok-kw">return</span> (
-    &lt;&gt;
+    &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex min-h-0 grow flex-col"</span>&gt;
       &lt;<span class="tok-fn">ProgramTabs</span> <span class="tok-prop">programId</span>={programId} <span class="tok-prop">active</span>=<span class="tok-str">"reports"</span> /&gt;
       &lt;<span class="tok-fn">Reports</span> <span class="tok-prop">programId</span>={programId} /&gt;
-    &lt;/&gt;
+    &lt;/div&gt;
   );
 }</pre>
     <CodeCaption>
@@ -377,11 +377,11 @@ flowchart LR
       is:raw><span class="filename">app/programs/[programId]/layout.tsx - the bar is written once, in the persistent frame</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramLayout</span>({ children, params }: <span class="tok-fn">LayoutProps</span>) {
   <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
   <span class="tok-kw">return</span> (
-    &lt;&gt;
+    &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex max-h-full flex-col overflow-hidden"</span>&gt;
       &lt;<span class="tok-fn">ProgramHeader</span> <span class="tok-prop">programId</span>={programId} /&gt;
       &lt;<span class="tok-fn">ProgramTabs</span> <span class="tok-prop">programId</span>={programId} /&gt;
-      &lt;main&gt;{children}&lt;/main&gt;
-    &lt;/&gt;
+      &lt;main <span class="tok-prop">className</span>=<span class="tok-str">"min-h-0 grow overflow-y-auto"</span>&gt;{children}&lt;/main&gt;
+    &lt;/div&gt;
   );
 }</pre>
     <CodeCaption>
@@ -459,11 +459,12 @@ flowchart LR
       is:raw><span class="filename">app/programs/[programId]/layout.tsx - the slot renders alongside the page</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramLayout</span>({ children, view, params }: <span class="tok-fn">Props</span>) {
   <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
   <span class="tok-kw">return</span> (
-    &lt;&gt;
+    &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex max-h-full flex-col overflow-hidden"</span>&gt;
       {children}
       &lt;<span class="tok-fn">ProgramTabs</span> <span class="tok-prop">programId</span>={programId} /&gt;
-      &lt;section <span class="tok-prop">className</span>=<span class="tok-str">"min-h-0 grow"</span>&gt;{view}&lt;/section&gt;
-    &lt;/&gt;
+      <span class="tok-com">{/* The frame clips; it's up to the slot's children to implement scroll. */}</span>
+      &lt;section <span class="tok-prop">className</span>=<span class="tok-str">"min-h-0 grow overflow-hidden"</span>&gt;{view}&lt;/section&gt;
+    &lt;/div&gt;
   );
 }</pre>
     <CodeCaption>
@@ -504,14 +505,14 @@ flowchart LR
   <span class="tok-kw">const</span> Panel = PANELS[tab] ?? PANELS.reports;
 
   <span class="tok-kw">return</span> (
-    &lt;&gt;
+    &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex min-h-0 grow flex-col"</span>&gt;
       &lt;<span class="tok-fn">ViewTabs</span> <span class="tok-prop">active</span>={tab} /&gt;
       <span class="tok-com">{/* Recover the loading boundary by hand: panels that fetch on the
           server suspend here instead of blocking the whole page. */}</span>
       &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">PanelSkeleton</span> /&gt;}&gt;
         &lt;<span class="tok-fn">Panel</span> <span class="tok-prop">programId</span>={programId} /&gt;
       &lt;/<span class="tok-fn">Suspense</span>&gt;
-    &lt;/&gt;
+    &lt;/div&gt;
   );
 }</pre>
     <CodeCaption>
