@@ -20,6 +20,7 @@ future pass knows what to draw.
 import argparse
 import os
 import re
+import shutil
 import sys
 from html.parser import HTMLParser
 
@@ -474,6 +475,10 @@ def convert_page(path, page, link_map, anchor):
 
 def build_folder():
     outdir = os.path.join(ROOT, "build", "output", "app-router-guide_md")
+    # Wipe first so renamed or deleted chapters can't leave orphaned .md files
+    # behind (the html folder is Astro's outDir and gets this for free).
+    if os.path.isdir(outdir):
+        shutil.rmtree(outdir)
     os.makedirs(outdir, exist_ok=True)
 
     def link_map(href):
