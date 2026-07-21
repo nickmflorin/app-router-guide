@@ -1076,79 +1076,86 @@ flowchart TB
 
   <Diagram>
     <svg
-      viewBox='0 0 720 134'
+      viewBox='0 0 720 186'
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
+      <defs>
+        <marker
+          id='aChk'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#737373'
+            stroke-width='1.5'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
       <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
         The HTML stream, chunk by chunk
       </text>
-      <rect x='70' y='32' width='180' height='22' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
-      <text
-        x='160'
-        y='43'
-        font-size='9'
-        fill='#157a4c'
-        text-anchor='middle'
-        dominant-baseline='central'>chunk 0 · the static shell</text
+
+      <!-- chunk 0: the shell, sent first -->
+      <rect x='20' y='60' width='160' height='26' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='100' y='73' font-size='9' fill='#157a4c' text-anchor='middle' dominant-baseline='central'
+        >chunk 0 · static shell</text
       >
-      <text x='70' y='68' font-size='8.5' fill='#3e7d5c' dominant-baseline='central'>
-        layout, nav, containers, every fallback
+      <text x='20' y='100' font-size='8.5' fill='#3e7d5c' dominant-baseline='central'>
+        sent first: layout, nav, every fallback
       </text>
-      <text x='70' y='81' font-size='8.5' fill='#3e7d5c' dominant-baseline='central'>
+      <text x='20' y='111' font-size='8.5' fill='#3e7d5c' dominant-baseline='central'>
         first paint; CSS/JS discovery starts here
       </text>
-      <line
-        x1='254'
-        y1='43'
-        x2='286'
-        y2='43'
-        stroke='#c9c9c9'
-        stroke-width='1.5'
-        stroke-dasharray='3 3'></line>
-      <rect x='290' y='32' width='180' height='22' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text
-        x='380'
-        y='43'
-        font-size='9'
-        fill='#0757ba'
-        text-anchor='middle'
-        dominant-baseline='central'>chunk · the header resolves</text
+
+      <!-- fork: the two boundaries resolve concurrently, in any order -->
+      <path
+        d='M 180 73 L 300 73 L 300 41 L 448 41'
+        fill='none'
+        stroke='#737373'
+        stroke-width='1.2'
+        marker-end='url(#aChk)'></path>
+      <path
+        d='M 180 73 L 300 73 L 300 105 L 448 105'
+        fill='none'
+        stroke='#737373'
+        stroke-width='1.2'
+        marker-end='url(#aChk)'></path>
+      <text x='374' y='72' font-size='8' fill='#737373' text-anchor='middle'>
+        resolve concurrently, in any order
+      </text>
+
+      <!-- header boundary chunk -->
+      <rect x='452' y='28' width='234' height='26' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='569' y='41' font-size='9' fill='#0757ba' text-anchor='middle' dominant-baseline='central'
+        >chunk · the header resolves</text
       >
-      <text x='290' y='68' font-size='8.5' fill='#527dad' dominant-baseline='central'>
-        hidden HTML + a tiny inline script
+      <text x='452' y='68' font-size='8.5' fill='#527dad' dominant-baseline='central'>
+        hidden HTML + an inline script swaps the fallback
       </text>
-      <text x='290' y='81' font-size='8.5' fill='#527dad' dominant-baseline='central'>
-        swaps the fallback, before hydration
-      </text>
-      <line
-        x1='474'
-        y1='43'
-        x2='506'
-        y2='43'
-        stroke='#c9c9c9'
-        stroke-width='1.5'
-        stroke-dasharray='3 3'></line>
-      <rect x='510' y='32' width='180' height='22' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text
-        x='600'
-        y='43'
-        font-size='9'
-        fill='#0757ba'
-        text-anchor='middle'
-        dominant-baseline='central'>chunk · the table resolves</text
+
+      <!-- table boundary chunk -->
+      <rect x='452' y='92' width='234' height='26' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='569' y='105' font-size='9' fill='#0757ba' text-anchor='middle' dominant-baseline='central'
+        >chunk · the table resolves</text
       >
-      <text x='510' y='68' font-size='8.5' fill='#527dad' dominant-baseline='central'>
-        each boundary streams independently,
+      <text x='452' y='132' font-size='8.5' fill='#527dad' dominant-baseline='central'>
+        whichever boundary's data finishes first arrives first
       </text>
-      <text x='510' y='81' font-size='8.5' fill='#527dad' dominant-baseline='central'>
-        in whatever order the data finishes
+
+      <line x1='20' y1='150' x2='700' y2='150' stroke='#e0e0e0'></line>
+      <text x='360' y='168' font-size='9' fill='#737373' text-anchor='middle'>
+        alongside the HTML, each chunk also carries the RSC payload React hydrates from;
       </text>
-      <text x='360' y='112' font-size='9.5' fill='#737373' text-anchor='middle'>
-        riding along the whole way: the component payload React later hydrates from
-      </text>
-      <text x='360' y='128' font-size='9' fill='#737373' text-anchor='middle'>
-        on client navigations only that payload travels: no HTML at all (§4.5)
+      <text x='360' y='181' font-size='9' fill='#737373' text-anchor='middle'>
+        on a client-side navigation only that payload travels, with no HTML at all
       </text>
     </svg>
 
@@ -1156,9 +1163,9 @@ flowchart TB
       slot='mermaid'
       is:raw>
 flowchart LR
-  c0("chunk 0 · the static shell<br/>layout, nav, containers, every fallback<br/>first paint; CSS/JS discovery starts"):::green
-  c0 --> c1("chunk · the header resolves<br/>hidden HTML + inline script<br/>swaps the fallback, before hydration"):::blue
-  c1 --> c2("chunk · the table resolves<br/>each boundary streams independently"):::blue
+  c0("chunk 0 · static shell<br/>layout, nav, every fallback<br/>first paint; CSS/JS discovery starts"):::green
+  c0 -->|"concurrent, any order"| c1("chunk · the header resolves<br/>hidden HTML + inline script swaps the fallback"):::blue
+  c0 -->|"concurrent, any order"| c2("chunk · the table resolves<br/>whichever data finishes first arrives first"):::blue
   linkStyle default stroke:#737373,stroke-width:1.5px
   classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
   classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
@@ -1167,8 +1174,10 @@ flowchart LR
     <Fragment slot='caption'>
       One response, arriving in pieces. The first chunk is the whole static shell, which is why TTFB
       and FCP stop depending on data; every later chunk is a resolved boundary's HTML plus the
-      inline script that swaps it into place, no bundle or hydration required. The component payload
-      rides alongside for hydration, and on client-side navigations it travels alone.
+      inline script that swaps it into place, no bundle or hydration required. The boundaries resolve
+      concurrently and arrive in whatever order their data finishes. Alongside the HTML, each chunk
+      also carries the RSC payload React hydrates from, and on a client-side navigation only that
+      payload travels, with no HTML at all.
     </Fragment>
   </Diagram>
 

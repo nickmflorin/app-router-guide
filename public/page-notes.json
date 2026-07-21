@@ -442,7 +442,7 @@
       "id": "nmruxcq9p",
       "page": "11-suspense-streaming.html",
       "ts": "2026-07-21T17:25:39.709Z",
-      "status": "open",
+      "status": "resolved",
       "text": "the 'riding along the way' sentence makes 0 sense and should be written more clearly, but the chunks resolving should also show concurrency",
       "target": {
         "anchor": "wire",
@@ -451,13 +451,14 @@
         ],
         "tag": "figure",
         "snippet": "The HTML stream, chunk by chunk chunk 0 \u00b7 the static shell layout, nav, containers, every "
-      }
+      },
+      "resolution": "Reworked the \u00a711 chunk-stream diagram: chunk 0 (the shell) now forks to the header and table chunks with two arrows and a \"resolve concurrently, in any order\" label, so the concurrency is visible; rewrote the confusing \"riding along the whole way\" line as two clear sentences (\"alongside the HTML, each chunk also carries the RSC payload React hydrates from; on a client-side navigation only that payload travels, with no HTML at all\"). Twin and caption updated to match."
     },
     {
       "id": "nmruxgntm",
       "page": "06-bootstrapping-first-paint.html",
       "ts": "2026-07-21T17:28:43.162Z",
-      "status": "open",
+      "status": "resolved",
       "text": "the red and green supplementary text under the bars is not aligned - each should be left aligned with the start of the bar and should be closer (maybe 2px) to the bars",
       "target": {
         "anchor": "auth-chain",
@@ -466,7 +467,8 @@
         ],
         "tag": "figure",
         "snippet": "The auth chain, before and after bootstrapping The gate chain (each blocks the next) JS + "
-      }
+      },
+      "resolution": "The red and green summary lines under the \u00a76 auth-chain bars are now left-aligned with the start of the bars (x=175 instead of centered) and moved up to sit ~2px beneath their bars; viewBox tightened accordingly."
     }
   ]
 }
