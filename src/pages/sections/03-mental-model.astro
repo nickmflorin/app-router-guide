@@ -75,7 +75,7 @@ import CompareCol from '../../components/CompareCol.astro';
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
             stroke='#737373'
-            stroke-width='1.8'
+            stroke-width='1.5'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
         </marker>
@@ -92,7 +92,7 @@ import CompareCol from '../../components/CompareCol.astro';
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
             stroke='#0070f3'
-            stroke-width='1.8'
+            stroke-width='1.5'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
         </marker>
@@ -120,27 +120,27 @@ import CompareCol from '../../components/CompareCol.astro';
         font-weight='500'
         dominant-baseline='central'>Server</text>
       <path
-        d='M 300 36 L 160 36 L 160 104'
+        d='M 312 36 L 160 36 L 160 107'
         fill='none'
         stroke='#0070f3'
-        stroke-width='1.5'
+        stroke-width='1.2'
         marker-end='url(#aEvoB)'></path>
       <text x='230' y='28' font-size='8.5' fill='#527dad' text-anchor='middle'>
         HTML: the whole first frame
       </text>
       <path
-        d='M 350 50 L 350 62 L 435 62 L 435 130'
+        d='M 408 42 L 460 42 L 460 146 L 442 146'
         fill='none'
         stroke='#0070f3'
-        stroke-width='1.5'
+        stroke-width='1.2'
         marker-end='url(#aEvoB)'></path>
       <path
-        d='M 410 50 L 466 50 L 466 189 L 448 189'
+        d='M 408 30 L 470 30 L 470 189 L 442 189'
         fill='none'
         stroke='#0070f3'
-        stroke-width='1.5'
+        stroke-width='1.2'
         marker-end='url(#aEvoB)'></path>
-      <text x='478' y='44' font-size='8.5' fill='#527dad'>
+      <text x='482' y='24' font-size='8.5' fill='#527dad'>
         streaming: one arrow per boundary, in parallel
       </text>
       <text x='20' y='102' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
@@ -210,42 +210,42 @@ import CompareCol from '../../components/CompareCol.astro';
         complete and fully interactive
       </text>
       <!-- fork -->
-      <line x1='190' y1='168' x2='234' y2='168' stroke='#737373' stroke-width='1.5'></line>
+      <line x1='190' y1='168' x2='234' y2='168' stroke='#737373' stroke-width='1.2'></line>
       <line
         x1='234'
         y1='168'
         x2='274'
         y2='168'
         stroke='#737373'
-        stroke-width='1.5'
+        stroke-width='1.2'
         marker-end='url(#aEvo)'></line>
       <path
         d='M 234 168 L 234 336 L 274 336'
         fill='none'
         stroke='#737373'
-        stroke-width='1.5'
+        stroke-width='1.2'
         marker-end='url(#aEvo)'></path>
-      <text x='240' y='262' font-size='8.5' fill='#737373' dominant-baseline='central'>
+      <text x='254' y='348' font-size='8.5' fill='#737373' text-anchor='middle' dominant-baseline='central'>
         in parallel
       </text>
       <!-- merge -->
       <path
-        d='M 448 168 L 492 168 L 492 252'
+        d='M 448 214 L 492 214 L 492 252'
         fill='none'
         stroke='#737373'
-        stroke-width='1.5'></path>
+        stroke-width='1.2'></path>
       <path
         d='M 448 336 L 492 336 L 492 252'
         fill='none'
         stroke='#737373'
-        stroke-width='1.5'></path>
+        stroke-width='1.2'></path>
       <line
         x1='492'
         y1='252'
         x2='532'
         y2='252'
         stroke='#737373'
-        stroke-width='1.5'
+        stroke-width='1.2'
         marker-end='url(#aEvo)'></line>
     </svg>
 
@@ -339,7 +339,7 @@ flowchart LR
 
   <Diagram>
     <svg
-      viewBox='0 0 720 313'
+      viewBox='0 0 720 344'
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
@@ -384,13 +384,13 @@ flowchart LR
       <text x='12' y='274.64' font-size='10.5' fill='#171717' font-weight='500'>
         Server-first page (same data)
       </text>
-      <rect x='12' y='286.64' width='200' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='112' y='302.64' font-size='10' fill='#0757ba' text-anchor='middle'>
+      <rect x='12' y='301.64' width='200' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='112' y='317.64' font-size='10' fill='#0757ba' text-anchor='middle'>
         server: fetch in parallel + render
       </text>
-      <rect x='214' y='286.64' width='130' height='24' rx='5' fill='#e7f5ee' stroke='#2ea06d'
+      <rect x='214' y='301.64' width='130' height='24' rx='5' fill='#e7f5ee' stroke='#2ea06d'
       ></rect>
-      <text x='279' y='302.64' font-size='10' fill='#157a4c' text-anchor='middle'>
+      <text x='279' y='317.64' font-size='10' fill='#157a4c' text-anchor='middle'>
         content visible: T₁
       </text>
       <rect
@@ -405,10 +405,13 @@ flowchart LR
       <text x='421' y='302.64' font-size='10' fill='#8a5a00' text-anchor='middle'>
         slow regions stream in
       </text>
-      <rect x='498' y='286.64' width='110' height='24' rx='5' fill='#e0f5f9' stroke='#0891b2'
+      <rect x='346' y='316.64' width='150' height='24' rx='5' fill='#e0f5f9' stroke='#0891b2'
       ></rect>
-      <text x='553' y='302.64' font-size='10' fill='#0e7490' text-anchor='middle'>
+      <text x='421' y='332.64' font-size='10' fill='#0e7490' text-anchor='middle'>
         + leaves hydrate
+      </text>
+      <text x='508' y='317.64' font-size='8.5' fill='#737373' dominant-baseline='central'>
+        stacked: both happen at once
       </text>
     </svg>
 

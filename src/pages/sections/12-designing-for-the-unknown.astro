@@ -829,116 +829,282 @@ flowchart LR
     interesting.
   </p>
 
+  <h4 id='wizard-shell-bad'>The wrong shape: a drawer per step</h4>
+  <p>
+    The failure mode is worth seeing before the fix. Give each step its own drawer component and
+    the flow becomes a parade of teardowns: React sees a different element type on every advance,
+    so it unmounts the entire tree the user is standing in and mounts a lookalike.
+  </p>
+
   <Diagram>
     <svg
-      viewBox='0 0 720 284'
+      viewBox='0 0 720 224'
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
-      <text x='180' y='12' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+      <defs>
+        <marker
+          id='aWzR'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#b3261e'
+            stroke-width='1.5'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+      <text x='360' y='12' font-size='10.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+        One flow, three drawers: the shell rebuilds on every advance
+      </text>
+      <text x='115' y='32' font-size='8.5' fill='#737373' text-anchor='middle'>
+        step 1 · PickLearnersDrawer
+      </text>
+      <rect x='30' y='40' width='170' height='148' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='40' y='50' width='150' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <rect
+        x='40'
+        y='74'
+        width='150'
+        height='80'
+        rx='4'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-dasharray='4 3'></rect>
+      <text x='115' y='114' font-size='8' fill='#8a5a00' text-anchor='middle' dominant-baseline='central'>
+        PickLearners
+      </text>
+      <rect x='40' y='160' width='150' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <line
+        x1='208'
+        y1='114'
+        x2='267'
+        y2='114'
+        stroke='#b3261e'
+        stroke-width='1.2'
+        marker-end='url(#aWzR)'></line>
+      <text x='360' y='32' font-size='8.5' fill='#737373' text-anchor='middle'>
+        step 2 · ReviewConflictsDrawer
+      </text>
+      <rect x='275' y='40' width='170' height='148' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='285' y='50' width='150' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <rect
+        x='285'
+        y='74'
+        width='150'
+        height='80'
+        rx='4'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-dasharray='4 3'></rect>
+      <text x='360' y='114' font-size='8' fill='#8a5a00' text-anchor='middle' dominant-baseline='central'>
+        ReviewConflicts
+      </text>
+      <rect x='285' y='160' width='150' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <line
+        x1='453'
+        y1='114'
+        x2='512'
+        y2='114'
+        stroke='#b3261e'
+        stroke-width='1.2'
+        marker-end='url(#aWzR)'></line>
+      <text x='605' y='32' font-size='8.5' fill='#737373' text-anchor='middle'>
+        step 3 · ConfirmAssignmentsDrawer
+      </text>
+      <rect x='520' y='40' width='170' height='148' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='530' y='50' width='150' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <rect
+        x='530'
+        y='74'
+        width='150'
+        height='80'
+        rx='4'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-dasharray='4 3'></rect>
+      <text x='605' y='114' font-size='8' fill='#8a5a00' text-anchor='middle' dominant-baseline='central'>
+        ConfirmAssignments
+      </text>
+      <rect x='530' y='160' width='150' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='360' y='206' font-size='8.5' fill='#b3261e' text-anchor='middle'>
+        each advance tears down the drawer the user is standing in and mounts a lookalike:
+      </text>
+      <text x='360' y='219' font-size='8.5' fill='#b3261e' text-anchor='middle'>
+        the open animation replays, focus and scroll are lost, and the header and footer rebuild for no reason
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart LR
+  D1("PickLearnersDrawer<br/>header + content + footer"):::bad
+  D1 -->|"torn down + rebuilt"| D2("ReviewConflictsDrawer<br/>header + content + footer"):::bad
+  D2 -->|"torn down + rebuilt"| D3("ConfirmAssignmentsDrawer<br/>header + content + footer"):::bad
+  linkStyle default stroke:#b3261e,stroke-width:1.5px
+  classDef bad fill:#fdecea,stroke:#b3261e,color:#b3261e
+</pre>
+
+    <Fragment slot='caption'>
+      A drawer per step. Every frame is a near-clone of its neighbors (same header, same footer,
+      same container), yet all of it is unmounted and remounted on every click because the element
+      type changed. The user pays for the duplication in replayed animations, lost focus, and reset
+      scroll, and the code pays for it in three copies of the same shell.
+    </Fragment>
+  </Diagram>
+
+  <Snippet>
+    <pre
+      class='code v-bad'
+      is:raw><span class="filename">AssignLearnersFlow.tsx - a drawer per step: the frame rebuilds on every click</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">const</span> DRAWERS = [PickLearnersDrawer, ReviewConflictsDrawer, ConfirmAssignmentsDrawer] <span class="tok-kw">as const</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">AssignLearnersFlow</span>({ programId, onClose }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">const</span> [step, setStep] = <span class="tok-fn">useState</span>(<span class="tok-str">0</span>);
+
+  <span class="tok-com">/* A different drawer component per step. Each advance unmounts the
+     entire drawer the user is standing in (container, header, footer,
+     open animation, scroll position) and mounts a lookalike. */</span>
+  <span class="tok-kw">const</span> StepDrawer = DRAWERS[step];
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">StepDrawer</span>
+      <span class="tok-prop">programId</span>={programId}
+      <span class="tok-prop">onNext</span>={() =&gt; <span class="tok-fn">setStep</span>((s) =&gt; s + <span class="tok-str">1</span>)}
+      <span class="tok-prop">onClose</span>={onClose}
+    /&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The anti-pattern in one line: <code>DRAWERS[step]</code> changes the element type, so React
+      reconciles by teardown. Each of the three drawers also duplicates the header and footer
+      internally, which means "make the buttons match across steps" is now a maintenance task
+      instead of a guarantee.
+    </CodeCaption>
+  </Snippet>
+
+  <h4 id='wizard-shell-sequential'>Sequential flows: one shell, a swappable step</h4>
+  <p>
+    The correct shape mounts one drawer for the whole flow. The shell (container, header, footer)
+    renders once per open; between the static pieces sits a <strong>static content region</strong>
+    (<code>flex min-h-0 grow overflow-hidden</code>) that is itself part of the frame. Only the
+    step rendered <em>inside</em> that region changes, and the inner frame is what decides how to
+    use the reserved space: cap at it and scroll, or take all of it and center.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 286'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker
+          id='aWzG'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#737373'
+            stroke-width='1.5'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+      <text x='360' y='10' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
         Sequential: next / prev
       </text>
-      <text x='540' y='12' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
-        Non-sequential: tabs
+      <rect x='220' y='18' width='280' height='250' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <line
+        x1='204'
+        y1='18'
+        x2='204'
+        y2='268'
+        stroke='#737373'
+        stroke-width='1.2'
+        marker-start='url(#aWzG)'
+        marker-end='url(#aWzG)'></line>
+      <text x='188' y='127' font-size='8.5' fill='#737373' text-anchor='end'>
+        h-full: 100% of the
       </text>
-      <line x1='360' y1='2' x2='360' y2='282' stroke='#e0e0e0'></line>
-
-      <!-- LEFT: sequential wizard drawer -->
-      <rect x='40' y='26' width='280' height='230' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <rect x='52' y='38' width='256' height='26' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='64' y='51' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+      <text x='188' y='140' font-size='8.5' fill='#737373' text-anchor='end'>
+        viewport height,
+      </text>
+      <text x='188' y='153' font-size='8.5' fill='#737373' text-anchor='end'>
+        overflow-hidden
+      </text>
+      <rect x='232' y='30' width='256' height='26' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='244' y='43' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
         Drawer header (static)
       </text>
+      <!-- data-lint-ignore: nested scene - label row above the inner frame by design -->
+      <rect data-lint-ignore='scene' x='232' y='64' width='256' height='154' rx='5' fill='#ffffff' stroke='#0070f3'></rect>
+      <text x='360' y='78' font-size='8' fill='#0757ba' text-anchor='middle'>
+        content region (static) · min-h-0 · grow · overflow-hidden
+      </text>
+      <line
+        x1='242'
+        y1='70'
+        x2='242'
+        y2='212'
+        stroke='#737373'
+        stroke-width='1.2'
+        marker-start='url(#aWzG)'
+        marker-end='url(#aWzG)'></line>
       <rect
-        x='52'
-        y='72'
-        width='256'
-        height='134'
-        rx='5'
+        x='252'
+        y='90'
+        width='216'
+        height='116'
+        rx='4'
         fill='#fdf3e3'
         stroke='#b45309'
         stroke-dasharray='5 4'></rect>
-      <text x='180' y='120' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
+      <text x='360' y='126' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
         step content (dynamic)
       </text>
-      <text x='180' y='136' font-size='8.5' fill='#8f6b2e' text-anchor='middle'>
-        min-h-0 · grow · overflow-hidden
+      <text x='360' y='144' font-size='8.5' fill='#8f6b2e' text-anchor='middle'>
+        the inner frame: max-h-full · overflow-y-auto
       </text>
-      <text x='180' y='152' font-size='8.5' fill='#8f6b2e' text-anchor='middle'>
-        empty/loading center; lists scroll inside
+      <text x='360' y='160' font-size='8.5' fill='#8f6b2e' text-anchor='middle'>
+        empty/loading centers · lists scroll inside
       </text>
       <!-- data-lint-ignore: footer scene - actions right-aligned by design -->
-      <rect data-lint-ignore='scene' x='52' y='214' width='256' height='30' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <rect x='176' y='220' width='58' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
+      <rect data-lint-ignore='scene' x='232' y='226' width='256' height='30' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <rect x='366' y='232' width='58' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
       <text
-        x='205'
-        y='229'
+        x='395'
+        y='241'
         font-size='8.5'
         fill='#527dad'
         text-anchor='middle'
         dominant-baseline='central'>Previous</text>
-      <rect x='240' y='220' width='58' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
+      <rect x='430' y='232' width='58' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
       <text
-        x='269'
-        y='229'
+        x='459'
+        y='241'
         font-size='8.5'
         fill='#527dad'
         text-anchor='middle'
         dominant-baseline='central'>Next</text>
-      <text x='64' y='229' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+      <text x='244' y='241' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
         Footer (static)
       </text>
-      <text x='180' y='274' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
+      <text x='360' y='282' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
         one drawer; only STEPS[step] swaps inside
-      </text>
-
-      <!-- RIGHT: tabbed drawer -->
-      <rect x='400' y='26' width='280' height='230' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <rect x='412' y='38' width='256' height='26' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='424' y='51' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
-        Drawer header (static)
-      </text>
-      <rect x='412' y='72' width='78' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text
-        x='451'
-        y='81'
-        font-size='8.5'
-        fill='#0757ba'
-        text-anchor='middle'
-        dominant-baseline='central'>Details</text>
-      <rect x='500' y='72' width='78' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
-      <text
-        x='539'
-        y='81'
-        font-size='8.5'
-        fill='#527dad'
-        text-anchor='middle'
-        dominant-baseline='central'>Schedule</text>
-      <rect x='588' y='72' width='78' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
-      <text
-        x='627'
-        y='81'
-        font-size='8.5'
-        fill='#527dad'
-        text-anchor='middle'
-        dominant-baseline='central'>History</text>
-      <rect
-        x='412'
-        y='98'
-        width='256'
-        height='146'
-        rx='5'
-        fill='#fdf3e3'
-        stroke='#b45309'
-        stroke-dasharray='5 4'></rect>
-      <text x='540' y='156' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
-        tab content (dynamic)
-      </text>
-      <text x='540' y='172' font-size='8.5' fill='#8f6b2e' text-anchor='middle'>
-        flex-grow fills everything below the tabs
-      </text>
-      <text x='540' y='274' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
-        one drawer; only TABS[tab] swaps inside
       </text>
     </svg>
 
@@ -946,34 +1112,28 @@ flowchart LR
       slot='mermaid'
       is:raw>
 flowchart TB
-  subgraph SW["Sequential wizard drawer"]
+  subgraph SW["Sequential wizard drawer · h-full + overflow-hidden"]
     direction TB
     h1("Drawer header · static"):::blue
-    h1 --> c1("step content · dynamic<br/>min-h-0 · grow · overflow-hidden"):::amberdash
+    h1 --> r1("content region · static container<br/>min-h-0 · grow · overflow-hidden"):::blue
+    r1 --> c1("step content · dynamic inner frame<br/>max-h-full · overflow-y-auto"):::amberdash
     c1 --> f1("Footer: Previous / Next · static"):::blue
   end
   linkStyle default stroke:#737373,stroke-width:1.5px
   style SW fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
   classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
   classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
-%%split%%
-flowchart TB
-  subgraph TD["Tabbed drawer"]
-    direction TB
-    h2("Drawer header + tab bar · static"):::blue
-    h2 --> c2("tab content · dynamic<br/>flex-grow fills below the tabs"):::amberdash
-  end
-  linkStyle default stroke:#737373,stroke-width:1.5px
-  style TD fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
-  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
-  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
 </pre>
 
     <Fragment slot='caption'>
-      The anatomy of both wizard shapes. Blue is the static shell (rendered once per open, never
-      touched as the user progresses); the amber region is the only thing that changes, stretched
-      between the static pieces by flex-grow. In the sequential case the footer's buttons never
-      move; in the tabbed case the tab bar holds still while the user skips around beneath it.
+      The sequential anatomy, with the two double-headed arrows that make the geometry work. The
+      outer arrow: the drawer is 100% of the available height (usually the viewport) with <code
+        >overflow-hidden</code
+      >, so the frame itself can never grow or scroll. The inner arrow: the static content region
+      stretches to absorb all free height between the header and the footer. The amber inner frame
+      is the only thing that changes per step, and it is what defines <code>max-h-full</code> +
+      <code>overflow-y-auto</code>: content scrolls inside the reserved space, never by resizing
+      it.
     </Fragment>
   </Diagram>
 
@@ -995,8 +1155,9 @@ flowchart TB
         <span class="tok-com">{/* Static: rendered once per open; never changes per step. */}</span>
         &lt;<span class="tok-fn">DrawerHeader</span> <span class="tok-prop">title</span>=<span class="tok-str">"Assign learners"</span> <span class="tok-prop">onClose</span>={onClose} /&gt;
 
-        <span class="tok-com">{/* Dynamic: the ONE region that changes. It stretches between the
-            header and the footer; its children decide how to fill it. */}</span>
+        <span class="tok-com">{/* Static container: reserves everything between the header and
+            the footer and never changes. Only the step INSIDE it swaps;
+            the step's inner frame decides how to use the space. */}</span>
         &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex min-h-0 grow flex-col overflow-hidden"</span>&gt;
           &lt;<span class="tok-fn">Step</span> <span class="tok-prop">programId</span>={programId} /&gt;
         &lt;/div&gt;
@@ -1029,20 +1190,21 @@ flowchart TB
 <span class="tok-kw">export function</span> <span class="tok-fn">PickLearners</span>({ programId }: { programId: <span class="tok-kw">string</span> }) {
   <span class="tok-kw">const</span> { data: learners } = <span class="tok-fn">useLearners</span>(programId);
 
-  <span class="tok-com">/* Unknown or empty: centered in the region's available height. The
-     centering is free, because the parent region is grow + overflow-
-     hidden: there is real, fixed space to center within. */</span>
+  <span class="tok-com">/* Unknown or empty: the static container already reserved the space.
+     Take all of it (h-full + min-h-full) and center the children within
+     it: the centering is free because the height is real and fixed. */</span>
   <span class="tok-kw">if</span> (!learners || learners.length === <span class="tok-str">0</span>) {
     <span class="tok-kw">return</span> (
-      &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex min-h-0 grow items-center justify-center"</span>&gt;
+      &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex h-full min-h-full items-center justify-center"</span>&gt;
         {learners ? <span class="tok-str">"No learners to assign."</span> : &lt;<span class="tok-fn">Spinner</span> /&gt;}
       &lt;/div&gt;
     );
   }
 
-  <span class="tok-com">/* List content: claims the same height and scrolls internally. */</span>
+  <span class="tok-com">/* List content: caps at the reserved height and scrolls inside it.
+     No grow, no min-h-0: the container already owns the geometry. */</span>
   <span class="tok-kw">return</span> (
-    &lt;ul <span class="tok-prop">className</span>=<span class="tok-str">"min-h-0 grow overflow-y-auto"</span>&gt;
+    &lt;ul <span class="tok-prop">className</span>=<span class="tok-str">"max-h-full overflow-y-auto"</span>&gt;
       {learners.map((l) =&gt; (
         &lt;<span class="tok-fn">LearnerRow</span> <span class="tok-prop">key</span>={l.id} <span class="tok-prop">learner</span>={l} /&gt;
       ))}
@@ -1050,15 +1212,163 @@ flowchart TB
   );
 }</pre>
     <CodeCaption>
-      Both fill modes of the dynamic region, from the same geometry. A spinner or empty message
-      centers in the available height; a list claims that height and scrolls inside it with <code
-        >overflow-y-auto</code
+      Both fill modes of the inner frame, against the same reserved space. A spinner or empty
+      message takes the full height (<code>h-full</code>) and centers within it; a list caps at
+      that height (<code>max-h-full</code>) and scrolls inside it with <code>overflow-y-auto</code
       >; and in neither case does the drawer's frame move a pixel. The panel showing its own
       loading indicator is the legitimate case (<a href='15-dedupe-caching.html#when-client'
         >§15.7</a
       >): the drawer is the container, and its content was never knowable before the click.
     </CodeCaption>
   </Snippet>
+
+  <h4 id='wizard-shell-tabs'>Non-sequential flows: tabs in the static shell</h4>
+  <p>
+    When the "steps" aren't ordered, the shell gains a tab bar and loses the footer, and the
+    doctrine doesn't change: the tab bar is part of the static frame, the content region below it
+    is a static container, and only the panel inside that region swaps.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 286'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker
+          id='aWzG2'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke='#737373'
+            stroke-width='1.5'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+      <text x='360' y='10' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+        Non-sequential: tabs
+      </text>
+      <rect x='220' y='18' width='280' height='250' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <line
+        x1='204'
+        y1='18'
+        x2='204'
+        y2='268'
+        stroke='#737373'
+        stroke-width='1.2'
+        marker-start='url(#aWzG2)'
+        marker-end='url(#aWzG2)'></line>
+      <text x='188' y='127' font-size='8.5' fill='#737373' text-anchor='end'>
+        h-full: 100% of the
+      </text>
+      <text x='188' y='140' font-size='8.5' fill='#737373' text-anchor='end'>
+        viewport height,
+      </text>
+      <text x='188' y='153' font-size='8.5' fill='#737373' text-anchor='end'>
+        overflow-hidden
+      </text>
+      <rect x='232' y='30' width='256' height='26' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='244' y='43' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+        Drawer header (static)
+      </text>
+      <!-- data-lint-ignore: tab bar scene - labels and underline centered as a group -->
+      <rect data-lint-ignore='scene' x='232' y='64' width='256' height='24' rx='4' fill='#f5f9fe' stroke='#a9cdf5'></rect>
+      <text
+        x='266'
+        y='75'
+        font-size='8.5'
+        fill='#0757ba'
+        text-anchor='middle'
+        dominant-baseline='central'
+        font-weight='500'>Details</text>
+      <line x1='249' y1='83' x2='283' y2='83' stroke='#0070f3' stroke-width='2'></line>
+      <text
+        x='338'
+        y='75'
+        font-size='8.5'
+        fill='#527dad'
+        text-anchor='middle'
+        dominant-baseline='central'>Schedule</text>
+      <text
+        x='402'
+        y='75'
+        font-size='8.5'
+        fill='#527dad'
+        text-anchor='middle'
+        dominant-baseline='central'>History</text>
+      <text x='480' y='75' font-size='8' fill='#527dad' text-anchor='end' dominant-baseline='central'>
+        tabs (static)
+      </text>
+      <!-- data-lint-ignore: nested scene - label row above the inner frame by design -->
+      <rect data-lint-ignore='scene' x='232' y='96' width='256' height='160' rx='5' fill='#ffffff' stroke='#0070f3'></rect>
+      <text x='360' y='110' font-size='8' fill='#0757ba' text-anchor='middle'>
+        content region (static) · min-h-0 · grow · overflow-hidden
+      </text>
+      <line
+        x1='242'
+        y1='102'
+        x2='242'
+        y2='250'
+        stroke='#737373'
+        stroke-width='1.2'
+        marker-start='url(#aWzG2)'
+        marker-end='url(#aWzG2)'></line>
+      <rect
+        x='252'
+        y='122'
+        width='216'
+        height='122'
+        rx='4'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-dasharray='5 4'></rect>
+      <text x='360' y='164' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
+        tab content (dynamic)
+      </text>
+      <text x='360' y='182' font-size='8.5' fill='#8f6b2e' text-anchor='middle'>
+        the inner frame: max-h-full · overflow-y-auto
+      </text>
+      <text x='360' y='198' font-size='8.5' fill='#8f6b2e' text-anchor='middle'>
+        empty/loading centers · lists scroll inside
+      </text>
+      <text x='360' y='282' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
+        one drawer; only TABS[tab] swaps inside
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart TB
+  subgraph TD["Tabbed drawer · h-full + overflow-hidden"]
+    direction TB
+    h2("Drawer header + tab bar · static"):::blue
+    h2 --> r2("content region · static container<br/>min-h-0 · grow · overflow-hidden"):::blue
+    r2 --> c2("tab content · dynamic inner frame<br/>max-h-full · overflow-y-auto"):::amberdash
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style TD fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+</pre>
+
+    <Fragment slot='caption'>
+      The tabbed anatomy: the same two double-headed arrows (drawer at 100% height with <code
+        >overflow-hidden</code
+      >, static region growing to absorb everything below the tab bar), with the tab labels and the
+      active underline centered as a group inside the bar. The user skips around freely and the
+      only thing that ever changes is the amber inner frame.
+    </Fragment>
+  </Diagram>
 
   <Snippet>
     <pre
@@ -1078,7 +1388,8 @@ flowchart TB
         <span class="tok-com">{/* Static: the tab bar holds still; the user skips around freely. */}</span>
         &lt;<span class="tok-fn">TabList</span> <span class="tok-prop">value</span>={tab} <span class="tok-prop">onChange</span>={setTab} /&gt;
 
-        <span class="tok-com">{/* Dynamic: everything below the tabs, stretched to the bottom. */}</span>
+        <span class="tok-com">{/* Static container: everything below the tabs, stretched to the
+            bottom. Only the tab panel INSIDE it swaps. */}</span>
         &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex min-h-0 grow flex-col overflow-hidden"</span>&gt;
           &lt;<span class="tok-fn">Tab</span> <span class="tok-prop">programId</span>={programId} /&gt;
         &lt;/div&gt;

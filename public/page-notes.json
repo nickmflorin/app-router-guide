@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-21T16:12:05.652Z",
+  "updatedAt": "2026-07-21T16:31:12.042Z",
   "notes": [
     {
       "id": "nmrutjyb3",
@@ -15,7 +15,7 @@
         "tag": "h3",
         "snippet": "The API is your HTML"
       },
-      "resolution": "New paragraph under \"The API is your HTML\": the emerging pattern is that the data layer IS your server components: direct server data access encapsulated together with the UI that presents it, exposed as server-rendered components (microfrontends whose contract is finished, typed UI), replacing the raw-data API + client-side (or second-pass server-side) rendering as the default integration point; cross-links §5.10 for depth and the non-React-consumer caveat."
+      "resolution": "New paragraph under \"The API is your HTML\": the emerging pattern is that the data layer IS your server components: direct server data access encapsulated together with the UI that presents it, exposed as server-rendered components (microfrontends whose contract is finished, typed UI), replacing the raw-data API + client-side (or second-pass server-side) rendering as the default integration point; cross-links \u00a75.10 for depth and the non-React-consumer caveat."
     },
     {
       "id": "nmrutnzfe",
@@ -31,7 +31,7 @@
         "tag": "figure",
         "snippet": "Browser GET /programs/42 Server render server components await data: parallel, deduped sus"
       },
-      "resolution": "§3.1 diagram now separates the phases: the timeline gains a dotted \"concurrent, not sequential\" bracket over the streaming + hydration milestones, the third milestone reads \"leaves hydrate as they arrive; interactivity grows piece by piece\", the twin fans both phases out of first-paint in parallel, and the caption explains that after the first page load's first paint, streaming and selective hydration overlap rather than queue (linking §11.2)."
+      "resolution": "\u00a73.1 diagram now separates the phases: the timeline gains a dotted \"concurrent, not sequential\" bracket over the streaming + hydration milestones, the third milestone reads \"leaves hydrate as they arrive; interactivity grows piece by piece\", the twin fans both phases out of first-paint in parallel, and the caption explains that after the first page load's first paint, streaming and selective hydration overlap rather than queue (linking \u00a711.2)."
     },
     {
       "id": "nmrutpm9n",
@@ -61,9 +61,9 @@
           13
         ],
         "tag": "figure",
-        "snippet": "Two page regions, one canonical query …/programs/42 app layout (shell) ProgramHeader needs"
+        "snippet": "Two page regions, one canonical query \u2026/programs/42 app layout (shell) ProgramHeader needs"
       },
-      "resolution": "Added beneath the canonical-query figure: a paragraph + file-tree snippet showing the header and details regions split into @header/@details parallel-route slots, with @details carrying nested sub-routes (activity) so navigation swaps only that slot; notes that dedupe holds across slots (same server request, one getProgram execution) and links §13.3 for slot mechanics and defaults."
+      "resolution": "Added beneath the canonical-query figure: a paragraph + file-tree snippet showing the header and details regions split into @header/@details parallel-route slots, with @details carrying nested sub-routes (activity) so navigation swaps only that slot; notes that dedupe holds across slots (same server request, one getProgram execution) and links \u00a713.3 for slot mechanics and defaults."
     },
     {
       "id": "nmrutsou9",
@@ -114,7 +114,7 @@
         "tag": "pre",
         "snippet": "app/programs/[programId]/reports/page.tsx - the page declares its own identityexport defau"
       },
-      "resolution": "Fragments removed across the §9.3 snippets (Approach 1 page, Approach 4 param page too): roots are now flex-col stack divs. Convention recorded in PROJECT.md: no fragment roots in example snippets."
+      "resolution": "Fragments removed across the \u00a79.3 snippets (Approach 1 page, Approach 4 param page too): roots are now flex-col stack divs. Convention recorded in PROJECT.md: no fragment roots in example snippets."
     },
     {
       "id": "nmruujoe2",
@@ -130,8 +130,137 @@
         "tag": "h1",
         "snippet": "Designing for the Unknown"
       },
-      "resolution": "New §12.4 subsection \"Building the one frame: wizard drawers and dialogs\": one component per flow; shell (container/header/tabs/footer) static, one dynamic inner region stretched by min-h-0/grow/overflow-hidden; never unmount/remount a drawer per step; hold constant the static, maximize structure, minimize the dynamic; the drawer itself is the only mount/unmount, dynamically imported per §8.4; applies verbatim to dialogs. Two-panel anatomy diagram (sequential with static header + Prev/Next footer; tabbed with static tab bar, no footer) with twin. Three snippets: the sequential shell where only STEPS[step] changes, step content showing both fill modes (empty/loading centered by the grow+overflow-hidden geometry; lists claim the height with min-h-0 grow overflow-y-auto), and the tabbed variant (overlay tabs in useState = §9.3 ladder bottom rung, legitimately).",
-      "resolvedAt": "2026-07-20"
+      "resolution": "New \u00a712.4 subsection \"Building the one frame: wizard drawers and dialogs\": one component per flow; shell (container/header/tabs/footer) static, one dynamic inner region stretched by min-h-0/grow/overflow-hidden; never unmount/remount a drawer per step; hold constant the static, maximize structure, minimize the dynamic; the drawer itself is the only mount/unmount, dynamically imported per \u00a78.4; applies verbatim to dialogs. Two-panel anatomy diagram (sequential with static header + Prev/Next footer; tabbed with static tab bar, no footer) with twin. Three snippets: the sequential shell where only STEPS[step] changes, step content showing both fill modes (empty/loading centered by the grow+overflow-hidden geometry; lists claim the height with min-h-0 grow overflow-y-auto), and the tabbed variant (overlay tabs in useState = \u00a79.3 ladder bottom rung, legitimately)."
+    },
+    {
+      "id": "nmruuubmw",
+      "page": "03-mental-model.html",
+      "ts": "2026-07-21T16:15:21.704Z",
+      "status": "resolved",
+      "text": "on the bottom chart, the slow regions stream in and leaves hydrate should probably be on top of each other in a column to indicate concurrency",
+      "target": {
+        "anchor": "old-vs-new",
+        "path": [
+          16
+        ],
+        "tag": "figure",
+        "snippet": "SPA-style page (client-fetch chain) HTML shell download + parse JS hydrate fetch /users/me"
+      },
+      "resolution": "Bottom chart now stacks \"slow regions stream in\" and \"+ leaves hydrate\" in a column at the same x, with a \"stacked: both happen at once\" note, to signal concurrency."
+    },
+    {
+      "id": "nmruv5s77",
+      "page": "12-designing-for-the-unknown.html",
+      "ts": "2026-07-21T16:24:16.387Z",
+      "status": "resolved",
+      "text": "for the content areas that are dotted, please make sure to show a vertical double headed arrow inside indicating the behavior of growing to fill available space, with a nother double headed arrow on the outer box for hte whole drawer that indicates that it is 100% height (viewport usually) and has overflow hidden",
+      "target": {
+        "anchor": "wizard-shell",
+        "path": [
+          32
+        ],
+        "tag": "figure",
+        "snippet": "Sequential: next / prev Non-sequential: tabs Drawer header (static) step content (dynamic)"
+      },
+      "resolution": "Sequential + tabbed anatomy diagrams now show a double-headed vertical arrow inside the dynamic content region (grows to fill) and a second double-headed arrow on the outer drawer box labeled h-full / overflow-hidden."
+    },
+    {
+      "id": "nmruv7a8x",
+      "page": "12-designing-for-the-unknown.html",
+      "ts": "2026-07-21T16:25:26.433Z",
+      "status": "resolved",
+      "text": "please make sure things like tab content and the line underneath it are vertically centered in the box",
+      "target": {
+        "anchor": "wizard-shell",
+        "path": [
+          32
+        ],
+        "tag": "figure",
+        "snippet": "Sequential: next / prev Non-sequential: tabs Drawer header (static) step content (dynamic)"
+      },
+      "resolution": "Tab labels and the active underline are centered as a group inside the tab bar rect."
+    },
+    {
+      "id": "nmruv7qz3",
+      "page": "12-designing-for-the-unknown.html",
+      "ts": "2026-07-21T16:25:48.111Z",
+      "status": "resolved",
+      "text": "these diagrams don't indicate that the content area's container with the flex grow and min-h or whatever is static - there is still a container there for the content that is static and known across all frames - the inner frame is what changes and the inner frame is what defines max-h-full overflow-y-auto for scroll - please indicate this with nested boxes",
+      "target": {
+        "anchor": "wizard-shell",
+        "path": [
+          32
+        ],
+        "tag": "figure",
+        "snippet": "Sequential: next / prev Non-sequential: tabs Drawer header (static) step content (dynamic)"
+      },
+      "resolution": "Both anatomy diagrams now use nested boxes: a static content-region container (min-h-0 grow overflow-hidden) with the dynamic inner frame (max-h-full overflow-y-auto) nested inside it."
+    },
+    {
+      "id": "nmruv9hf0",
+      "page": "12-designing-for-the-unknown.html",
+      "ts": "2026-07-21T16:27:09.036Z",
+      "status": "resolved",
+      "text": "the empty state should not have min h 0 and grow it should be min-h-full and h-full and basically center its children inside with justify content and align items center",
+      "target": {
+        "anchor": "wizard-shell",
+        "path": [
+          34,
+          0
+        ],
+        "tag": "pre",
+        "snippet": "PickLearners.tsx - dynamic content slotting into the static frame\"use client\";export funct"
+      },
+      "resolution": "PickLearners empty/loading state now uses h-full min-h-full with items-center justify-center; caption and diagram updated to match."
+    },
+    {
+      "id": "nmruvabzh",
+      "page": "12-designing-for-the-unknown.html",
+      "ts": "2026-07-21T16:27:48.653Z",
+      "status": "resolved",
+      "text": "the list should have max-h-full and should not grow of have min-h-0 - its sitting in a container that already reserves the space for it",
+      "target": {
+        "anchor": "wizard-shell",
+        "path": [
+          34,
+          0
+        ],
+        "tag": "pre",
+        "snippet": "PickLearners.tsx - dynamic content slotting into the static frame\"use client\";export funct"
+      },
+      "resolution": "PickLearners list now uses max-h-full overflow-y-auto with no grow / min-h-0, since the static container already reserves the space."
+    },
+    {
+      "id": "nmruvbg4l",
+      "page": "12-designing-for-the-unknown.html",
+      "ts": "2026-07-21T16:28:40.677Z",
+      "status": "resolved",
+      "text": "please try to keep the diagram and snippet for each approach together, instead of the diagrams for all cases and then the snippest for all cases.  each approach/case should have a separate sub-header smaller than building one frame header.  also - please make sure to include a diagram and snippet that shows the bad case - i.e. swapping drawers entirely or swapping dialogs entirely.",
+      "target": {
+        "anchor": "wizard-shell",
+        "path": [
+          32
+        ],
+        "tag": "figure",
+        "snippet": "Sequential: next / prev Non-sequential: tabs Drawer header (static) step content (dynamic)"
+      },
+      "resolution": "Restructured \u00a712.4 into per-approach h4 subsections (bad case: drawer-per-step with diagram + v-bad snippet; sequential; tabbed), each keeping its diagram and snippet together."
+    },
+    {
+      "id": "nmruvd61w",
+      "page": "03-mental-model.html",
+      "ts": "2026-07-21T16:30:00.932Z",
+      "status": "resolved",
+      "text": "lets use less thick arrows and make the server arrows not horizontal/inline with the bottom of the 'server' tile because it's confusing and looks bad.  the server lines should also reach _into_ the tile and show that it is touching the green sub-tiles, - right now its not and it looks like one is hidden behind the view",
+      "target": {
+        "anchor": "rendering-model",
+        "path": [
+          8
+        ],
+        "tag": "figure",
+        "snippet": "One response, then the page evolves: first paint, two parallel phases, settled Server HTML"
+      },
+      "resolution": "Thinned all arrows to 1.2px; rerouted the two streaming arrows so they leave the Server tile from its bottom edge (not inline with it), run through the free corridor, and terminate with arrowheads reaching into 2a onto the two green sub-tiles; \"in parallel\" moved out of the caption zone."
     }
   ]
 }
