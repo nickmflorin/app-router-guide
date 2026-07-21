@@ -15,7 +15,7 @@
         "tag": "h3",
         "snippet": "The API is your HTML"
       },
-      "resolution": "New paragraph under \"The API is your HTML\": the emerging pattern is that the data layer IS your server components: direct server data access encapsulated together with the UI that presents it, exposed as server-rendered components (microfrontends whose contract is finished, typed UI), replacing the raw-data API + client-side (or second-pass server-side) rendering as the default integration point; cross-links §5.10 for depth and the non-React-consumer caveat."
+      "resolution": "New paragraph under \"The API is your HTML\": the emerging pattern is that the data layer IS your server components: direct server data access encapsulated together with the UI that presents it, exposed as server-rendered components (microfrontends whose contract is finished, typed UI), replacing the raw-data API + client-side (or second-pass server-side) rendering as the default integration point; cross-links \u00a75.10 for depth and the non-React-consumer caveat."
     },
     {
       "id": "nmrutnzfe",
@@ -31,7 +31,7 @@
         "tag": "figure",
         "snippet": "Browser GET /programs/42 Server render server components await data: parallel, deduped sus"
       },
-      "resolution": "§3.1 diagram now separates the phases: the timeline gains a dotted \"concurrent, not sequential\" bracket over the streaming + hydration milestones, the third milestone reads \"leaves hydrate as they arrive; interactivity grows piece by piece\", the twin fans both phases out of first-paint in parallel, and the caption explains that after the first page load's first paint, streaming and selective hydration overlap rather than queue (linking §11.2)."
+      "resolution": "\u00a73.1 diagram now separates the phases: the timeline gains a dotted \"concurrent, not sequential\" bracket over the streaming + hydration milestones, the third milestone reads \"leaves hydrate as they arrive; interactivity grows piece by piece\", the twin fans both phases out of first-paint in parallel, and the caption explains that after the first page load's first paint, streaming and selective hydration overlap rather than queue (linking \u00a711.2)."
     },
     {
       "id": "nmrutpm9n",
@@ -61,9 +61,9 @@
           13
         ],
         "tag": "figure",
-        "snippet": "Two page regions, one canonical query …/programs/42 app layout (shell) ProgramHeader needs"
+        "snippet": "Two page regions, one canonical query \u2026/programs/42 app layout (shell) ProgramHeader needs"
       },
-      "resolution": "Added beneath the canonical-query figure: a paragraph + file-tree snippet showing the header and details regions split into @header/@details parallel-route slots, with @details carrying nested sub-routes (activity) so navigation swaps only that slot; notes that dedupe holds across slots (same server request, one getProgram execution) and links §13.3 for slot mechanics and defaults."
+      "resolution": "Added beneath the canonical-query figure: a paragraph + file-tree snippet showing the header and details regions split into @header/@details parallel-route slots, with @details carrying nested sub-routes (activity) so navigation swaps only that slot; notes that dedupe holds across slots (same server request, one getProgram execution) and links \u00a713.3 for slot mechanics and defaults."
     },
     {
       "id": "nmrutsou9",
@@ -114,7 +114,7 @@
         "tag": "pre",
         "snippet": "app/programs/[programId]/reports/page.tsx - the page declares its own identityexport defau"
       },
-      "resolution": "Fragments removed across the §9.3 snippets (Approach 1 page, Approach 4 param page too): roots are now flex-col stack divs. Convention recorded in PROJECT.md: no fragment roots in example snippets."
+      "resolution": "Fragments removed across the \u00a79.3 snippets (Approach 1 page, Approach 4 param page too): roots are now flex-col stack divs. Convention recorded in PROJECT.md: no fragment roots in example snippets."
     },
     {
       "id": "nmruujoe2",
@@ -130,7 +130,7 @@
         "tag": "h1",
         "snippet": "Designing for the Unknown"
       },
-      "resolution": "New §12.4 subsection \"Building the one frame: wizard drawers and dialogs\": one component per flow; shell (container/header/tabs/footer) static, one dynamic inner region stretched by min-h-0/grow/overflow-hidden; never unmount/remount a drawer per step; hold constant the static, maximize structure, minimize the dynamic; the drawer itself is the only mount/unmount, dynamically imported per §8.4; applies verbatim to dialogs. Two-panel anatomy diagram (sequential with static header + Prev/Next footer; tabbed with static tab bar, no footer) with twin. Three snippets: the sequential shell where only STEPS[step] changes, step content showing both fill modes (empty/loading centered by the grow+overflow-hidden geometry; lists claim the height with min-h-0 grow overflow-y-auto), and the tabbed variant (overlay tabs in useState = §9.3 ladder bottom rung, legitimately)."
+      "resolution": "New \u00a712.4 subsection \"Building the one frame: wizard drawers and dialogs\": one component per flow; shell (container/header/tabs/footer) static, one dynamic inner region stretched by min-h-0/grow/overflow-hidden; never unmount/remount a drawer per step; hold constant the static, maximize structure, minimize the dynamic; the drawer itself is the only mount/unmount, dynamically imported per \u00a78.4; applies verbatim to dialogs. Two-panel anatomy diagram (sequential with static header + Prev/Next footer; tabbed with static tab bar, no footer) with twin. Three snippets: the sequential shell where only STEPS[step] changes, step content showing both fill modes (empty/loading centered by the grow+overflow-hidden geometry; lists claim the height with min-h-0 grow overflow-y-auto), and the tabbed variant (overlay tabs in useState = \u00a79.3 ladder bottom rung, legitimately)."
     },
     {
       "id": "nmruuubmw",
@@ -244,7 +244,7 @@
         "tag": "figure",
         "snippet": "Sequential: next / prev Non-sequential: tabs Drawer header (static) step content (dynamic)"
       },
-      "resolution": "Restructured §12.4 into per-approach h4 subsections (bad case: drawer-per-step with diagram + v-bad snippet; sequential; tabbed), each keeping its diagram and snippet together."
+      "resolution": "Restructured \u00a712.4 into per-approach h4 subsections (bad case: drawer-per-step with diagram + v-bad snippet; sequential; tabbed), each keeping its diagram and snippet together."
     },
     {
       "id": "nmruvd61w",
@@ -274,7 +274,7 @@
           34
         ],
         "tag": "figure",
-        "snippet": "One flow, three drawers: the shell rebuilds on every advance step 1 · PickLearnersDrawer P"
+        "snippet": "One flow, three drawers: the shell rebuilds on every advance step 1 \u00b7 PickLearnersDrawer P"
       },
       "resolution": "Bad-case diagram: content boxes are now solid (not dotted), and the entire drawer is drawn as a dashed-red box with \"unmount, remount\" on the arrows, making clear the whole structure is torn down and rebuilt on each advance (not just the content)."
     },
@@ -356,7 +356,7 @@
         "tag": "p",
         "snippet": "The pattern has three moves, and the order is the point. ReactVery important"
       },
-      "resolution": "Added a `.chip + .chip { margin-left: 6px }` rule so adjacent chips always have a gap even when written with no whitespace between them (as in §6); flex chip rows that already use `gap` opt out."
+      "resolution": "Added a `.chip + .chip { margin-left: 6px }` rule so adjacent chips always have a gap even when written with no whitespace between them (as in \u00a76); flex chip rows that already use `gap` opt out."
     },
     {
       "id": "nmruwpr5n",
@@ -370,7 +370,7 @@
           34
         ],
         "tag": "figure",
-        "snippet": "What a tab click re-renders, per approach Layout Tab bar Panel 1 · bar in each page (zero "
+        "snippet": "What a tab click re-renders, per approach Layout Tab bar Panel 1 \u00b7 bar in each page (zero "
       },
       "resolution": "Added a paragraph after the diagram explaining why Approach 4 re-render is not cheap: the tab is not a route segment, so the router cannot swap surgically and the whole page component re-executes as one unit (bar + panel + every param-dependent branch), versus Approach 1 where only the small bar and its sibling panel segment swap under an untouched layout."
     },
@@ -386,7 +386,7 @@
           34
         ],
         "tag": "figure",
-        "snippet": "What a tab click re-renders, per approach Layout Tab bar Panel 1 · bar in each page (zero "
+        "snippet": "What a tab click re-renders, per approach Layout Tab bar Panel 1 \u00b7 bar in each page (zero "
       },
       "resolution": "Added a paragraph explaining segment swap vs slot swap: a segment swap replaces the single active child segment beneath a persistent layout (ordinary nested routing), while a slot swap navigates one named parallel-route slot while the layout other children and sibling slots keep their state, which is why Approach 3 can hold sibling state the others cannot."
     },
@@ -404,7 +404,7 @@
         "tag": "p",
         "snippet": "The correct shape mounts one drawer for the whole flow. The shell (container, header, foot"
       },
-      "resolution": "Removed sequential/non-sequential language from §12: the subsection is now \"Wizard flows\" (id wizard-flow) and \"Tabbed flows\" (id tabbed-flow); diagram titles, mermaid twins, captions, and the ProgramDetailsDrawer filename all updated to wizard flow / tabbed flow."
+      "resolution": "Removed sequential/non-sequential language from \u00a712: the subsection is now \"Wizard flows\" (id wizard-flow) and \"Tabbed flows\" (id tabbed-flow); diagram titles, mermaid twins, captions, and the ProgramDetailsDrawer filename all updated to wizard flow / tabbed flow."
     },
     {
       "id": "nmrux119o",
@@ -450,9 +450,9 @@
           26
         ],
         "tag": "figure",
-        "snippet": "The HTML stream, chunk by chunk chunk 0 · the static shell layout, nav, containers, every "
+        "snippet": "The HTML stream, chunk by chunk chunk 0 \u00b7 the static shell layout, nav, containers, every "
       },
-      "resolution": "Reworked the §11 chunk-stream diagram: chunk 0 (the shell) now forks to the header and table chunks with two arrows and a \"resolve concurrently, in any order\" label, so the concurrency is visible; rewrote the confusing \"riding along the whole way\" line as two clear sentences (\"alongside the HTML, each chunk also carries the RSC payload React hydrates from; on a client-side navigation only that payload travels, with no HTML at all\"). Twin and caption updated to match."
+      "resolution": "Reworked the \u00a711 chunk-stream diagram: chunk 0 (the shell) now forks to the header and table chunks with two arrows and a \"resolve concurrently, in any order\" label, so the concurrency is visible; rewrote the confusing \"riding along the whole way\" line as two clear sentences (\"alongside the HTML, each chunk also carries the RSC payload React hydrates from; on a client-side navigation only that payload travels, with no HTML at all\"). Twin and caption updated to match."
     },
     {
       "id": "nmruxgntm",
@@ -468,13 +468,13 @@
         "tag": "figure",
         "snippet": "The auth chain, before and after bootstrapping The gate chain (each blocks the next) JS + "
       },
-      "resolution": "The red and green summary lines under the §6 auth-chain bars are now left-aligned with the start of the bars (x=175 instead of centered) and moved up to sit ~2px beneath their bars; viewBox tightened accordingly."
+      "resolution": "The red and green summary lines under the \u00a76 auth-chain bars are now left-aligned with the start of the bars (x=175 instead of centered) and moved up to sit ~2px beneath their bars; viewBox tightened accordingly."
     },
     {
       "id": "nmrv2kw27",
       "page": "09-server-resolvable-state.html",
       "ts": "2026-07-21T19:51:58.543Z",
-      "status": "open",
+      "status": "resolved",
       "text": "I want to include a section/example on this page that shows how to break apart a page with a header that sits inside the chrome and has a data table in it with a filters bar above it.  It should show how to break apart the inputs in the filter bar (a select filter, a search filter, etc.) so that the \"use client\" is under each little component (a select input, a search input, etc.) and then those inputs should write to the url query inside of a transition that triggers the table to rerender server side and refetch data server side.  it should include an explanation as to how this works, with suspense and whatnot.  it should show how the server is able to read those params and fetch data based on those params.  please do research on this and explore documentation to aid in your explanation as to how this works and how it ties into the RSC payload and how the table updates without a full page refresh or reload as it streams in.  please show examples that can be used for deferred value checks and dimming the table body as it is reloading new data",
       "target": {
         "anchor": null,
@@ -483,7 +483,8 @@
         ],
         "tag": "h1",
         "snippet": "Server-Resolvable State"
-      }
+      },
+      "resolution": "Added \u00a79.5 'Worked example: a filterable data table' (renumbering Cookies to 9.6 and client-state to 9.7, and updating the five external \u00a79.5 references). It shows: an anatomy diagram (static chrome + page header, two client-leaf inputs, a server-rendered table behind Suspense); breaking the filters bar into one 'use client' leaf per input (StatusFilter select + debounced SearchFilter), each writing only its own URL param in a transition with scroll:false and resetting ?page; a server page.tsx that reads searchParams and feeds both the inputs and the table, with the table behind an unkeyed Suspense boundary; a ProgramsTable server component whose arguments ARE the params (awaits its data, no effect/state machine); an update-cycle diagram plus prose on how the RSC payload swaps only the table subtree with no reload while chrome/scroll persist; and the feedback section covering isPending + data-pending + group-has dimming for server results, plus a useDeferredValue ResultsView example for client-side filtering. Researched against the Next.js docs and Sam Selikoff's RSC search-params writeup."
     }
   ]
 }

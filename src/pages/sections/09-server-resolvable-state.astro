@@ -965,7 +965,369 @@ flowchart LR
     filters, sort toggles, pagination, view switches.
   </p>
 
-  <h2 id='cookies'>9.5 Cookies: preferences that follow the user, not the URL</h2>
+  <h2 id='filter-table'>9.5 Worked example: a filterable data table</h2>
+  <p>
+    Everything so far in this chapter converges on one very common screen: a page with chrome (a
+    nav, a sidebar, a header), a <strong>filters bar</strong>, and a <strong>data table</strong>
+    below it.
+    <Chip k='next' />
+    <Chip k='critical' /> The instinct from the old model is a single
+    <code>"use client"</code> component that holds the filter values in <code>useState</code> and
+    refetches the rows in an effect whenever they change. The server-first version inverts that: the
+    only client code is the individual inputs, each writing one param to the URL, and the table is a
+    server component that reads those params and fetches. Nothing else on the page is interactive,
+    so nothing else ships JavaScript.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 640 290'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <text x='320' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>A filterable table: what is static, what is a client leaf, what is server-rendered</text>
+      <!-- app chrome frame -->
+      <rect x='20' y='28' width='600' height='236' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='32' y='40' width='576' height='16' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <rect x='32' y='64' width='44' height='188' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='54' y='158' font-size='7.5' fill='#527dad' text-anchor='middle' dominant-baseline='central' transform='rotate(-90 54 158)'>sidebar</text>
+      <!-- page header -->
+      <rect x='88' y='64' width='520' height='24' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='98' y='76' font-size='9' fill='#0757ba' dominant-baseline='central'>Programs</text>
+      <text x='600' y='76' font-size='8' fill='#527dad' text-anchor='end' dominant-baseline='central'>page header (static)</text>
+      <!-- filters bar -->
+      <!-- data-lint-ignore: scene - toolbar; inputs left-aligned, label right by design -->
+      <rect data-lint-ignore='scene' x='88' y='96' width='520' height='32' rx='4' fill='#f7fafc' stroke='#dfe6ec'></rect>
+      <rect x='98' y='102' width='120' height='20' rx='4' fill='#e0f5f9' stroke='#0891b2'></rect>
+      <circle cx='108' cy='112' r='3.5' fill='#e0f5f9' stroke='#0891b2' stroke-width='1.5'></circle>
+      <text x='150' y='112' font-size='8' fill='#0e7490' text-anchor='middle' dominant-baseline='central'>Status</text>
+      <rect x='226' y='102' width='180' height='20' rx='4' fill='#e0f5f9' stroke='#0891b2'></rect>
+      <circle cx='236' cy='112' r='3.5' fill='#e0f5f9' stroke='#0891b2' stroke-width='1.5'></circle>
+      <text x='320' y='112' font-size='8' fill='#0e7490' text-anchor='middle' dominant-baseline='central'>Search</text>
+      <text x='600' y='112' font-size='8' fill='#0e7490' text-anchor='end' dominant-baseline='central'>client leaves: one per input</text>
+      <!-- table (server) -->
+      <rect x='88' y='136' width='520' height='116' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <rect x='96' y='144' width='504' height='16' rx='3' fill='#cfe9dd'></rect>
+      <rect x='96' y='166' width='504' height='12' rx='2' fill='#eaf6f0'></rect>
+      <rect x='96' y='182' width='504' height='12' rx='2' fill='#eaf6f0'></rect>
+      <rect x='96' y='198' width='504' height='12' rx='2' fill='#eaf6f0'></rect>
+      <rect x='96' y='214' width='504' height='12' rx='2' fill='#eaf6f0'></rect>
+      <text x='344' y='238' font-size='8' fill='#157a4c' text-anchor='middle'>server component: reads searchParams, fetches, streams in behind Suspense</text>
+      <!-- legend -->
+      <rect x='20' y='276' width='12' height='10' rx='2' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='36' y='281' font-size='8' fill='#737373' dominant-baseline='central'>static chrome</text>
+      <circle cx='150' cy='281' r='4' fill='#e0f5f9' stroke='#0891b2' stroke-width='1.5'></circle>
+      <text x='160' y='281' font-size='8' fill='#737373' dominant-baseline='central'>client leaf (use client)</text>
+      <rect x='300' y='276' width='12' height='10' rx='2' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='316' y='281' font-size='8' fill='#737373' dominant-baseline='central'>server-rendered</text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart TB
+  hdr("App chrome + page header · static"):::blue
+  hdr --> fb("Filters bar")
+  fb --> st("Status select · client leaf, writes ?status"):::cyan
+  fb --> q("Search input · client leaf, writes ?q"):::cyan
+  fb --> tbl("Programs table · server component<br/>reads searchParams, fetches, behind Suspense"):::green
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
+    <Fragment slot='caption'>
+      The same anatomy as everywhere else in the guide: the chrome and the page header are static,
+      the two filter inputs are the page's only client leaves (each owns one control and writes one
+      param), and the table is a server component that reads the params, fetches, and streams in
+      behind a <a href='11-suspense-streaming.html#mechanism'>Suspense</a> boundary.
+    </Fragment>
+  </Diagram>
+
+  <h3 id='filter-inputs'>One client leaf per input</h3>
+  <p>
+    Break the filters bar apart so that <strong>each input is its own small
+    <code>"use client"</code> component.</strong> A status dropdown and a text search are two
+    leaves, not one filter panel; each reads only its own current value (handed down from the
+    server) and, on change, writes only its own param, in a transition, preserving the others. This
+    is the push-down instinct of <a href='05-client-server-boundaries.html#push-down'>§5.3</a>
+    applied to a toolbar: the boundary wraps the one control that needs a handler, not the row it
+    sits in.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">StatusFilter.tsx - one leaf, one control, one param</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">StatusFilter</span>({ value }: { value: <span class="tok-kw">string</span> }) {
+  <span class="tok-kw">const</span> router = <span class="tok-fn">useRouter</span>();
+  <span class="tok-kw">const</span> searchParams = <span class="tok-fn">useSearchParams</span>();
+  <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
+
+  <span class="tok-kw">function</span> <span class="tok-fn">setStatus</span>(next: <span class="tok-kw">string</span>) {
+    <span class="tok-kw">const</span> params = <span class="tok-kw">new</span> <span class="tok-fn">URLSearchParams</span>(searchParams);
+    next === <span class="tok-str">"all"</span> ? params.<span class="tok-fn">delete</span>(<span class="tok-str">"status"</span>) : params.<span class="tok-fn">set</span>(<span class="tok-str">"status"</span>, next);
+    params.<span class="tok-fn">delete</span>(<span class="tok-str">"page"</span>); <span class="tok-com">// a new filter resets pagination</span>
+    <span class="tok-fn">startTransition</span>(() =&gt; {
+      router.<span class="tok-fn">replace</span>(<span class="tok-str">`?${params.toString()}`</span>, { <span class="tok-prop">scroll</span>: <span class="tok-kw">false</span> });
+    });
+  }
+
+  <span class="tok-kw">return</span> (
+    &lt;select
+      <span class="tok-prop">data-pending</span>={isPending ? <span class="tok-str">""</span> : <span class="tok-kw">undefined</span>}
+      <span class="tok-prop">value</span>={value}
+      <span class="tok-prop">onChange</span>={(e) =&gt; <span class="tok-fn">setStatus</span>(e.target.value)}
+    &gt;
+      &lt;option <span class="tok-prop">value</span>=<span class="tok-str">"all"</span>&gt;All statuses&lt;/option&gt;
+      &lt;option <span class="tok-prop">value</span>=<span class="tok-str">"active"</span>&gt;Active&lt;/option&gt;
+      &lt;option <span class="tok-prop">value</span>=<span class="tok-str">"archived"</span>&gt;Archived&lt;/option&gt;
+    &lt;/select&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The leaf reads its current value from a prop (the server passes it), and its only side effect
+      is writing <code>?status</code>. <code>scroll: false</code> stops the page from jumping to the
+      top on every change; deleting <code>?page</code> is the "reset the dependent state" habit, so
+      filtering never strands you on a page that no longer exists. The write is the refetch (<a
+        href='#url-writes'>§9.4</a>).
+    </CodeCaption>
+  </Snippet>
+
+  <p>
+    The search input is the same shape, with one addition: <strong>debounce the write</strong> so a
+    round trip fires once the user pauses, not on every keystroke. The input stays uncontrolled
+    (<code>defaultValue</code>) because between writes its own keystrokes are the source of truth;
+    the URL catches up a beat later.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">SearchFilter.tsx - same shape, debounced</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">SearchFilter</span>({ value }: { value: <span class="tok-kw">string</span> }) {
+  <span class="tok-kw">const</span> router = <span class="tok-fn">useRouter</span>();
+  <span class="tok-kw">const</span> searchParams = <span class="tok-fn">useSearchParams</span>();
+  <span class="tok-kw">const</span> [isPending, startTransition] = <span class="tok-fn">useTransition</span>();
+
+  <span class="tok-kw">const</span> write = <span class="tok-fn">useDebouncedCallback</span>((q: <span class="tok-kw">string</span>) =&gt; {
+    <span class="tok-kw">const</span> params = <span class="tok-kw">new</span> <span class="tok-fn">URLSearchParams</span>(searchParams);
+    q ? params.<span class="tok-fn">set</span>(<span class="tok-str">"q"</span>, q) : params.<span class="tok-fn">delete</span>(<span class="tok-str">"q"</span>);
+    params.<span class="tok-fn">delete</span>(<span class="tok-str">"page"</span>);
+    <span class="tok-fn">startTransition</span>(() =&gt; {
+      router.<span class="tok-fn">replace</span>(<span class="tok-str">`?${params.toString()}`</span>, { <span class="tok-prop">scroll</span>: <span class="tok-kw">false</span> });
+    });
+  }, <span class="tok-str">300</span>);
+
+  <span class="tok-kw">return</span> (
+    &lt;input
+      <span class="tok-prop">type</span>=<span class="tok-str">"search"</span>
+      <span class="tok-prop">data-pending</span>={isPending ? <span class="tok-str">""</span> : <span class="tok-kw">undefined</span>}
+      <span class="tok-prop">defaultValue</span>={value}
+      <span class="tok-prop">onChange</span>={(e) =&gt; <span class="tok-fn">write</span>(e.target.value)}
+      <span class="tok-prop">placeholder</span>=<span class="tok-str">"Search programs"</span>
+    /&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Two independent leaves, two params, and neither clobbers the other: each rebuilds the query
+      from the live <code>useSearchParams()</code> and changes only its own key. Add a sort control
+      or a date range later and it is one more leaf, not a rewrite of a growing filter object.
+    </CodeCaption>
+  </Snippet>
+
+  <h3 id='filter-server'>The server reads the params and refetches</h3>
+  <p>
+    The page is a server component. It reads the params once, hands each one to the input that
+    renders it (so the controls show the current state after a reload or a shared link), and hands
+    them to the table (so it fetches). The table sits behind a <a
+      href='11-suspense-streaming.html#mechanism'>Suspense</a> boundary so its data never blocks the
+    chrome or the filters bar from painting.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/programs/page.tsx - reads params, feeds the inputs and the table</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramsPage</span>({ searchParams }: <span class="tok-fn">PageProps</span>) {
+  <span class="tok-kw">const</span> { status = <span class="tok-str">"all"</span>, q = <span class="tok-str">""</span> } = <span class="tok-kw">await</span> searchParams;
+
+  <span class="tok-kw">return</span> (
+    &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"group flex min-h-0 grow flex-col"</span>&gt;
+      &lt;<span class="tok-fn">PageHeader</span> <span class="tok-prop">title</span>=<span class="tok-str">"Programs"</span> /&gt;
+
+      <span class="tok-com">{/* Static bar; only its inputs are client leaves. */}</span>
+      &lt;<span class="tok-fn">FiltersBar</span>&gt;
+        &lt;<span class="tok-fn">StatusFilter</span> <span class="tok-prop">value</span>={status} /&gt;
+        &lt;<span class="tok-fn">SearchFilter</span> <span class="tok-prop">value</span>={q} /&gt;
+      &lt;/<span class="tok-fn">FiltersBar</span>&gt;
+
+      <span class="tok-com">{/* Fallback shows once, on first load. A filter change keeps the old
+          rows on screen and dims them (below) instead of flashing this. */}</span>
+      &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">TableSkeleton</span> /&gt;}&gt;
+        &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"transition-opacity group-has-[[data-pending]]:opacity-50"</span>&gt;
+          &lt;<span class="tok-fn">ProgramsTable</span> <span class="tok-prop">status</span>={status} <span class="tok-prop">q</span>={q} /&gt;
+        &lt;/div&gt;
+      &lt;/<span class="tok-fn">Suspense</span>&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+    <CodeCaption>
+      There is deliberately no <code>key</code> on the Suspense boundary: keying it by the params
+      would remount it and re-show the skeleton on every filter change, the exact flash you are
+      trying to avoid. Leaving it stable lets the transition keep the old rows visible while the new
+      ones stream in.
+    </CodeCaption>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">ProgramsTable.tsx - the params ARE the function signature</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramsTable</span>({ status, q }: <span class="tok-fn">Props</span>) {
+  <span class="tok-com">/* The fetch lives at the leaf that needs it (§5.3), keyed by the params.
+     Changing the URL re-runs this component on the server with new args. */</span>
+  <span class="tok-kw">const</span> programs = <span class="tok-kw">await</span> db.programs.<span class="tok-fn">findMany</span>({
+    <span class="tok-prop">where</span>: {
+      <span class="tok-prop">status</span>: status === <span class="tok-str">"all"</span> ? <span class="tok-kw">undefined</span> : status,
+      <span class="tok-prop">name</span>: q ? { <span class="tok-prop">contains</span>: q, <span class="tok-prop">mode</span>: <span class="tok-str">"insensitive"</span> } : <span class="tok-kw">undefined</span>,
+    },
+    <span class="tok-prop">orderBy</span>: { <span class="tok-prop">updatedAt</span>: <span class="tok-str">"desc"</span> },
+  });
+
+  <span class="tok-kw">if</span> (programs.length === <span class="tok-str">0</span>) <span class="tok-kw">return</span> &lt;<span class="tok-fn">EmptyState</span> <span class="tok-prop">query</span>={q} /&gt;;
+
+  <span class="tok-kw">return</span> (
+    &lt;table&gt;
+      &lt;tbody&gt;
+        {programs.map((p) =&gt; (
+          &lt;<span class="tok-fn">ProgramRow</span> <span class="tok-prop">key</span>={p.id} <span class="tok-prop">program</span>={p} /&gt;
+        ))}
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  );
+}</pre>
+    <CodeCaption>
+      No <code>"use client"</code>, no effect, no request-state machine: the component awaits its
+      data while it renders, and its arguments are the URL params. This is the whole payoff of <a
+        href='#url-state'>§9.2</a>: the query string is the page's function signature, and the server
+      is free to cache and dedupe the fetch (<a href='15-dedupe-caching.html'>§15</a>).
+    </CodeCaption>
+  </Snippet>
+
+  <h3 id='filter-swap'>How the table swaps in without a reload</h3>
+  <p>
+    The cycle is the mechanic of <a href='#url-writes'>§9.4</a>, made concrete. A leaf writes the
+    URL inside a transition; the router issues an RSC request for the same route; the server
+    re-renders with the new <code>searchParams</code> and refetches; the fresh RSC payload for the
+    changed segment merges into the tree in place (<a href='04-ssr.html#routing'>§4.5</a>). The
+    document never reloads, and the parts that did not change (the chrome, the sidebar, the filters
+    bar and its focus, the scroll position) are never touched.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 125'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker id='aFlt' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'>
+          <path d='M 2 1 L 8.5 5 L 2 9' fill='none' stroke='#737373' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>One filter change, one RSC round trip</text>
+      <rect x='8' y='42' width='140' height='40' rx='6' fill='#e0f5f9' stroke='#0891b2'></rect>
+      <text x='78' y='58' font-size='9' fill='#0e7490' text-anchor='middle'>filter leaf</text>
+      <text x='78' y='70' font-size='9' fill='#0e7490' text-anchor='middle'>writes ?status</text>
+      <text x='179' y='54' font-size='7.5' fill='#737373' text-anchor='middle'>transition</text>
+      <path d='M 148 62 L 210 62' fill='none' stroke='#737373' stroke-width='1.3' marker-end='url(#aFlt)'></path>
+      <rect x='212' y='42' width='104' height='40' rx='6' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='264' y='62' font-size='9' fill='#0757ba' text-anchor='middle' dominant-baseline='central'>URL changes</text>
+      <text x='347' y='54' font-size='7.5' fill='#737373' text-anchor='middle'>RSC request</text>
+      <path d='M 316 62 L 378 62' fill='none' stroke='#737373' stroke-width='1.3' marker-end='url(#aFlt)'></path>
+      <rect x='380' y='42' width='140' height='40' rx='6' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='450' y='58' font-size='9' fill='#0757ba' text-anchor='middle'>server re-renders</text>
+      <text x='450' y='70' font-size='9' fill='#0757ba' text-anchor='middle'>and refetches</text>
+      <text x='551' y='54' font-size='7.5' fill='#737373' text-anchor='middle'>RSC payload</text>
+      <path d='M 520 62 L 582 62' fill='none' stroke='#737373' stroke-width='1.3' marker-end='url(#aFlt)'></path>
+      <rect x='584' y='42' width='128' height='40' rx='6' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text x='648' y='58' font-size='9' fill='#157a4c' text-anchor='middle'>table region</text>
+      <text x='648' y='70' font-size='9' fill='#157a4c' text-anchor='middle'>swaps in place</text>
+      <text x='360' y='106' font-size='9' fill='#737373' text-anchor='middle'>the chrome, sidebar, filters bar, and scroll position all persist;</text>
+      <text x='360' y='119' font-size='9' fill='#737373' text-anchor='middle'>only the table subtree re-renders, with no document reload</text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart LR
+  leaf("filter leaf writes ?status"):::cyan -->|"transition"| url("URL changes"):::blue
+  url -->|"RSC request"| srv("server re-renders and refetches"):::blue
+  srv -->|"RSC payload"| tbl("table region swaps in place"):::green
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
+    <Fragment slot='caption'>
+      One filter change is one small RSC round trip, not a page load. Because the App Router runs
+      the navigation as a transition, the already-revealed Suspense boundary keeps the old rows on
+      screen rather than re-showing the skeleton (<a href='11-suspense-streaming.html#refetch'
+        >§11.5</a>); only the table subtree re-renders when the payload arrives.
+    </Fragment>
+  </Diagram>
+
+  <h3 id='filter-feedback'>Feedback while it reloads: dim, do not flash</h3>
+  <p>
+    Because the transition holds the old rows in place, the table would otherwise sit there looking
+    unchanged while the fetch runs. Give the user a signal by <strong>dimming the stale rows.</strong>
+    Each leaf already flips a <code>data-pending</code> attribute on itself during its transition;
+    a single <code>group-has-[[data-pending]]</code> selector on the table wrapper (in the page
+    above) lets the server-rendered table dim itself while any filter is in flight, with no shared
+    client state and no prop drilling. The rows fade to half opacity, then snap back to full when
+    the new payload lands.
+  </p>
+  <p>
+    That <code>isPending</code>-driven dim is the right tool when the results come from the server.
+    When the filtering happens <em>on the client</em> instead (a large in-memory list, no round
+    trip), <code>useDeferredValue</code> is the analog: it keeps the last committed list on screen
+    while an expensive re-filter is prepared, and comparing the current value to the deferred one
+    tells you the list is stale.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">ResultsView.tsx - client-side filtering: useDeferredValue for the same dim</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">ResultsView</span>({ rows, query }: { rows: Row[]; query: <span class="tok-kw">string</span> }) {
+  <span class="tok-com">/* Keep the last-rendered list on screen while a new one is prepared;
+     compare the two values to know the visible list is stale. */</span>
+  <span class="tok-kw">const</span> deferredQuery = <span class="tok-fn">useDeferredValue</span>(query);
+  <span class="tok-kw">const</span> isStale = query !== deferredQuery;
+  <span class="tok-kw">const</span> visible = <span class="tok-fn">useMemo</span>(
+    () =&gt; <span class="tok-fn">filterRows</span>(rows, deferredQuery),
+    [rows, deferredQuery],
+  );
+
+  <span class="tok-kw">return</span> (
+    &lt;ul <span class="tok-prop">className</span>=<span class="tok-str">"transition-opacity"</span> <span class="tok-prop">style</span>={{ <span class="tok-prop">opacity</span>: isStale ? <span class="tok-str">0.5</span> : <span class="tok-str">1</span> }}&gt;
+      {visible.map((r) =&gt; (
+        &lt;<span class="tok-fn">ResultRow</span> <span class="tok-prop">key</span>={r.id} <span class="tok-prop">row</span>={r} /&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Same shape as the server case, different engine: <code>deferredQuery</code> lags <code>query</code>
+      by one render, <code>isStale</code> is the dim flag, and the old list stays visible until the
+      re-filter commits. Rule of thumb: URL write plus <code>isPending</code> for server-fetched
+      results, <code>useDeferredValue</code> when the work is client-side (<a
+        href='11-suspense-streaming.html#refetch'>§11.5</a>).
+    </CodeCaption>
+  </Snippet>
+
+  <h2 id='cookies'>9.6 Cookies: preferences that follow the user, not the URL</h2>
   <p>
     Some state should survive across pages and sessions but has no business in a link: the collapsed
     sidebar, a table-density preference, the dismissed-announcement flag, theme. Put those in <strong
@@ -1004,7 +1366,7 @@ flowchart LR
     with the link should get it. A collapsed sidebar is the viewer: it would be bizarre in a shared link.
   </p>
 
-  <h2 id='client-state'>9.6 What genuinely stays client state</h2>
+  <h2 id='client-state'>9.7 What genuinely stays client state</h2>
   <p>
     The point is not that <code>useState</code> is bad; it's that it should hold
     <strong>interaction</strong>, not <strong>identity</strong>. Ephemeral, mid-gesture,
