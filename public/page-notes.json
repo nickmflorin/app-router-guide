@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-21T15:47:55.994Z",
+  "updatedAt": "2026-07-21T16:12:05.652Z",
   "notes": [
     {
       "id": "nmrutjyb3",
@@ -15,8 +15,7 @@
         "tag": "h3",
         "snippet": "The API is your HTML"
       },
-      "resolution": "New paragraph under \"The API is your HTML\": the emerging pattern is that the data layer IS your server components: direct server data access encapsulated together with the UI that presents it, exposed as server-rendered components (microfrontends whose contract is finished, typed UI), replacing the raw-data API + client-side (or second-pass server-side) rendering as the default integration point; cross-links §5.10 for depth and the non-React-consumer caveat.",
-      "resolvedAt": "2026-07-20"
+      "resolution": "New paragraph under \"The API is your HTML\": the emerging pattern is that the data layer IS your server components: direct server data access encapsulated together with the UI that presents it, exposed as server-rendered components (microfrontends whose contract is finished, typed UI), replacing the raw-data API + client-side (or second-pass server-side) rendering as the default integration point; cross-links §5.10 for depth and the non-React-consumer caveat."
     },
     {
       "id": "nmrutnzfe",
@@ -32,8 +31,7 @@
         "tag": "figure",
         "snippet": "Browser GET /programs/42 Server render server components await data: parallel, deduped sus"
       },
-      "resolution": "§3.1 diagram now separates the phases: the timeline gains a dotted \"concurrent, not sequential\" bracket over the streaming + hydration milestones, the third milestone reads \"leaves hydrate as they arrive; interactivity grows piece by piece\", the twin fans both phases out of first-paint in parallel, and the caption explains that after the first page load's first paint, streaming and selective hydration overlap rather than queue (linking §11.2).",
-      "resolvedAt": "2026-07-20"
+      "resolution": "§3.1 diagram now separates the phases: the timeline gains a dotted \"concurrent, not sequential\" bracket over the streaming + hydration milestones, the third milestone reads \"leaves hydrate as they arrive; interactivity grows piece by piece\", the twin fans both phases out of first-paint in parallel, and the caption explains that after the first page load's first paint, streaming and selective hydration overlap rather than queue (linking §11.2)."
     },
     {
       "id": "nmrutpm9n",
@@ -49,8 +47,7 @@
         "tag": "figure",
         "snippet": "SPA-style page (client-fetch chain) HTML shell download + parse JS hydrate fetch /users/me"
       },
-      "resolution": "Yes, and fixed: the SPA-vs-server-first figure's server-first lane now shows \"slow regions stream in\" \"+ leaves hydrate\" as concurrent tiles, and the twin fans hydration and streaming out of T1 in parallel instead of chaining them.",
-      "resolvedAt": "2026-07-20"
+      "resolution": "Yes, and fixed: the SPA-vs-server-first figure's server-first lane now shows \"slow regions stream in\" \"+ leaves hydrate\" as concurrent tiles, and the twin fans hydration and streaming out of T1 in parallel instead of chaining them."
     },
     {
       "id": "nmrutqoh9",
@@ -66,8 +63,7 @@
         "tag": "figure",
         "snippet": "Two page regions, one canonical query …/programs/42 app layout (shell) ProgramHeader needs"
       },
-      "resolution": "Added beneath the canonical-query figure: a paragraph + file-tree snippet showing the header and details regions split into @header/@details parallel-route slots, with @details carrying nested sub-routes (activity) so navigation swaps only that slot; notes that dedupe holds across slots (same server request, one getProgram execution) and links §13.3 for slot mechanics and defaults.",
-      "resolvedAt": "2026-07-20"
+      "resolution": "Added beneath the canonical-query figure: a paragraph + file-tree snippet showing the header and details regions split into @header/@details parallel-route slots, with @details carrying nested sub-routes (activity) so navigation swaps only that slot; notes that dedupe holds across slots (same server request, one getProgram execution) and links §13.3 for slot mechanics and defaults."
     },
     {
       "id": "nmrutsou9",
@@ -84,8 +80,7 @@
         "tag": "pre",
         "snippet": "app/programs/[programId]/layout.tsx - the slot renders alongside the pageexport default as"
       },
-      "resolution": "Parallel-layout snippet: root is now a div with flex max-h-full flex-col overflow-hidden; the slot section has min-h-0 grow overflow-hidden with the comment that it is up to the slot's children to implement scroll.",
-      "resolvedAt": "2026-07-20"
+      "resolution": "Parallel-layout snippet: root is now a div with flex max-h-full flex-col overflow-hidden; the slot section has min-h-0 grow overflow-hidden with the comment that it is up to the slot's children to implement scroll."
     },
     {
       "id": "nmrutu228",
@@ -102,8 +97,7 @@
         "tag": "pre",
         "snippet": "app/programs/[programId]/layout.tsx - the bar is written once, in the persistent frameexpo"
       },
-      "resolution": "Approach-2 layout snippet: fragment root replaced with the flex-col frame (max-h-full, overflow-hidden) and a scrolling main region.",
-      "resolvedAt": "2026-07-20"
+      "resolution": "Approach-2 layout snippet: fragment root replaced with the flex-col frame (max-h-full, overflow-hidden) and a scrolling main region."
     },
     {
       "id": "nmrutum5z",
@@ -120,8 +114,22 @@
         "tag": "pre",
         "snippet": "app/programs/[programId]/reports/page.tsx - the page declares its own identityexport defau"
       },
-      "resolution": "Fragments removed across the §9.3 snippets (Approach 1 page, Approach 4 param page too): roots are now flex-col stack divs. Convention recorded in PROJECT.md: no fragment roots in example snippets.",
-      "resolvedAt": "2026-07-20"
+      "resolution": "Fragments removed across the §9.3 snippets (Approach 1 page, Approach 4 param page too): roots are now flex-col stack divs. Convention recorded in PROJECT.md: no fragment roots in example snippets."
+    },
+    {
+      "id": "nmruujoe2",
+      "page": "12-designing-for-the-unknown.html",
+      "ts": "2026-07-21T16:07:05.018Z",
+      "status": "open",
+      "text": "I want to include a more detailed section on this page that touches on the dialog flow example that is already on the page more thoroughly, but applied to both dialogs and drawers.  IT should be focused on wizard-style components, and how the container or shell and outer structure should remain static with just the inner content changing as the user progresses.  It should show a drawer example, where the drawer has multiple steps (next prev etc) and an example where the drawer has multiple tabs (i.e. non sequentail steps the user can skip around in) - each one should keep all of the non-dynamic per-step per-tab content static in a single drawer component that is dyanmically imported and mounted/unmounted when it is open/closed.  it should then show that the inner content changes as the step or tab changes, but not the outer content.  In the next/prev case, it should show the drawer container, structure, drawer header, and footer as static and the inner content as dynamic, with the inner content stretching with flex grow between the header and the footer and establishing min-h-0 and flex-grow and overflow hidden, and then should show how the dynamic inner content slots into that static structure, and how the inner content that is dynamic can show empty messages or loading indicators that are centered in the available height because of the flex grow and overflow hidden, but then list-style content that is dynamic can define max-h-0 and overflow-y-auto to force scroll.  the footer should have the next and previous buttons which are static, and it should emphasis that we don't unmount/remount 3 different drawers on each tab or prev/next change - the goal of everything we do in teh UI is to hold contsant what is static and unchanging, maximize that structure and minimize the dynamic.  the tabs case should be similar, but just doesn't have the footer at the bottom, and the tabs are static and at the top with the flex grow applied to the available space under it.",
+      "target": {
+        "anchor": null,
+        "path": [
+          1
+        ],
+        "tag": "h1",
+        "snippet": "Designing for the Unknown"
+      }
     }
   ]
 }

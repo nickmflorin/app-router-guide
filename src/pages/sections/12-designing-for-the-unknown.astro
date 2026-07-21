@@ -810,6 +810,288 @@ flowchart LR
     </Fragment>
   </Diagram>
 
+  <h3 id='wizard-shell'>Building the one frame: wizard drawers and dialogs</h3>
+  <p>
+    The design rule above has an engineering twin: <strong>one component per flow.</strong>
+    <Chip k='react' />
+    <Chip k='very' /> The drawer or dialog's shell (its container, header, tab bar, footer) is
+    static across every step, and only the inner content region changes as the user progresses.
+    Never unmount and remount three different drawers as the step changes; that rebuilds, re-lays
+    out, and re-animates the exact structure the user is mid-flow inside of. The goal here is the
+    same as everywhere else in the UI: <strong>hold constant what is static and unchanging,
+    maximize that structure, and minimize the dynamic.</strong> The one component that <em>is</em>
+    mounted and unmounted is the drawer itself: it's a floating element, so it lives in its own
+    dynamically imported file, mounted on open and unmounted on close (<a
+      href='08-bundle-size-code-splitting.html#triggers'>§8.4</a
+    >). Everything below applies verbatim to dialogs; drawers just make the vertical geometry more
+    interesting.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 312'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <text x='180' y='12' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+        Sequential: next / prev
+      </text>
+      <text x='540' y='12' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+        Non-sequential: tabs
+      </text>
+      <line x1='360' y1='2' x2='360' y2='282' stroke='#e0e0e0'></line>
+
+      <!-- LEFT: sequential wizard drawer -->
+      <rect x='40' y='26' width='280' height='230' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='52' y='38' width='256' height='26' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='64' y='51' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+        Drawer header (static)
+      </text>
+      <rect
+        x='52'
+        y='72'
+        width='256'
+        height='134'
+        rx='5'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-dasharray='5 4'></rect>
+      <text x='180' y='120' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
+        step content (dynamic)
+      </text>
+      <text x='180' y='136' font-size='8.5' fill='#8f6b2e' text-anchor='middle'>
+        min-h-0 · grow · overflow-hidden
+      </text>
+      <text x='180' y='152' font-size='8.5' fill='#8f6b2e' text-anchor='middle'>
+        empty/loading center; lists scroll inside
+      </text>
+      <rect x='52' y='214' width='256' height='30' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <rect x='176' y='220' width='58' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
+      <text
+        x='205'
+        y='229'
+        font-size='8.5'
+        fill='#527dad'
+        text-anchor='middle'
+        dominant-baseline='central'>Previous</text>
+      <rect x='240' y='220' width='58' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
+      <text
+        x='269'
+        y='229'
+        font-size='8.5'
+        fill='#527dad'
+        text-anchor='middle'
+        dominant-baseline='central'>Next</text>
+      <text x='64' y='229' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+        Footer (static)
+      </text>
+      <text x='180' y='274' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
+        one drawer; only STEPS[step] swaps inside
+      </text>
+
+      <!-- RIGHT: tabbed drawer -->
+      <rect x='400' y='26' width='280' height='230' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='412' y='38' width='256' height='26' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='424' y='51' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+        Drawer header (static)
+      </text>
+      <rect x='412' y='72' width='78' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text
+        x='451'
+        y='81'
+        font-size='8.5'
+        fill='#0757ba'
+        text-anchor='middle'
+        dominant-baseline='central'>Details</text>
+      <rect x='500' y='72' width='78' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
+      <text
+        x='539'
+        y='81'
+        font-size='8.5'
+        fill='#527dad'
+        text-anchor='middle'
+        dominant-baseline='central'>Schedule</text>
+      <rect x='588' y='72' width='78' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
+      <text
+        x='627'
+        y='81'
+        font-size='8.5'
+        fill='#527dad'
+        text-anchor='middle'
+        dominant-baseline='central'>History</text>
+      <rect
+        x='412'
+        y='98'
+        width='256'
+        height='146'
+        rx='5'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-dasharray='5 4'></rect>
+      <text x='540' y='156' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
+        tab content (dynamic)
+      </text>
+      <text x='540' y='172' font-size='8.5' fill='#8f6b2e' text-anchor='middle'>
+        flex-grow fills everything below the tabs
+      </text>
+      <text x='540' y='274' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
+        one drawer; only TABS[tab] swaps inside
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart TB
+  subgraph SW["Sequential wizard drawer"]
+    direction TB
+    h1("Drawer header · static"):::blue
+    h1 --> c1("step content · dynamic<br/>min-h-0 · grow · overflow-hidden"):::amberdash
+    c1 --> f1("Footer: Previous / Next · static"):::blue
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style SW fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+%%split%%
+flowchart TB
+  subgraph TD["Tabbed drawer"]
+    direction TB
+    h2("Drawer header + tab bar · static"):::blue
+    h2 --> c2("tab content · dynamic<br/>flex-grow fills below the tabs"):::amberdash
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style TD fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+</pre>
+
+    <Fragment slot='caption'>
+      The anatomy of both wizard shapes. Blue is the static shell (rendered once per open, never
+      touched as the user progresses); the amber region is the only thing that changes, stretched
+      between the static pieces by flex-grow. In the sequential case the footer's buttons never
+      move; in the tabbed case the tab bar holds still while the user skips around beneath it.
+    </Fragment>
+  </Diagram>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">AssignLearnersDrawer.tsx - one shell for the whole flow; only the step swaps</span><span class="tok-dir">"use client"</span>;
+<span class="tok-com">/* Mounted on open, unmounted on close, dynamically imported by its
+   trigger (§8.4). The steps live in their own files. */</span>
+<span class="tok-kw">const</span> STEPS = [PickLearners, ReviewConflicts, ConfirmAssignments] <span class="tok-kw">as const</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">AssignLearnersDrawer</span>({ programId, onClose }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">const</span> [step, setStep] = <span class="tok-fn">useState</span>(<span class="tok-str">0</span>);
+  <span class="tok-kw">const</span> Step = STEPS[step];
+
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Drawer</span> <span class="tok-prop">onClose</span>={onClose}&gt;
+      &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex max-h-full grow flex-col overflow-hidden"</span>&gt;
+        <span class="tok-com">{/* Static: rendered once per open; never changes per step. */}</span>
+        &lt;<span class="tok-fn">DrawerHeader</span> <span class="tok-prop">title</span>=<span class="tok-str">"Assign learners"</span> <span class="tok-prop">onClose</span>={onClose} /&gt;
+
+        <span class="tok-com">{/* Dynamic: the ONE region that changes. It stretches between the
+            header and the footer; its children decide how to fill it. */}</span>
+        &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex min-h-0 grow flex-col overflow-hidden"</span>&gt;
+          &lt;<span class="tok-fn">Step</span> <span class="tok-prop">programId</span>={programId} /&gt;
+        &lt;/div&gt;
+
+        <span class="tok-com">{/* Static: the buttons never move under the user's cursor. */}</span>
+        &lt;<span class="tok-fn">DrawerFooter</span>&gt;
+          &lt;<span class="tok-fn">Button</span> <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">setStep</span>((s) =&gt; s - <span class="tok-str">1</span>)} <span class="tok-prop">disabled</span>={step === <span class="tok-str">0</span>}&gt;
+            Previous
+          &lt;/<span class="tok-fn">Button</span>&gt;
+          &lt;<span class="tok-fn">Button</span> <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">setStep</span>((s) =&gt; s + <span class="tok-str">1</span>)}&gt;
+            {step === STEPS.length - <span class="tok-str">1</span> ? <span class="tok-str">"Finish"</span> : <span class="tok-str">"Next"</span>}
+          &lt;/<span class="tok-fn">Button</span>&gt;
+        &lt;/<span class="tok-fn">DrawerFooter</span>&gt;
+      &lt;/div&gt;
+    &lt;/<span class="tok-fn">Drawer</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Three steps, one drawer. The shell (container, header, footer) renders when the drawer opens
+      and is never rebuilt; advancing the wizard changes <code>STEPS[step]</code> and nothing else.
+      The wrong version mounts a different drawer per step, and the user watches the frame they were
+      standing in tear down and reassemble on every click.
+    </CodeCaption>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">PickLearners.tsx - dynamic content slotting into the static frame</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">PickLearners</span>({ programId }: { programId: <span class="tok-kw">string</span> }) {
+  <span class="tok-kw">const</span> { data: learners } = <span class="tok-fn">useLearners</span>(programId);
+
+  <span class="tok-com">/* Unknown or empty: centered in the region's available height. The
+     centering is free, because the parent region is grow + overflow-
+     hidden: there is real, fixed space to center within. */</span>
+  <span class="tok-kw">if</span> (!learners || learners.length === <span class="tok-str">0</span>) {
+    <span class="tok-kw">return</span> (
+      &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex min-h-0 grow items-center justify-center"</span>&gt;
+        {learners ? <span class="tok-str">"No learners to assign."</span> : &lt;<span class="tok-fn">Spinner</span> /&gt;}
+      &lt;/div&gt;
+    );
+  }
+
+  <span class="tok-com">/* List content: claims the same height and scrolls internally. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;ul <span class="tok-prop">className</span>=<span class="tok-str">"min-h-0 grow overflow-y-auto"</span>&gt;
+      {learners.map((l) =&gt; (
+        &lt;<span class="tok-fn">LearnerRow</span> <span class="tok-prop">key</span>={l.id} <span class="tok-prop">learner</span>={l} /&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Both fill modes of the dynamic region, from the same geometry. A spinner or empty message
+      centers in the available height; a list claims that height and scrolls inside it with <code
+        >overflow-y-auto</code
+      >; and in neither case does the drawer's frame move a pixel. The panel showing its own
+      loading indicator is the legitimate case (<a href='15-dedupe-caching.html#when-client'
+        >§15.7</a
+      >): the drawer is the container, and its content was never knowable before the click.
+    </CodeCaption>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">ProgramDetailsDrawer.tsx - non-sequential steps: static tabs, same doctrine</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">const</span> TABS = { <span class="tok-prop">details</span>: DetailsTab, <span class="tok-prop">schedule</span>: ScheduleTab, <span class="tok-prop">history</span>: HistoryTab } <span class="tok-kw">as const</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramDetailsDrawer</span>({ programId, onClose }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">const</span> [tab, setTab] = <span class="tok-fn">useState</span>&lt;<span class="tok-kw">keyof typeof</span> TABS&gt;(<span class="tok-str">"details"</span>);
+  <span class="tok-kw">const</span> Tab = TABS[tab];
+
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Drawer</span> <span class="tok-prop">onClose</span>={onClose}&gt;
+      &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex max-h-full grow flex-col overflow-hidden"</span>&gt;
+        &lt;<span class="tok-fn">DrawerHeader</span> <span class="tok-prop">title</span>=<span class="tok-str">"Program details"</span> <span class="tok-prop">onClose</span>={onClose} /&gt;
+
+        <span class="tok-com">{/* Static: the tab bar holds still; the user skips around freely. */}</span>
+        &lt;<span class="tok-fn">TabList</span> <span class="tok-prop">value</span>={tab} <span class="tok-prop">onChange</span>={setTab} /&gt;
+
+        <span class="tok-com">{/* Dynamic: everything below the tabs, stretched to the bottom. */}</span>
+        &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex min-h-0 grow flex-col overflow-hidden"</span>&gt;
+          &lt;<span class="tok-fn">Tab</span> <span class="tok-prop">programId</span>={programId} /&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/<span class="tok-fn">Drawer</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The tabbed cousin: no footer, tabs pinned at the top, and the same flex-grow region absorbing
+      everything beneath them. Tab identity in <code>useState</code> is correct here, not a
+      violation of <a href='09-server-resolvable-state.html#tabs'>§9.3</a>: these tabs live inside a
+      transient overlay, not a page, which is exactly the ladder's bottom rung. One drawer, three
+      tabs, and only <code>TABS[tab]</code> ever changes.
+    </CodeCaption>
+  </Snippet>
+
   <h2 id='seed-data'>12.5 Seed data is part of the discipline</h2>
   <p>
     There is a development-side habit that keeps all of the above honest:
