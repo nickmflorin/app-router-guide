@@ -7,4 +7,4 @@ build/output/
 .preview/
 public/assets/style.css
 public/assets/search-index.js
-public/pages-notes.json
+public/page-notes.json
