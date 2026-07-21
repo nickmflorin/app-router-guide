@@ -104,8 +104,8 @@ import Snippet from '../../components/Snippet.astro';
   </table>
   <p>
     Those are real, and they're the ones you'll see cited everywhere. But two benefits matter more
-    to this guide than all of the above, because they are the ones traditional React habits give away
-    first: <strong>stability</strong> and
+    to this guide than all of the above, because they are the ones traditional React habits give
+    away first: <strong>stability</strong> and
     <strong>simplicity</strong>.
   </p>
 
@@ -327,7 +327,8 @@ flowchart LR
       effect and ship it. The moment the bar becomes an application that looks and feels
       professional (loads in a predictable sequence, holds still, handles every error and loading
       state cleanly), the client-side version of that is not simpler. It is dramatically more
-      complex, and past a certain surface area it stops being achievable at all. Tracker is not a demo with a handful of forgiving users; things shouldn't flash and shift around, and loading
+      complex, and past a certain surface area it stops being achievable at all. Tracker is not a
+      demo with a handful of forgiving users; things shouldn't flash and shift around, and loading
       should be something the user can predict and understand. That is the bar, and server-first is
       the cheaper way to clear it.
     </p>
@@ -502,16 +503,17 @@ flowchart LR
     data is the pattern the audit flagged, <a href='18-applied-to-tracker.html'>§18</a>.)
   </p>
   <p>
-    And there is a name for where this is heading. The pattern emerging across the ecosystem is
-    that <strong>the data layer is your server components</strong>: rather than a data API that
-    returns raw JSON for callers to render (client-side, or even server-side in a second pass),
-    teams increasingly encapsulate direct server data access <em>together with</em> the UI that
-    presents it, and expose those pieces as server-rendered components: microfrontends whose
-    contract is finished, typed UI. The HTTP data layer stops being the default integration point
-    between products; the component is, and the middleman surface it used to drag in (<a
+    And there is a name for where this is heading. The pattern emerging across the ecosystem is that <strong
+      >the data layer is your server components</strong
+    >: rather than a data API that returns raw JSON for callers to render (client-side, or even
+    server-side in a second pass), teams increasingly encapsulate direct server data access <em
+      >together with</em
+    > the UI that presents it, and expose those pieces as server-rendered components: microfrontends whose
+    contract is finished, typed UI. The HTTP data layer stops being the default integration point between
+    products; the component is, and the middleman surface it used to drag in (<a
       href='05-client-server-boundaries.html#server-actions'>§5.10</a
-    >) never comes into existence. §5.10 also carries the honest caveat: the moment a consumer
-    isn't React, the raw-data API earns its place back.
+    >) never comes into existence. §5.10 also carries the honest caveat: the moment a consumer isn't
+    React, the raw-data API earns its place back.
   </p>
 
   <h2 id='perceived'>4.3 Perceived performance, and where streaming fits</h2>
@@ -584,9 +586,9 @@ flowchart LR
     and out while regions shift around as each response lands just looks terrible: busy,
     unprofessional, and, crucially, <em>slower</em>, even when the wall-clock time is identical.
     Every spinner and every reflow gives the user a blatant look into the intermediate machinery:
-    here is what has not been fetched yet, here is the empty space being held with fallback
-    content, here is everything arriving one request at a time, in whatever order the network chose.
-    The user is made to watch the kitchen.
+    here is what has not been fetched yet, here is the empty space being held with fallback content,
+    here is everything arriving one request at a time, in whatever order the network chose. The user
+    is made to watch the kitchen.
   </p>
   <p>
     All of that can simply be swooped up onto the server. Resolve the data there and the
@@ -594,9 +596,9 @@ flowchart LR
     not yet hydrated, and none of the scaffolding that produced it. Fewer visible steps always reads
     as faster. The mechanics of holding still (containers, honest space reservation, CLS as a field
     metric) get a full chapter in
-    <a href='10-containers-content-shifting.html'>§10</a>; what belongs here is the perceptual claim:
-    a page that appears at once and never moves feels faster than one that assembles itself in front
-    of the user, regardless of what the network tab says.
+    <a href='10-containers-content-shifting.html'>§10</a>; what belongs here is the perceptual
+    claim: a page that appears at once and never moves feels faster than one that assembles itself
+    in front of the user, regardless of what the network tab says.
   </p>
 
   <h2 id='page-cache'>

@@ -19,15 +19,17 @@ import CompareCol from '../../components/CompareCol.astro';
 
   <h2 id='why'>18.1 Why the codebase was audited</h2>
   <p>
-    The audit exists to answer one question: how far the repo's actual usage of the App Router diverges
-    from the model React 19 and the App Router require in order to work well? Not the model this
-    guide prefers; the model the platform is built on. Deviating from it does not produce a
+    The audit exists to answer one question: how far the repo's actual usage of the App Router
+    diverges from the model React 19 and the App Router require in order to work well? Not the model
+    this guide prefers; the model the platform is built on. Deviating from it does not produce a
     different-but-valid architecture, it produces an application the framework cannot help: no
     streaming, no caching, no stability, with the costs compounding page by page (<a
       href='01-introduction.html#direction'>§1</a
-    >). Before asking the team to adopt server-first patterns, the audit had to produce a specific, cited picture of where the codebase stands today, so that the guide's recommendations map to real code rather than
-    hypotheticals, and so the fixes can be prioritized by impact instead of by vibes. Every finding
-    below points at concrete files; every fix points back at the chapter that covers the pattern.
+    >). Before asking the team to adopt server-first patterns, the audit had to produce a specific,
+    cited picture of where the codebase stands today, so that the guide's recommendations map to
+    real code rather than hypotheticals, and so the fixes can be prioritized by impact instead of by
+    vibes. Every finding below points at concrete files; every fix points back at the chapter that
+    covers the pattern.
   </p>
 
   <Callout kind='voice' title="Read this in the spirit it's written">

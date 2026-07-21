@@ -608,18 +608,20 @@ flowchart TB
   <h3 id='swr-vs-query'>SWR vs TanStack Query</h3>
   <p>
     Both libraries are excellent, and it's worth being plain about that before stating a preference.
-    <a href='https://tanstack.com/query/latest' target='_blank' rel='noopener'>TanStack Query</a> is
-    the more popular one (roughly 12 million weekly downloads to SWR's 5 as of this writing, and
-    growing faster) and the more <em>powerful</em> one: a dedicated
+    <a href='https://tanstack.com/query/latest' target='_blank' rel='noopener'>TanStack Query</a> is the
+    more popular one (roughly 12 million weekly downloads to SWR's 5 as of this writing, and growing faster)
+    and the more <em>powerful</em> one: a dedicated
     <code>useMutation</code> hook with built-in optimistic updates and rollback, query invalidation primitives,
-    infinite-query and pagination helpers, and first-class devtools. It is fully App Router
-    compatible (its hydration setup takes a little more ceremony than SWR's), and for a client-heavy
-    app where the browser cache <em>is</em> the data layer, it is the stronger tool and the one
-    general-audience comparisons rightly recommend.
+    infinite-query and pagination helpers, and first-class devtools. It is fully App Router compatible
+    (its hydration setup takes a little more ceremony than SWR's), and for a client-heavy app where the
+    browser cache <em>is</em> the data layer, it is the stronger tool and the one general-audience comparisons
+    rightly recommend.
   </p>
   <p>
     But notice that the question here is narrower than "SWR vs TanStack Query" in the abstract,
-    because in this architecture <strong>neither library is the primary way data gets fetched</strong>.
+    because in this architecture <strong
+      >neither library is the primary way data gets fetched</strong
+    >.
     <Chip k='next' />
     <Chip k='very' /> The server owns first-paint data, mutations flow through server actions with <code
       >revalidateTag</code
@@ -630,11 +632,10 @@ flowchart TB
     job, not against the needs of an app they'd be carrying alone.
   </p>
   <p>
-    Judged that way, <a href='https://swr.vercel.app' target='_blank' rel='noopener'>SWR</a> gets
-    the nod, mildly, for fit and alignment rather than quality. Its small surface matches the small
-    job (the §15.7 cases are exactly what it covers, with little machinery left unused), it costs
-    about 4&nbsp;KB gzipped against TanStack Query's ~13&nbsp;KB (<a
-      href='08-bundle-size-code-splitting.html'>§8</a
+    Judged that way, <a href='https://swr.vercel.app' target='_blank' rel='noopener'>SWR</a> gets the
+    nod, mildly, for fit and alignment rather than quality. Its small surface matches the small job (the
+    §15.7 cases are exactly what it covers, with little machinery left unused), it costs about 4&nbsp;KB
+    gzipped against TanStack Query's ~13&nbsp;KB (<a href='08-bundle-size-code-splitting.html'>§8</a
     >'s budget thinking), and it is built by Vercel with Next in mind: its defaults are designed
     against the App Router's behavior, its releases track Next's, and the Next.js docs use it in
     their own client-fetching examples. None of that makes SWR fundamentally better suited; both

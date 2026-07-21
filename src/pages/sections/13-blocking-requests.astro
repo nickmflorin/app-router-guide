@@ -287,9 +287,8 @@ flowchart LR
 
   <h2 id='parallel-routes'>13.3 Parallel routes: independence with a file address</h2>
   <p>
-    <a href='10-containers-content-shifting.html#layouts'>§10.4</a> put the containers in the layout; <a
-      href='14-minimize-the-wires.html'>§14</a
-    > made the regions self-fetching;
+    <a href='10-containers-content-shifting.html#layouts'>§10.4</a> put the containers in the layout;
+    <a href='14-minimize-the-wires.html'>§14</a> made the regions self-fetching;
     <a href='11-suspense-streaming.html'>§11</a> gave each one a boundary.
     <strong>Parallel routes</strong> are the framework formalizing that whole pattern as filesystem structure:
     a layout declares named <em>slots</em> (<code>@header</code>,
@@ -686,9 +685,9 @@ flowchart LR
     <strong>route-level independence</strong> - its own <code>loading.tsx</code>/<code
       >error.tsx</code
     >
-    files, participation in navigation, or different content per sub-route. A canonical example:
-    a page header. If the header is <em>static</em>, it's just layout markup - no slot needed. If
-    the header <em>depends on server data</em> (program name, status badge, owner), a <code
+    files, participation in navigation, or different content per sub-route. A canonical example: a page
+    header. If the header is <em>static</em>, it's just layout markup - no slot needed. If the
+    header <em>depends on server data</em> (program name, status badge, owner), a <code
       >@header</code
     > slot gives it an error and loading lifecycle that can't take the table down with it, and vice versa.
     One convention matters in practice:
@@ -1026,26 +1025,30 @@ flowchart LR
 
   <h3 id='slot-subroutes'>Nested routes inside a slot</h3>
   <p>
-    Slots don't stop at one page. A slot folder can contain a <strong>full nested route tree</strong>
-    of its own: give <code>@summary</code> an <code>archived/page.tsx</code> and the summary region
-    now has two views, recent and archived, each with a file address.
+    Slots don't stop at one page. A slot folder can contain a <strong>full nested route tree</strong
+    >
+    of its own: give <code>@summary</code> an <code>archived/page.tsx</code> and the summary region now
+    has two views, recent and archived, each with a file address.
     <Chip k='next' />
-    <Chip k='very' /> Because slots are not URL segments, the sub-route grafts onto the <em>page's</em>
+    <Chip k='very' /> Because slots are not URL segments, the sub-route grafts onto the <em
+      >page's</em
+    >
     URL: navigating to <code>/programs/42/archived</code> means "render the slot subtree that matches
     <code>archived</code>", and the slot that matches is <code>@summary/archived</code>.
   </p>
   <p>
     The interesting part is what happens to everybody else. On a <strong>soft navigation</strong> (a
-    <code>&lt;Link&gt;</code> click), Next.js performs a partial render: the slot whose subtree
-    matches the new URL re-renders, and
+    <code>&lt;Link&gt;</code> click), Next.js performs a partial render: the slot whose subtree matches
+    the new URL re-renders, and
     <strong>every other slot keeps its previously active state</strong>, even though the new URL no
     longer says anything about them. The header and the main content don't re-render, don't refetch,
-    and don't flicker; one pane changes view. On a <strong>hard navigation</strong> (a reload, or a
-    shared deep link), the router has only the URL to go on and cannot reconstruct what the
-    unmatched slots were showing, so each of them renders its <code>default.tsx</code> instead (the
-    implicit <code>children</code> slot included). This is exactly why the rule below insists every
-    slot defines one: a missing <code>default.tsx</code> turns a reload of a perfectly valid URL
-    into a 404.
+    and don't flicker; one pane changes view. On a <strong>hard navigation</strong> (a reload, or a shared
+    deep link), the router has only the URL to go on and cannot reconstruct what the unmatched slots were
+    showing, so each of them renders its <code>default.tsx</code> instead (the implicit <code
+      >children</code
+    > slot included). This is exactly why the rule below insists every slot defines one: a missing <code
+      >default.tsx</code
+    > turns a reload of a perfectly valid URL into a 404.
   </p>
 
   <Diagram>
@@ -1214,13 +1217,12 @@ flowchart LR
 </pre>
 
     <Fragment slot='caption'>
-      A nested route inside the <code>@summary</code> slot gives one pane its own sub-navigation.
-      Following the link is a soft navigation: the summary pane re-renders against its <code
-        >archived</code
-      > subtree while the header and main content keep their state untouched. Reloading that same URL
-      is a hard navigation: the router can't know what the unmatched slots were showing, so each one
-      falls back to its <code>default.tsx</code>, which is why every slot must define one. The
-      sub-view lives in the URL, so it is shareable and back-button-friendly (<a
+      A nested route inside the <code>@summary</code> slot gives one pane its own sub-navigation. Following
+      the link is a soft navigation: the summary pane re-renders against its <code>archived</code> subtree
+      while the header and main content keep their state untouched. Reloading that same URL is a hard
+      navigation: the router can't know what the unmatched slots were showing, so each one falls back
+      to its <code>default.tsx</code>, which is why every slot must define one. The sub-view lives
+      in the URL, so it is shareable and back-button-friendly (<a
         href='09-server-resolvable-state.html'>§9</a
       >).
     </Fragment>
@@ -1553,29 +1555,31 @@ flowchart LR
   <h3 id='csr-depth'>When CSR runs deep: the tree serializes the network</h3>
   <p>
     The waterfall diagrams above show the network cost. There is a structural cost that appears the
-    moment client-side rendering owns <em>layers</em> of content, and it's worse: the top layer
-    cannot finish rendering until its API response lands, and a few layers beneath it sit components
-    with data dependencies of their own, fetched with their own hooks, whose requests
+    moment client-side rendering owns <em>layers</em> of content, and it's worse: the top layer cannot
+    finish rendering until its API response lands, and a few layers beneath it sit components with data
+    dependencies of their own, fetched with their own hooks, whose requests
     <strong>have not even started</strong>, because a component that isn't mounted can't fetch.
     Depth in the tree becomes serialization on the network, automatically, with nobody ever choosing
-    it. Each layer resolves, renders, and thereby <em>begins</em> the next layer's wait: the user
-    watches spinner generations hatch one inside another.
+    it. Each layer resolves, renders, and thereby <em>begins</em> the next layer's wait: the user watches
+    spinner generations hatch one inside another.
     <Chip k='react' />
     <Chip k='critical' />
   </p>
   <p>
     TypeScript makes the trap explicit. When a child's props are typed non-optional (<code
       >stats: Stats</code
-    >, not <code>Stats | undefined</code>), the child <em>literally cannot render</em> until the
-    data exists, so the parent has exactly two options, and both are bad. <strong>Gate at the
-    top</strong>: one <code>if (!data) return &lt;Skeleton /&gt;</code> and everything beneath waits,
-    including children whose own fetches now serialize behind the gate. Or <strong>thread
-    <code>undefined</code> down</strong> and let each element decide: now "can this render yet?" is
-    smeared across every leaf in the region, ten scattered checks with ten fallbacks to size and
-    maintain, instead of one. That entire decision space (gate or smear, and where, and with what
-    fallback) exists <em>only because the data might not be there yet</em>. It is the concrete form
-    of <a href='04-ssr.html#simplicity'>§4.2</a>'s argument: on the server the question is
-    unaskable, because by the time anything renders, the data is a value.
+    >, not <code>Stats | undefined</code>), the child <em>literally cannot render</em> until the data
+    exists, so the parent has exactly two options, and both are bad. <strong>Gate at the top</strong
+    >: one <code>if (!data) return &lt;Skeleton /&gt;</code> and everything beneath waits, including children
+    whose own fetches now serialize behind the gate. Or <strong
+      >thread
+      <code>undefined</code> down</strong
+    > and let each element decide: now "can this render yet?" is smeared across every leaf in the region,
+    ten scattered checks with ten fallbacks to size and maintain, instead of one. That entire decision
+    space (gate or smear, and where, and with what fallback) exists <em
+      >only because the data might not be there yet</em
+    >. It is the concrete form of <a href='04-ssr.html#simplicity'>§4.2</a>'s argument: on the
+    server the question is unaskable, because by the time anything renders, the data is a value.
   </p>
 
   <Snippet>
@@ -1598,10 +1602,10 @@ flowchart LR
   );
 }</pre>
     <CodeCaption>
-      Every layer that repeats this shape adds a full round trip <em>plus</em> a render cycle to the
-      path. Three such layers and the region's time-to-content is the sum of three sequential
-      requests, none of which needed the others' data. The typed props made the gate feel mandatory;
-      the gate made the waterfall.
+      Every layer that repeats this shape adds a full round trip <em>plus</em> a render cycle to the path.
+      Three such layers and the region's time-to-content is the sum of three sequential requests, none
+      of which needed the others' data. The typed props made the gate feel mandatory; the gate made the
+      waterfall.
     </CodeCaption>
   </Snippet>
 
@@ -1623,11 +1627,11 @@ flowchart LR
   );
 }</pre>
     <CodeCaption>
-      One change de-serialized it: the stats hook is keyed by <code>programId</code> (already
-      known) instead of <code>program.id</code> (born from the first response). And note what even
-      the fixed version still pays: two render-or-fallback decisions instead of zero. That residual
-      tax is permanent wherever CSR owns layered content, which is the deeper argument for putting
-      the chain on the server in the first place.
+      One change de-serialized it: the stats hook is keyed by <code>programId</code> (already known) instead
+      of <code>program.id</code> (born from the first response). And note what even the fixed version
+      still pays: two render-or-fallback decisions instead of zero. That residual tax is permanent wherever
+      CSR owns layered content, which is the deeper argument for putting the chain on the server in the
+      first place.
     </CodeCaption>
   </Snippet>
 
@@ -1662,7 +1666,8 @@ flowchart LR
         font-size='9'
         fill='#525252'
         text-anchor='middle'
-        dominant-baseline='central'>JS + hydrate</text>
+        dominant-baseline='central'>JS + hydrate</text
+      >
       <rect x='269' y='36' width='110' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
       <text
         x='324'
@@ -1670,7 +1675,8 @@ flowchart LR
         font-size='9'
         fill='#8a5a00'
         text-anchor='middle'
-        dominant-baseline='central'>page fetch</text>
+        dominant-baseline='central'>page fetch</text
+      >
       <rect x='383' y='62' width='110' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
       <text
         x='438'
@@ -1678,7 +1684,8 @@ flowchart LR
         font-size='9'
         fill='#8a5a00'
         text-anchor='middle'
-        dominant-baseline='central'>section fetch</text>
+        dominant-baseline='central'>section fetch</text
+      >
       <rect x='497' y='88' width='110' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
       <text
         x='552'
@@ -1686,13 +1693,10 @@ flowchart LR
         font-size='9'
         fill='#8a5a00'
         text-anchor='middle'
-        dominant-baseline='central'>widget fetch</text>
-      <text x='615' y='93' font-size='9.5' fill='#b3261e' font-weight='500'>
-        3 spinner
-      </text>
-      <text x='615' y='105' font-size='9.5' fill='#b3261e' font-weight='500'>
-        generations
-      </text>
+        dominant-baseline='central'>widget fetch</text
+      >
+      <text x='615' y='93' font-size='9.5' fill='#b3261e' font-weight='500'> 3 spinner </text>
+      <text x='615' y='105' font-size='9.5' fill='#b3261e' font-weight='500'> generations </text>
 
       <!-- LANE 2: parallel by design -->
       <text
@@ -1715,7 +1719,8 @@ flowchart LR
         font-size='9'
         fill='#525252'
         text-anchor='middle'
-        dominant-baseline='central'>JS + hydrate</text>
+        dominant-baseline='central'>JS + hydrate</text
+      >
       <rect x='269' y='146' width='110' height='16' rx='3' fill='#e0f5f9' stroke='#0891b2'></rect>
       <text
         x='324'
@@ -1723,7 +1728,8 @@ flowchart LR
         font-size='9'
         fill='#0e7490'
         text-anchor='middle'
-        dominant-baseline='central'>page fetch</text>
+        dominant-baseline='central'>page fetch</text
+      >
       <rect x='269' y='166' width='110' height='16' rx='3' fill='#e0f5f9' stroke='#0891b2'></rect>
       <text
         x='324'
@@ -1731,7 +1737,8 @@ flowchart LR
         font-size='9'
         fill='#0e7490'
         text-anchor='middle'
-        dominant-baseline='central'>section fetch</text>
+        dominant-baseline='central'>section fetch</text
+      >
       <rect x='269' y='186' width='110' height='16' rx='3' fill='#e0f5f9' stroke='#0891b2'></rect>
       <text
         x='324'
@@ -1739,7 +1746,8 @@ flowchart LR
         font-size='9'
         fill='#0e7490'
         text-anchor='middle'
-        dominant-baseline='central'>widget fetch</text>
+        dominant-baseline='central'>widget fetch</text
+      >
       <text
         x='395'
         y='168'
@@ -1797,13 +1805,13 @@ flowchart LR
   <p>
     So the standing rule for the cases where client fetching is genuinely required (<a
       href='15-dedupe-caching.html#when-client'>§15.7</a
-    >): <strong>the client data flow must never be serial.</strong> If you find a request that can't
-    start until another finishes, that is not a fact of life to be styled around with spinners; it
-    is a signal that something upstream is shaped wrong. Either the earlier request should
-    <strong>fetch more</strong> (return what the children need, so one response feeds the region),
-    or the requests should be <strong>re-keyed to what is already known</strong> so they run in
-    parallel, or the chain never belonged on the client at all and moves to the server. Serial
-    client data flow is a design bug, not a constraint.
+    >): <strong>the client data flow must never be serial.</strong> If you find a request that can't start
+    until another finishes, that is not a fact of life to be styled around with spinners; it is a signal
+    that something upstream is shaped wrong. Either the earlier request should
+    <strong>fetch more</strong> (return what the children need, so one response feeds the region), or
+    the requests should be <strong>re-keyed to what is already known</strong> so they run in parallel,
+    or the chain never belonged on the client at all and moves to the server. Serial client data flow
+    is a design bug, not a constraint.
   </p>
 
   <h2 id='rules'>The rules</h2>
@@ -1849,8 +1857,8 @@ flowchart LR
       </tr>
       <tr>
         <td>
-          Parallel routes: every slot defines <strong><code>default.tsx</code></strong> - a hard
-          navigation to a URL the slot doesn't match must not 404 the route.
+          Parallel routes: every slot defines <strong><code>default.tsx</code></strong> - a hard navigation
+          to a URL the slot doesn't match must not 404 the route.
         </td>
         <td><Chip k='next' /></td>
         <td><Chip k='critical' /></td>

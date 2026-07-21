@@ -299,17 +299,17 @@ flowchart LR
   <p>
     With segments, each tab is a page: server-rendered with real content, prefetched by its
     <code>&lt;Link&gt;</code> before the click (<a href='04-ssr.html#prefetching'>§4.5</a>), and
-    addressable from anywhere. That leaves one real decision: <strong>where does the tab bar live,
-    and how does it know which tab is active?</strong> There are four URL-backed approaches, and
-    they are not equal. In order of preference:
+    addressable from anywhere. That leaves one real decision: <strong
+      >where does the tab bar live, and how does it know which tab is active?</strong
+    > There are four URL-backed approaches, and they are not equal. In order of preference:
   </p>
 
   <h3 id='tabs-page'>Approach 1: segments, with the bar in each page</h3>
   <p>
     The page already knows which page it is. So let each sibling page render the tab bar and
-    <em>tell it</em> which tab is active, as a plain prop. The bar becomes a pure server component:
-    no directive, no hook, no hydration, nothing read back from the URL at runtime, because the
-    active tab is a static fact of the file it is rendered from.
+    <em>tell it</em> which tab is active, as a plain prop. The bar becomes a pure server component: no
+    directive, no hook, no hydration, nothing read back from the URL at runtime, because the active tab
+    is a static fact of the file it is rendered from.
     <Chip k='react' />
     <Chip k='very' />
   </p>
@@ -347,26 +347,26 @@ flowchart LR
   );
 }</pre>
     <CodeCaption>
-      The benefit is purity: zero client JavaScript for the strip, and the active state never has
-      to be computed because it was never unknown. The costs are two. The bar lives at page level,
-      so it re-renders on every tab change (cheaply: it is a row of links, and the swap is
-      invisible when the markup is identical), and every sibling page must remember to render it,
-      which a shared server wrapper mitigates but does not delete.
+      The benefit is purity: zero client JavaScript for the strip, and the active state never has to
+      be computed because it was never unknown. The costs are two. The bar lives at page level, so
+      it re-renders on every tab change (cheaply: it is a row of links, and the swap is invisible
+      when the markup is identical), and every sibling page must remember to render it, which a
+      shared server wrapper mitigates but does not delete.
     </CodeCaption>
   </Snippet>
 
   <h3 id='tabs-layout'>Approach 2: segments, with the bar in the layout</h3>
   <p>
-    If the bar should be written once and <em>never repaint</em> across tab changes, it belongs in
-    the (group) layout (<a href='10-containers-content-shifting.html#layouts'>§10.4</a>). That buys
-    the strongest stability the router offers, and it costs exactly one small client boundary:
-    layouts persist across navigations without re-rendering (<a
-      href='03-mental-model.html#rendering-model'>§3.1</a
+    If the bar should be written once and <em>never repaint</em> across tab changes, it belongs in the
+    (group) layout (<a href='10-containers-content-shifting.html#layouts'>§10.4</a>). That buys the
+    strongest stability the router offers, and it costs exactly one small client boundary: layouts
+    persist across navigations without re-rendering (<a href='03-mental-model.html#rendering-model'
+      >§3.1</a
     >), so a server-rendered active state in a layout would go stale on the first click. Only a
     client component re-renders during navigation, and the platform ships a purpose-built hook for
     precisely this: <code>useSelectedLayoutSegment</code>, which reads the active route segment one
-    level below the layout. Prefer it over <code>usePathname</code> string-matching: it is
-    semantic, and it doesn't break when routes nest.
+    level below the layout. Prefer it over <code>usePathname</code> string-matching: it is semantic, and
+    it doesn't break when routes nest.
     <Chip k='next' />
     <Chip k='very' />
   </p>
@@ -387,8 +387,8 @@ flowchart LR
     <CodeCaption>
       The layout owns the header and the bar; each tab's <code>page.tsx</code> swaps in as <code
         >children</code
-      > beneath them. Because the layout persists across sibling navigations, this markup renders
-      once per visit, not once per tab change.
+      > beneath them. Because the layout persists across sibling navigations, this markup renders once
+      per visit, not once per tab change.
     </CodeCaption>
   </Snippet>
 
@@ -420,18 +420,20 @@ flowchart LR
 }</pre>
     <CodeCaption>
       Rendered once from the layout, persistent across every tab change, and the active indicator
-      updates because this leaf (alone) re-renders. The trade against Approach 1 is one small
-      client boundary and its hydration, purchased deliberately for the never-repaints guarantee.
-      Between the two segment approaches the choice is taste and stakes: bar-in-page when zero
-      client JS matters most, bar-in-layout when the persistent frame does.
+      updates because this leaf (alone) re-renders. The trade against Approach 1 is one small client
+      boundary and its hydration, purchased deliberately for the never-repaints guarantee. Between
+      the two segment approaches the choice is taste and stakes: bar-in-page when zero client JS
+      matters most, bar-in-layout when the persistent frame does.
     </CodeCaption>
   </Snippet>
 
-  <h3 id='tabs-parallel'>Approach 3: a parallel-route slot, when tabs are one region among several</h3>
+  <h3 id='tabs-parallel'>
+    Approach 3: a parallel-route slot, when tabs are one region among several
+  </h3>
   <p>
     A third segment-based shape exists for a specific composition: the tabbed area is <em>part</em>
-    of the page, sitting beside content that must not re-render when the tab changes. Make the
-    tabbed region a <strong>parallel-route slot</strong> (<a
+    of the page, sitting beside content that must not re-render when the tab changes. Make the tabbed
+    region a <strong>parallel-route slot</strong> (<a
       href='13-blocking-requests.html#parallel-routes'>§13.3</a
     >) with its own sub-routes: the tab links are ordinary URLs, only the slot's subtree navigates,
     and every sibling region keeps its state untouched (<a
@@ -468,22 +470,24 @@ flowchart LR
   );
 }</pre>
     <CodeCaption>
-      A tab click navigates only the <code>@view</code> slot's subtree; the summary above it never
-      re-renders and never loses state. Slots can also be rendered <em>conditionally</em> by the
-      layout (<code>&#123;isAdmin ? adminView : view&#125;</code>), which is how role-dependent tab
-      sets stay server-decided. The cost is ceremony: slot folders, <code>default.tsx</code> files
-      for hard loads, and a structure worth reserving for pages where independent regions genuinely
-      coexist; when the page <em>is</em> the tabs, Approaches 1 and 2 are simpler.
+      A tab click navigates only the <code>@view</code> slot's subtree; the summary above it never re-renders
+      and never loses state. Slots can also be rendered <em>conditionally</em> by the layout (<code
+        >&#123;isAdmin ? adminView : view&#125;</code
+      >), which is how role-dependent tab sets stay server-decided. The cost is ceremony: slot
+      folders, <code>default.tsx</code> files for hard loads, and a structure worth reserving for pages
+      where independent regions genuinely coexist; when the page <em>is</em> the tabs, Approaches 1 and
+      2 are simpler.
     </CodeCaption>
   </Snippet>
 
   <h3 id='tabs-param'>Approach 4: a query param (the last URL resort)</h3>
   <p>
-    The fourth shape keeps one route and rides the tab on the query string: <code>?tab=roster</code>,
-    with the server page switching on <code>searchParams</code>. It is still the URL, so it keeps
+    The fourth shape keeps one route and rides the tab on the query string: <code>?tab=roster</code
+    >, with the server page switching on <code>searchParams</code>. It is still the URL, so it keeps
     the non-negotiables (shareable, refresh-proof, server-resolvable), which places it far above
-    <code>useState</code>. But among the URL options it should be the <strong>deliberate last
-    choice</strong> for tabs, because it discards everything the router grants to segments:
+    <code>useState</code>. But among the URL options it should be the <strong
+      >deliberate last choice</strong
+    > for tabs, because it discards everything the router grants to segments:
   </p>
 
   <Snippet>
@@ -516,39 +520,37 @@ flowchart LR
   );
 }</pre>
     <CodeCaption>
-      If you take this road, take all of it: the panels must be <code>dynamic()</code> imports (or
-      the inactive tabs' code ships anyway, <a href='08-bundle-size-code-splitting.html'>§8</a>) and
-      any panel that fetches server-side data must sit behind its own <code>Suspense</code> (or its
-      fetch blocks the entire page's render). Notice what that adds up to: the page is hand-building
-      the code loading, the boundary, and the switch that the file system provides for free, and it
-      still has no per-tab <code>error.tsx</code> and no per-tab prefetch.
+      If you take this road, take all of it: the panels must be <code>dynamic()</code> imports (or the
+      inactive tabs' code ships anyway, <a href='08-bundle-size-code-splitting.html'>§8</a>) and any
+      panel that fetches server-side data must sit behind its own <code>Suspense</code> (or its fetch
+      blocks the entire page's render). Notice what that adds up to: the page is hand-building the code
+      loading, the boundary, and the switch that the file system provides for free, and it still has no
+      per-tab <code>error.tsx</code> and no per-tab prefetch.
     </CodeCaption>
   </Snippet>
 
   <ul>
     <li>
-      <strong>No per-tab code splitting.</strong> The router splits by route segment, and it cannot
-      split what the URL doesn't distinguish: all three panels' code belongs to one page module and
-      loads together (<a href='08-bundle-size-code-splitting.html'>§8</a>). With segments, only the
-      visited tab's panel ships.
+      <strong>No per-tab code splitting.</strong> The router splits by route segment, and it cannot split
+      what the URL doesn't distinguish: all three panels' code belongs to one page module and loads together
+      (<a href='08-bundle-size-code-splitting.html'>§8</a>). With segments, only the visited tab's
+      panel ships.
     </li>
     <li>
       <strong>No per-tab file conventions.</strong> Segments get their own <code>loading.tsx</code>
-      and <code>error.tsx</code> for free; a query-param page hand-builds every boundary, and an
-      error in one panel is contained only as well as you remembered to contain it.
+      and <code>error.tsx</code> for free; a query-param page hand-builds every boundary, and an error
+      in one panel is contained only as well as you remembered to contain it.
     </li>
     <li>
-      <strong>Coarser re-renders, weaker prefetch.</strong> A tab change re-renders the entire page
-      segment on the server rather than swapping one child segment beneath a persistent parent. And
-      <code>&lt;Link&gt;</code> prefetches route segments: three tabs as segments are each
-      prefetched before the click, while <code>?tab=</code> variants of one route are not
-      prefetched apiece.
+      <strong>Coarser re-renders, weaker prefetch.</strong> A tab change re-renders the entire page segment
+      on the server rather than swapping one child segment beneath a persistent parent. And
+      <code>&lt;Link&gt;</code> prefetches route segments: three tabs as segments are each prefetched
+      before the click, while <code>?tab=</code> variants of one route are not prefetched apiece.
     </li>
     <li>
-      <strong>Wrong semantics.</strong> Query parameters parameterize a view (sort, filter, page);
-      tabs <em>are</em> views. A thing with an identity deserves an address, and downstream
-      machinery (caching, analytics, error reporting) all keys more usefully on paths than on
-      params.
+      <strong>Wrong semantics.</strong> Query parameters parameterize a view (sort, filter, page); tabs
+      <em>are</em> views. A thing with an identity deserves an address, and downstream machinery (caching,
+      analytics, error reporting) all keys more usefully on paths than on params.
     </li>
   </ul>
   <p>
@@ -593,7 +595,8 @@ flowchart LR
         font-size='9'
         fill='#737373'
         text-anchor='middle'
-        dominant-baseline='central'>persists</text>
+        dominant-baseline='central'>persists</text
+      >
       <rect x='330' y='50' width='120' height='22' rx='4' fill='#fdf3e3' stroke='#b45309'></rect>
       <text
         x='390'
@@ -601,7 +604,8 @@ flowchart LR
         font-size='9'
         fill='#8a5a00'
         text-anchor='middle'
-        dominant-baseline='central'>re-renders (cheap)</text>
+        dominant-baseline='central'>re-renders (cheap)</text
+      >
       <rect x='460' y='50' width='130' height='22' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
       <text
         x='525'
@@ -609,7 +613,8 @@ flowchart LR
         font-size='9'
         fill='#157a4c'
         text-anchor='middle'
-        dominant-baseline='central'>segment swaps in</text>
+        dominant-baseline='central'>segment swaps in</text
+      >
 
       <!-- row 2 -->
       <text
@@ -632,7 +637,8 @@ flowchart LR
         font-size='9'
         fill='#737373'
         text-anchor='middle'
-        dominant-baseline='central'>persists</text>
+        dominant-baseline='central'>persists</text
+      >
       <rect x='330' y='98' width='120' height='22' rx='4' fill='#ffffff' stroke='#c9c9c9'></rect>
       <text
         x='390'
@@ -640,7 +646,8 @@ flowchart LR
         font-size='9'
         fill='#737373'
         text-anchor='middle'
-        dominant-baseline='central'>persists</text>
+        dominant-baseline='central'>persists</text
+      >
       <rect x='460' y='98' width='130' height='22' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
       <text
         x='525'
@@ -648,7 +655,8 @@ flowchart LR
         font-size='9'
         fill='#157a4c'
         text-anchor='middle'
-        dominant-baseline='central'>segment swaps in</text>
+        dominant-baseline='central'>segment swaps in</text
+      >
 
       <!-- row 3 -->
       <text
@@ -671,7 +679,8 @@ flowchart LR
         font-size='9'
         fill='#737373'
         text-anchor='middle'
-        dominant-baseline='central'>persists + siblings</text>
+        dominant-baseline='central'>persists + siblings</text
+      >
       <rect x='330' y='146' width='120' height='22' rx='4' fill='#ffffff' stroke='#c9c9c9'></rect>
       <text
         x='390'
@@ -679,7 +688,8 @@ flowchart LR
         font-size='9'
         fill='#737373'
         text-anchor='middle'
-        dominant-baseline='central'>persists</text>
+        dominant-baseline='central'>persists</text
+      >
       <rect x='460' y='146' width='130' height='22' rx='4' fill='#e0f5f9' stroke='#0891b2'></rect>
       <text
         x='525'
@@ -687,7 +697,8 @@ flowchart LR
         font-size='9'
         fill='#0e7490'
         text-anchor='middle'
-        dominant-baseline='central'>slot swaps in</text>
+        dominant-baseline='central'>slot swaps in</text
+      >
 
       <!-- row 4 -->
       <text
@@ -710,7 +721,8 @@ flowchart LR
         font-size='9'
         fill='#737373'
         text-anchor='middle'
-        dominant-baseline='central'>persists</text>
+        dominant-baseline='central'>persists</text
+      >
       <rect x='330' y='194' width='120' height='22' rx='4' fill='#fdf3e3' stroke='#b45309'></rect>
       <text
         x='390'
@@ -718,7 +730,8 @@ flowchart LR
         font-size='9'
         fill='#8a5a00'
         text-anchor='middle'
-        dominant-baseline='central'>re-renders</text>
+        dominant-baseline='central'>re-renders</text
+      >
       <rect x='460' y='194' width='130' height='22' rx='4' fill='#fdf3e3' stroke='#b45309'></rect>
       <text
         x='525'
@@ -726,7 +739,8 @@ flowchart LR
         font-size='9'
         fill='#8a5a00'
         text-anchor='middle'
-        dominant-baseline='central'>re-renders with page</text>
+        dominant-baseline='central'>re-renders with page</text
+      >
       <text x='360' y='242' font-size='9.5' fill='#737373' text-anchor='middle'>
         green and cyan cells keep per-tab splitting, loading/error files, and prefetch; amber cells
         do not
@@ -784,10 +798,9 @@ flowchart LR
 
     <Fragment slot='caption'>
       The same tab click, four blast radii. Approaches 1 and 2 swap a route segment beneath a
-      persistent layout (2 additionally never repaints the bar); Approach 3 confines the swap to
-      one slot while sibling regions hold their state; Approach 4 re-renders the whole page
-      segment, and is the only row where the panel loses per-tab splitting, loading/error files,
-      and prefetching.
+      persistent layout (2 additionally never repaints the bar); Approach 3 confines the swap to one
+      slot while sibling regions hold their state; Approach 4 re-renders the whole page segment, and
+      is the only row where the panel loses per-tab splitting, loading/error files, and prefetching.
     </Fragment>
   </Diagram>
 
@@ -834,11 +847,12 @@ flowchart LR
   </table>
 
   <p>
-        So the full ladder reads:
-    <strong>segments (bar in the page, or in the layout with the one-leaf indicator), a parallel
-    slot when the tabs share the page with regions that must hold state, then a search param, then,
-    for genuinely cosmetic switches only, state</strong>. Each step down should be a deliberate
-    decision, not a habit.
+    So the full ladder reads:
+    <strong
+      >segments (bar in the page, or in the layout with the one-leaf indicator), a parallel slot
+      when the tabs share the page with regions that must hold state, then a search param, then, for
+      genuinely cosmetic switches only, state</strong
+    >. Each step down should be a deliberate decision, not a habit.
     <Chip k='next' />
     <Chip k='very' />
   </p>
@@ -987,8 +1001,8 @@ flowchart LR
     <strong>Would the user expect it back after a refresh, or want it in a shared link?</strong>
     Then it's the URL (view) or a cookie (preference).
     <strong>Does the server need it to render real content?</strong> Then it must be server-resolvable,
-    full stop. Content the server can't finish is Part B's territory, entered only deliberately.
-    If both answers are no, it's interaction state: keep it in the leaf, in memory, where it costs nothing.
+    full stop. Content the server can't finish is Part B's territory, entered only deliberately. If both
+    answers are no, it's interaction state: keep it in the leaf, in memory, where it costs nothing.
   </p>
 
   <h2 id='rules'>The rules</h2>

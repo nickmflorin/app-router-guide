@@ -14,7 +14,8 @@ import Snippet from '../../components/Snippet.astro';
   <div class='kicker'>Chapter 11 · Part B: Contain the Unknown</div>
   <h1>Suspense &amp; Streaming</h1>
   <p class='lede'>
-    Loading is not a component concern. It's a structural one. Suspense moves "what shows while the page waits" out of components and into the tree, where the framework can stream around it. This
+    Loading is not a component concern. It's a structural one. Suspense moves "what shows while the
+    page waits" out of components and into the tree, where the framework can stream around it. This
     chapter covers how suspension works, what triggers it, and the loading-state doctrine that
     follows from it.
   </p>
@@ -183,10 +184,10 @@ flowchart LR
     It's worth slowing down on what "suspends" mechanically means, because the mental model most of
     React's guarantees hang on lives here. During render, a component that isn't ready
     <strong>throws</strong>: historically a promise, today the thenable protocol behind
-    <code>use()</code> and the framework's data APIs. React catches it at the nearest boundary. And
-    here is the part that matters: that render was <strong>an attempt, not a commitment</strong>.
-    The suspended component was never mounted. No DOM was created for it, none of its effects ran,
-    no lifecycle happened, nothing it might have rendered reaches the screen. React discards the
+    <code>use()</code> and the framework's data APIs. React catches it at the nearest boundary. And here
+    is the part that matters: that render was <strong>an attempt, not a commitment</strong>. The
+    suspended component was never mounted. No DOM was created for it, none of its effects ran, no
+    lifecycle happened, nothing it might have rendered reaches the screen. React discards the
     attempt, commits the boundary's fallback instead, and when the thenable resolves, <strong
       >re-renders the subtree from scratch</strong
     >. If the retry completes, the finished result is swapped in whole.
@@ -194,25 +195,24 @@ flowchart LR
     <Chip k='critical' />
   </p>
   <p>
-    That is the two-phase design underneath all of it: <strong>rendering</strong> is speculative
-    work in memory (interruptible, discardable, retryable), while <strong>committing</strong> is
-    atomic (all or nothing, and the only step that touches the DOM or fires effects). "Mounted"
-    means <em>committed</em>, not rendered. This is why a component can never observe its own
-    suspension, why no effect ever fires for an attempt that suspended, and why the user never sees
-    a half-finished tree: half-finished trees exist only in memory, and memory is cheap to throw
-    away.
+    That is the two-phase design underneath all of it: <strong>rendering</strong> is speculative work
+    in memory (interruptible, discardable, retryable), while <strong>committing</strong> is atomic (all
+    or nothing, and the only step that touches the DOM or fires effects). "Mounted" means <em
+      >committed</em
+    >, not rendered. This is why a component can never observe its own suspension, why no effect
+    ever fires for an attempt that suspended, and why the user never sees a half-finished tree:
+    half-finished trees exist only in memory, and memory is cheap to throw away.
   </p>
   <p>
     The React team's own explanation of this, from the talk that introduced Suspense, is
     <strong>version control</strong>. The UI on screen is <code>main</code>: committed, stable,
     interactive. When React renders the next UI, it works on a <em>branch</em>: if something
-    suspends, the branch simply stays unmerged while the data loads, and <code>main</code> is
-    untouched. When the branch finally completes, it merges: one atomic commit, never a
-    half-finished merge. And note which git operation maps to which React phase: the <em>branch
-    work</em> is rendering (speculative, in memory, free to take as long as the data takes), and the
-    <em>merge</em> is the commit. Because the commit is flat, the new UI appears all at once: not a
-    header, then rows, then a footer trickling onto the screen, but one instantaneous swap of
-    finished work.
+    suspends, the branch simply stays unmerged while the data loads, and <code>main</code> is untouched.
+    When the branch finally completes, it merges: one atomic commit, never a half-finished merge. And
+    note which git operation maps to which React phase: the <em>branch work</em> is rendering (speculative,
+    in memory, free to take as long as the data takes), and the
+    <em>merge</em> is the commit. Because the commit is flat, the new UI appears all at once: not a header,
+    then rows, then a footer trickling onto the screen, but one instantaneous swap of finished work.
   </p>
 
   <Diagram>
@@ -245,7 +245,14 @@ flowchart LR
       </text>
 
       <!-- FRAME 1 -->
-      <text x='24' y='41' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+      <text
+        x='24'
+        y='41'
+        font-size='10.5'
+        fill='#171717'
+        font-weight='500'
+        dominant-baseline='central'
+      >
         the committed UI, on screen
       </text>
       <text x='24' y='55' font-size='9' fill='#737373' dominant-baseline='central'>
@@ -264,7 +271,14 @@ flowchart LR
       </text>
 
       <!-- FRAME 2 -->
-      <text x='24' y='103' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+      <text
+        x='24'
+        y='103'
+        font-size='10.5'
+        fill='#171717'
+        font-weight='500'
+        dominant-baseline='central'
+      >
         the next UI renders in memory
       </text>
       <text x='24' y='117' font-size='9' fill='#737373' dominant-baseline='central'>
@@ -274,7 +288,14 @@ flowchart LR
       <circle cx='205' cy='118' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
       <circle cx='245' cy='118' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
       <circle cx='285' cy='118' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
-      <line x1='285' y1='118' x2='325' y2='98' stroke='#c9c9c9' stroke-width='1.5' stroke-dasharray='4 3'></line>
+      <line
+        x1='285'
+        y1='118'
+        x2='325'
+        y2='98'
+        stroke='#c9c9c9'
+        stroke-width='1.5'
+        stroke-dasharray='4 3'></line>
       <circle
         cx='325'
         cy='98'
@@ -291,7 +312,14 @@ flowchart LR
       </text>
 
       <!-- FRAME 3 -->
-      <text x='24' y='165' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+      <text
+        x='24'
+        y='165'
+        font-size='10.5'
+        fill='#171717'
+        font-weight='500'
+        dominant-baseline='central'
+      >
         the current UI keeps working
       </text>
       <text x='24' y='179' font-size='9' fill='#737373' dominant-baseline='central'>
@@ -301,7 +329,14 @@ flowchart LR
       <circle cx='205' cy='180' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
       <circle cx='245' cy='180' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
       <circle cx='285' cy='180' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
-      <line x1='285' y1='180' x2='325' y2='160' stroke='#c9c9c9' stroke-width='1.5' stroke-dasharray='4 3'></line>
+      <line
+        x1='285'
+        y1='180'
+        x2='325'
+        y2='160'
+        stroke='#c9c9c9'
+        stroke-width='1.5'
+        stroke-dasharray='4 3'></line>
       <circle
         cx='325'
         cy='160'
@@ -319,7 +354,14 @@ flowchart LR
       </text>
 
       <!-- FRAME 4: the branch completes; HEAD points at the finished tree -->
-      <text x='24' y='227' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+      <text
+        x='24'
+        y='227'
+        font-size='10.5'
+        fill='#171717'
+        font-weight='500'
+        dominant-baseline='central'
+      >
         the render completes in memory
       </text>
       <text x='24' y='241' font-size='9' fill='#737373' dominant-baseline='central'>
@@ -332,7 +374,14 @@ flowchart LR
       <line x1='285' y1='242' x2='325' y2='222' stroke='#c9c9c9' stroke-width='1.5'></line>
       <circle cx='325' cy='222' r='6' fill='#eaf3fe' stroke='#0070f3' stroke-width='1.5'></circle>
       <circle cx='325' cy='242' r='6' fill='#e7f5ee' stroke='#2ea06d' stroke-width='1.5'></circle>
-      <text x='368' y='222' font-size='8.5' fill='#0757ba' font-weight='500' dominant-baseline='central'>
+      <text
+        x='368'
+        y='222'
+        font-size='8.5'
+        fill='#0757ba'
+        font-weight='500'
+        dominant-baseline='central'
+      >
         HEAD
       </text>
       <line
@@ -351,7 +400,14 @@ flowchart LR
       </text>
 
       <!-- FRAME 5: merged and flattened onto one line -->
-      <text x='24' y='289' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+      <text
+        x='24'
+        y='289'
+        font-size='10.5'
+        fill='#171717'
+        font-weight='500'
+        dominant-baseline='central'
+      >
         commit: it all appears at once
       </text>
       <text x='24' y='303' font-size='9' fill='#737373' dominant-baseline='central'>
@@ -370,7 +426,6 @@ flowchart LR
       <text x='460' y='311' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
         history is one line again, as if it was always main
       </text>
-
     </svg>
 
     <pre
@@ -399,14 +454,14 @@ flowchart LR
       >, a little after the 29-minute mark, and it repays watching in full. Committed UI is <code
         >main</code
       >; a render attempt is an unmerged branch that can wait on data without touching the screen;
-      resolution is two distinct moments: first the branch <em>completes</em> (a finished tree exists in
-      memory, and HEAD points at what the screen should become), then the merge flattens it into <code
+      resolution is two distinct moments: first the branch <em>completes</em> (a finished tree exists
+      in memory, and HEAD points at what the screen should become), then the merge flattens it into <code
         >main</code
-      > in one atomic commit. One footnote the analogy needs: when there is
-      no old screen worth keeping (a first load), the boundary commits its <em>fallback</em> to
+      > in one atomic commit. One footnote the analogy needs: when there is no old screen worth keeping
+      (a first load), the boundary commits its <em>fallback</em> to
       <code>main</code> while the branch works, which is the streaming story of
-      <a href='#streaming'>§11.2</a>; on navigations, transitions (<a href='#transitions'>§11.7</a
-      >) are what keep the old <code>main</code> checked out instead.
+      <a href='#streaming'>§11.2</a>; on navigations, transitions (<a href='#transitions'>§11.7</a>)
+      are what keep the old <code>main</code> checked out instead.
     </Fragment>
   </Diagram>
 
@@ -507,8 +562,8 @@ flowchart LR
     Just as important is what does <em>not</em> trigger suspension:
     <strong>a fetch inside <code>useEffect</code> is invisible to React.</strong> Nothing suspends, no
     boundary activates, no streaming happens; the framework doesn't even know the component is waiting.
-    Every hand-rolled <code>isLoading</code> flag in a codebase exists because the fetching pattern
-    opted out of the mechanism that would have made it unnecessary.
+    Every hand-rolled <code>isLoading</code> flag in a codebase exists because the fetching pattern opted
+    out of the mechanism that would have made it unnecessary.
   </p>
   <Callout kind='info' title="Boundaries don't re-trigger on updates">
     <p>
@@ -613,13 +668,9 @@ flowchart LR
         fetch report rows (slow)
       </text>
       <rect x='424' y='230' width='90' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='469' y='246' font-size='10' fill='#0757ba' text-anchor='middle'>
-        render table
-      </text>
+      <text x='469' y='246' font-size='10' fill='#0757ba' text-anchor='middle'> render table </text>
       <rect x='518' y='230' width='84' height='24' rx='5' fill='#d8e8fc' stroke='#0070f3'></rect>
-      <text x='560' y='246' font-size='10' fill='#23507f' text-anchor='middle'>
-        chunk: table
-      </text>
+      <text x='560' y='246' font-size='10' fill='#23507f' text-anchor='middle'> chunk: table </text>
       <rect x='606' y='230' width='94' height='24' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
       <text x='653' y='246' font-size='10' fill='#157a4c' text-anchor='middle'>
         swap: table in
@@ -671,8 +722,8 @@ flowchart LR
       then each region follows the same pipeline: rendered on the server when its fetch resolves,
       streamed to the browser as a chunk, and swapped into its reserved slot, the fast header first
       (with the rows skeleton still showing), the slow table when it's ready. TTI is deliberately
-      not marked: it depends on hydration, and <a href='04-ssr.html#tti'>§4.3</a> explains why it
-      stopped being a useful milestone.
+      not marked: it depends on hydration, and <a href='04-ssr.html#tti'>§4.3</a> explains why it stopped
+      being a useful milestone.
     </Fragment>
   </Diagram>
 
@@ -682,11 +733,11 @@ flowchart LR
   </p>
   <ul>
     <li>
-            <strong><code>loading.tsx</code> is a route-level Suspense boundary</strong> the framework wires
+      <strong><code>loading.tsx</code> is a route-level Suspense boundary</strong> the framework wires
       up for you: it wraps the page, shows instantly on navigation, and is even <em>prefetched</em>
-      along with the route so the fallback can appear before the server responds at all. Use it for
-      the route transition, but treat it as the coarsest tool: a whole-page skeleton is exactly the page-level skeleton to avoid
-      (<a href='#skeletons'>§11.4</a>). Prefer a
+      along with the route so the fallback can appear before the server responds at all. Use it for the
+      route transition, but treat it as the coarsest tool: a whole-page skeleton is exactly the page-level
+      skeleton to avoid (<a href='#skeletons'>§11.4</a>). Prefer a
       <code>loading.tsx</code> that renders the page's known scaffold, with granular boundaries inside
       the page doing the real work.
     </li>
@@ -1007,22 +1058,20 @@ flowchart TB
   <h3 id='wire'>What actually travels down the wire</h3>
   <p>
     Two streams cooperate during an initial load, and knowing them makes the rest of this section
-    mechanical rather than magical. The <strong>HTML stream</strong> carries the page the user sees:
-    the <strong>static shell</strong> (layouts, navigation, containers, every Suspense fallback)
-    goes out in the first chunk, and as each suspended server component resolves, React streams its
-    finished HTML in a hidden node along with a tiny inline script that <strong>swaps it into the
-    fallback's slot immediately</strong>, before the page's JavaScript bundle has loaded and without
-    waiting for hydration. Alongside it rides the <strong>component payload</strong> (<a
-      href='04-ssr.html#routing'>§4.5</a
-    >'s RSC payload), the serialized tree React later hydrates from; on client-side navigations,
-    <em>only</em> the payload travels, no HTML at all. One practical consequence is worth having
-    seen once: in DevTools, a streaming page shows an early time-to-first-byte followed by a long
-    content-download phase, and the raw response is literally the shell, then <code
-      >&lt;div hidden&gt;</code
-    > chunks arriving one boundary at a time. If a page you expected to stream arrives as one late
-    lump instead, suspect the pipes: reverse proxies (nginx buffers by default), CDNs, serverless
-    platforms without response streaming, and even compression layers can buffer the chunks back
-    into a single delayed response.
+    mechanical rather than magical. The <strong>HTML stream</strong> carries the page the user sees: the
+    <strong>static shell</strong> (layouts, navigation, containers, every Suspense fallback) goes out
+    in the first chunk, and as each suspended server component resolves, React streams its finished HTML
+    in a hidden node along with a tiny inline script that <strong
+      >swaps it into the fallback's slot immediately</strong
+    >, before the page's JavaScript bundle has loaded and without waiting for hydration. Alongside
+    it rides the <strong>component payload</strong> (<a href='04-ssr.html#routing'>§4.5</a>'s RSC
+    payload), the serialized tree React later hydrates from; on client-side navigations,
+    <em>only</em> the payload travels, no HTML at all. One practical consequence is worth having seen
+    once: in DevTools, a streaming page shows an early time-to-first-byte followed by a long content-download
+    phase, and the raw response is literally the shell, then <code>&lt;div hidden&gt;</code> chunks arriving
+    one boundary at a time. If a page you expected to stream arrives as one late lump instead, suspect
+    the pipes: reverse proxies (nginx buffers by default), CDNs, serverless platforms without response
+    streaming, and even compression layers can buffer the chunks back into a single delayed response.
   </p>
 
   <Diagram>
@@ -1041,7 +1090,8 @@ flowchart TB
         font-size='9'
         fill='#157a4c'
         text-anchor='middle'
-        dominant-baseline='central'>chunk 0 · the static shell</text>
+        dominant-baseline='central'>chunk 0 · the static shell</text
+      >
       <text x='70' y='68' font-size='8.5' fill='#3e7d5c' dominant-baseline='central'>
         layout, nav, containers, every fallback
       </text>
@@ -1063,7 +1113,8 @@ flowchart TB
         font-size='9'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>chunk · the header resolves</text>
+        dominant-baseline='central'>chunk · the header resolves</text
+      >
       <text x='290' y='68' font-size='8.5' fill='#527dad' dominant-baseline='central'>
         hidden HTML + a tiny inline script
       </text>
@@ -1085,7 +1136,8 @@ flowchart TB
         font-size='9'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>chunk · the table resolves</text>
+        dominant-baseline='central'>chunk · the table resolves</text
+      >
       <text x='510' y='68' font-size='8.5' fill='#527dad' dominant-baseline='central'>
         each boundary streams independently,
       </text>
@@ -1113,10 +1165,10 @@ flowchart LR
 </pre>
 
     <Fragment slot='caption'>
-      One response, arriving in pieces. The first chunk is the whole static shell, which is why
-      TTFB and FCP stop depending on data; every later chunk is a resolved boundary's HTML plus the
-      inline script that swaps it into place, no bundle or hydration required. The component
-      payload rides alongside for hydration, and on client-side navigations it travels alone.
+      One response, arriving in pieces. The first chunk is the whole static shell, which is why TTFB
+      and FCP stop depending on data; every later chunk is a resolved boundary's HTML plus the
+      inline script that swaps it into place, no bundle or hydration required. The component payload
+      rides alongside for hydration, and on client-side navigations it travels alone.
     </Fragment>
   </Diagram>
 
@@ -1125,12 +1177,13 @@ flowchart LR
     The size of that instantly-sent shell is decided by one habit.
     <Chip k='next' />
     <Chip k='critical' /> Every request-time access (<code>params</code>, <code>searchParams</code>,
-    <code>cookies()</code>, <code>headers()</code>, a data fetch) that you <code>await</code> at the
-    top of a layout or page makes <em>everything below that point</em> dynamic: it all leaves the
-    shell and waits with you. The fix is the same push-down instinct as
+    <code>cookies()</code>, <code>headers()</code>, a data fetch) that you <code>await</code> at the top
+    of a layout or page makes <em>everything below that point</em> dynamic: it all leaves the shell and
+    waits with you. The fix is the same push-down instinct as
     <a href='05-client-server-boundaries.html#push-down'>§5.3</a>, applied to awaits:
-    <strong>start the work where it's convenient, but resolve it only inside the boundary that
-    needs it</strong>. These APIs return promises precisely so the promise can travel.
+    <strong
+      >start the work where it's convenient, but resolve it only inside the boundary that needs it</strong
+    >. These APIs return promises precisely so the promise can travel.
   </p>
 
   <Snippet>
@@ -1154,9 +1207,9 @@ flowchart LR
   );
 }</pre>
     <CodeCaption>
-      One <code>await cookies()</code> at the top of this layout would have pulled the entire route,
-      children included, out of the static shell. Passing the promise down confines the dynamic
-      access to the one component that genuinely needs it; the frame prerenders and ships instantly.
+      One <code>await cookies()</code> at the top of this layout would have pulled the entire route, children
+      included, out of the static shell. Passing the promise down confines the dynamic access to the one
+      component that genuinely needs it; the frame prerenders and ships instantly.
     </CodeCaption>
   </Snippet>
 
@@ -1178,20 +1231,20 @@ flowchart LR
     <CodeCaption>
       The page never awaits <code>params</code>, so the hero paints in the shell; the inline <code
         >.then()</code
-      > defers the access to inside the boundary while keeping <code>ProgramStats</code> simple: it
-      receives a plain string, not a promise.
+      > defers the access to inside the boundary while keeping <code>ProgramStats</code> simple: it receives
+      a plain string, not a promise.
     </CodeCaption>
   </Snippet>
 
   <h3 id='promises-as-props'>Streaming across the boundary: promises as props</h3>
   <p>
-    The same trick crosses into client components. A server component can <strong>start</strong> a
-    fetch and hand the unresolved promise to a client component as a prop; the promise can pass
-    through as many layers as needed, and only the component that finally reads it with <code
-      >use()</code
-    > (<a href='19-new-primitives.html'>§19</a>) needs a Suspense boundary above it. This is the
-    right shape when the <em>rendering</em> genuinely needs the client (a chart library, a canvas)
-    but the <em>data</em> has no business being fetched from the browser:
+    The same trick crosses into client components. A server component can <strong>start</strong> a fetch
+    and hand the unresolved promise to a client component as a prop; the promise can pass through as many
+    layers as needed, and only the component that finally reads it with <code>use()</code> (<a
+      href='19-new-primitives.html'>§19</a
+    >) needs a Suspense boundary above it. This is the right shape when the <em>rendering</em> genuinely
+    needs the client (a chart library, a canvas) but the <em>data</em> has no business being fetched from
+    the browser:
   </p>
 
   <Snippet>
@@ -1228,13 +1281,13 @@ flowchart LR
 
   <h3 id='progressive-reveal'>Progressive reveal with nested boundaries</h3>
   <p>
-    Sibling boundaries resolve independently; <strong>nested</strong> boundaries resolve in
-    layers, and that ordering is a design tool. Put the reviews boundary <em>inside</em> the
-    product-details boundary and the page reveals itself outside-in: details first, reviews after,
-    never reviews-before-details no matter which fetch wins the race. Use nesting when one region's
-    content is meaningless without another's (a comments list before the post it belongs to reads
-    as broken); use siblings (<a href='13-blocking-requests.html'>§13</a>) everywhere else, so
-    independent regions never wait on each other.
+    Sibling boundaries resolve independently; <strong>nested</strong> boundaries resolve in layers, and
+    that ordering is a design tool. Put the reviews boundary <em>inside</em> the product-details boundary
+    and the page reveals itself outside-in: details first, reviews after, never reviews-before-details
+    no matter which fetch wins the race. Use nesting when one region's content is meaningless without
+    another's (a comments list before the post it belongs to reads as broken); use siblings (<a
+      href='13-blocking-requests.html'>§13</a
+    >) everywhere else, so independent regions never wait on each other.
   </p>
 
   <Snippet>
@@ -1258,13 +1311,14 @@ flowchart LR
   <p>
     Streaming has one hard constraint worth internalizing.
     <Chip k='next' />
-    <Chip k='very' /> The moment the first chunk is sent, the response's status code and headers are
-    committed: the server said <code>200 OK</code> and cannot take it back. A <code>notFound()</code>
-    that fires mid-stream can't become a real 404 (Next injects a <code>noindex</code> meta tag into
-    the stream instead), and a <code>redirect()</code> mid-stream degrades to a client-side redirect
-    rather than an HTTP one. The practical rule: anything that should produce a <em>real</em> status
-    code (a 404 for a record that doesn't exist, an auth redirect) belongs <strong>before the first
-    boundary</strong>, as a fast check ahead of the slow work:
+    <Chip k='very' /> The moment the first chunk is sent, the response's status code and headers are committed:
+    the server said <code>200 OK</code> and cannot take it back. A <code>notFound()</code>
+    that fires mid-stream can't become a real 404 (Next injects a <code>noindex</code> meta tag into the
+    stream instead), and a <code>redirect()</code> mid-stream degrades to a client-side redirect rather
+    than an HTTP one. The practical rule: anything that should produce a <em>real</em> status code (a
+    404 for a record that doesn't exist, an auth redirect) belongs <strong
+      >before the first boundary</strong
+    >, as a fast check ahead of the slow work:
   </p>
 
   <Snippet>
@@ -1297,18 +1351,18 @@ flowchart LR
     The vitals story rounds this out, because boundary placement moves real numbers. TTFB and FCP
     decouple from data (the <a href='#streaming'>lane diagram above</a>); CLS is
     <a href='10-containers-content-shifting.html'>§10</a>'s territory (fallback and content share
-    one honest footprint). Two more deserve a sentence each. <strong>LCP:</strong> if the page's
-    largest element (a hero, the main heading) sits inside a Suspense boundary, it cannot paint
-    until that boundary resolves; keep LCP elements in the shell, above the boundaries, and preload
-    LCP images so the browser starts fetching them from the first chunk. <strong>INP:</strong> each
-    boundary is also a <em>hydration unit</em>. React hydrates streamed regions independently and
-    prioritizes whatever the user is touching, so granular boundaries break hydration into small
-    tasks that keep the main thread responsive, where a boundary-less page hydrates as one long
-    blocking pass. And the shell's first chunk carries the page's <code>&lt;link&gt;</code> and
-    <code>&lt;script&gt;</code> tags, so CSS, fonts, and JS start downloading during server think
-    time instead of after it: streaming buys back the network idle that blocking rendering wastes.
+    one honest footprint). Two more deserve a sentence each. <strong>LCP:</strong> if the page's largest
+    element (a hero, the main heading) sits inside a Suspense boundary, it cannot paint until that boundary
+    resolves; keep LCP elements in the shell, above the boundaries, and preload LCP images so the browser
+    starts fetching them from the first chunk. <strong>INP:</strong> each boundary is also a <em
+      >hydration unit</em
+    >. React hydrates streamed regions independently and prioritizes whatever the user is touching,
+    so granular boundaries break hydration into small tasks that keep the main thread responsive,
+    where a boundary-less page hydrates as one long blocking pass. And the shell's first chunk
+    carries the page's <code>&lt;link&gt;</code> and
+    <code>&lt;script&gt;</code> tags, so CSS, fonts, and JS start downloading during server think time
+    instead of after it: streaming buys back the network idle that blocking rendering wastes.
   </p>
-
 
   <Snippet>
     <pre
@@ -1326,9 +1380,8 @@ flowchart LR
     <CodeCaption>
       The hero image and heading are the page's largest paint, so they sit in the shell where the
       first chunk delivers them; <code>preload</code> puts a <code>&lt;link rel="preload"&gt;</code>
-      in the head so the browser starts fetching the image before its tag even streams by. Wrap the
-      same hero in the stats' boundary and LCP would inherit the stats query's latency for no
-      reason.
+      in the head so the browser starts fetching the image before its tag even streams by. Wrap the same
+      hero in the stats' boundary and LCP would inherit the stats query's latency for no reason.
     </CodeCaption>
   </Snippet>
 
@@ -1338,9 +1391,9 @@ flowchart LR
   </p>
   <ol>
     <li>
-      <strong>What you buy:</strong> the page stops waiting for that region's data. The server ships
-      the shell the moment it is ready, the browser paints it, and the slow region streams into its
-      slot later; without the boundary, that one fetch holds the entire response hostage (the <a
+      <strong>What you buy:</strong> the page stops waiting for that region's data. The server ships the
+      shell the moment it is ready, the browser paints it, and the slow region streams into its slot later;
+      without the boundary, that one fetch holds the entire response hostage (the <a
         href='#streaming'>first diagram above</a
       >).
     </li>
@@ -2556,8 +2609,7 @@ flowchart LR
       (the two streams, the HTTP contract, vitals, and infra buffering, with a
       <a href='https://streaming-demo.labs.vercel.dev/' target='_blank' rel='noopener'
         >live companion demo</a
-      >) ·
-      React 19 docs:
+      >) · React 19 docs:
       <a href='https://react.dev/reference/react/Suspense' target='_blank' rel='noopener'
         >&lt;Suspense&gt;</a
       >

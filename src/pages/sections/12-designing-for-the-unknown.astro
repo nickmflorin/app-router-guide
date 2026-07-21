@@ -15,8 +15,8 @@ import Snippet from '../../components/Snippet.astro';
     Everything in <a href='10-containers-content-shifting.html'>§10</a> and
     <a href='11-suspense-streaming.html'>§11</a> assumed the layout <em>can</em> be contained. That is
     not an engineering given; it is decided earlier, in design. Some layouts are containable and some
-    fight containment no matter how carefully they are implemented, which makes stability a cross-team goal:
-    engineering, UX, and design deciding together what the page does while the data is still unknown.
+    fight containment no matter how carefully they are implemented, which makes stability a cross-team
+    goal: engineering, UX, and design deciding together what the page does while the data is still unknown.
   </p>
 
   <Callout kind='voice' title='"Design is how it works"'>
@@ -43,10 +43,11 @@ import Snippet from '../../components/Snippet.astro';
     Cumulative Layout Shift is the engineering measurement of a goal that is fundamentally shared: <strong
       >the page must not move under the user.</strong
     > Nothing they are reading jumps, nothing they are about to click dodges, nothing "settles" in three
-    visible steps. The metric lives in engineering's world, but its causes mostly do not: they live in composition
-    decisions (what shares an axis with what, what gets how much space, what the page shows before the
-    data) that are made in design, before any code exists. A goal whose measurement belongs to one team
-    and whose causes belong to another cannot be owned by either alone. It has to be a standing conversation.
+    visible steps. The metric lives in engineering's world, but its causes mostly do not: they live in
+    composition decisions (what shares an axis with what, what gets how much space, what the page shows
+    before the data) that are made in design, before any code exists. A goal whose measurement belongs
+    to one team and whose causes belong to another cannot be owned by either alone. It has to be a standing
+    conversation.
   </p>
   <p>
     Today that conversation mostly doesn't happen, and the reason it must is timing.
@@ -57,7 +58,8 @@ import Snippet from '../../components/Snippet.astro';
     <em>while the design is still a design</em>: identifying the places where a composition
     introduces content that is hard to contain, early enough that the UX can be shaped toward
     predictability instead of patched toward it. Done consistently, that pressure compounds: the
-    design system itself drifts toward layouts that are stable by default, for the screens being built now and the ones not yet designed.
+    design system itself drifts toward layouts that are stable by default, for the screens being
+    built now and the ones not yet designed.
   </p>
 
   <Callout kind='voice' title='What the channel is for'>
@@ -89,7 +91,8 @@ import Snippet from '../../components/Snippet.astro';
     rows fit it; the height was an artifact of the sample data, not a decision. What the comp never shows
     is the page
     <em>flipping between</em> those states: empty today, 1 row after the first save, 300 rows next quarter,
-    with everything below the container living or dying by which state it's in. The count is never knowable ahead of time; that is permanent. So the real design question is not "what does empty look like?"
+    with everything below the container living or dying by which state it's in. The count is never knowable
+    ahead of time; that is permanent. So the real design question is not "what does empty look like?"
     but
     <strong
       >"how do all of these states swap through the same space without pushing everything else
@@ -150,11 +153,11 @@ import Snippet from '../../components/Snippet.astro';
     <strong>Guess 2, size each table to its content with a min-height:</strong> now the pre-data state
     reserves the min-height, but the moment the top table's 30 rows arrive it grows and
     <em>shoves the bottom table down the page</em>, possibly below the fold: the exact
-    reading-interrupting shift this whole effort exists to prevent, and it happens on every load, in front of the
-    user. <strong>Guess 3, just let both tables be auto-height:</strong> no constraints at all, so the
-    table bodies are never contained and never scroll; the content area around them (usually the whole
-    page) becomes the scroll container instead. The shift is the same as Guess 2: whatever the top table
-    turns out to be pushes everything below it, except now the page's total length is also data-dependent,
+    reading-interrupting shift this whole effort exists to prevent, and it happens on every load, in
+    front of the user. <strong>Guess 3, just let both tables be auto-height:</strong> no constraints at
+    all, so the table bodies are never contained and never scroll; the content area around them (usually
+    the whole page) becomes the scroll container instead. The shift is the same as Guess 2: whatever the
+    top table turns out to be pushes everything below it, except now the page's total length is also data-dependent,
     the scrollbar jumps as each table resolves, and the app chrome is the only thing standing still. Auto-height
     is not a neutral default; it is a decision to let the data lay out the page.
   </p>
@@ -816,14 +819,16 @@ flowchart LR
   <p>
     The design rule above has an engineering twin: <strong>one component per flow.</strong>
     <Chip k='react' />
-    <Chip k='very' /> The drawer or dialog's shell (its container, header, tab bar, footer) is
-    static across every step, and only the inner content region changes as the user progresses.
-    Never unmount and remount three different drawers as the step changes; that rebuilds, re-lays
-    out, and re-animates the exact structure the user is mid-flow inside of. The goal here is the
-    same as everywhere else in the UI: <strong>hold constant what is static and unchanging,
-    maximize that structure, and minimize the dynamic.</strong> The one component that <em>is</em>
-    mounted and unmounted is the drawer itself: it's a floating element, so it lives in its own
-    dynamically imported file, mounted on open and unmounted on close (<a
+    <Chip k='very' /> The drawer or dialog's shell (its container, header, tab bar, footer) is static
+    across every step, and only the inner content region changes as the user progresses. Never unmount
+    and remount three different drawers as the step changes; that rebuilds, re-lays out, and re-animates
+    the exact structure the user is mid-flow inside of. The goal here is the same as everywhere else in
+    the UI: <strong
+      >hold constant what is static and unchanging, maximize that structure, and minimize the
+      dynamic.</strong
+    > The one component that <em>is</em>
+    mounted and unmounted is the drawer itself: it's a floating element, so it lives in its own dynamically
+    imported file, mounted on open and unmounted on close (<a
       href='08-bundle-size-code-splitting.html#triggers'>§8.4</a
     >). Everything below applies verbatim to dialogs; drawers just make the vertical geometry more
     interesting.
@@ -831,9 +836,9 @@ flowchart LR
 
   <h4 id='wizard-shell-bad'>The wrong shape: a drawer per step</h4>
   <p>
-    The failure mode is worth seeing before the fix. Give each step its own drawer component and
-    the flow becomes a parade of teardowns: React sees a different element type on every advance,
-    so it unmounts the entire tree the user is standing in and mounts a lookalike.
+    The failure mode is worth seeing before the fix. Give each step its own drawer component and the
+    flow becomes a parade of teardowns: React sees a different element type on every advance, so it
+    unmounts the entire tree the user is standing in and mounts a lookalike.
   </p>
 
   <Diagram>
@@ -878,7 +883,14 @@ flowchart LR
         fill='#fdf3e3'
         stroke='#b45309'
         stroke-dasharray='4 3'></rect>
-      <text x='115' y='114' font-size='8' fill='#8a5a00' text-anchor='middle' dominant-baseline='central'>
+      <text
+        x='115'
+        y='114'
+        font-size='8'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'
+      >
         PickLearners
       </text>
       <rect x='40' y='160' width='150' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
@@ -904,7 +916,14 @@ flowchart LR
         fill='#fdf3e3'
         stroke='#b45309'
         stroke-dasharray='4 3'></rect>
-      <text x='360' y='114' font-size='8' fill='#8a5a00' text-anchor='middle' dominant-baseline='central'>
+      <text
+        x='360'
+        y='114'
+        font-size='8'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'
+      >
         ReviewConflicts
       </text>
       <rect x='285' y='160' width='150' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
@@ -930,7 +949,14 @@ flowchart LR
         fill='#fdf3e3'
         stroke='#b45309'
         stroke-dasharray='4 3'></rect>
-      <text x='605' y='114' font-size='8' fill='#8a5a00' text-anchor='middle' dominant-baseline='central'>
+      <text
+        x='605'
+        y='114'
+        font-size='8'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'
+      >
         ConfirmAssignments
       </text>
       <rect x='530' y='160' width='150' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
@@ -938,7 +964,8 @@ flowchart LR
         each advance tears down the drawer the user is standing in and mounts a lookalike:
       </text>
       <text x='360' y='219' font-size='8.5' fill='#b3261e' text-anchor='middle'>
-        the open animation replays, focus and scroll are lost, and the header and footer rebuild for no reason
+        the open animation replays, focus and scroll are lost, and the header and footer rebuild for
+        no reason
       </text>
     </svg>
 
@@ -983,10 +1010,9 @@ flowchart LR
   );
 }</pre>
     <CodeCaption>
-      The anti-pattern in one line: <code>DRAWERS[step]</code> changes the element type, so React
-      reconciles by teardown. Each of the three drawers also duplicates the header and footer
-      internally, which means "make the buttons match across steps" is now a maintenance task
-      instead of a guarantee.
+      The anti-pattern in one line: <code>DRAWERS[step]</code> changes the element type, so React reconciles
+      by teardown. Each of the three drawers also duplicates the header and footer internally, which means
+      "make the buttons match across steps" is now a maintenance task instead of a guarantee.
     </CodeCaption>
   </Snippet>
 
@@ -994,9 +1020,9 @@ flowchart LR
   <p>
     The correct shape mounts one drawer for the whole flow. The shell (container, header, footer)
     renders once per open; between the static pieces sits a <strong>static content region</strong>
-    (<code>flex min-h-0 grow overflow-hidden</code>) that is itself part of the frame. Only the
-    step rendered <em>inside</em> that region changes, and the inner frame is what decides how to
-    use the reserved space: cap at it and scroll, or take all of it and center.
+    (<code>flex min-h-0 grow overflow-hidden</code>) that is itself part of the frame. Only the step
+    rendered <em>inside</em> that region changes, and the inner frame is what decides how to use the reserved
+    space: cap at it and scroll, or take all of it and center.
   </p>
 
   <Diagram>
@@ -1051,7 +1077,15 @@ flowchart LR
         Drawer header (static)
       </text>
       <!-- data-lint-ignore: nested scene - label row above the inner frame by design -->
-      <rect data-lint-ignore='scene' x='232' y='64' width='256' height='154' rx='5' fill='#ffffff' stroke='#0070f3'></rect>
+      <rect
+        data-lint-ignore='scene'
+        x='232'
+        y='64'
+        width='256'
+        height='154'
+        rx='5'
+        fill='#ffffff'
+        stroke='#0070f3'></rect>
       <text x='360' y='78' font-size='8' fill='#0757ba' text-anchor='middle'>
         content region (static) · min-h-0 · grow · overflow-hidden
       </text>
@@ -1083,7 +1117,15 @@ flowchart LR
         empty/loading centers · lists scroll inside
       </text>
       <!-- data-lint-ignore: footer scene - actions right-aligned by design -->
-      <rect data-lint-ignore='scene' x='232' y='226' width='256' height='30' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <rect
+        data-lint-ignore='scene'
+        x='232'
+        y='226'
+        width='256'
+        height='30'
+        rx='5'
+        fill='#eaf3fe'
+        stroke='#0070f3'></rect>
       <rect x='366' y='232' width='58' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
       <text
         x='395'
@@ -1091,7 +1133,8 @@ flowchart LR
         font-size='8.5'
         fill='#527dad'
         text-anchor='middle'
-        dominant-baseline='central'>Previous</text>
+        dominant-baseline='central'>Previous</text
+      >
       <rect x='430' y='232' width='58' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
       <text
         x='459'
@@ -1099,7 +1142,8 @@ flowchart LR
         font-size='8.5'
         fill='#527dad'
         text-anchor='middle'
-        dominant-baseline='central'>Next</text>
+        dominant-baseline='central'>Next</text
+      >
       <text x='244' y='241' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
         Footer (static)
       </text>
@@ -1132,8 +1176,7 @@ flowchart TB
       >, so the frame itself can never grow or scroll. The inner arrow: the static content region
       stretches to absorb all free height between the header and the footer. The amber inner frame
       is the only thing that changes per step, and it is what defines <code>max-h-full</code> +
-      <code>overflow-y-auto</code>: content scrolls inside the reserved space, never by resizing
-      it.
+      <code>overflow-y-auto</code>: content scrolls inside the reserved space, never by resizing it.
     </Fragment>
   </Diagram>
 
@@ -1177,9 +1220,9 @@ flowchart TB
 }</pre>
     <CodeCaption>
       Three steps, one drawer. The shell (container, header, footer) renders when the drawer opens
-      and is never rebuilt; advancing the wizard changes <code>STEPS[step]</code> and nothing else.
-      The wrong version mounts a different drawer per step, and the user watches the frame they were
-      standing in tear down and reassemble on every click.
+      and is never rebuilt; advancing the wizard changes <code>STEPS[step]</code> and nothing else. The
+      wrong version mounts a different drawer per step, and the user watches the frame they were standing
+      in tear down and reassemble on every click.
     </CodeCaption>
   </Snippet>
 
@@ -1213,20 +1256,19 @@ flowchart TB
 }</pre>
     <CodeCaption>
       Both fill modes of the inner frame, against the same reserved space. A spinner or empty
-      message takes the full height (<code>h-full</code>) and centers within it; a list caps at
-      that height (<code>max-h-full</code>) and scrolls inside it with <code>overflow-y-auto</code
-      >; and in neither case does the drawer's frame move a pixel. The panel showing its own
-      loading indicator is the legitimate case (<a href='15-dedupe-caching.html#when-client'
-        >§15.7</a
-      >): the drawer is the container, and its content was never knowable before the click.
+      message takes the full height (<code>h-full</code>) and centers within it; a list caps at that
+      height (<code>max-h-full</code>) and scrolls inside it with <code>overflow-y-auto</code>; and
+      in neither case does the drawer's frame move a pixel. The panel showing its own loading
+      indicator is the legitimate case (<a href='15-dedupe-caching.html#when-client'>§15.7</a>): the
+      drawer is the container, and its content was never knowable before the click.
     </CodeCaption>
   </Snippet>
 
   <h4 id='wizard-shell-tabs'>Non-sequential flows: tabs in the static shell</h4>
   <p>
     When the "steps" aren't ordered, the shell gains a tab bar and loses the footer, and the
-    doctrine doesn't change: the tab bar is part of the static frame, the content region below it
-    is a static container, and only the panel inside that region swaps.
+    doctrine doesn't change: the tab bar is part of the static frame, the content region below it is
+    a static container, and only the panel inside that region swaps.
   </p>
 
   <Diagram>
@@ -1281,7 +1323,15 @@ flowchart TB
         Drawer header (static)
       </text>
       <!-- data-lint-ignore: tab bar scene - labels and underline centered as a group -->
-      <rect data-lint-ignore='scene' x='232' y='64' width='256' height='24' rx='4' fill='#f5f9fe' stroke='#a9cdf5'></rect>
+      <rect
+        data-lint-ignore='scene'
+        x='232'
+        y='64'
+        width='256'
+        height='24'
+        rx='4'
+        fill='#f5f9fe'
+        stroke='#a9cdf5'></rect>
       <text
         x='266'
         y='75'
@@ -1289,7 +1339,8 @@ flowchart TB
         fill='#0757ba'
         text-anchor='middle'
         dominant-baseline='central'
-        font-weight='500'>Details</text>
+        font-weight='500'>Details</text
+      >
       <line x1='249' y1='83' x2='283' y2='83' stroke='#0070f3' stroke-width='2'></line>
       <text
         x='338'
@@ -1297,19 +1348,36 @@ flowchart TB
         font-size='8.5'
         fill='#527dad'
         text-anchor='middle'
-        dominant-baseline='central'>Schedule</text>
+        dominant-baseline='central'>Schedule</text
+      >
       <text
         x='402'
         y='75'
         font-size='8.5'
         fill='#527dad'
         text-anchor='middle'
-        dominant-baseline='central'>History</text>
-      <text x='480' y='75' font-size='8' fill='#527dad' text-anchor='end' dominant-baseline='central'>
+        dominant-baseline='central'>History</text
+      >
+      <text
+        x='480'
+        y='75'
+        font-size='8'
+        fill='#527dad'
+        text-anchor='end'
+        dominant-baseline='central'
+      >
         tabs (static)
       </text>
       <!-- data-lint-ignore: nested scene - label row above the inner frame by design -->
-      <rect data-lint-ignore='scene' x='232' y='96' width='256' height='160' rx='5' fill='#ffffff' stroke='#0070f3'></rect>
+      <rect
+        data-lint-ignore='scene'
+        x='232'
+        y='96'
+        width='256'
+        height='160'
+        rx='5'
+        fill='#ffffff'
+        stroke='#0070f3'></rect>
       <text x='360' y='110' font-size='8' fill='#0757ba' text-anchor='middle'>
         content region (static) · min-h-0 · grow · overflow-hidden
       </text>
@@ -1365,8 +1433,8 @@ flowchart TB
       The tabbed anatomy: the same two double-headed arrows (drawer at 100% height with <code
         >overflow-hidden</code
       >, static region growing to absorb everything below the tab bar), with the tab labels and the
-      active underline centered as a group inside the bar. The user skips around freely and the
-      only thing that ever changes is the amber inner frame.
+      active underline centered as a group inside the bar. The user skips around freely and the only
+      thing that ever changes is the amber inner frame.
     </Fragment>
   </Diagram>
 
@@ -1399,10 +1467,10 @@ flowchart TB
 }</pre>
     <CodeCaption>
       The tabbed cousin: no footer, tabs pinned at the top, and the same flex-grow region absorbing
-      everything beneath them. Tab identity in <code>useState</code> is correct here, not a
-      violation of <a href='09-server-resolvable-state.html#tabs'>§9.3</a>: these tabs live inside a
-      transient overlay, not a page, which is exactly the ladder's bottom rung. One drawer, three
-      tabs, and only <code>TABS[tab]</code> ever changes.
+      everything beneath them. Tab identity in <code>useState</code> is correct here, not a violation
+      of <a href='09-server-resolvable-state.html#tabs'>§9.3</a>: these tabs live inside a transient
+      overlay, not a page, which is exactly the ladder's bottom rung. One drawer, three tabs, and
+      only <code>TABS[tab]</code> ever changes.
     </CodeCaption>
   </Snippet>
 

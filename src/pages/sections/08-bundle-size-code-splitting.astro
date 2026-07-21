@@ -467,9 +467,11 @@ flowchart LR
     Sometimes you genuinely need a heavy client component: a rich text editor, a charting library, a
     map, a spreadsheet grid whose interactivity you can't rebuild by hand. The rule there is not
     "never use it," it is
-    <strong>keep it out of the first-render bundle and give it a light fallback</strong>. In <code>ojl-tracker</code>, the data-heavy tables are loaded lazily for exactly this reason: the route paints its frame
-    immediately, and the heavy grid streams in behind a skeleton rather than blocking the whole page on
-    its download.
+    <strong>keep it out of the first-render bundle and give it a light fallback</strong>. In <code
+      >ojl-tracker</code
+    >, the data-heavy tables are loaded lazily for exactly this reason: the route paints its frame
+    immediately, and the heavy grid streams in behind a skeleton rather than blocking the whole page
+    on its download.
   </p>
   <p>
     The mechanics of the dynamic import (the <code>ssr: false</code> option, the top-level declaration

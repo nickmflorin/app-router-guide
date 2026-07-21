@@ -118,7 +118,8 @@ import CompareCol from '../../components/CompareCol.astro';
         fill='#0757ba'
         text-anchor='middle'
         font-weight='500'
-        dominant-baseline='central'>Server</text>
+        dominant-baseline='central'>Server</text
+      >
       <path
         d='M 312 36 L 160 36 L 160 107'
         fill='none'
@@ -143,23 +144,53 @@ import CompareCol from '../../components/CompareCol.astro';
       <text x='482' y='24' font-size='8.5' fill='#527dad'>
         streaming: one arrow per boundary, in parallel
       </text>
-      <text x='20' y='102' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+      <text
+        x='20'
+        y='102'
+        font-size='10.5'
+        fill='#171717'
+        font-weight='500'
+        dominant-baseline='central'
+      >
         1 · first paint
       </text>
       <rect x='20' y='110' width='170' height='116' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
       <rect x='28' y='118' width='154' height='12' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
       <circle cx='172' cy='124' r='3.5' fill='#ffffff' stroke='#9ca3af' stroke-width='1.5'></circle>
       <rect x='28' y='136' width='26' height='80' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <rect x='60' y='136' width='122' height='20' rx='4' fill='#fdf3e3' stroke='#b45309' stroke-dasharray='4 3'></rect>
+      <rect
+        x='60'
+        y='136'
+        width='122'
+        height='20'
+        rx='4'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-dasharray='4 3'></rect>
       <circle cx='172' cy='146' r='3.5' fill='#ffffff' stroke='#9ca3af' stroke-width='1.5'></circle>
-      <rect x='60' y='162' width='122' height='54' rx='4' fill='#fdf3e3' stroke='#b45309' stroke-dasharray='4 3'></rect>
+      <rect
+        x='60'
+        y='162'
+        width='122'
+        height='54'
+        rx='4'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-dasharray='4 3'></rect>
       <text x='20' y='238' font-size='8.5' fill='#737373' dominant-baseline='central'>
         known HTML painted; fallbacks hold reserved space;
       </text>
       <text x='20' y='250' font-size='8.5' fill='#737373' dominant-baseline='central'>
         client leaves are pre-rendered markup, not yet live
       </text>
-      <text x='278' y='102' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+      <text
+        x='278'
+        y='102'
+        font-size='10.5'
+        fill='#171717'
+        font-weight='500'
+        dominant-baseline='central'
+      >
         2a · regions stream in
       </text>
       <rect x='278' y='110' width='170' height='116' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
@@ -176,20 +207,50 @@ import CompareCol from '../../components/CompareCol.astro';
       <text x='278' y='238' font-size='8.5' fill='#737373' dominant-baseline='central'>
         fallbacks replaced by streamed HTML, in place
       </text>
-      <text x='278' y='268' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+      <text
+        x='278'
+        y='268'
+        font-size='10.5'
+        fill='#171717'
+        font-weight='500'
+        dominant-baseline='central'
+      >
         2b · leaves hydrate
       </text>
       <rect x='278' y='278' width='170' height='116' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
       <rect x='286' y='286' width='154' height='12' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
       <circle cx='430' cy='292' r='3.5' fill='#e0f5f9' stroke='#0891b2' stroke-width='1.5'></circle>
       <rect x='286' y='304' width='26' height='80' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <rect x='318' y='304' width='122' height='20' rx='4' fill='#fdf3e3' stroke='#b45309' stroke-dasharray='4 3'></rect>
+      <rect
+        x='318'
+        y='304'
+        width='122'
+        height='20'
+        rx='4'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-dasharray='4 3'></rect>
       <circle cx='430' cy='314' r='3.5' fill='#e0f5f9' stroke='#0891b2' stroke-width='1.5'></circle>
-      <rect x='318' y='330' width='122' height='54' rx='4' fill='#fdf3e3' stroke='#b45309' stroke-dasharray='4 3'></rect>
+      <rect
+        x='318'
+        y='330'
+        width='122'
+        height='54'
+        rx='4'
+        fill='#fdf3e3'
+        stroke='#b45309'
+        stroke-dasharray='4 3'></rect>
       <text x='278' y='406' font-size='8.5' fill='#737373' dominant-baseline='central'>
         JS attaches handlers to the pre-rendered leaves
       </text>
-      <text x='536' y='186' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+      <text
+        x='536'
+        y='186'
+        font-size='10.5'
+        fill='#171717'
+        font-weight='500'
+        dominant-baseline='central'
+      >
         3 · settled
       </text>
       <rect x='536' y='194' width='170' height='116' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
@@ -225,20 +286,21 @@ import CompareCol from '../../components/CompareCol.astro';
         stroke='#737373'
         stroke-width='1.2'
         marker-end='url(#aEvo)'></path>
-      <text x='254' y='348' font-size='8.5' fill='#737373' text-anchor='middle' dominant-baseline='central'>
+      <text
+        x='254'
+        y='348'
+        font-size='8.5'
+        fill='#737373'
+        text-anchor='middle'
+        dominant-baseline='central'
+      >
         in parallel
       </text>
       <!-- merge -->
-      <path
-        d='M 448 214 L 492 214 L 492 252'
-        fill='none'
-        stroke='#737373'
-        stroke-width='1.2'></path>
-      <path
-        d='M 448 336 L 492 336 L 492 252'
-        fill='none'
-        stroke='#737373'
-        stroke-width='1.2'></path>
+      <path d='M 448 214 L 492 214 L 492 252' fill='none' stroke='#737373' stroke-width='1.2'
+      ></path>
+      <path d='M 448 336 L 492 336 L 492 252' fill='none' stroke='#737373' stroke-width='1.2'
+      ></path>
       <line
         x1='492'
         y1='252'

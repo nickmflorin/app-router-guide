@@ -9,9 +9,7 @@
       "text": "would be helpful here to have a smaller subsection that talks a little bit about hte HTML middleman thing, where the pattern emerging now adays is that the data layer is your sSR components, and that microfrontends that can encapsulate direct server data access with the UI and then expose those UI pieces as server rendered components is becoming more of a norm, rather than a data layer API that returns raw data and is then rendered by clients client side (or sometimes even server side too)",
       "target": {
         "anchor": "output-not-machinery",
-        "path": [
-          26
-        ],
+        "path": [26],
         "tag": "h3",
         "snippet": "The API is your HTML"
       },
@@ -25,9 +23,7 @@
       "text": "it might be helpful here to be able to differentiate between the first page load (and the first paint) and subsequent hydration and streaming.  So that we show this is what happens on the first page load, then the hydration occurs and makes these pieces interactive and at the same time the content is streaming from the server and filling in suspended boundaries.",
       "target": {
         "anchor": "rendering-model",
-        "path": [
-          8
-        ],
+        "path": [8],
         "tag": "figure",
         "snippet": "Browser GET /programs/42 Server render server components await data: parallel, deduped sus"
       },
@@ -41,9 +37,7 @@
       "text": "isn't it true for the server-first page case that the slow regions stream in while the leaves are hydrating?",
       "target": {
         "anchor": "old-vs-new",
-        "path": [
-          16
-        ],
+        "path": [16],
         "tag": "figure",
         "snippet": "SPA-style page (client-fetch chain) HTML shell download + parse JS hydrate fetch /users/me"
       },
@@ -57,9 +51,7 @@
       "text": "I think it would be helpful to mention or show a diagram underneath this one somehow that shows how the header and progrma details sections can be split out using parallel routes so that the details section can change with nested route segments",
       "target": {
         "anchor": "repetition",
-        "path": [
-          13
-        ],
+        "path": [13],
         "tag": "figure",
         "snippet": "Two page regions, one canonical query \u2026/programs/42 app layout (shell) ProgramHeader needs"
       },
@@ -73,10 +65,7 @@
       "text": "lets make it so that the container is not a fragment and is a div with flex col display max h full and overflow hidden, and then the section has overflow hidden as well with a comment saying that it's up to the children to implement scroll",
       "target": {
         "anchor": "tabs-parallel",
-        "path": [
-          28,
-          0
-        ],
+        "path": [28, 0],
         "tag": "pre",
         "snippet": "app/programs/[programId]/layout.tsx - the slot renders alongside the pageexport default as"
       },
@@ -90,10 +79,7 @@
       "text": "same kind of comment as down below - lets avoid using fragments at hte root level for hygiene purposes and focus on the fragment being a stack or something flex-col div",
       "target": {
         "anchor": "tabs-layout",
-        "path": [
-          23,
-          0
-        ],
+        "path": [23, 0],
         "tag": "pre",
         "snippet": "app/programs/[programId]/layout.tsx - the bar is written once, in the persistent frameexpo"
       },
@@ -107,10 +93,7 @@
       "text": "again lets try to avoid fragments across the board when possible",
       "target": {
         "anchor": "tabs-page",
-        "path": [
-          20,
-          0
-        ],
+        "path": [20, 0],
         "tag": "pre",
         "snippet": "app/programs/[programId]/reports/page.tsx - the page declares its own identityexport defau"
       },
@@ -124,9 +107,7 @@
       "text": "I want to include a more detailed section on this page that touches on the dialog flow example that is already on the page more thoroughly, but applied to both dialogs and drawers.  IT should be focused on wizard-style components, and how the container or shell and outer structure should remain static with just the inner content changing as the user progresses.  It should show a drawer example, where the drawer has multiple steps (next prev etc) and an example where the drawer has multiple tabs (i.e. non sequentail steps the user can skip around in) - each one should keep all of the non-dynamic per-step per-tab content static in a single drawer component that is dyanmically imported and mounted/unmounted when it is open/closed.  it should then show that the inner content changes as the step or tab changes, but not the outer content.  In the next/prev case, it should show the drawer container, structure, drawer header, and footer as static and the inner content as dynamic, with the inner content stretching with flex grow between the header and the footer and establishing min-h-0 and flex-grow and overflow hidden, and then should show how the dynamic inner content slots into that static structure, and how the inner content that is dynamic can show empty messages or loading indicators that are centered in the available height because of the flex grow and overflow hidden, but then list-style content that is dynamic can define max-h-0 and overflow-y-auto to force scroll.  the footer should have the next and previous buttons which are static, and it should emphasis that we don't unmount/remount 3 different drawers on each tab or prev/next change - the goal of everything we do in teh UI is to hold contsant what is static and unchanging, maximize that structure and minimize the dynamic.  the tabs case should be similar, but just doesn't have the footer at the bottom, and the tabs are static and at the top with the flex grow applied to the available space under it.",
       "target": {
         "anchor": null,
-        "path": [
-          1
-        ],
+        "path": [1],
         "tag": "h1",
         "snippet": "Designing for the Unknown"
       },
@@ -140,9 +121,7 @@
       "text": "on the bottom chart, the slow regions stream in and leaves hydrate should probably be on top of each other in a column to indicate concurrency",
       "target": {
         "anchor": "old-vs-new",
-        "path": [
-          16
-        ],
+        "path": [16],
         "tag": "figure",
         "snippet": "SPA-style page (client-fetch chain) HTML shell download + parse JS hydrate fetch /users/me"
       },
@@ -156,9 +135,7 @@
       "text": "for the content areas that are dotted, please make sure to show a vertical double headed arrow inside indicating the behavior of growing to fill available space, with a nother double headed arrow on the outer box for hte whole drawer that indicates that it is 100% height (viewport usually) and has overflow hidden",
       "target": {
         "anchor": "wizard-shell",
-        "path": [
-          32
-        ],
+        "path": [32],
         "tag": "figure",
         "snippet": "Sequential: next / prev Non-sequential: tabs Drawer header (static) step content (dynamic)"
       },
@@ -172,9 +149,7 @@
       "text": "please make sure things like tab content and the line underneath it are vertically centered in the box",
       "target": {
         "anchor": "wizard-shell",
-        "path": [
-          32
-        ],
+        "path": [32],
         "tag": "figure",
         "snippet": "Sequential: next / prev Non-sequential: tabs Drawer header (static) step content (dynamic)"
       },
@@ -188,9 +163,7 @@
       "text": "these diagrams don't indicate that the content area's container with the flex grow and min-h or whatever is static - there is still a container there for the content that is static and known across all frames - the inner frame is what changes and the inner frame is what defines max-h-full overflow-y-auto for scroll - please indicate this with nested boxes",
       "target": {
         "anchor": "wizard-shell",
-        "path": [
-          32
-        ],
+        "path": [32],
         "tag": "figure",
         "snippet": "Sequential: next / prev Non-sequential: tabs Drawer header (static) step content (dynamic)"
       },
@@ -204,10 +177,7 @@
       "text": "the empty state should not have min h 0 and grow it should be min-h-full and h-full and basically center its children inside with justify content and align items center",
       "target": {
         "anchor": "wizard-shell",
-        "path": [
-          34,
-          0
-        ],
+        "path": [34, 0],
         "tag": "pre",
         "snippet": "PickLearners.tsx - dynamic content slotting into the static frame\"use client\";export funct"
       },
@@ -221,10 +191,7 @@
       "text": "the list should have max-h-full and should not grow of have min-h-0 - its sitting in a container that already reserves the space for it",
       "target": {
         "anchor": "wizard-shell",
-        "path": [
-          34,
-          0
-        ],
+        "path": [34, 0],
         "tag": "pre",
         "snippet": "PickLearners.tsx - dynamic content slotting into the static frame\"use client\";export funct"
       },
@@ -238,9 +205,7 @@
       "text": "please try to keep the diagram and snippet for each approach together, instead of the diagrams for all cases and then the snippest for all cases.  each approach/case should have a separate sub-header smaller than building one frame header.  also - please make sure to include a diagram and snippet that shows the bad case - i.e. swapping drawers entirely or swapping dialogs entirely.",
       "target": {
         "anchor": "wizard-shell",
-        "path": [
-          32
-        ],
+        "path": [32],
         "tag": "figure",
         "snippet": "Sequential: next / prev Non-sequential: tabs Drawer header (static) step content (dynamic)"
       },
@@ -254,9 +219,7 @@
       "text": "lets use less thick arrows and make the server arrows not horizontal/inline with the bottom of the 'server' tile because it's confusing and looks bad.  the server lines should also reach _into_ the tile and show that it is touching the green sub-tiles, - right now its not and it looks like one is hidden behind the view",
       "target": {
         "anchor": "rendering-model",
-        "path": [
-          8
-        ],
+        "path": [8],
         "tag": "figure",
         "snippet": "One response, then the page evolves: first paint, two parallel phases, settled Server HTML"
       },

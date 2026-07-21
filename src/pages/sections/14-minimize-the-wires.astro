@@ -389,15 +389,15 @@ flowchart TB
   </Callout>
 
   <p>
-    One instinct still fights this: the components don't need the <em>same</em> data, so sharing one
-    query feels wasteful. Picture the page-level header and the page-level content area of a program
-    page. The header needs <code>name</code> and <code>status</code>; the content area needs
+    One instinct still fights this: the components don't need the <em>same</em> data, so sharing one query
+    feels wasteful. Picture the page-level header and the page-level content area of a program page. The
+    header needs <code>name</code> and <code>status</code>; the content area needs
     <code>description</code> and <code>status</code>. Overlapping, but not identical, and the old
     instinct says either drill one fetch down from the page or write two narrow queries so nobody
     over-fetches. Resist both.
     <Chip k='next' />
-    <Chip k='very' /> When the difference between the fields is not meaningfully more expensive to
-    query (and for columns on the same row, it almost never is), both components should call
+    <Chip k='very' /> When the difference between the fields is not meaningfully more expensive to query
+    (and for columns on the same row, it almost never is), both components should call
     <strong>the same canonical query</strong>, redundant fields and all. Dedupe collapses the two
     calls into one execution, so the page pays for one query either way; the redundancy costs
     nothing, and what it buys is the decoupling: each region asks for itself, neither knows the
@@ -539,23 +539,25 @@ flowchart LR
 
     <Fragment slot='caption'>
       Two regions of the same page, needing overlapping-but-different fields of the same program.
-      Each calls the one canonical <code>getProgram(42)</code> and reads the fields it cares about;
-      the cache collapses the two calls into a single execution, so the database sees one query
-      either way. Writing two narrow queries (or drilling one fetch down from the page) would save
-      nothing measurable and cost the independence: with the shared query, either region can move,
-      stream, or disappear without the other noticing. The same logic holds client-side with a
-      shared SWR key (<a href='15-dedupe-caching.html#client'>§15.3</a>).
+      Each calls the one canonical <code>getProgram(42)</code> and reads the fields it cares about; the
+      cache collapses the two calls into a single execution, so the database sees one query either way.
+      Writing two narrow queries (or drilling one fetch down from the page) would save nothing measurable
+      and cost the independence: with the shared query, either region can move, stream, or disappear without
+      the other noticing. The same logic holds client-side with a shared SWR key (<a
+        href='15-dedupe-caching.html#client'>§15.3</a
+      >).
     </Fragment>
   </Diagram>
 
   <p>
-    The same two regions also split cleanly along <em>route</em> lines. If the details region should
-    change with nested sub-views (activity, history, settings) while the header stays put, make the
-    regions <strong>parallel-route slots</strong> (<a
-      href='13-blocking-requests.html#parallel-routes'>§13.3</a
-    >): the layout renders <code>@header</code> and <code>@details</code> side by side, and
-    <code>@details</code> carries its own sub-routes, so a navigation swaps only that slot. The
-    dedupe holds across the split: both slots render in the same server request, so their <code
+    The same two regions also split cleanly along <em>route</em> lines. If the details region should change
+    with nested sub-views (activity, history, settings) while the header stays put, make the regions <strong
+      >parallel-route slots</strong
+    > (<a href='13-blocking-requests.html#parallel-routes'>§13.3</a>): the layout renders <code
+      >@header</code
+    > and <code>@details</code> side by side, and
+    <code>@details</code> carries its own sub-routes, so a navigation swaps only that slot. The dedupe
+    holds across the split: both slots render in the same server request, so their <code
       >getProgram(42)</code
     > calls still collapse into one execution.
   </p>
@@ -573,11 +575,11 @@ flowchart LR
     ├── activity/page.tsx  <span class="tok-com">/programs/[id]/activity: only this slot changes</span>
     └── default.tsx</pre>
     <CodeCaption>
-      Navigating to a nested sub-view re-renders the <code>@details</code> subtree alone; the
-      header slot keeps its state on soft navigations (<a
-        href='13-blocking-requests.html#slot-subroutes'>§13.3</a
-      >) and falls back to its <code>default.tsx</code> on hard loads. Each slot still asks the
-      canonical question for itself, and the request-scoped cache still answers it once.
+      Navigating to a nested sub-view re-renders the <code>@details</code> subtree alone; the header slot
+      keeps its state on soft navigations (<a href='13-blocking-requests.html#slot-subroutes'
+        >§13.3</a
+      >) and falls back to its <code>default.tsx</code> on hard loads. Each slot still asks the canonical
+      question for itself, and the request-scoped cache still answers it once.
     </CodeCaption>
   </Snippet>
 

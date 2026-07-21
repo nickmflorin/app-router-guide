@@ -695,9 +695,9 @@ flowchart LR
   </Diagram>
 
   <p>
-    Two more shift sources worth closing here. <strong>Fonts</strong>: a late-swapping
-    webfont reflows every line of text; <code>next/font</code> preloads and applies size-adjusted fallbacks
-    so text renders in its final metrics from the start
+    Two more shift sources worth closing here. <strong>Fonts</strong>: a late-swapping webfont
+    reflows every line of text; <code>next/font</code> preloads and applies size-adjusted fallbacks so
+    text renders in its final metrics from the start
     <Chip k='next' />
     <Chip k='very' />. And
     <strong>conditionally-injected UI</strong> (banners, alerts, toolbars that appear after a check):
@@ -915,9 +915,9 @@ flowchart LR
   <p>
     The same persistence extends to <strong>siblings</strong>, and this is where it's most often
     thrown away. Routes like <code>/learners</code>, <code>/evaluators</code>, and
-    <code>/levels</code> are not nested under each other; they're peers. A <strong>route
-    group</strong> (a parenthesized folder that adds no URL segment) exists precisely so peers can
-    share one layout:
+    <code>/levels</code> are not nested under each other; they're peers. A <strong
+      >route group</strong
+    > (a parenthesized folder that adds no URL segment) exists precisely so peers can share one layout:
     <Chip k='next' />
     <Chip k='very' /> define the header, the tab bar, and the table container once in the group's <code
       >layout.tsx</code
@@ -978,7 +978,8 @@ flowchart LR
         font-size='9.5'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>/learners</text>
+        dominant-baseline='central'>/learners</text
+      >
       <rect x='42' y='68' width='256' height='22' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
       <text
         x='170'
@@ -986,7 +987,8 @@ flowchart LR
         font-size='9.5'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>Program header (group layout)</text>
+        dominant-baseline='central'>Program header (group layout)</text
+      >
       <rect x='42' y='98' width='76' height='16' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
       <text
         x='80'
@@ -994,7 +996,8 @@ flowchart LR
         font-size='9'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>Learners</text>
+        dominant-baseline='central'>Learners</text
+      >
       <rect x='132' y='98' width='76' height='16' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
       <text
         x='170'
@@ -1002,7 +1005,8 @@ flowchart LR
         font-size='9'
         fill='#527dad'
         text-anchor='middle'
-        dominant-baseline='central'>Evaluators</text>
+        dominant-baseline='central'>Evaluators</text
+      >
       <rect x='222' y='98' width='76' height='16' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
       <text
         x='260'
@@ -1010,7 +1014,8 @@ flowchart LR
         font-size='9'
         fill='#527dad'
         text-anchor='middle'
-        dominant-baseline='central'>Levels</text>
+        dominant-baseline='central'>Levels</text
+      >
       <rect x='42' y='122' width='256' height='128' rx='6' fill='#ffffff' stroke='#0070f3'></rect>
       <text x='54' y='138' font-size='9' fill='#527dad'>table container (group layout)</text>
       <rect x='54' y='150' width='232' height='10' rx='4' fill='#cfe9dd'></rect>
@@ -1045,7 +1050,8 @@ flowchart LR
         font-size='9.5'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>/evaluators</text>
+        dominant-baseline='central'>/evaluators</text
+      >
       <rect x='422' y='68' width='256' height='22' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
       <text
         x='550'
@@ -1053,7 +1059,8 @@ flowchart LR
         font-size='9.5'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>Program header (group layout)</text>
+        dominant-baseline='central'>Program header (group layout)</text
+      >
       <rect x='422' y='98' width='76' height='16' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
       <text
         x='460'
@@ -1061,7 +1068,8 @@ flowchart LR
         font-size='9'
         fill='#527dad'
         text-anchor='middle'
-        dominant-baseline='central'>Learners</text>
+        dominant-baseline='central'>Learners</text
+      >
       <rect x='512' y='98' width='76' height='16' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
       <text
         x='550'
@@ -1069,7 +1077,8 @@ flowchart LR
         font-size='9'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>Evaluators</text>
+        dominant-baseline='central'>Evaluators</text
+      >
       <rect x='602' y='98' width='76' height='16' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
       <text
         x='640'
@@ -1077,7 +1086,8 @@ flowchart LR
         font-size='9'
         fill='#527dad'
         text-anchor='middle'
-        dominant-baseline='central'>Levels</text>
+        dominant-baseline='central'>Levels</text
+      >
       <rect x='422' y='122' width='256' height='128' rx='6' fill='#ffffff' stroke='#0070f3'></rect>
       <text x='434' y='138' font-size='9' fill='#527dad'>table container (group layout)</text>
       <rect x='434' y='150' width='170' height='10' rx='4' fill='#a9dcc4'></rect>
@@ -1116,9 +1126,9 @@ flowchart LR
     <Fragment slot='caption'>
       The sibling version of the previous figure. The three routes are peers with different paths,
       yet the header, the tab bar, and the table container belong to the <code>(program)</code>
-      group's layout, so a navigation between them re-renders only the page's table; the active-tab
-      highlight comes from a tiny <code>useSelectedLayoutSegment</code> leaf, not from re-rendering the bar. The wrong
-      version of this page repeats the header and tabs inside each sibling's page file, and every
+      group's layout, so a navigation between them re-renders only the page's table; the active-tab highlight
+      comes from a tiny <code>useSelectedLayoutSegment</code> leaf, not from re-rendering the bar. The
+      wrong version of this page repeats the header and tabs inside each sibling's page file, and every
       navigation tears down and rebuilds the exact chrome the user is staring at.
     </Fragment>
   </Diagram>

@@ -21,16 +21,16 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     Before the catalog, a nudge: a lot of this is genuinely new, and a fair amount of it is easy to
     miss. The platform ships APIs faster than most teams read the changelogs, and many of them exist
-    precisely to <strong>delete work still being done by hand</strong>: a hook that replaces a
-    whole <code>isLoading</code>/<code>errors</code> state pair (<a href='#use-action-state'
-      >useActionState</a
-    >), a value that replaces a debounce (<a href='#use-deferred-value'>useDeferredValue</a>), a
-    component that replaces a mount/unmount dance (<a href='#activity'>Activity</a>), a compiler
-    that replaces a wall of <code>useMemo</code> (<a href='#compiler'>the React Compiler</a>). Half
-    the reason this appendix exists is discovery: to put the current server-first toolkit in one
-    place, so the next time you're about to reach for a manual workaround, you can check here first
-    and find that the framework already ships the thing. If an entry below is new to you, that is
-    exactly the point; skim the map for the names you don't recognize.
+    precisely to <strong>delete work still being done by hand</strong>: a hook that replaces a whole <code
+      >isLoading</code
+    >/<code>errors</code> state pair (<a href='#use-action-state'>useActionState</a>), a value that
+    replaces a debounce (<a href='#use-deferred-value'>useDeferredValue</a>), a component that
+    replaces a mount/unmount dance (<a href='#activity'>Activity</a>), a compiler that replaces a
+    wall of <code>useMemo</code> (<a href='#compiler'>the React Compiler</a>). Half the reason this
+    appendix exists is discovery: to put the current server-first toolkit in one place, so the next
+    time you're about to reach for a manual workaround, you can check here first and find that the
+    framework already ships the thing. If an entry below is new to you, that is exactly the point;
+    skim the map for the names you don't recognize.
   </p>
 
   <p>
@@ -198,7 +198,8 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     A server function is an async function that runs on the server but is
     <strong>callable from client code as if it were local</strong>. React serializes the call across
-    the network; Next.js wires it to an endpoint automatically. This is the primitive that makes the 73 pass-through proxy handlers (<a href='18-applied-to-tracker.html#finding-1'>§18</a>)
+    the network; Next.js wires it to an endpoint automatically. This is the primitive that makes the
+    73 pass-through proxy handlers (<a href='18-applied-to-tracker.html#finding-1'>§18</a>)
     unnecessary for mutations: no route handler, no manual fetch, and end-to-end type safety,
     because the function's signature <em>is</em> the contract.
   </p>
@@ -541,7 +542,8 @@ import Snippet from '../../components/Snippet.astro';
       As of this writing, <code>&lt;ViewTransition&gt;</code> is available
       <strong>only in React's canary and experimental channels</strong>, not in stable React 19.2.
       It's in this catalog because it shows where the platform is going (animation as a tree
-      concern, like loading states in <a href='11-suspense-streaming.html'>§11</a>), not because it should ship yet. Watch the
+      concern, like loading states in <a href='11-suspense-streaming.html'>§11</a>), not because it
+      should ship yet. Watch the
       <a href='https://react.dev/reference/react/ViewTransition' target='_blank' rel='noopener'
         >React: ViewTransition</a
       >

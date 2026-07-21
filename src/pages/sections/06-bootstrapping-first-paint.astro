@@ -33,26 +33,29 @@ import Snippet from '../../components/Snippet.astro';
     The common surrender at that point is to hand the whole view to the client: fetch in a hook,
     paint a skeleton first, content later. And that surrender gives up the one thing this entire
     part of the guide exists to protect, the complete first paint. There is a middle path, and it
-    predates the App Router: <strong>bootstrap the view from the server, and defer the client's own
-    fetching until after the paint</strong>.
+    predates the App Router: <strong
+      >bootstrap the view from the server, and defer the client's own fetching until after the paint</strong
+    >.
   </p>
 
   <h2 id='pattern'>6.2 The pattern: server seeds, client validates on idle</h2>
-  <p>The pattern has three moves, and the order is the point. <Chip k='react' /><Chip k='very' /></p>
+  <p>
+    The pattern has three moves, and the order is the point. <Chip k='react' /><Chip k='very' />
+  </p>
   <ol>
     <li>
       <strong>The server sources the data during the request.</strong> In the pages router this was
       <code>getServerSideProps</code>; in the App Router it is simply a server component awaiting
       the query. Either way, the initial view's data arrives as a prop, and the page renders
-      <em>everything</em> on the first paint: the table, its rows, its controls. No spinners, no
-      skeletons, nothing to swap.
+      <em>everything</em> on the first paint: the table, its rows, its controls. No spinners, no skeletons,
+      nothing to swap.
     </li>
     <li>
-      <strong>The client's twin query exists but starts paused.</strong> The same data has a client
-      hook (SWR, TanStack Query, urql), because interactions will need it later, but on load it is
-      gated behind an idle signal: <code>requestIdleCallback</code> with a timeout fallback. The
-      second fetch never competes with the main thread while the page renders and hydrates; it fires
-      a few seconds later, quietly, because nothing needs it immediately.
+      <strong>The client's twin query exists but starts paused.</strong> The same data has a client hook
+      (SWR, TanStack Query, urql), because interactions will need it later, but on load it is gated behind
+      an idle signal: <code>requestIdleCallback</code> with a timeout fallback. The second fetch never
+      competes with the main thread while the page renders and hydrates; it fires a few seconds later,
+      quietly, because nothing needs it immediately.
     </li>
     <li>
       <strong>Once awake, the client copy takes over.</strong> The component renders
@@ -94,7 +97,8 @@ import Snippet from '../../components/Snippet.astro';
         font-size='9'
         fill='#525252'
         text-anchor='middle'
-        dominant-baseline='central'>JS + hydrate</text>
+        dominant-baseline='central'>JS + hydrate</text
+      >
       <rect x='269' y='40' width='130' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
       <text
         x='334'
@@ -102,7 +106,8 @@ import Snippet from '../../components/Snippet.astro';
         font-size='9'
         fill='#8a5a00'
         text-anchor='middle'
-        dominant-baseline='central'>fetch the view's data</text>
+        dominant-baseline='central'>fetch the view's data</text
+      >
       <rect x='403' y='40' width='110' height='18' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
       <text
         x='458'
@@ -110,7 +115,8 @@ import Snippet from '../../components/Snippet.astro';
         font-size='9'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>content replaces it</text>
+        dominant-baseline='central'>content replaces it</text
+      >
       <text
         x='530'
         y='42'
@@ -146,7 +152,8 @@ import Snippet from '../../components/Snippet.astro';
         font-size='9'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>server: fetch + render the view</text>
+        dominant-baseline='central'>server: fetch + render the view</text
+      >
       <rect x='339' y='102' width='104' height='18' rx='3' fill='#e7f5ee' stroke='#2ea06d'></rect>
       <text
         x='391'
@@ -154,7 +161,8 @@ import Snippet from '../../components/Snippet.astro';
         font-size='9'
         fill='#157a4c'
         text-anchor='middle'
-        dominant-baseline='central'>paint: complete</text>
+        dominant-baseline='central'>paint: complete</text
+      >
       <line
         x1='447'
         y1='111'
@@ -163,9 +171,7 @@ import Snippet from '../../components/Snippet.astro';
         stroke='#c9c9c9'
         stroke-width='1.5'
         stroke-dasharray='3 3'></line>
-      <text x='474' y='99' font-size='8.5' fill='#737373' text-anchor='middle'>
-        browser idle
-      </text>
+      <text x='474' y='99' font-size='8.5' fill='#737373' text-anchor='middle'> browser idle </text>
       <rect x='505' y='102' width='140' height='18' rx='3' fill='#e0f5f9' stroke='#0891b2'></rect>
       <text
         x='575'
@@ -173,7 +179,8 @@ import Snippet from '../../components/Snippet.astro';
         font-size='9'
         fill='#0e7490'
         text-anchor='middle'
-        dominant-baseline='central'>client query unpauses</text>
+        dominant-baseline='central'>client query unpauses</text
+      >
       <text x='530' y='134' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
         validates against the server copy
       </text>
@@ -202,7 +209,8 @@ import Snippet from '../../components/Snippet.astro';
         font-size='9'
         fill='#525252'
         text-anchor='middle'
-        dominant-baseline='central'>state changes</text>
+        dominant-baseline='central'>state changes</text
+      >
       <rect x='289' y='178' width='160' height='18' rx='3' fill='#e0f5f9' stroke='#0891b2'></rect>
       <text
         x='369'
@@ -210,7 +218,8 @@ import Snippet from '../../components/Snippet.astro';
         font-size='9'
         fill='#0e7490'
         text-anchor='middle'
-        dominant-baseline='central'>client refetch: just this data</text>
+        dominant-baseline='central'>client refetch: just this data</text
+      >
       <text
         x='465'
         y='180'
@@ -292,9 +301,9 @@ flowchart LR
   </Snippet>
 
   <p>
-    The provider is where the three moves meet. This is the shape <code>ojl-tracker</code> uses for
-    both the authenticated user and the program model: seeded from a server prop, refreshed by an
-    idle-deferred query, live thereafter:
+    The provider is where the three moves meet. This is the shape <code>ojl-tracker</code> uses for both
+    the authenticated user and the program model: seeded from a server prop, refreshed by an idle-deferred
+    query, live thereafter:
   </p>
 
   <Snippet>
@@ -324,33 +333,32 @@ flowchart LR
     </CodeCaption>
   </Snippet>
 
-
   <h2 id='auth-chain'>6.4 Case study: the auth chain that blocked every page</h2>
   <p>
     The clearest real instance of this pattern isn't a table at all; it's authentication. Every hard
-    navigation in the <code>ojl-tracker</code> app used to render <em>nothing</em> until a serial
-    chain of client-side providers resolved: first the Auth0 client asked <code>/api/auth/me</code>
-    who the user was; only after that resolved did the authenticated-user GraphQL query fire; only
-    after <em>that</em> (plus a client-environment fetch) did the feature-flag provider initialize
-    against its CDN. Each gate rendered a full-page loading screen while it waited, and each waited
-    on the previous, so a cold load spent seconds inside the chain before the page shell appeared:
-    hard-navigation TTI ran seconds long while soft navigations took a few hundred milliseconds, a
-    split that averages quietly hide. It is <a href='13-blocking-requests.html#csr-depth'>§13.5</a>'s
-    serial-by-structure waterfall, wearing auth clothing.
+    navigation in the <code>ojl-tracker</code> app used to render <em>nothing</em> until a serial chain
+    of client-side providers resolved: first the Auth0 client asked <code>/api/auth/me</code>
+    who the user was; only after that resolved did the authenticated-user GraphQL query fire; only after
+    <em>that</em> (plus a client-environment fetch) did the feature-flag provider initialize against its
+    CDN. Each gate rendered a full-page loading screen while it waited, and each waited on the previous,
+    so a cold load spent seconds inside the chain before the page shell appeared: hard-navigation TTI
+    ran seconds long while soft navigations took a few hundred milliseconds, a split that averages quietly
+    hide. It is <a href='13-blocking-requests.html#csr-depth'>§13.5</a>'s serial-by-structure
+    waterfall, wearing auth clothing.
   </p>
   <p>
     The tell, and the reason this is a bootstrap case study, is that
-    <strong>every fact in that chain was already known to the server.</strong> The session is
-    validated server-side before the page is even allowed to render; the authenticated user (role,
-    permissions, identity) falls out of the same session parse; and the feature-flag service can run
-    as a server-side singleton whose rulesets stay fresh in memory, making per-request flag state a
-    synchronous, CPU-only computation. The waterfall existed purely because those questions were
-    being asked <em>from the browser</em>. So the fix was to stop asking: parse the session once per
-    request, compute the flag state against the in-memory rules, and hand all three (Auth0 user,
-    authenticated user, flag state) to the providers as props. Each provider initializes
-    synchronously from its prop and renders its children immediately: no auth round trip, no
-    blocking query, no CDN init, no loading screen. The page pre-renders completely, and
-    hard-navigation TTI collapses to the soft-navigation number.
+    <strong>every fact in that chain was already known to the server.</strong> The session is validated
+    server-side before the page is even allowed to render; the authenticated user (role, permissions,
+    identity) falls out of the same session parse; and the feature-flag service can run as a server-side
+    singleton whose rulesets stay fresh in memory, making per-request flag state a synchronous, CPU-only
+    computation. The waterfall existed purely because those questions were being asked <em
+      >from the browser</em
+    >. So the fix was to stop asking: parse the session once per request, compute the flag state
+    against the in-memory rules, and hand all three (Auth0 user, authenticated user, flag state) to
+    the providers as props. Each provider initializes synchronously from its prop and renders its
+    children immediately: no auth round trip, no blocking query, no CDN init, no loading screen. The
+    page pre-renders completely, and hard-navigation TTI collapses to the soft-navigation number.
   </p>
 
   <Diagram>
@@ -384,7 +392,8 @@ flowchart LR
         font-size='9'
         fill='#525252'
         text-anchor='middle'
-        dominant-baseline='central'>JS + hydrate</text>
+        dominant-baseline='central'>JS + hydrate</text
+      >
       <rect x='259' y='36' width='100' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
       <text
         x='309'
@@ -392,7 +401,8 @@ flowchart LR
         font-size='9'
         fill='#8a5a00'
         text-anchor='middle'
-        dominant-baseline='central'>auth0 session</text>
+        dominant-baseline='central'>auth0 session</text
+      >
       <rect x='363' y='36' width='110' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
       <text
         x='418'
@@ -400,7 +410,8 @@ flowchart LR
         font-size='9'
         fill='#8a5a00'
         text-anchor='middle'
-        dominant-baseline='central'>user query (GraphQL)</text>
+        dominant-baseline='central'>user query (GraphQL)</text
+      >
       <rect x='477' y='36' width='100' height='18' rx='3' fill='#fdf3e3' stroke='#b45309'></rect>
       <text
         x='527'
@@ -408,7 +419,8 @@ flowchart LR
         font-size='9'
         fill='#8a5a00'
         text-anchor='middle'
-        dominant-baseline='central'>flags init (CDN)</text>
+        dominant-baseline='central'>flags init (CDN)</text
+      >
       <rect x='581' y='36' width='100' height='18' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
       <text
         x='631'
@@ -416,7 +428,8 @@ flowchart LR
         font-size='9'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>page renders</text>
+        dominant-baseline='central'>page renders</text
+      >
       <text x='360' y='78' font-size='9.5' fill='#b0483e' text-anchor='middle'>
         a full-page loader covers the whole chain: seconds of TTI on every hard navigation
       </text>
@@ -442,7 +455,8 @@ flowchart LR
         font-size='9'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>server: session + user + flags</text>
+        dominant-baseline='central'>server: session + user + flags</text
+      >
       <rect x='369' y='104' width='110' height='18' rx='3' fill='#e7f5ee' stroke='#2ea06d'></rect>
       <text
         x='424'
@@ -450,7 +464,8 @@ flowchart LR
         font-size='9'
         fill='#157a4c'
         text-anchor='middle'
-        dominant-baseline='central'>paint: complete</text>
+        dominant-baseline='central'>paint: complete</text
+      >
       <line
         x1='483'
         y1='113'
@@ -467,7 +482,8 @@ flowchart LR
         font-size='9'
         fill='#0e7490'
         text-anchor='middle'
-        dominant-baseline='central'>twins wake: validate + subscribe</text>
+        dominant-baseline='central'>twins wake: validate + subscribe</text
+      >
       <text x='360' y='146' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
         no auth round trip, no blocking query, no CDN init: the loader is gone
       </text>
@@ -507,10 +523,11 @@ flowchart LR
     <Fragment slot='caption'>
       The real chain from the <code>ojl-tracker</code> auth and page-loading work, condensed. Before:
       four serialized client-side gates, each showing a full-page loading screen, all resolving facts
-      the server had already established. After: one server pass computes the session, the
-      authenticated user, and the feature-flag state; providers initialize synchronously from props;
-      the page pre-renders whole. The client twins wake on idle to validate and subscribe, exactly
-      the shape of <a href='#pattern'>§6.2</a>.
+      the server had already established. After: one server pass computes the session, the authenticated
+      user, and the feature-flag state; providers initialize synchronously from props; the page pre-renders
+      whole. The client twins wake on idle to validate and subscribe, exactly the shape of <a
+        href='#pattern'>§6.2</a
+      >.
     </Fragment>
   </Diagram>
 
@@ -520,10 +537,10 @@ flowchart LR
     <Chip k='react' />
     <Chip k='very' /> The bootstrapped user provider's GraphQL query wakes on idle and then <em
       >stays subscribed</em
-    >. Because it is a live citizen of the GraphQL cache, automatic invalidation does the refreshing:
-    when any mutation during the session touches the user's profile, the cache invalidates the
-    relevant typename, the subscribed query refires on its own, and the user in context updates
-    everywhere, with no callback, no manual refetch, no wiring (<a
+    >. Because it is a live citizen of the GraphQL cache, automatic invalidation does the
+    refreshing: when any mutation during the session touches the user's profile, the cache
+    invalidates the relevant typename, the subscribed query refires on its own, and the user in
+    context updates everywhere, with no callback, no manual refetch, no wiring (<a
       href='14-minimize-the-wires.html#callbacks'>§14.4</a
     >). The same holds for any bootstrapped GraphQL hook: the server seed buys the complete paint,
     and the idle-woken subscription buys automatic refetch whenever the data changes on the server
@@ -550,10 +567,9 @@ flowchart LR
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">ReportsTable</span> <span class="tok-prop">bootstrappedRows</span>={rows} <span class="tok-prop">defaultQuery</span>={DEFAULT_QUERY} /&gt;;
 }</pre>
     <CodeCaption>
-      In the pages router this exact move was <code>getServerSideProps</code> handing props to the
-      page, which is where the pattern grew up; the App Router version is just a server component
-      awaiting the same query. Either way the client component below receives a fully-known first
-      view.
+      In the pages router this exact move was <code>getServerSideProps</code> handing props to the page,
+      which is where the pattern grew up; the App Router version is just a server component awaiting the
+      same query. Either way the client component below receives a fully-known first view.
     </CodeCaption>
   </Snippet>
 
@@ -629,7 +645,8 @@ flowchart LR
         font-size='9.5'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>/reports · first paint</text>
+        dominant-baseline='central'>/reports · first paint</text
+      >
       <rect x='42' y='68' width='160' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
       <text x='52' y='77' font-size='8.5' fill='#0757ba' dominant-baseline='central'>
         filters · search · sort (real)
@@ -641,7 +658,8 @@ flowchart LR
         font-size='8.5'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>pagination</text>
+        dominant-baseline='central'>pagination</text
+      >
       <rect x='42' y='94' width='256' height='156' rx='6' fill='#ffffff' stroke='#0070f3'></rect>
       <rect x='54' y='106' width='232' height='10' rx='4' fill='#cfe9dd'></rect>
       <rect x='54' y='122' width='196' height='10' rx='4' fill='#cfe9dd'></rect>
@@ -678,7 +696,8 @@ flowchart LR
         font-size='9.5'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>/reports · after the interaction</text>
+        dominant-baseline='central'>/reports · after the interaction</text
+      >
       <rect x='422' y='68' width='160' height='18' rx='4' fill='#eaf3fe' stroke='#0070f3'></rect>
       <text x='432' y='77' font-size='8.5' fill='#0757ba' dominant-baseline='central'>
         filters: changed by the user
@@ -690,7 +709,8 @@ flowchart LR
         font-size='8.5'
         fill='#0757ba'
         text-anchor='middle'
-        dominant-baseline='central'>pagination</text>
+        dominant-baseline='central'>pagination</text
+      >
       <rect
         x='422'
         y='94'
@@ -753,25 +773,26 @@ flowchart LR
     <Chip k='next' />
     <Chip k='critical' /> Bootstrapping was <em>the</em> tool of the pages-router era, when <code
       >getServerSideProps</code
-    > was the only way to put server data in the first paint and the client cache was the only thing
-    that could react to an interaction. It remains fully applicable in the App Router (nothing about
-    it broke), and <code>ojl-tracker</code> still runs on it well; it is simply <em>needed less
-    often</em> now, because the App Router covers more of its old territory natively. But the App Router's <em>native</em> answer to "the view changed" is better when you can use
-    it: put the state in the URL (<a href='09-server-resolvable-state.html'>§9</a>), and a change
-    re-renders <strong>only the affected region on the server</strong>, streaming a fresh RSC
-    payload for just what changed (<a href='04-ssr.html#routing'>§4.5</a>) instead of re-running a
-    whole page or maintaining a duplicate client data layer. One copy of the data, one place it is
-    fetched, shareable URLs, and no twin query to keep honest.
+    > was the only way to put server data in the first paint and the client cache was the only thing that
+    could react to an interaction. It remains fully applicable in the App Router (nothing about it broke),
+    and <code>ojl-tracker</code> still runs on it well; it is simply <em>needed less often</em> now, because
+    the App Router covers more of its old territory natively. But the App Router's <em>native</em> answer
+    to "the view changed" is better when you can use it: put the state in the URL (<a
+      href='09-server-resolvable-state.html'>§9</a
+    >), and a change re-renders <strong>only the affected region on the server</strong>, streaming a
+    fresh RSC payload for just what changed (<a href='04-ssr.html#routing'>§4.5</a>) instead of
+    re-running a whole page or maintaining a duplicate client data layer. One copy of the data, one
+    place it is fetched, shareable URLs, and no twin query to keep honest.
   </p>
   <p>
     So the decision comes in this order. <strong>Default to URL state</strong>; most filter, sort,
     and pagination state fits a URL more comfortably than the old instinct assumes, and it buys
-    shareability and back-button behavior for free. <strong>Reach for the bootstrap</strong> when
-    the state genuinely won't fit: too rich to serialize, too transient for history, or owned by
-    client machinery that can't read the URL. And when you do reach for it, keep the whole pattern:
-    server seed, idle-deferred twin, client ownership only after the first interaction. The bootstrap
-    without the idle gate is just a page that pays for its data twice at the worst moment; the idle
-    gate without the seed is just a slower skeleton.
+    shareability and back-button behavior for free. <strong>Reach for the bootstrap</strong> when the
+    state genuinely won't fit: too rich to serialize, too transient for history, or owned by client machinery
+    that can't read the URL. And when you do reach for it, keep the whole pattern: server seed, idle-deferred
+    twin, client ownership only after the first interaction. The bootstrap without the idle gate is just
+    a page that pays for its data twice at the worst moment; the idle gate without the seed is just a
+    slower skeleton.
   </p>
 
   <h2 id='rules'>The rules</h2>
@@ -786,16 +807,16 @@ flowchart LR
     <tbody>
       <tr>
         <td>
-          <strong>URL state first.</strong> Bootstrapping is for state that genuinely won't fit the
-          URL, not an alternative to trying.
+          <strong>URL state first.</strong> Bootstrapping is for state that genuinely won't fit the URL,
+          not an alternative to trying.
         </td>
         <td><Chip k='next' /></td>
         <td><Chip k='critical' /></td>
       </tr>
       <tr>
         <td>
-          When bootstrapping, <strong>the server sources the initial view</strong> and the page
-          paints complete: no spinners, no skeletons, nothing waiting on the client.
+          When bootstrapping, <strong>the server sources the initial view</strong> and the page paints
+          complete: no spinners, no skeletons, nothing waiting on the client.
         </td>
         <td><Chip k='react' /></td>
         <td><Chip k='critical' /></td>
@@ -840,11 +861,12 @@ flowchart LR
         target='_blank'
         rel='noopener'>ojl-tracker auth + page-loading write-up</a
       >
-      that <a href='#auth-chain'>§6.4</a> condenses
-      · <a href='09-server-resolvable-state.html'>§9</a> for the URL-state default this pattern is
-      the exception to · <a href='15-dedupe-caching.html#client'>§15.3</a> for the client data layer
-      the twin query lives in · <a href='04-ssr.html#routing'>§4.5</a> for the RSC-payload
-      re-rendering that makes URL state the App Router's native answer.
+      that <a href='#auth-chain'>§6.4</a> condenses · <a href='09-server-resolvable-state.html'
+        >§9</a
+      > for the URL-state default this pattern is the exception to · <a
+        href='15-dedupe-caching.html#client'>§15.3</a
+      > for the client data layer the twin query lives in · <a href='04-ssr.html#routing'>§4.5</a> for
+      the RSC-payload re-rendering that makes URL state the App Router's native answer.
     </p>
   </GoDeeper>
 </GuidePage>
