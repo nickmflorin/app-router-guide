@@ -94,18 +94,13 @@ import Snippet from '../../components/Snippet.astro';
       >
         Client-owned view
       </text>
-      <text class='fill-dg-clay-ink' x='12' y='61' font-size='9' dominant-baseline='central'>
+      <text class='fill-dg-red' x='12' y='61' font-size='9' dominant-baseline='central'>
         (fetch after mount)
       </text>
-      <rect
-        class='fill-dg-gray-tint stroke-dg-gray-border'
-        x='175'
-        y='40'
-        width='90'
-        height='18'
-        rx='3'></rect>
+      <rect class='fill-dg-fill stroke-dg-border' x='175' y='40' width='90' height='18' rx='3'
+      ></rect>
       <text
-        class='fill-dg-gray-ink'
+        class='fill-dg-muted'
         x='220'
         y='49'
         font-size='9'
@@ -142,7 +137,7 @@ import Snippet from '../../components/Snippet.astro';
       >
         first paint: a skeleton shell;
       </text>
-      <text class='fill-dg-clay-ink' x='530' y='55' font-size='9' dominant-baseline='central'>
+      <text class='fill-dg-red' x='530' y='55' font-size='9' dominant-baseline='central'>
         content arrives later, in pieces
       </text>
 
@@ -186,7 +181,7 @@ import Snippet from '../../components/Snippet.astro';
         dominant-baseline='central'>paint: complete</text
       >
       <line
-        class='stroke-dg-gray-border'
+        class='stroke-dg-border'
         x1='447'
         y1='111'
         x2='501'
@@ -236,18 +231,13 @@ import Snippet from '../../components/Snippet.astro';
       >
         Later: an interaction
       </text>
-      <text class='fill-dg-teal-ink-2' x='12' y='199' font-size='9' dominant-baseline='central'>
+      <text class='fill-dg-teal-ink' x='12' y='199' font-size='9' dominant-baseline='central'>
         (a filter, a mutation)
       </text>
-      <rect
-        class='fill-dg-gray-tint stroke-dg-gray-border'
-        x='175'
-        y='178'
-        width='110'
-        height='18'
-        rx='3'></rect>
+      <rect class='fill-dg-fill stroke-dg-border' x='175' y='178' width='110' height='18' rx='3'
+      ></rect>
       <text
-        class='fill-dg-gray-ink'
+        class='fill-dg-muted'
         x='230'
         y='187'
         font-size='9'
@@ -265,7 +255,7 @@ import Snippet from '../../components/Snippet.astro';
         dominant-baseline='central'>client refetch: just this data</text
       >
       <text
-        class='fill-dg-green-strong'
+        class='fill-dg-green-ink'
         x='465'
         y='180'
         font-size='9.5'
@@ -439,18 +429,13 @@ flowchart LR
       >
         The gate chain
       </text>
-      <text class='fill-dg-clay-ink' x='12' y='57' font-size='9' dominant-baseline='central'>
+      <text class='fill-dg-red' x='12' y='57' font-size='9' dominant-baseline='central'>
         (each blocks the next)
       </text>
-      <rect
-        class='fill-dg-gray-tint stroke-dg-gray-border'
-        x='175'
-        y='36'
-        width='80'
-        height='18'
-        rx='3'></rect>
+      <rect class='fill-dg-fill stroke-dg-border' x='175' y='36' width='80' height='18' rx='3'
+      ></rect>
       <text
-        class='fill-dg-gray-ink'
+        class='fill-dg-muted'
         x='215'
         y='45'
         font-size='9'
@@ -497,7 +482,7 @@ flowchart LR
         text-anchor='middle'
         dominant-baseline='central'>page renders</text
       >
-      <text class='fill-dg-clay-ink' x='175' y='64' font-size='9.5'>
+      <text class='fill-dg-red' x='175' y='64' font-size='9.5'>
         a full-page loader covers the whole chain: seconds of TTI on every hard navigation
       </text>
 
@@ -541,7 +526,7 @@ flowchart LR
         dominant-baseline='central'>paint: complete</text
       >
       <line
-        class='stroke-dg-gray-border'
+        class='stroke-dg-border'
         x1='483'
         y1='113'
         x2='527'
@@ -719,13 +704,8 @@ flowchart LR
       </text>
 
       <!-- LEFT PANEL: first paint -->
-      <rect
-        class='fill-dg-white stroke-dg-gray-border'
-        x='30'
-        y='28'
-        width='280'
-        height='234'
-        rx='8'></rect>
+      <rect class='fill-dg-white stroke-dg-border' x='30' y='28' width='280' height='234' rx='8'
+      ></rect>
       <rect class='fill-dg-blue-soft stroke-dg-blue' x='42' y='40' width='256' height='20' rx='6'
       ></rect>
       <text
@@ -796,13 +776,8 @@ flowchart LR
       </text>
 
       <!-- RIGHT PANEL: after interaction -->
-      <rect
-        class='fill-dg-white stroke-dg-gray-border'
-        x='410'
-        y='28'
-        width='280'
-        height='234'
-        rx='8'></rect>
+      <rect class='fill-dg-white stroke-dg-border' x='410' y='28' width='280' height='234' rx='8'
+      ></rect>
       <rect class='fill-dg-blue-soft stroke-dg-blue' x='422' y='40' width='256' height='20' rx='6'
       ></rect>
       <text
@@ -836,12 +811,12 @@ flowchart LR
         height='156'
         rx='6'
         stroke-dasharray='6 4'></rect>
-      <rect class='fill-dg-teal-fill-2' x='434' y='106' width='226' height='10' rx='4'></rect>
-      <rect class='fill-dg-teal-fill-2' x='434' y='122' width='188' height='10' rx='4'></rect>
-      <rect class='fill-dg-teal-fill-2' x='434' y='138' width='214' height='10' rx='4'></rect>
-      <rect class='fill-dg-teal-fill-2' x='434' y='154' width='170' height='10' rx='4'></rect>
-      <rect class='fill-dg-teal-fill-2' x='434' y='170' width='226' height='10' rx='4'></rect>
-      <rect class='fill-dg-teal-fill-2' x='434' y='186' width='202' height='10' rx='4'></rect>
+      <rect class='fill-dg-teal-soft' x='434' y='106' width='226' height='10' rx='4'></rect>
+      <rect class='fill-dg-teal-soft' x='434' y='122' width='188' height='10' rx='4'></rect>
+      <rect class='fill-dg-teal-soft' x='434' y='138' width='214' height='10' rx='4'></rect>
+      <rect class='fill-dg-teal-soft' x='434' y='154' width='170' height='10' rx='4'></rect>
+      <rect class='fill-dg-teal-soft' x='434' y='170' width='226' height='10' rx='4'></rect>
+      <rect class='fill-dg-teal-soft' x='434' y='186' width='202' height='10' rx='4'></rect>
       <text class='fill-dg-teal-ink' x='434' y='240' font-size='9'>
         stale rows held under a refresh indicator
       </text>

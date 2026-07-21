@@ -35,84 +35,47 @@
   --color-red: #d93025;
   --color-red-soft: #fdecea;
 
-  /* ----- diagram palette (dg-*): faithful 1:1 tokens for SVG fill/stroke.
-     Each maps one hex used in the diagrams; consolidate here later. ----- */
+  /* ----- diagram palette (dg-*): consolidated semantic scale.
+     One token per role per hue; edit a value here to recolor everywhere. ----- */
   /* neutral */
+  --color-dg-border: #c9c9c9;
   --color-dg-faint: #999999;
+  --color-dg-fill: #f2f2f2;
   --color-dg-gray: #737373;
-  --color-dg-gray-2: #8b8b8b;
-  --color-dg-gray-3: #bcc4cc;
-  --color-dg-gray-blue-fill: #d4dde8;
-  --color-dg-gray-border: #c9c9c9;
-  --color-dg-gray-border-2: #dfe6ec;
-  --color-dg-gray-fill: #e8e8e8;
-  --color-dg-gray-fill-2: #f2f2f2;
-  --color-dg-gray-ink: #525252;
-  --color-dg-gray-ring: #9ca3af;
-  --color-dg-gray-skel: #eef2f7;
-  --color-dg-gray-tint: #f5f5f5;
-  --color-dg-gray-tint-2: #f7f7f7;
-  --color-dg-gray-tint-3: #eef0f2;
   --color-dg-ink: #171717;
   --color-dg-line: #e0e0e0;
-  --color-dg-line-2: #e5e5e5;
   --color-dg-line-strong: #d4d4d4;
   --color-dg-muted: #666666;
+  --color-dg-ring: #9ca3af;
+  --color-dg-skel: #eef2f7;
   --color-dg-surface: #fafafa;
-  --color-dg-tint: #f7fafc;
   --color-dg-white: #ffffff;
   /* blue */
   --color-dg-blue: #0070f3;
   --color-dg-blue-border: #a9cdf5;
-  --color-dg-blue-fill-2: #d8e8fc;
-  --color-dg-blue-fill-3: #c4dbf7;
-  --color-dg-blue-fill-4: #cfe3fb;
+  --color-dg-blue-fill: #d8e8fc;
   --color-dg-blue-ink: #0757ba;
-  --color-dg-blue-ink-2: #56789e;
-  --color-dg-blue-ink-3: #23507f;
   --color-dg-blue-ink-soft: #527dad;
   --color-dg-blue-soft: #eaf3fe;
-  --color-dg-blue-strong: #0068d6;
-  --color-dg-blue-tint: #f5f9fe;
   /* amber */
   --color-dg-amber: #b45309;
   --color-dg-amber-border: #f3e2c0;
-  --color-dg-amber-border-2: #e0c48f;
   --color-dg-amber-ink: #8a5a00;
   --color-dg-amber-ink-soft: #8f6b2e;
   --color-dg-amber-soft: #fdf3e3;
-  /* clay */
-  --color-dg-clay-ink: #b0483e;
   /* green */
   --color-dg-green: #2ea06d;
-  --color-dg-green-2: #2e7d5b;
-  --color-dg-green-3: #3f8f68;
-  --color-dg-green-fill-2: #bfe3d0;
-  --color-dg-green-fill-3: #a9dcc4;
-  --color-dg-green-fill-4: #d2ead9;
   --color-dg-green-ink: #157a4c;
   --color-dg-green-ink-soft: #3e7d5c;
   --color-dg-green-skel: #cfe9dd;
   --color-dg-green-soft: #e7f5ee;
-  --color-dg-green-strong: #0f7b48;
-  --color-dg-green-tint: #eaf6f0;
   /* teal */
   --color-dg-teal: #0891b2;
-  --color-dg-teal-2: #4d99a8;
-  --color-dg-teal-3: #4a8ba0;
-  --color-dg-teal-border: #bfe4ec;
-  --color-dg-teal-fill: #e6f7fb;
-  --color-dg-teal-fill-2: #d2eef4;
   --color-dg-teal-ink: #0e7490;
-  --color-dg-teal-ink-2: #3f8a99;
-  --color-dg-teal-react: #087ea4;
   --color-dg-teal-soft: #e0f5f9;
-  --color-dg-teal-strong: #0e6a8a;
-  --color-dg-teal-tint: #e6f4f9;
   /* red */
   --color-dg-red: #b3261e;
   --color-dg-red-soft: #fdecea;
-  --color-dg-red-strong: #d93025;
 
   /* Layout constants. */
   --spacing-sidebar: 272px;
