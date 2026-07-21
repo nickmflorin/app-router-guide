@@ -300,7 +300,7 @@ flowchart LR
     With segments, each tab is a page: server-rendered with real content, prefetched by its
     <code>&lt;Link&gt;</code> before the click (<a href='04-ssr.html#prefetching'>§4.5</a>), and
     addressable from anywhere. That leaves one real decision: <strong>where does the tab bar live,
-    and how does it know which tab is active?</strong> There are three URL-backed approaches, and
+    and how does it know which tab is active?</strong> There are four URL-backed approaches, and
     they are not equal. In order of preference:
   </p>
 
@@ -374,6 +374,27 @@ flowchart LR
   <Snippet>
     <pre
       class='code v-good'
+      is:raw><span class="filename">app/programs/[programId]/layout.tsx - the bar is written once, in the persistent frame</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramLayout</span>({ children, params }: <span class="tok-fn">LayoutProps</span>) {
+  <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">ProgramHeader</span> <span class="tok-prop">programId</span>={programId} /&gt;
+      &lt;<span class="tok-fn">ProgramTabs</span> <span class="tok-prop">programId</span>={programId} /&gt;
+      &lt;main&gt;{children}&lt;/main&gt;
+    &lt;/&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The layout owns the header and the bar; each tab's <code>page.tsx</code> swaps in as <code
+        >children</code
+      > beneath them. Because the layout persists across sibling navigations, this markup renders
+      once per visit, not once per tab change.
+    </CodeCaption>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
       is:raw><span class="filename">components/program/ProgramTabs.tsx - the one client leaf a layout-resident bar needs</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useSelectedLayoutSegment } <span class="tok-kw">from</span> <span class="tok-str">"next/navigation"</span>;
 
@@ -406,9 +427,58 @@ flowchart LR
     </CodeCaption>
   </Snippet>
 
-  <h3 id='tabs-param'>Approach 3: a query param (the last URL resort)</h3>
+  <h3 id='tabs-parallel'>Approach 3: a parallel-route slot, when tabs are one region among several</h3>
   <p>
-    The third shape keeps one route and rides the tab on the query string: <code>?tab=roster</code>,
+    A third segment-based shape exists for a specific composition: the tabbed area is <em>part</em>
+    of the page, sitting beside content that must not re-render when the tab changes. Make the
+    tabbed region a <strong>parallel-route slot</strong> (<a
+      href='13-blocking-requests.html#parallel-routes'>§13.3</a
+    >) with its own sub-routes: the tab links are ordinary URLs, only the slot's subtree navigates,
+    and every sibling region keeps its state untouched (<a
+      href='13-blocking-requests.html#slot-subroutes'>§13.3</a
+    >'s sub-navigation mechanics). Each tab is still a real segment, so the per-tab splitting,
+    <code>loading.tsx</code>/<code>error.tsx</code>, and prefetching all survive.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/programs/[programId]/ - the tabbed region is a slot beside the main content</span>[programId]/
+├── layout.tsx              <span class="tok-com">renders children AND the view slot</span>
+├── page.tsx                <span class="tok-com">the always-present summary</span>
+├── default.tsx             <span class="tok-com">children's fallback on hard loads (§13.3)</span>
+└── @view/
+    ├── reports/page.tsx    <span class="tok-com">/programs/[id]/reports</span>
+    ├── roster/page.tsx     <span class="tok-com">/programs/[id]/roster</span>
+    └── default.tsx</pre>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/programs/[programId]/layout.tsx - the slot renders alongside the page</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramLayout</span>({ children, view, params }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      {children}
+      &lt;<span class="tok-fn">ProgramTabs</span> <span class="tok-prop">programId</span>={programId} /&gt;
+      &lt;section <span class="tok-prop">className</span>=<span class="tok-str">"min-h-0 grow"</span>&gt;{view}&lt;/section&gt;
+    &lt;/&gt;
+  );
+}</pre>
+    <CodeCaption>
+      A tab click navigates only the <code>@view</code> slot's subtree; the summary above it never
+      re-renders and never loses state. Slots can also be rendered <em>conditionally</em> by the
+      layout (<code>&#123;isAdmin ? adminView : view&#125;</code>), which is how role-dependent tab
+      sets stay server-decided. The cost is ceremony: slot folders, <code>default.tsx</code> files
+      for hard loads, and a structure worth reserving for pages where independent regions genuinely
+      coexist; when the page <em>is</em> the tabs, Approaches 1 and 2 are simpler.
+    </CodeCaption>
+  </Snippet>
+
+  <h3 id='tabs-param'>Approach 4: a query param (the last URL resort)</h3>
+  <p>
+    The fourth shape keeps one route and rides the tab on the query string: <code>?tab=roster</code>,
     with the server page switching on <code>searchParams</code>. It is still the URL, so it keeps
     the non-negotiables (shareable, refresh-proof, server-resolvable), which places it far above
     <code>useState</code>. But among the URL options it should be the <strong>deliberate last
@@ -418,20 +488,39 @@ flowchart LR
   <Snippet>
     <pre
       class='code v-warn'
-      is:raw><span class="filename">app/programs/[programId]/page.tsx - one route; the tab rides the query string</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramPage</span>({ params, searchParams }: <span class="tok-fn">Props</span>) {
+      is:raw><span class="filename">app/programs/[programId]/page.tsx - one route; the tab rides the query string</span><span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
+
+<span class="tok-com">/* Recover code splitting by hand: each panel is its own chunk, loaded
+   only when its tab is active. Segments would have done this for free. */</span>
+<span class="tok-kw">const</span> PANELS = {
+  <span class="tok-prop">reports</span>: <span class="tok-fn">dynamic</span>(() =&gt; <span class="tok-kw">import</span>(<span class="tok-str">"./panels/Reports"</span>).<span class="tok-fn">then</span>((m) =&gt; m.Reports)),
+  <span class="tok-prop">roster</span>: <span class="tok-fn">dynamic</span>(() =&gt; <span class="tok-kw">import</span>(<span class="tok-str">"./panels/Roster"</span>).<span class="tok-fn">then</span>((m) =&gt; m.Roster)),
+  <span class="tok-prop">settings</span>: <span class="tok-fn">dynamic</span>(() =&gt; <span class="tok-kw">import</span>(<span class="tok-str">"./panels/Settings"</span>).<span class="tok-fn">then</span>((m) =&gt; m.Settings)),
+};
+
+<span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramPage</span>({ params, searchParams }: <span class="tok-fn">Props</span>) {
   <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
   <span class="tok-kw">const</span> { tab = <span class="tok-str">"reports"</span> } = <span class="tok-kw">await</span> searchParams;
+  <span class="tok-kw">const</span> Panel = PANELS[tab] ?? PANELS.reports;
 
   <span class="tok-kw">return</span> (
     &lt;&gt;
       &lt;<span class="tok-fn">ViewTabs</span> <span class="tok-prop">active</span>={tab} /&gt;
-      {tab === <span class="tok-str">"reports"</span> ? &lt;<span class="tok-fn">Reports</span> /&gt; : tab === <span class="tok-str">"roster"</span> ? &lt;<span class="tok-fn">Roster</span> /&gt; : &lt;<span class="tok-fn">Settings</span> /&gt;}
+      <span class="tok-com">{/* Recover the loading boundary by hand: panels that fetch on the
+          server suspend here instead of blocking the whole page. */}</span>
+      &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">PanelSkeleton</span> /&gt;}&gt;
+        &lt;<span class="tok-fn">Panel</span> <span class="tok-prop">programId</span>={programId} /&gt;
+      &lt;/<span class="tok-fn">Suspense</span>&gt;
     &lt;/&gt;
   );
 }</pre>
     <CodeCaption>
-      Legitimate, and sometimes right; but notice that the page is now doing by hand (the switch,
-      the boundaries, the code loading) everything the file system would have done for it.
+      If you take this road, take all of it: the panels must be <code>dynamic()</code> imports (or
+      the inactive tabs' code ships anyway, <a href='08-bundle-size-code-splitting.html'>§8</a>) and
+      any panel that fetches server-side data must sit behind its own <code>Suspense</code> (or its
+      fetch blocks the entire page's render). Notice what that adds up to: the page is hand-building
+      the code loading, the boundary, and the switch that the file system provides for free, and it
+      still has no per-tab <code>error.tsx</code> and no per-tab prefetch.
     </CodeCaption>
   </Snippet>
 
@@ -469,6 +558,238 @@ flowchart LR
     native.
   </p>
 
+  <Diagram>
+    <svg
+      viewBox='0 0 720 248'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
+        What a tab click re-renders, per approach
+      </text>
+      <text x='260' y='34' font-size='9' fill='#737373' text-anchor='middle'>Layout</text>
+      <text x='390' y='34' font-size='9' fill='#737373' text-anchor='middle'>Tab bar</text>
+      <text x='525' y='34' font-size='9' fill='#737373' text-anchor='middle'>Panel</text>
+
+      <!-- row 1 -->
+      <text
+        x='12'
+        y='57'
+        font-size='10.5'
+        fill='#157a4c'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        1 · bar in each page
+      </text>
+      <text x='12' y='70' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+        (zero client JS)
+      </text>
+      <rect x='200' y='50' width='120' height='22' rx='4' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text
+        x='260'
+        y='61'
+        font-size='9'
+        fill='#737373'
+        text-anchor='middle'
+        dominant-baseline='central'>persists</text>
+      <rect x='330' y='50' width='120' height='22' rx='4' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text
+        x='390'
+        y='61'
+        font-size='9'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'>re-renders (cheap)</text>
+      <rect x='460' y='50' width='130' height='22' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text
+        x='525'
+        y='61'
+        font-size='9'
+        fill='#157a4c'
+        text-anchor='middle'
+        dominant-baseline='central'>segment swaps in</text>
+
+      <!-- row 2 -->
+      <text
+        x='12'
+        y='105'
+        font-size='10.5'
+        fill='#157a4c'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        2 · bar in the layout
+      </text>
+      <text x='12' y='118' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+        (one client leaf)
+      </text>
+      <rect x='200' y='98' width='120' height='22' rx='4' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text
+        x='260'
+        y='109'
+        font-size='9'
+        fill='#737373'
+        text-anchor='middle'
+        dominant-baseline='central'>persists</text>
+      <rect x='330' y='98' width='120' height='22' rx='4' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text
+        x='390'
+        y='109'
+        font-size='9'
+        fill='#737373'
+        text-anchor='middle'
+        dominant-baseline='central'>persists</text>
+      <rect x='460' y='98' width='130' height='22' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <text
+        x='525'
+        y='109'
+        font-size='9'
+        fill='#157a4c'
+        text-anchor='middle'
+        dominant-baseline='central'>segment swaps in</text>
+
+      <!-- row 3 -->
+      <text
+        x='12'
+        y='153'
+        font-size='10.5'
+        fill='#0e7490'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        3 · a @view slot
+      </text>
+      <text x='12' y='166' font-size='9' fill='#3f8a99' dominant-baseline='central'>
+        (other regions hold state)
+      </text>
+      <rect x='200' y='146' width='120' height='22' rx='4' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text
+        x='260'
+        y='157'
+        font-size='9'
+        fill='#737373'
+        text-anchor='middle'
+        dominant-baseline='central'>persists + siblings</text>
+      <rect x='330' y='146' width='120' height='22' rx='4' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text
+        x='390'
+        y='157'
+        font-size='9'
+        fill='#737373'
+        text-anchor='middle'
+        dominant-baseline='central'>persists</text>
+      <rect x='460' y='146' width='130' height='22' rx='4' fill='#e0f5f9' stroke='#0891b2'></rect>
+      <text
+        x='525'
+        y='157'
+        font-size='9'
+        fill='#0e7490'
+        text-anchor='middle'
+        dominant-baseline='central'>slot swaps in</text>
+
+      <!-- row 4 -->
+      <text
+        x='12'
+        y='201'
+        font-size='10.5'
+        fill='#8a5a00'
+        font-weight='500'
+        dominant-baseline='central'
+      >
+        4 · ?tab= param
+      </text>
+      <text x='12' y='214' font-size='9' fill='#8f6b2e' dominant-baseline='central'>
+        (one module; no prefetch)
+      </text>
+      <rect x='200' y='194' width='120' height='22' rx='4' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <text
+        x='260'
+        y='205'
+        font-size='9'
+        fill='#737373'
+        text-anchor='middle'
+        dominant-baseline='central'>persists</text>
+      <rect x='330' y='194' width='120' height='22' rx='4' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text
+        x='390'
+        y='205'
+        font-size='9'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'>re-renders</text>
+      <rect x='460' y='194' width='130' height='22' rx='4' fill='#fdf3e3' stroke='#b45309'></rect>
+      <text
+        x='525'
+        y='205'
+        font-size='9'
+        fill='#8a5a00'
+        text-anchor='middle'
+        dominant-baseline='central'>re-renders with page</text>
+      <text x='360' y='242' font-size='9.5' fill='#737373' text-anchor='middle'>
+        green and cyan cells keep per-tab splitting, loading/error files, and prefetch; amber cells
+        do not
+      </text>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart LR
+  subgraph T1["1 · bar in each page"]
+    direction LR
+    p1("layout: persists"):::neutral --> p2("bar: re-renders, cheap"):::amber
+    p2 --> p3("panel: segment swaps in"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style T1 fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#525252
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+%%split%%
+flowchart LR
+  subgraph T2["2 · bar in the layout"]
+    direction LR
+    q1("layout: persists"):::neutral --> q2("bar: persists"):::neutral
+    q2 --> q3("panel: segment swaps in"):::green
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style T2 fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#525252
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+%%split%%
+flowchart LR
+  subgraph T3["3 · a @view slot"]
+    direction LR
+    r1("layout + siblings: persist"):::neutral --> r2("bar: persists"):::neutral
+    r2 --> r3("panel: slot swaps in"):::cyan
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style T3 fill:#ffffff,stroke:#e0e0e0,color:#0e7490,rx:8px,ry:8px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#525252
+  classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+%%split%%
+flowchart LR
+  subgraph T4["4 · ?tab= param"]
+    direction LR
+    s1("layout: persists"):::neutral --> s2("bar: re-renders"):::amber
+    s2 --> s3("panel: re-renders with the page"):::amber
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style T4 fill:#ffffff,stroke:#e0e0e0,color:#8a5a00,rx:8px,ry:8px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#525252
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+</pre>
+
+    <Fragment slot='caption'>
+      The same tab click, four blast radii. Approaches 1 and 2 swap a route segment beneath a
+      persistent layout (2 additionally never repaints the bar); Approach 3 confines the swap to
+      one slot while sibling regions hold their state; Approach 4 re-renders the whole page
+      segment, and is the only row where the panel loses per-tab splitting, loading/error files,
+      and prefetching.
+    </Fragment>
+  </Diagram>
+
   <table class='tbl'>
     <thead>
       <tr>
@@ -495,7 +816,14 @@ flowchart LR
         <td>Yes</td>
       </tr>
       <tr>
-        <td><strong>3 · Query param</strong></td>
+        <td><strong>3 · Parallel-route slot</strong></td>
+        <td>One small leaf</td>
+        <td>Bar + sibling regions never repaint</td>
+        <td>Yes (slot sub-routes)</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td><strong>4 · Query param</strong></td>
         <td>None required</td>
         <td>Re-renders with the page</td>
         <td>No: one module, hand-built boundaries</td>
@@ -505,10 +833,11 @@ flowchart LR
   </table>
 
   <p>
-    So the full ladder reads:
-    <strong>segments (bar in the page, or in the layout with the one-leaf indicator), then a search
-    param, then, for genuinely cosmetic switches only, state</strong>. Each step down should be a
-    deliberate decision, not a habit.
+        So the full ladder reads:
+    <strong>segments (bar in the page, or in the layout with the one-leaf indicator), a parallel
+    slot when the tabs share the page with regions that must hold state, then a search param, then,
+    for genuinely cosmetic switches only, state</strong>. Each step down should be a deliberate
+    decision, not a habit.
     <Chip k='next' />
     <Chip k='very' />
   </p>

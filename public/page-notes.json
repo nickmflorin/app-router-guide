@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-21T15:17:10.035Z",
+  "updatedAt": "2026-07-21T15:41:25.398Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -1509,8 +1509,22 @@
         "tag": "pre",
         "snippet": "components/program/ProgramTabs.tsx\"use client\";import { usePathname } from \"next/navigatio"
       },
-      "resolution": "Research reported in chat, then (per your follow-up) §9.3 restructured into a documented three-approach comparison. Approach 1: segments with the bar in each page: fully-server ProgramTabs taking an active prop, each page declaring its own identity; benefits (zero client JS, active state never unknown) and costs (cheap per-navigation re-render, every sibling must render it) stated. Approach 2: segments with the bar in the layout: the purpose-built useSelectedLayoutSegment client leaf (preferred over usePathname string-matching), never-repaints guarantee vs one small hydrated boundary; explains WHY it must be client (layouts persist without re-rendering). Approach 3: query param, marked v-warn and ranked the deliberate last URL choice with the detailed why: no per-tab code splitting (router splits by segment), no per-tab loading/error files, coarser re-renders and no per-tab prefetch, wrong semantics (params parameterize a view; tabs ARE views), plus when it is genuinely fine and the §9.4 optimistic recipe pointer. Comparison table + updated closing ladder. §10.4 captions now name useSelectedLayoutSegment.",
-      "resolvedAt": "2026-07-20"
+      "resolution": "Research reported in chat, then (per your follow-up) §9.3 restructured into a documented three-approach comparison. Approach 1: segments with the bar in each page: fully-server ProgramTabs taking an active prop, each page declaring its own identity; benefits (zero client JS, active state never unknown) and costs (cheap per-navigation re-render, every sibling must render it) stated. Approach 2: segments with the bar in the layout: the purpose-built useSelectedLayoutSegment client leaf (preferred over usePathname string-matching), never-repaints guarantee vs one small hydrated boundary; explains WHY it must be client (layouts persist without re-rendering). Approach 3: query param, marked v-warn and ranked the deliberate last URL choice with the detailed why: no per-tab code splitting (router splits by segment), no per-tab loading/error files, coarser re-renders and no per-tab prefetch, wrong semantics (params parameterize a view; tabs ARE views), plus when it is genuinely fine and the §9.4 optimistic recipe pointer. Comparison table + updated closing ladder. §10.4 captions now name useSelectedLayoutSegment."
+    },
+    {
+      "id": "nmrutjyb3",
+      "page": "04-ssr.html",
+      "ts": "2026-07-21T15:39:18.255Z",
+      "status": "open",
+      "text": "would be helpful here to have a smaller subsection that talks a little bit about hte HTML middleman thing, where the pattern emerging now adays is that the data layer is your sSR components, and that microfrontends that can encapsulate direct server data access with the UI and then expose those UI pieces as server rendered components is becoming more of a norm, rather than a data layer API that returns raw data and is then rendered by clients client side (or sometimes even server side too)",
+      "target": {
+        "anchor": "output-not-machinery",
+        "path": [
+          26
+        ],
+        "tag": "h3",
+        "snippet": "The API is your HTML"
+      }
     }
   ]
 }
