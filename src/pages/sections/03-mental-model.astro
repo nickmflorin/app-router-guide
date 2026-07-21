@@ -57,13 +57,13 @@ import CompareCol from '../../components/CompareCol.astro';
 
   <Diagram>
     <svg
-      viewBox='0 0 720 216'
+      viewBox='0 0 720 334'
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
       <defs>
         <marker
-          id='arr'
+          id='aEvo'
           viewBox='0 0 10 10'
           refX='8'
           refY='5'
@@ -80,160 +80,138 @@ import CompareCol from '../../components/CompareCol.astro';
             stroke-linejoin='round'></path>
         </marker>
       </defs>
-      <!-- request -->
-      <rect x='10' y='20' width='120' height='52' rx='8' fill='#ffffff' stroke='#d4d4d4'></rect>
-      <text x='70' y='42' font-size='12' fill='#171717' text-anchor='middle'>Browser</text>
-      <text x='70' y='58' font-size='10.5' fill='#666666' text-anchor='middle'>
-        GET /programs/42
+      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
+        One response, then the page evolves: first paint, two parallel phases, settled
       </text>
+      <text x='20' y='34' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        1 · first paint
+      </text>
+      <rect x='20' y='44' width='170' height='116' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='28' y='52' width='154' height='12' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <circle cx='172' cy='58' r='3.5' fill='#ffffff' stroke='#9ca3af' stroke-width='1.5'></circle>
+      <rect x='28' y='70' width='26' height='80' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <rect x='60' y='70' width='122' height='20' rx='4' fill='#fdf3e3' stroke='#b45309' stroke-dasharray='4 3'></rect>
+      <circle cx='172' cy='80' r='3.5' fill='#ffffff' stroke='#9ca3af' stroke-width='1.5'></circle>
+      <rect x='60' y='96' width='122' height='54' rx='4' fill='#fdf3e3' stroke='#b45309' stroke-dasharray='4 3'></rect>
+      <text x='20' y='172' font-size='8.5' fill='#737373' dominant-baseline='central'>
+        known HTML painted; fallbacks hold reserved space;
+      </text>
+      <text x='20' y='184' font-size='8.5' fill='#737373' dominant-baseline='central'>
+        client leaves are pre-rendered markup, not yet live
+      </text>
+      <text x='278' y='34' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        2a · regions stream in
+      </text>
+      <rect x='278' y='44' width='170' height='116' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='286' y='52' width='154' height='12' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <circle cx='430' cy='58' r='3.5' fill='#ffffff' stroke='#9ca3af' stroke-width='1.5'></circle>
+      <rect x='286' y='70' width='26' height='80' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <rect x='318' y='70' width='122' height='20' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <circle cx='430' cy='80' r='3.5' fill='#ffffff' stroke='#9ca3af' stroke-width='1.5'></circle>
+      <rect x='318' y='96' width='122' height='54' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <rect x='326' y='110' width='106' height='6' rx='3' fill='#cfe9dd'></rect>
+      <rect x='326' y='122' width='86' height='6' rx='3' fill='#cfe9dd'></rect>
+      <rect x='326' y='134' width='98' height='6' rx='3' fill='#cfe9dd'></rect>
+      <rect x='326' y='77' width='80' height='6' rx='3' fill='#cfe9dd'></rect>
+      <text x='278' y='172' font-size='8.5' fill='#737373' dominant-baseline='central'>
+        fallbacks replaced by streamed server HTML, in place
+      </text>
+      <text x='278' y='188' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        2b · leaves hydrate
+      </text>
+      <rect x='278' y='198' width='170' height='116' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='286' y='206' width='154' height='12' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <circle cx='430' cy='212' r='3.5' fill='#e0f5f9' stroke='#0891b2' stroke-width='1.5'></circle>
+      <rect x='286' y='224' width='26' height='80' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <rect x='318' y='224' width='122' height='20' rx='4' fill='#fdf3e3' stroke='#b45309' stroke-dasharray='4 3'></rect>
+      <circle cx='430' cy='234' r='3.5' fill='#e0f5f9' stroke='#0891b2' stroke-width='1.5'></circle>
+      <rect x='318' y='250' width='122' height='54' rx='4' fill='#fdf3e3' stroke='#b45309' stroke-dasharray='4 3'></rect>
+      <text x='278' y='326' font-size='8.5' fill='#737373' dominant-baseline='central'>
+        JS attaches handlers to the pre-rendered leaves
+      </text>
+      <text x='536' y='110' font-size='10.5' fill='#171717' font-weight='500' dominant-baseline='central'>
+        3 · settled
+      </text>
+      <rect x='536' y='120' width='170' height='116' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='544' y='128' width='154' height='12' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <circle cx='688' cy='134' r='3.5' fill='#e0f5f9' stroke='#0891b2' stroke-width='1.5'></circle>
+      <rect x='544' y='146' width='26' height='80' rx='3' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <rect x='576' y='146' width='122' height='20' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <circle cx='688' cy='156' r='3.5' fill='#e0f5f9' stroke='#0891b2' stroke-width='1.5'></circle>
+      <rect x='576' y='172' width='122' height='54' rx='4' fill='#e7f5ee' stroke='#2ea06d'></rect>
+      <rect x='584' y='186' width='106' height='6' rx='3' fill='#cfe9dd'></rect>
+      <rect x='584' y='198' width='86' height='6' rx='3' fill='#cfe9dd'></rect>
+      <rect x='584' y='210' width='98' height='6' rx='3' fill='#cfe9dd'></rect>
+      <rect x='584' y='153' width='80' height='6' rx='3' fill='#cfe9dd'></rect>
+      <text x='536' y='248' font-size='8.5' fill='#737373' dominant-baseline='central'>
+        every region real, every leaf live:
+      </text>
+      <text x='536' y='260' font-size='8.5' fill='#737373' dominant-baseline='central'>
+        complete and fully interactive
+      </text>
+      <line x1='190' y1='102' x2='234' y2='102' stroke='#737373' stroke-width='1.5'></line>
       <line
-        x1='130'
-        y1='46'
-        x2='176'
-        y2='46'
+        x1='234'
+        y1='102'
+        x2='274'
+        y2='102'
         stroke='#737373'
         stroke-width='1.5'
-        marker-end='url(#arr)'></line>
-
-      <!-- server -->
-      <rect
-        x='180'
-        y='2'
-        width='230'
-        height='140'
-        rx='8'
-        fill='#eaf3fe'
-        stroke='#0070f3'
-        stroke-width='1.5'></rect>
-      <text x='295' y='24' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
-        Server
-      </text>
-      <rect x='194' y='34' width='202' height='26' rx='5' fill='#d8e8fc'></rect>
-      <text x='205' y='51' font-size='10.5' fill='#23507f'>render server components</text>
-      <rect x='194' y='66' width='202' height='26' rx='5' fill='#d8e8fc'></rect>
-      <text x='205' y='83' font-size='10.5' fill='#23507f'> await data: parallel, deduped </text>
-      <rect x='194' y='98' width='202' height='26' rx='5' fill='#d8e8fc'></rect>
-      <text x='205' y='115' font-size='10.5' fill='#23507f'>suspend the not-yet-known</text>
-      <line
-        x1='410'
-        y1='46'
-        x2='456'
-        y2='46'
+        marker-end='url(#aEvo)'></line>
+      <path
+        d='M 234 102 L 234 256 L 274 256'
+        fill='none'
         stroke='#737373'
         stroke-width='1.5'
-        marker-end='url(#arr)'></line>
-
-      <!-- stream -->
-      <rect x='460' y='2' width='250' height='140' rx='8' fill='#ffffff' stroke='#d4d4d4'></rect>
-      <text x='585' y='24' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
-        Streamed response
+        marker-end='url(#aEvo)'></path>
+      <text x='206' y='166' font-size='8.5' fill='#737373' dominant-baseline='central'>
+        in parallel
       </text>
-      <rect
-        x='474'
-        y='34'
-        width='222'
-        height='26'
-        rx='5'
-        fill='#e7f5ee'
-        stroke='#2ea06d'
-        stroke-width='1'></rect>
-      <text x='485' y='51' font-size='10.5' fill='#157a4c'> HTML: structure + known content </text>
-      <rect
-        x='474'
-        y='66'
-        width='222'
-        height='26'
-        rx='5'
-        fill='#fdf3e3'
-        stroke='#b45309'
-        stroke-width='1'
-        stroke-dasharray='4 3'></rect>
-      <text x='485' y='83' font-size='10.5' fill='#8a5a00'> fallbacks in reserved containers </text>
-      <rect
-        x='474'
-        y='98'
-        width='222'
-        height='26'
-        rx='5'
-        fill='#d8e8fc'
-        stroke='#0070f3'
-        stroke-width='1'></rect>
-      <text x='485' y='115' font-size='10.5' fill='#0757ba'>
-        RSC payload + JS for client leaves
-      </text>
-
-      <!-- timeline: first paint, then streaming + hydration proceed together -->
-      <line x1='10' y1='175' x2='710' y2='175' stroke='#d4d4d4' stroke-width='1'></line>
-      <line x1='320' y1='163' x2='660' y2='163' stroke='#c9c9c9' stroke-dasharray='3 3'></line>
-      <text x='490' y='156' font-size='9' fill='#737373' text-anchor='middle'>
-        concurrent, not sequential
-      </text>
-      <circle cx='120' cy='175' r='5' fill='#157a4c'></circle>
-      <text x='120' y='197' font-size='10.5' fill='#157a4c' text-anchor='middle'>
-        first paint: real content,
-      </text>
-      <text x='120' y='211' font-size='10.5' fill='#157a4c' text-anchor='middle'>
-        stable layout
-      </text>
-      <circle cx='360' cy='175' r='5' fill='#b45309'></circle>
-      <text x='360' y='197' font-size='10.5' fill='#8a5a00' text-anchor='middle'>
-        suspended regions stream in,
-      </text>
-      <text x='360' y='211' font-size='10.5' fill='#8a5a00' text-anchor='middle'>
-        replacing fallbacks in place
-      </text>
-      <circle cx='600' cy='175' r='5' fill='#0891b2'></circle>
-      <text x='600' y='197' font-size='10.5' fill='#0891b2' text-anchor='middle'>
-        leaves hydrate as they arrive;
-      </text>
-      <text x='600' y='211' font-size='10.5' fill='#0891b2' text-anchor='middle'>
-        interactivity grows piece by piece
-      </text>
+      <path
+        d='M 448 102 L 492 102 L 492 172'
+        fill='none'
+        stroke='#737373'
+        stroke-width='1.5'></path>
+      <path
+        d='M 448 256 L 492 256 L 492 184'
+        fill='none'
+        stroke='#737373'
+        stroke-width='1.5'></path>
+      <line
+        x1='492'
+        y1='178'
+        x2='532'
+        y2='178'
+        stroke='#737373'
+        stroke-width='1.5'
+        marker-end='url(#aEvo)'></line>
     </svg>
 
     <pre
       slot='mermaid'
       is:raw>
 flowchart LR
-  B("Browser"):::neutral
-  subgraph S["Server"]
-    direction TB
-    S1("render server components"):::bluesub
-    S2("await data: parallel, deduped"):::bluesub
-    S3("suspend the not-yet-known"):::bluesub
-  end
-  subgraph R["Streamed response"]
-    direction TB
-    R1("HTML: structure + known content"):::green
-    R2("fallbacks in reserved containers"):::amberdash
-    R3("RSC payload + JS for client leaves"):::blue
-  end
-  B -->|"GET /programs/42"| S
-  S --> R
-  R --> P1("first paint: real content,<br/>stable layout"):::green
-  P1 --> P2("suspended regions stream in,<br/>replacing fallbacks in place"):::amberdash
-  P1 --> P3("leaves hydrate as they arrive:<br/>concurrent with the streaming"):::cyan
+  FP("1 · first paint<br/>known HTML + reserved fallbacks;<br/>leaves are markup, not yet live"):::green
+  FP --> ST("2a · regions stream in<br/>fallbacks replaced by server HTML, in place"):::amber
+  FP --> HY("2b · leaves hydrate<br/>JS attaches to the pre-rendered markup"):::cyan
+  ST --> SET("3 · settled<br/>complete and fully interactive"):::green
+  HY --> SET
   linkStyle default stroke:#737373,stroke-width:1.5px
-  style S fill:#eaf3fe,stroke:#0070f3,color:#0757ba,rx:8px,ry:8px
-  style R fill:#ffffff,stroke:#d4d4d4,color:#171717,rx:8px,ry:8px
-  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#171717
-  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
-  classDef bluesub fill:#d8e8fc,stroke:#d8e8fc,color:#0757ba
   classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
-  classDef amberdash fill:#fdf3e3,stroke:#b45309,color:#8a5a00,stroke-dasharray:4 3
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
   classDef cyan fill:#e0f5f9,stroke:#0891b2,color:#0e7490
 </pre>
 
     <Fragment slot='caption'>
-      One request. The server resolves everything knowable, streams structure immediately, and the
-      unknown fills in without moving anything. No client-side fetch chain, no
-      spinner-then-layout-shift choreography.
-     Note the timeline's second half: this is what happens on the <em>first
-      page load</em>. After the first paint, the two remaining phases overlap rather than queue:
-      suspended regions keep streaming in from the server while the client leaves that have already
-      arrived hydrate and become interactive (selective hydration, <a
-        href='11-suspense-streaming.html#streaming-vitals'>§11.2</a>). The page doesn't wait to be
-      whole before it starts being interactive.
+      The first page load, in the same visual language as the anatomy figure: blue is known and
+      painted, amber-dashed is a reserved fallback, and the small ring is an interactive leaf. The
+      server's single streamed response delivers everything in frame 1: real HTML for the known,
+      fallbacks holding reserved space for the unknown, pre-rendered markup for the client leaves,
+      and the RSC payload + leaf JS behind them. Then the path forks and both branches run at once:
+      suspended regions stream in and replace their fallbacks (2a) while the JavaScript hydrates the
+      already-visible leaves (2b), and the branches merge into the settled page. Nothing waits for
+      anything it doesn't depend on: content doesn't wait for interactivity, and interactivity
+      doesn't wait for the slowest fetch.
     </Fragment>
   </Diagram>
 
