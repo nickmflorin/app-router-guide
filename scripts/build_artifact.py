@@ -192,6 +192,17 @@ script = r"""
 # Draft mode needs the UNSTRIPPED css (public/) so the DRAFT badge stays
 # styled; final mode uses the built css, which has the draft layer removed.
 css = read("build/output/app-router-guide_html/assets/style.css") if ARGS.final else read("public/assets/style.css")
+
+# The Tailwind bundle Astro emits (theme tokens + the fill-dg-*/stroke-dg-*
+# utilities the diagrams now use) lives in _astro/*.css and is linked per page
+# in the folder build. The single file has no <link>s, so inline it too or the
+# diagrams lose all color. Built by `astro build`, so it exists in both modes.
+import glob as _glob
+tailwind_css = "".join(
+    read(os.path.relpath(p, ROOT)) + "\n"
+    for p in sorted(_glob.glob(os.path.join(ROOT, "build/output/app-router-guide_html/_astro/*.css")))
+)
+
 extra_css = """
 :root { color-scheme: light; }
 section.chapter { display: none; }
@@ -206,6 +217,7 @@ doc = f"""<!DOCTYPE html>
 <title>The App Router Guide — Craft Education{'' if ARGS.final else ' (DRAFT)'}</title>
 <link rel="icon" href="{logo_uri}">
 <style>
+{tailwind_css}
 {css}
 {extra_css}
 </style>

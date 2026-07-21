@@ -74,9 +74,9 @@ import CompareCol from '../../components/CompareCol.astro';
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-amber'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#b45309'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
@@ -91,154 +91,202 @@ import CompareCol from '../../components/CompareCol.astro';
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-blue'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#0070f3'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
         </marker>
       </defs>
 
-      <text x='180' y='12' font-size='10.5' fill='#8a5a00' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-amber-ink'
+        x='180'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Today: the browser assembles the page
       </text>
-      <text x='540' y='12' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-blue-ink'
+        x='540'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         The model: the server sends the page
       </text>
-      <line x1='360' y1='2' x2='360' y2='426' stroke='#e0e0e0'></line>
+      <line class='stroke-dg-line' x1='360' y1='2' x2='360' y2='426'></line>
 
       <!-- LEFT: current architecture -->
-      <rect x='60' y='28' width='240' height='44' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='180' y='46' font-size='11' fill='#171717' text-anchor='middle'>
+      <rect class='fill-dg-white stroke-dg-gray-border' x='60' y='28' width='240' height='44' rx='8'
+      ></rect>
+      <text class='fill-dg-ink' x='180' y='46' font-size='11' text-anchor='middle'>
         Browser requests /programs/42
       </text>
-      <text x='180' y='61' font-size='9.5' fill='#737373' text-anchor='middle'>
+      <text class='fill-dg-gray' x='180' y='61' font-size='9.5' text-anchor='middle'>
         the user is waiting from here
       </text>
 
       <line
+        class='stroke-dg-amber'
         x1='180'
         y1='72'
         x2='180'
         y2='106'
-        stroke='#b45309'
         stroke-width='1.5'
         marker-end='url(#a16am)'></line>
-      <text x='192' y='92' font-size='9.5' fill='#737373'>round trip 1</text>
+      <text class='fill-dg-gray' x='192' y='92' font-size='9.5'>round trip 1</text>
 
-      <rect x='60' y='110' width='240' height='44' rx='8' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='180' y='128' font-size='11' fill='#8a5a00' text-anchor='middle'>
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='60' y='110' width='240' height='44' rx='8'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='180' y='128' font-size='11' text-anchor='middle'>
         Server returns an empty shell
       </text>
-      <text x='180' y='143' font-size='9.5' fill='#8f6b2e' text-anchor='middle'>
+      <text class='fill-dg-amber-ink-soft' x='180' y='143' font-size='9.5' text-anchor='middle'>
         no content in the HTML, just a bundle
       </text>
 
       <line
+        class='stroke-dg-amber'
         x1='180'
         y1='154'
         x2='180'
         y2='188'
-        stroke='#b45309'
         stroke-width='1.5'
         marker-end='url(#a16am)'></line>
-      <text x='192' y='174' font-size='9.5' fill='#737373'>bundle + hydration</text>
+      <text class='fill-dg-gray' x='192' y='174' font-size='9.5'>bundle + hydration</text>
 
-      <rect x='60' y='192' width='240' height='44' rx='8' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='180' y='210' font-size='11' fill='#8a5a00' text-anchor='middle'>
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='60' y='192' width='240' height='44' rx='8'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='180' y='210' font-size='11' text-anchor='middle'>
         Bundle downloads, React hydrates
       </text>
-      <text x='180' y='225' font-size='9.5' fill='#8f6b2e' text-anchor='middle'>
+      <text class='fill-dg-amber-ink-soft' x='180' y='225' font-size='9.5' text-anchor='middle'>
         effects fire only after mount
       </text>
 
       <line
+        class='stroke-dg-amber'
         x1='180'
         y1='236'
         x2='180'
         y2='270'
-        stroke='#b45309'
         stroke-width='1.5'
         marker-end='url(#a16am)'></line>
-      <text x='192' y='256' font-size='9.5' fill='#737373'>effects fire</text>
+      <text class='fill-dg-gray' x='192' y='256' font-size='9.5'>effects fire</text>
 
-      <rect x='60' y='274' width='240' height='44' rx='8' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='180' y='292' font-size='11' fill='#8a5a00' text-anchor='middle'>
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='60' y='274' width='240' height='44' rx='8'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='180' y='292' font-size='11' text-anchor='middle'>
         fetch("/api/proxy/programs/42")
       </text>
-      <text x='180' y='307' font-size='9.5' fill='#8f6b2e' text-anchor='middle'>
+      <text class='fill-dg-amber-ink-soft' x='180' y='307' font-size='9.5' text-anchor='middle'>
         route handler adds a hop upstream
       </text>
 
       <line
+        class='stroke-dg-amber'
         x1='180'
         y1='318'
         x2='180'
         y2='352'
-        stroke='#b45309'
         stroke-width='1.5'
         marker-end='url(#a16am)'></line>
-      <text x='192' y='338' font-size='9.5' fill='#737373'> round trips 2 + 3 (proxy hop) </text>
+      <text class='fill-dg-gray' x='192' y='338' font-size='9.5'>
+        round trips 2 + 3 (proxy hop)
+      </text>
 
-      <rect x='60' y='356' width='240' height='44' rx='8' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='180' y='374' font-size='11' fill='#8a5a00' text-anchor='middle'>
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='60' y='356' width='240' height='44' rx='8'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='180' y='374' font-size='11' text-anchor='middle'>
         Data arrives, content renders
       </text>
-      <text x='180' y='389' font-size='9.5' fill='#8f6b2e' text-anchor='middle'>
+      <text class='fill-dg-amber-ink-soft' x='180' y='389' font-size='9.5' text-anchor='middle'>
         skeletons and spinners until now
       </text>
 
-      <text x='180' y='424' font-size='10.5' fill='#d93025' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-red-strong'
+        x='180'
+        y='424'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         First content: after 3 round trips + hydration
       </text>
 
       <!-- RIGHT: the server-first model -->
-      <rect x='420' y='28' width='240' height='44' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='540' y='46' font-size='11' fill='#171717' text-anchor='middle'>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='420'
+        y='28'
+        width='240'
+        height='44'
+        rx='8'></rect>
+      <text class='fill-dg-ink' x='540' y='46' font-size='11' text-anchor='middle'>
         Browser requests /programs/42
       </text>
-      <text x='540' y='61' font-size='9.5' fill='#737373' text-anchor='middle'>
+      <text class='fill-dg-gray' x='540' y='61' font-size='9.5' text-anchor='middle'>
         the user is waiting from here
       </text>
 
       <line
+        class='stroke-dg-blue'
         x1='540'
         y1='72'
         x2='540'
         y2='188'
-        stroke='#0070f3'
         stroke-width='1.5'
         marker-end='url(#a16bl)'></line>
-      <text x='552' y='134' font-size='9.5' fill='#737373'>one round trip, one hop</text>
+      <text class='fill-dg-gray' x='552' y='134' font-size='9.5'>one round trip, one hop</text>
 
-      <rect x='420' y='192' width='240' height='44' rx='8' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='540' y='210' font-size='11' fill='#0757ba' text-anchor='middle'>
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='420' y='192' width='240' height='44' rx='8'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='540' y='210' font-size='11' text-anchor='middle'>
         Async server component runs
       </text>
-      <text x='540' y='225' font-size='9.5' fill='#527dad' text-anchor='middle'>
+      <text class='fill-dg-blue-ink-soft' x='540' y='225' font-size='9.5' text-anchor='middle'>
         calls the upstream API directly
       </text>
 
       <line
+        class='stroke-dg-blue'
         x1='540'
         y1='236'
         x2='540'
         y2='352'
-        stroke='#0070f3'
         stroke-width='1.5'
         marker-end='url(#a16bl)'></line>
-      <text x='552' y='298' font-size='9.5' fill='#737373'>streamed as it resolves</text>
+      <text class='fill-dg-gray' x='552' y='298' font-size='9.5'>streamed as it resolves</text>
 
-      <rect x='420' y='356' width='240' height='44' rx='8' fill='#e7f5ee' stroke='#0f7b48'></rect>
-      <text x='540' y='374' font-size='11' fill='#0f7b48' text-anchor='middle'>
+      <rect
+        class='fill-dg-green-soft stroke-dg-green-strong'
+        x='420'
+        y='356'
+        width='240'
+        height='44'
+        rx='8'></rect>
+      <text class='fill-dg-green-strong' x='540' y='374' font-size='11' text-anchor='middle'>
         HTML streams, content included
       </text>
-      <text x='540' y='389' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
+      <text class='fill-dg-green-ink-soft' x='540' y='389' font-size='9.5' text-anchor='middle'>
         client JS only for interactive leaves
       </text>
 
-      <text x='540' y='424' font-size='10.5' fill='#0f7b48' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-strong'
+        x='540'
+        y='424'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         First content: in the first response
       </text>
     </svg>

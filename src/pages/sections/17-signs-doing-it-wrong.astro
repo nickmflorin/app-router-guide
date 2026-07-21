@@ -55,9 +55,9 @@ import CompareCol from '../../components/CompareCol.astro';
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-gray'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#737373'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
@@ -72,88 +72,145 @@ import CompareCol from '../../components/CompareCol.astro';
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-green-strong'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#0f7b48'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
         </marker>
       </defs>
 
-      <text x='360' y='12' font-size='11' fill='#171717' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-ink'
+        x='360'
+        y='12'
+        font-size='11'
+        text-anchor='middle'
+        font-weight='500'
+      >
         The one interrogation, top to bottom
       </text>
 
-      <rect x='40' y='30' width='280' height='44' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='180' y='57' font-size='11' fill='#171717' text-anchor='middle'>
+      <rect class='fill-dg-white stroke-dg-gray-border' x='40' y='30' width='280' height='44' rx='8'
+      ></rect>
+      <text class='fill-dg-ink' x='180' y='57' font-size='11' text-anchor='middle'>
         You need to render UI or read some data
       </text>
 
       <line
+        class='stroke-dg-gray'
         x1='180'
         y1='74'
         x2='180'
         y2='104'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#a15sp)'></line>
 
-      <rect x='40' y='108' width='280' height='54' rx='8' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='180' y='131' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='40' y='108' width='280' height='54' rx='8'
+      ></rect>
+      <text
+        class='fill-dg-blue-ink'
+        x='180'
+        y='131'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Why can't this be on the server?
       </text>
-      <text x='180' y='148' font-size='9.5' fill='#527dad' text-anchor='middle'>
+      <text class='fill-dg-blue-ink-soft' x='180' y='148' font-size='9.5' text-anchor='middle'>
         the default question, asked first
       </text>
 
       <line
+        class='stroke-dg-green-strong'
         x1='320'
         y1='135'
         x2='428'
         y2='135'
-        stroke='#0f7b48'
         stroke-width='1.5'
         marker-end='url(#a15out)'></line>
-      <rect x='432' y='111' width='248' height='48' rx='8' fill='#e7f5ee' stroke='#0f7b48'></rect>
-      <text x='556' y='132' font-size='10.5' fill='#0f7b48' text-anchor='middle' font-weight='500'>
+      <rect
+        class='fill-dg-green-soft stroke-dg-green-strong'
+        x='432'
+        y='111'
+        width='248'
+        height='48'
+        rx='8'></rect>
+      <text
+        class='fill-dg-green-strong'
+        x='556'
+        y='132'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         It can: server component.
       </text>
-      <text x='556' y='148' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
+      <text class='fill-dg-green-ink-soft' x='556' y='148' font-size='9.5' text-anchor='middle'>
         no client JS, no spinner
       </text>
 
       <line
+        class='stroke-dg-gray'
         x1='180'
         y1='162'
         x2='180'
         y2='200'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#a15sp)'></line>
-      <text x='192' y='185' font-size='9.5' fill='#737373'> it genuinely needs the browser </text>
+      <text class='fill-dg-gray' x='192' y='185' font-size='9.5'>
+        it genuinely needs the browser
+      </text>
 
-      <rect x='40' y='204' width='280' height='54' rx='8' fill='#e6f4f9' stroke='#087ea4'></rect>
-      <text x='180' y='227' font-size='10.5' fill='#0e6a8a' text-anchor='middle' font-weight='500'>
+      <rect
+        class='fill-dg-teal-tint stroke-dg-teal-react'
+        x='40'
+        y='204'
+        width='280'
+        height='54'
+        rx='8'></rect>
+      <text
+        class='fill-dg-teal-strong'
+        x='180'
+        y='227'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         How far down can I push it?
       </text>
-      <text x='180' y='244' font-size='9.5' fill='#4a8ba0' text-anchor='middle'>
+      <text class='fill-dg-teal-3' x='180' y='244' font-size='9.5' text-anchor='middle'>
         find the smallest interactive leaf
       </text>
 
       <line
+        class='stroke-dg-green-strong'
         x1='320'
         y1='231'
         x2='428'
         y2='231'
-        stroke='#0f7b48'
         stroke-width='1.5'
         marker-end='url(#a15out)'></line>
-      <rect x='432' y='207' width='248' height='48' rx='8' fill='#e7f5ee' stroke='#0f7b48'></rect>
-      <text x='556' y='228' font-size='10.5' fill='#0f7b48' text-anchor='middle' font-weight='500'>
+      <rect
+        class='fill-dg-green-soft stroke-dg-green-strong'
+        x='432'
+        y='207'
+        width='248'
+        height='48'
+        rx='8'></rect>
+      <text
+        class='fill-dg-green-strong'
+        x='556'
+        y='228'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Isolate that one leaf.
       </text>
-      <text x='556' y='244' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
+      <text class='fill-dg-green-ink-soft' x='556' y='244' font-size='9.5' text-anchor='middle'>
         everything above stays server
       </text>
     </svg>

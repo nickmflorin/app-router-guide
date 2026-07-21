@@ -61,6 +61,17 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   (Tailwind hybrid): import src/styles/tailwind.css, map palette to theme tokens, convert
   design-system classes via @apply, utilities for layout; component-by-component with Nick
   reviewing visually.
+- **DIAGRAM COLORS ARE TOKENS (2026-07-21, per Nick).** SVG diagrams no longer use inline
+  fill='#..'/stroke='#..' hex. Every diagram color is a @theme token `--color-dg-<name>` in
+  src/styles/tailwind.css, referenced on elements as `class='fill-dg-<name> stroke-dg-<name>'`
+  (Tailwind auto-generates the fill-*/stroke-* utilities). Currently a FAITHFUL 1:1 map (one
+  token per distinct hex, zero visual change) — consolidate near-duplicates by editing token
+  VALUES in tailwind.css, in one place. Constraints kept working: (1) scripts/svg_lint.py
+  derives the token->hex map from tailwind.css and resolves classes, so C1 (marker vs line
+  color) and D1 (divider) still check real colors; (2) build_artifact.py inlines the Astro
+  _astro/*.css Tailwind bundle into the single file, or diagrams lose color there; (3) mermaid
+  twins keep their own `classDef fill:#..` hex (Mermaid can't read CSS vars) — leave them.
+  New diagrams: use fill-dg-*/stroke-dg-* classes, not hex; add a token if a color is new.
 
 ## Repo structure (reorganized 2026-07-16 — per Nick, so future distributables aren't crammed together)
 

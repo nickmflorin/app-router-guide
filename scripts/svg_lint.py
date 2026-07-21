@@ -20,10 +20,38 @@ flagged repeatedly:
 Text width is estimated (Inter ≈ 0.56 × font-size per char; ~1.6 for emoji/wide
 glyphs), so T-checks are heuristics: tune FUDGE if false positives appear.
 """
-import re, sys, glob, html
+import re, sys, glob, html, os
 
 FUDGE = 0.56
 WIDE = set("⏳✦⟵→↓✓—")
+
+# Diagram colors moved from inline fill=/stroke= hex to Tailwind utility
+# classes (fill-dg-*, stroke-dg-*) backed by @theme tokens. Derive the
+# token -> hex map from the SAME source (tailwind.css) so the color checks
+# (C1 marker match, D1 divider) keep resolving real colors.
+def _load_dg_tokens():
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    try:
+        css = open(os.path.join(root, 'src/styles/tailwind.css')).read()
+    except OSError:
+        return {}
+    return {f'dg-{n}': h.lower()
+            for n, h in re.findall(r'--color-dg-([\w-]+):\s*(#[0-9a-fA-F]{6});', css)}
+
+DG = _load_dg_tokens()
+
+def color(attrs, prop):
+    """Effective fill/stroke of an element: an explicit hex attribute wins,
+    else resolve the `<prop>-dg-<token>` utility class against the token map."""
+    m = re.search(prop + r'="(#[0-9a-fA-F]{6})"', attrs)
+    if m:
+        return m.group(1).lower()
+    cls = re.search(r'class="([^"]*)"', attrs)
+    if cls:
+        cm = re.search(prop + r'-(dg-[\w-]+)', cls.group(1))
+        if cm and cm.group(1) in DG:
+            return DG[cm.group(1)]
+    return ''
 
 def text_width(s, fs):
     w = 0.0
@@ -37,7 +65,7 @@ def parse(svg):
         a = dict(re.findall(r'([\w-]+)="([^"]*)"', m.group(1)))
         try:
             rects.append(dict(x=float(a['x']), y=float(a['y']), w=float(a['width']),
-                              h=float(a['height']), fill=a.get('fill',''), raw=m.group(0)))
+                              h=float(a['height']), fill=color(m.group(1), 'fill'), raw=m.group(0)))
         except KeyError:
             pass
     for m in re.finditer(r'<text ([^>]*)>(.*?)</text>', svg):
@@ -56,7 +84,7 @@ def parse(svg):
         a = dict(re.findall(r'([\w-]+)="([^"]*)"', m.group(1)))
         try:
             lines.append(dict(x1=float(a['x1']), y1=float(a['y1']), x2=float(a['x2']),
-                              y2=float(a['y2']), stroke=a.get('stroke',''),
+                              y2=float(a['y2']), stroke=color(m.group(1), 'stroke'),
                               marker='marker-end' in m.group(1)))
         except KeyError:
             pass
@@ -101,12 +129,21 @@ def lint_svg(svg, where):
                 lo, hi = sorted((l['x1'], l['x2']))
                 if t['x1'] > lo+2 and t['x0'] < hi-2:
                     issues.append(f"T4 text overlaps line y={l['y1']:.0f}: '{t['s']}'")
-    # C1: a line's marker must match the line's stroke color
-    markers = {m.group(1): m.group(2) for m in re.finditer(
-        r'<marker id="([\w-]+)"[^>]*>.*?stroke="(#[0-9a-fA-F]+)"', svg, re.S)}
-    for m in re.finditer(r'<(?:line|path) [^>]*stroke="(#[0-9a-fA-F]+)"[^>]*marker-end="url\(#([\w-]+)\)"', svg):
-        stroke, mid = m.group(1).lower(), m.group(2)
-        if mid in markers and markers[mid].lower() != stroke:
+    # C1: a line's marker must match the line's stroke color. Colors now live
+    # in fill-dg-*/stroke-dg-* classes, so resolve both sides via color().
+    markers = {}
+    for mk in re.finditer(r'<marker id="([\w-]+)".*?</marker>', svg, re.S):
+        c = color(mk.group(0), 'stroke')
+        if c:
+            markers[mk.group(1)] = c
+    for m in re.finditer(r'<(?:line|path)\b([^>]*)>', svg):
+        attrs = m.group(1)
+        me = re.search(r'marker-end="url\(#([\w-]+)\)"', attrs)
+        if not me:
+            continue
+        mid = me.group(1)
+        stroke = color(attrs, 'stroke')
+        if stroke and mid in markers and markers[mid] != stroke:
             issues.append(f"C1 marker color mismatch: line stroke {stroke} uses marker #{mid} ({markers[mid]})")
     # L1: diagonal lines (allow deliberate mirrored diagonals? flag for review anyway)
     diags = [l for l in lines if l['x1'] != l['x2'] and l['y1'] != l['y2'] and l['marker']]

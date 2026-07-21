@@ -57,9 +57,9 @@ import Snippet from '../../components/Snippet.astro';
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-gray'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#737373'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
@@ -74,9 +74,9 @@ import Snippet from '../../components/Snippet.astro';
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-blue'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#0070f3'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
@@ -84,178 +84,268 @@ import Snippet from '../../components/Snippet.astro';
       </defs>
 
       <!-- headers -->
-      <text x='170' y='14' font-size='10.5' fill='#d93025' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-red-strong'
+        x='170'
+        y='14'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Prop drilling: the coupling layer
       </text>
-      <text x='530' y='14' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-ink'
+        x='530'
+        y='14'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Independent components
       </text>
-      <line x1='360' y1='2' x2='360' y2='369' stroke='#e0e0e0'></line>
+      <line class='stroke-dg-line' x1='360' y1='2' x2='360' y2='369'></line>
 
       <!-- LEFT: bad -->
-      <rect x='100' y='30' width='140' height='36' rx='7' fill='#ffffff' stroke='#b45309'></rect>
-      <text x='170' y='52' font-size='11.5' fill='#8a5a00' text-anchor='middle'>
+      <rect class='fill-dg-white stroke-dg-amber' x='100' y='30' width='140' height='36' rx='7'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='170' y='52' font-size='11.5' text-anchor='middle'>
         fetch: everything
       </text>
 
       <line
+        class='stroke-dg-gray'
         x1='170'
         y1='66'
         x2='170'
         y2='104'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#aG)'></line>
-      <text x='180' y='90' font-size='10' fill='#666666'>all the data</text>
+      <text class='fill-dg-muted' x='180' y='90' font-size='10'>all the data</text>
 
       <rect
+        class='fill-dg-red-soft stroke-dg-red-strong'
         x='85'
         y='108'
         width='170'
         height='40'
         rx='7'
-        fill='#fdecea'
-        stroke='#d93025'
         stroke-width='1.5'></rect>
-      <text x='170' y='126' font-size='10.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-red'
+        x='170'
+        y='126'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Parent
       </text>
-      <text x='170' y='140' font-size='9.5' fill='#b0483e' text-anchor='middle'>
+      <text class='fill-dg-clay-ink' x='170' y='140' font-size='9.5' text-anchor='middle'>
         knows everyone's requirements
       </text>
 
       <line
+        class='stroke-dg-gray'
         x1='135'
         y1='148'
         x2='93'
         y2='212'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#aG)'></line>
       <line
+        class='stroke-dg-gray'
         x1='205'
         y1='148'
         x2='247'
         y2='212'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#aG)'></line>
-      <text x='99' y='187' font-size='10' fill='#666666' text-anchor='end'> props &amp; data </text>
-      <text x='241' y='187' font-size='10' fill='#666666'>props &amp; data</text>
-
-      <rect x='28' y='218' width='120' height='36' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='88' y='240' font-size='11.5' fill='#171717' text-anchor='middle'> Child A </text>
-      <rect x='192' y='218' width='120' height='36' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='252' y='240' font-size='11.5' fill='#171717' text-anchor='middle'> Child B </text>
+      <text class='fill-dg-muted' x='99' y='187' font-size='10' text-anchor='end'>
+        props &amp; data
+      </text>
+      <text class='fill-dg-muted' x='241' y='187' font-size='10'>props &amp; data</text>
 
       <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='28'
+        y='218'
+        width='120'
+        height='36'
+        rx='7'></rect>
+      <text class='fill-dg-ink' x='88' y='240' font-size='11.5' text-anchor='middle'>
+        Child A
+      </text>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='192'
+        y='218'
+        width='120'
+        height='36'
+        rx='7'></rect>
+      <text class='fill-dg-ink' x='252' y='240' font-size='11.5' text-anchor='middle'>
+        Child B
+      </text>
+
+      <rect
+        class='fill-dg-amber-soft stroke-dg-amber'
         x='30'
         y='280'
         width='280'
         height='86'
         rx='8'
-        fill='#fdf3e3'
-        stroke='#b45309'
         stroke-dasharray='4 3'></rect>
-      <text x='170' y='301' font-size='10.5' fill='#8a5a00' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-amber-ink'
+        x='170'
+        y='301'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         When Child B's needs change:
       </text>
-      <text x='170' y='319' font-size='10' fill='#8f6b2e' text-anchor='middle'>
+      <text class='fill-dg-amber-ink-soft' x='170' y='319' font-size='10' text-anchor='middle'>
         edit Child B → Parent's fetch → the props
       </text>
-      <text x='170' y='337' font-size='10' fill='#8f6b2e' text-anchor='middle'>
+      <text class='fill-dg-amber-ink-soft' x='170' y='337' font-size='10' text-anchor='middle'>
         3 files every time · Parent re-renders everyone
       </text>
-      <text x='170' y='355' font-size='10' fill='#8f6b2e' text-anchor='middle'>
+      <text class='fill-dg-amber-ink-soft' x='170' y='355' font-size='10' text-anchor='middle'>
         children are unusable without this exact Parent
       </text>
 
       <!-- RIGHT: good -->
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='410'
         y='30'
         width='240'
         height='36'
         rx='7'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='530' y='47' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-blue-ink'
+        x='530'
+        y='47'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Data layer (deduped)
       </text>
-      <text x='530' y='60' font-size='9.5' fill='#527dad' text-anchor='middle'>
+      <text class='fill-dg-blue-ink-soft' x='530' y='60' font-size='9.5' text-anchor='middle'>
         getProgram(id) · 1 real request
       </text>
 
-      <rect x='455' y='108' width='150' height='40' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='530' y='126' font-size='11.5' fill='#171717' text-anchor='middle' font-weight='500'>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='455'
+        y='108'
+        width='150'
+        height='40'
+        rx='7'></rect>
+      <text
+        class='fill-dg-ink'
+        x='530'
+        y='126'
+        font-size='11.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Parent
       </text>
-      <text x='530' y='140' font-size='9.5' fill='#666666' text-anchor='middle'> layout only </text>
+      <text class='fill-dg-muted' x='530' y='140' font-size='9.5' text-anchor='middle'>
+        layout only
+      </text>
 
       <line
+        class='stroke-dg-gray'
         x1='495'
         y1='148'
         x2='467'
         y2='212'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#aG)'></line>
       <line
+        class='stroke-dg-gray'
         x1='565'
         y1='148'
         x2='593'
         y2='212'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#aG)'></line>
-      <text x='491' y='187' font-size='10' fill='#666666'>id only</text>
-      <text x='569' y='187' font-size='10' fill='#666666' text-anchor='end'>id only</text>
+      <text class='fill-dg-muted' x='491' y='187' font-size='10'>id only</text>
+      <text class='fill-dg-muted' x='569' y='187' font-size='10' text-anchor='end'>id only</text>
 
-      <rect x='384' y='218' width='122' height='36' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='445' y='240' font-size='11.5' fill='#171717' text-anchor='middle'> Child A </text>
-      <rect x='554' y='218' width='122' height='36' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='615' y='240' font-size='11.5' fill='#171717' text-anchor='middle'> Child B </text>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='384'
+        y='218'
+        width='122'
+        height='36'
+        rx='7'></rect>
+      <text class='fill-dg-ink' x='445' y='240' font-size='11.5' text-anchor='middle'>
+        Child A
+      </text>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='554'
+        y='218'
+        width='122'
+        height='36'
+        rx='7'></rect>
+      <text class='fill-dg-ink' x='615' y='240' font-size='11.5' text-anchor='middle'>
+        Child B
+      </text>
 
       <!-- children ask data layer directly -->
       <line
+        class='stroke-dg-blue'
         x1='430'
         y1='218'
         x2='430'
         y2='71'
-        stroke='#0070f3'
         stroke-width='1.5'
         marker-end='url(#aB)'></line>
       <line
+        class='stroke-dg-blue'
         x1='630'
         y1='218'
         x2='630'
         y2='71'
-        stroke='#0070f3'
         stroke-width='1.5'
         marker-end='url(#aB)'></line>
-      <text x='418' y='138' font-size='10' fill='#0068d6' text-anchor='end'> asks itself </text>
-      <text x='642' y='138' font-size='10' fill='#0068d6'>asks itself</text>
+      <text class='fill-dg-blue-strong' x='418' y='138' font-size='10' text-anchor='end'>
+        asks itself
+      </text>
+      <text class='fill-dg-blue-strong' x='642' y='138' font-size='10'>asks itself</text>
 
       <rect
+        class='fill-dg-green-soft stroke-dg-green'
         x='390'
         y='280'
         width='280'
         height='86'
         rx='8'
-        fill='#e7f5ee'
-        stroke='#2ea06d'
         stroke-dasharray='4 3'></rect>
-      <text x='530' y='301' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-ink'
+        x='530'
+        y='301'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         When Child B's needs change:
       </text>
-      <text x='530' y='319' font-size='10' fill='#2e7d5b' text-anchor='middle'>
+      <text class='fill-dg-green-2' x='530' y='319' font-size='10' text-anchor='middle'>
         edit Child B. Done: 1 file
       </text>
-      <text x='530' y='337' font-size='10' fill='#2e7d5b' text-anchor='middle'>
+      <text class='fill-dg-green-2' x='530' y='337' font-size='10' text-anchor='middle'>
         Parent never re-renders for data it doesn't use
       </text>
-      <text x='530' y='355' font-size='10' fill='#2e7d5b' text-anchor='middle'>
+      <text class='fill-dg-green-2' x='530' y='355' font-size='10' text-anchor='middle'>
         children are portable - drop them anywhere
       </text>
     </svg>
@@ -421,99 +511,149 @@ flowchart TB
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-gray'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#737373'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
         </marker>
       </defs>
-      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-ink'
+        x='360'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Two page regions, one canonical query
       </text>
 
       <!-- browser mockup -->
       <!-- data-lint-ignore: browser scene - chrome bar sits above the content grid -->
       <rect
+        class='fill-dg-white stroke-dg-gray-border'
         data-lint-ignore='scene'
         x='20'
         y='26'
         width='380'
         height='252'
-        rx='8'
-        fill='#ffffff'
-        stroke='#c9c9c9'></rect>
-      <circle cx='38' cy='40' r='4' fill='#c9c9c9'></circle>
-      <circle cx='52' cy='40' r='4' fill='#c9c9c9'></circle>
-      <rect x='64' y='32' width='180' height='16' rx='8' fill='#f2f2f2' stroke='#e0e0e0'></rect>
-      <text x='74' y='44' font-size='9' fill='#737373'>…/programs/42</text>
-      <rect x='32' y='56' width='356' height='210' rx='6' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='44' y='70' font-size='9' fill='#737373'>app layout (shell)</text>
-      <rect x='44' y='80' width='332' height='40' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='56' y='95' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+        rx='8'></rect>
+      <circle class='fill-dg-gray-border' cx='38' cy='40' r='4'></circle>
+      <circle class='fill-dg-gray-border' cx='52' cy='40' r='4'></circle>
+      <rect class='fill-dg-gray-fill-2 stroke-dg-line' x='64' y='32' width='180' height='16' rx='8'
+      ></rect>
+      <text class='fill-dg-gray' x='74' y='44' font-size='9'>…/programs/42</text>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='32'
+        y='56'
+        width='356'
+        height='210'
+        rx='6'></rect>
+      <text class='fill-dg-gray' x='44' y='70' font-size='9'>app layout (shell)</text>
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='44' y='80' width='332' height='40' rx='5'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='56' y='95' font-size='9.5' dominant-baseline='central'>
         ProgramHeader
       </text>
-      <text x='56' y='109' font-size='8.5' fill='#527dad' dominant-baseline='central'>
+      <text
+        class='fill-dg-blue-ink-soft'
+        x='56'
+        y='109'
+        font-size='8.5'
+        dominant-baseline='central'
+      >
         needs: name · status
       </text>
-      <rect x='44' y='128' width='332' height='126' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
-      <text x='56' y='143' font-size='9.5' fill='#157a4c' dominant-baseline='central'>
+      <rect
+        class='fill-dg-green-soft stroke-dg-green'
+        x='44'
+        y='128'
+        width='332'
+        height='126'
+        rx='5'></rect>
+      <text class='fill-dg-green-ink' x='56' y='143' font-size='9.5' dominant-baseline='central'>
         ProgramDetails
       </text>
-      <text x='56' y='157' font-size='8.5' fill='#3e7d5c' dominant-baseline='central'>
+      <text
+        class='fill-dg-green-ink-soft'
+        x='56'
+        y='157'
+        font-size='8.5'
+        dominant-baseline='central'
+      >
         needs: description · status
       </text>
-      <rect x='56' y='170' width='308' height='9' rx='3' fill='#cfe9dd'></rect>
-      <rect x='56' y='186' width='308' height='9' rx='3' fill='#cfe9dd'></rect>
-      <rect x='56' y='202' width='236' height='9' rx='3' fill='#cfe9dd'></rect>
-      <rect x='56' y='218' width='308' height='9' rx='3' fill='#cfe9dd'></rect>
-      <rect x='56' y='234' width='268' height='9' rx='3' fill='#cfe9dd'></rect>
+      <rect class='fill-dg-green-skel' x='56' y='170' width='308' height='9' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='56' y='186' width='308' height='9' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='56' y='202' width='236' height='9' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='56' y='218' width='308' height='9' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='56' y='234' width='268' height='9' rx='3'></rect>
 
       <!-- both regions ask the same question -->
       <path
+        class='stroke-dg-gray'
         d='M 376 100 L 440 100 L 440 114 L 472 114'
         fill='none'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#aShq)'></path>
       <path
+        class='stroke-dg-gray'
         d='M 376 150 L 440 150 L 440 136 L 472 136'
         fill='none'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#aShq)'></path>
 
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='476'
         y='96'
         width='224'
         height='58'
         rx='8'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='588' y='116' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-blue-ink'
+        x='588'
+        y='116'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         getProgram(42)
       </text>
-      <text x='588' y='132' font-size='9' fill='#527dad' text-anchor='middle'>
+      <text class='fill-dg-blue-ink-soft' x='588' y='132' font-size='9' text-anchor='middle'>
         asked twice · React.cache(): runs once
       </text>
 
       <line
+        class='stroke-dg-gray'
         x1='588'
         y1='154'
         x2='588'
         y2='192'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#aShq)'></line>
 
-      <rect x='518' y='196' width='140' height='40' rx='8' fill='#ffffff' stroke='#b45309'></rect>
-      <text x='588' y='212' font-size='10' fill='#8a5a00' text-anchor='middle'>database</text>
-      <text x='588' y='227' font-size='9' fill='#8f6b2e' text-anchor='middle'>1 query, total</text>
+      <rect class='fill-dg-white stroke-dg-amber' x='518' y='196' width='140' height='40' rx='8'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='588' y='212' font-size='10' text-anchor='middle'
+        >database</text
+      >
+      <text class='fill-dg-amber-ink-soft' x='588' y='227' font-size='9' text-anchor='middle'
+        >1 query, total</text
+      >
 
-      <text x='560' y='262' font-size='9.5' fill='#0f7b48' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-strong'
+        x='560'
+        y='262'
+        font-size='9.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         the overlap is free; the decoupling is the point
       </text>
     </svg>
@@ -598,78 +738,131 @@ flowchart LR
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
-      <text x='170' y='14' font-size='10.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-red'
+        x='170'
+        y='14'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Parent fetches &amp; drills
       </text>
-      <text x='530' y='14' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-ink'
+        x='530'
+        y='14'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Children fetch for themselves
       </text>
-      <line x1='360' y1='2' x2='360' y2='274' stroke='#e0e0e0'></line>
+      <line class='stroke-dg-line' x1='360' y1='2' x2='360' y2='274'></line>
 
       <!-- LEFT -->
       <rect
+        class='fill-dg-amber-soft stroke-dg-amber'
         x='40'
         y='32'
         width='260'
         height='212'
         rx='9'
-        fill='#fdf3e3'
-        stroke='#b45309'
         stroke-width='1.5'
         stroke-dasharray='6 4'></rect>
-      <text x='170' y='54' font-size='11' fill='#8a5a00' text-anchor='middle'>
+      <text class='fill-dg-amber-ink' x='170' y='54' font-size='11' text-anchor='middle'>
         ⏳ Suspense: forced above Parent
       </text>
-      <rect x='60' y='68' width='220' height='160' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='170' y='90' font-size='11.5' fill='#171717' text-anchor='middle'>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='60'
+        y='68'
+        width='220'
+        height='160'
+        rx='7'></rect>
+      <text class='fill-dg-ink' x='170' y='90' font-size='11.5' text-anchor='middle'>
         Parent (awaits everything)
       </text>
-      <rect x='76' y='104' width='188' height='50' rx='6' fill='#fafafa' stroke='#d4d4d4'></rect>
-      <text x='170' y='133' font-size='11' fill='#666666' text-anchor='middle'> Child A </text>
-      <rect x='76' y='166' width='188' height='50' rx='6' fill='#fafafa' stroke='#d4d4d4'></rect>
-      <text x='170' y='195' font-size='11' fill='#666666' text-anchor='middle'> Child B </text>
-      <text x='170' y='268' font-size='10.5' fill='#b3261e' text-anchor='middle'>
+      <rect
+        class='fill-dg-surface stroke-dg-line-strong'
+        x='76'
+        y='104'
+        width='188'
+        height='50'
+        rx='6'></rect>
+      <text class='fill-dg-muted' x='170' y='133' font-size='11' text-anchor='middle'>
+        Child A
+      </text>
+      <rect
+        class='fill-dg-surface stroke-dg-line-strong'
+        x='76'
+        y='166'
+        width='188'
+        height='50'
+        rx='6'></rect>
+      <text class='fill-dg-muted' x='170' y='195' font-size='11' text-anchor='middle'>
+        Child B
+      </text>
+      <text class='fill-dg-red' x='170' y='268' font-size='10.5' text-anchor='middle'>
         one unit · gated by the slowest fetch · all-or-nothing
       </text>
 
       <!-- RIGHT -->
-      <rect x='420' y='32' width='220' height='212' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='530' y='54' font-size='11.5' fill='#171717' text-anchor='middle'>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='420'
+        y='32'
+        width='220'
+        height='212'
+        rx='7'></rect>
+      <text class='fill-dg-ink' x='530' y='54' font-size='11.5' text-anchor='middle'>
         Parent: renders instantly
       </text>
       <rect
+        class='fill-dg-amber-soft stroke-dg-amber'
         x='436'
         y='68'
         width='188'
         height='76'
         rx='7'
-        fill='#fdf3e3'
-        stroke='#b45309'
         stroke-width='1.5'
         stroke-dasharray='5 4'></rect>
-      <text x='530' y='88' font-size='10.5' fill='#8a5a00' text-anchor='middle'> ⏳ Suspense </text>
-      <rect x='448' y='96' width='164' height='38' rx='6' fill='#fafafa' stroke='#d4d4d4'></rect>
-      <text x='530' y='119' font-size='11' fill='#171717' text-anchor='middle'>
+      <text class='fill-dg-amber-ink' x='530' y='88' font-size='10.5' text-anchor='middle'>
+        ⏳ Suspense
+      </text>
+      <rect
+        class='fill-dg-surface stroke-dg-line-strong'
+        x='448'
+        y='96'
+        width='164'
+        height='38'
+        rx='6'></rect>
+      <text class='fill-dg-ink' x='530' y='119' font-size='11' text-anchor='middle'>
         Child A: self-fetching
       </text>
       <rect
+        class='fill-dg-amber-soft stroke-dg-amber'
         x='436'
         y='156'
         width='188'
         height='76'
         rx='7'
-        fill='#fdf3e3'
-        stroke='#b45309'
         stroke-width='1.5'
         stroke-dasharray='5 4'></rect>
-      <text x='530' y='176' font-size='10.5' fill='#8a5a00' text-anchor='middle'>
+      <text class='fill-dg-amber-ink' x='530' y='176' font-size='10.5' text-anchor='middle'>
         ⏳ Suspense
       </text>
-      <rect x='448' y='184' width='164' height='38' rx='6' fill='#fafafa' stroke='#d4d4d4'></rect>
-      <text x='530' y='207' font-size='11' fill='#171717' text-anchor='middle'>
+      <rect
+        class='fill-dg-surface stroke-dg-line-strong'
+        x='448'
+        y='184'
+        width='164'
+        height='38'
+        rx='6'></rect>
+      <text class='fill-dg-ink' x='530' y='207' font-size='11' text-anchor='middle'>
         Child B: self-fetching
       </text>
-      <text x='530' y='268' font-size='10.5' fill='#2e7d5b' text-anchor='middle'>
+      <text class='fill-dg-green-2' x='530' y='268' font-size='10.5' text-anchor='middle'>
         independent units · each streams when ready
       </text>
     </svg>
@@ -863,108 +1056,166 @@ flowchart TB
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-gray'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#737373'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
         </marker>
       </defs>
 
-      <text x='180' y='12' font-size='10.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-red'
+        x='180'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Wired: the wires are part of the component
       </text>
-      <text x='540' y='12' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-ink'
+        x='540'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Self-contained: addressed by key, not delivered
       </text>
-      <line x1='360' y1='2' x2='360' y2='298' stroke='#e0e0e0'></line>
+      <line class='stroke-dg-line' x1='360' y1='2' x2='360' y2='298'></line>
 
       <!-- LANE 1: wired -->
-      <rect x='40' y='24' width='280' height='118' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='54' y='42' font-size='9' fill='#737373'>Page A</text>
-      <rect x='54' y='50' width='252' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='180' y='66' font-size='9' fill='#0757ba' text-anchor='middle'>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='40'
+        y='24'
+        width='280'
+        height='118'
+        rx='8'></rect>
+      <text class='fill-dg-gray' x='54' y='42' font-size='9'>Page A</text>
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='54' y='50' width='252' height='24' rx='5'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='180' y='66' font-size='9' text-anchor='middle'>
         page fetches, owns state, passes down
       </text>
-      <line x1='110' y1='74' x2='110' y2='104' stroke='#b0483e' stroke-width='1.2'></line>
-      <line x1='180' y1='74' x2='180' y2='104' stroke='#b0483e' stroke-width='1.2'></line>
-      <line x1='250' y1='74' x2='250' y2='104' stroke='#b0483e' stroke-width='1.2'></line>
-      <text x='118' y='92' font-size='7.5' fill='#b0483e'>rows</text>
-      <text x='188' y='92' font-size='7.5' fill='#b0483e'>loading</text>
-      <text x='258' y='92' font-size='7.5' fill='#b0483e'>onRefresh</text>
-      <rect x='54' y='104' width='252' height='26' rx='5' fill='#ffffff' stroke='#d4d4d4'></rect>
-      <text x='180' y='121' font-size='9.5' fill='#171717' text-anchor='middle'>
+      <line class='stroke-dg-clay-ink' x1='110' y1='74' x2='110' y2='104' stroke-width='1.2'></line>
+      <line class='stroke-dg-clay-ink' x1='180' y1='74' x2='180' y2='104' stroke-width='1.2'></line>
+      <line class='stroke-dg-clay-ink' x1='250' y1='74' x2='250' y2='104' stroke-width='1.2'></line>
+      <text class='fill-dg-clay-ink' x='118' y='92' font-size='7.5'>rows</text>
+      <text class='fill-dg-clay-ink' x='188' y='92' font-size='7.5'>loading</text>
+      <text class='fill-dg-clay-ink' x='258' y='92' font-size='7.5'>onRefresh</text>
+      <rect
+        class='fill-dg-white stroke-dg-line-strong'
+        x='54'
+        y='104'
+        width='252'
+        height='26'
+        rx='5'></rect>
+      <text class='fill-dg-ink' x='180' y='121' font-size='9.5' text-anchor='middle'>
         ProgramStats
       </text>
 
       <line
+        class='stroke-dg-gray'
         x1='180'
         y1='150'
         x2='180'
         y2='172'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#a13p)'></line>
-      <text x='192' y='165' font-size='8.5' fill='#737373'>move it</text>
+      <text class='fill-dg-gray' x='192' y='165' font-size='8.5'>move it</text>
 
-      <rect x='40' y='180' width='280' height='88' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='54' y='198' font-size='9' fill='#737373'>Page B</text>
       <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='40'
+        y='180'
+        width='280'
+        height='88'
+        rx='8'></rect>
+      <text class='fill-dg-gray' x='54' y='198' font-size='9'>Page B</text>
+      <rect
+        class='fill-dg-red-soft stroke-dg-red-strong'
         x='54'
         y='206'
         width='252'
         height='24'
         rx='5'
-        fill='#fdecea'
-        stroke='#d93025'
         stroke-dasharray='5 4'></rect>
-      <text x='180' y='222' font-size='9' fill='#b3261e' text-anchor='middle'>
+      <text class='fill-dg-red' x='180' y='222' font-size='9' text-anchor='middle'>
         new page must fetch + re-wire all three
       </text>
-      <rect x='54' y='234' width='252' height='26' rx='5' fill='#ffffff' stroke='#d4d4d4'></rect>
-      <text x='180' y='251' font-size='9.5' fill='#171717' text-anchor='middle'>
+      <rect
+        class='fill-dg-white stroke-dg-line-strong'
+        x='54'
+        y='234'
+        width='252'
+        height='26'
+        rx='5'></rect>
+      <text class='fill-dg-ink' x='180' y='251' font-size='9.5' text-anchor='middle'>
         ProgramStats
       </text>
-      <text x='180' y='290' font-size='10' fill='#b0483e' text-anchor='middle'>
+      <text class='fill-dg-clay-ink' x='180' y='290' font-size='10' text-anchor='middle'>
         moving the component means rebuilding its supply
       </text>
 
       <!-- LANE 2: self-contained -->
-      <rect x='400' y='24' width='280' height='118' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='414' y='42' font-size='9' fill='#737373'>Page A</text>
-      <rect x='414' y='50' width='252' height='24' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='540' y='66' font-size='9' fill='#0757ba' text-anchor='middle'>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='400'
+        y='24'
+        width='280'
+        height='118'
+        rx='8'></rect>
+      <text class='fill-dg-gray' x='414' y='42' font-size='9'>Page A</text>
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='414' y='50' width='252' height='24' rx='5'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='540' y='66' font-size='9' text-anchor='middle'>
         page just places it
       </text>
-      <rect x='414' y='90' width='252' height='40' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
-      <text x='540' y='106' font-size='9.5' fill='#157a4c' text-anchor='middle'>
+      <rect class='fill-dg-green-soft stroke-dg-green' x='414' y='90' width='252' height='40' rx='5'
+      ></rect>
+      <text class='fill-dg-green-ink' x='540' y='106' font-size='9.5' text-anchor='middle'>
         ProgramStats
       </text>
-      <text x='540' y='121' font-size='8' fill='#3e7d5c' text-anchor='middle'>
+      <text class='fill-dg-green-ink-soft' x='540' y='121' font-size='8' text-anchor='middle'>
         asks for its own data, by key
       </text>
 
       <line
+        class='stroke-dg-gray'
         x1='540'
         y1='150'
         x2='540'
         y2='172'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#a13p)'></line>
-      <text x='552' y='165' font-size='8.5' fill='#737373'>move it: one line</text>
+      <text class='fill-dg-gray' x='552' y='165' font-size='8.5'>move it: one line</text>
 
-      <rect x='400' y='180' width='280' height='88' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='414' y='198' font-size='9' fill='#737373'>Page B</text>
-      <rect x='414' y='212' width='252' height='40' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
-      <text x='540' y='228' font-size='9.5' fill='#157a4c' text-anchor='middle'>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='400'
+        y='180'
+        width='280'
+        height='88'
+        rx='8'></rect>
+      <text class='fill-dg-gray' x='414' y='198' font-size='9'>Page B</text>
+      <rect
+        class='fill-dg-green-soft stroke-dg-green'
+        x='414'
+        y='212'
+        width='252'
+        height='40'
+        rx='5'></rect>
+      <text class='fill-dg-green-ink' x='540' y='228' font-size='9.5' text-anchor='middle'>
         ProgramStats
       </text>
-      <text x='540' y='243' font-size='8' fill='#3e7d5c' text-anchor='middle'>
+      <text class='fill-dg-green-ink-soft' x='540' y='243' font-size='8' text-anchor='middle'>
         same key, same cache (§15)
       </text>
-      <text x='540' y='290' font-size='10' fill='#157a4c' text-anchor='middle'>
+      <text class='fill-dg-green-ink' x='540' y='290' font-size='10' text-anchor='middle'>
         the component carries its own supply
       </text>
     </svg>

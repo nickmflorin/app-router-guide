@@ -360,91 +360,116 @@ import Snippet from '../../components/Snippet.astro';
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-gray'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#737373'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
         </marker>
       </defs>
 
-      <rect x='110' y='4' width='390' height='44' rx='7' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='126' y='22' font-size='10.5' fill='#0757ba' font-weight='500'>
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='110' y='4' width='390' height='44' rx='7'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='126' y='22' font-size='10.5' font-weight='500'>
         1 · Draw the known frame
       </text>
-      <text x='126' y='37' font-size='9' fill='#527dad'>
+      <text class='fill-dg-blue-ink-soft' x='126' y='37' font-size='9'>
         layout, containers, chrome: renders on the first byte
       </text>
-      <text x='516' y='30' font-size='9' fill='#737373'>§2, §10</text>
+      <text class='fill-dg-gray' x='516' y='30' font-size='9'>§2, §10</text>
       <line
+        class='stroke-dg-gray'
         x1='305'
         y1='48'
         x2='305'
         y2='64'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#a15s)'></line>
 
-      <rect x='110' y='66' width='390' height='44' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='126' y='84' font-size='10.5' fill='#171717' font-weight='500'>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='110'
+        y='66'
+        width='390'
+        height='44'
+        rx='7'></rect>
+      <text class='fill-dg-ink' x='126' y='84' font-size='10.5' font-weight='500'>
         2 · One async component per data question
       </text>
-      <text x='126' y='99' font-size='9' fill='#737373'>
+      <text class='fill-dg-gray' x='126' y='99' font-size='9'>
         independent questions fetch in parallel, never chained
       </text>
-      <text x='516' y='92' font-size='9' fill='#737373'>§13, §14</text>
+      <text class='fill-dg-gray' x='516' y='92' font-size='9'>§13, §14</text>
       <line
+        class='stroke-dg-gray'
         x1='305'
         y1='110'
         x2='305'
         y2='126'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#a15s)'></line>
 
-      <rect x='110' y='128' width='390' height='44' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='126' y='146' font-size='10.5' fill='#171717' font-weight='500'>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='110'
+        y='128'
+        width='390'
+        height='44'
+        rx='7'></rect>
+      <text class='fill-dg-ink' x='126' y='146' font-size='10.5' font-weight='500'>
         3 · Contain each unknown
       </text>
-      <text x='126' y='161' font-size='9' fill='#737373'>
+      <text class='fill-dg-gray' x='126' y='161' font-size='9'>
         reserved container + Suspense + colocated skeleton
       </text>
-      <text x='516' y='154' font-size='9' fill='#737373'>§10, §11</text>
+      <text class='fill-dg-gray' x='516' y='154' font-size='9'>§10, §11</text>
       <line
+        class='stroke-dg-gray'
         x1='305'
         y1='172'
         x2='305'
         y2='188'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#a15s)'></line>
 
-      <rect x='110' y='190' width='390' height='44' rx='7' fill='#ffffff' stroke='#c9c9c9'></rect>
-      <text x='126' y='208' font-size='10.5' fill='#171717' font-weight='500'>
+      <rect
+        class='fill-dg-white stroke-dg-gray-border'
+        x='110'
+        y='190'
+        width='390'
+        height='44'
+        rx='7'></rect>
+      <text class='fill-dg-ink' x='126' y='208' font-size='10.5' font-weight='500'>
         4 · Push interactivity into leaves
       </text>
-      <text x='126' y='223' font-size='9' fill='#737373'>
+      <text class='fill-dg-gray' x='126' y='223' font-size='9'>
         "use client" on interaction atoms; shells receive slots
       </text>
-      <text x='516' y='216' font-size='9' fill='#737373'>§5, §7</text>
+      <text class='fill-dg-gray' x='516' y='216' font-size='9'>§5, §7</text>
       <line
+        class='stroke-dg-gray'
         x1='305'
         y1='234'
         x2='305'
         y2='250'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#a15s)'></line>
 
-      <rect x='110' y='252' width='390' height='44' rx='7' fill='#e7f5ee' stroke='#2ea06d'></rect>
-      <text x='126' y='270' font-size='10.5' fill='#157a4c' font-weight='500'>
+      <rect
+        class='fill-dg-green-soft stroke-dg-green'
+        x='110'
+        y='252'
+        width='390'
+        height='44'
+        rx='7'></rect>
+      <text class='fill-dg-green-ink' x='126' y='270' font-size='10.5' font-weight='500'>
         5 · One component per file, always
       </text>
-      <text x='126' y='285' font-size='9' fill='#3e7d5c'>
+      <text class='fill-dg-green-ink-soft' x='126' y='285' font-size='9'>
         the file is the unit of the boundary; splits stay cheap
       </text>
-      <text x='516' y='278' font-size='9' fill='#737373'>§8, §16.5</text>
+      <text class='fill-dg-gray' x='516' y='278' font-size='9'>§8, §16.5</text>
     </svg>
 
     <pre

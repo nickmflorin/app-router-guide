@@ -167,81 +167,113 @@ import Snippet from '../../components/Snippet.astro';
       font-family='Inter, system-ui, sans-serif'
     >
       <!-- left: client-side nesting -->
-      <text x='178' y='12' font-size='10.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-red'
+        x='178'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Client-rendered: each layer blocks the next
       </text>
       <rect
+        class='stroke-dg-amber'
         x='58'
         y='26'
         width='240'
         height='216'
         rx='8'
         fill='none'
-        stroke='#b45309'
         stroke-width='1.5'
         stroke-dasharray='5 4'></rect>
-      <text x='70' y='44' font-size='9.5' fill='#8a5a00'> ① page: spinner while fetching /me </text>
+      <text class='fill-dg-amber-ink' x='70' y='44' font-size='9.5'>
+        ① page: spinner while fetching /me
+      </text>
       <rect
+        class='stroke-dg-amber'
         x='74'
         y='58'
         width='208'
         height='168'
         rx='7'
         fill='none'
-        stroke='#b45309'
         stroke-width='1.5'
         stroke-dasharray='5 4'></rect>
-      <text x='86' y='76' font-size='9.5' fill='#8a5a00'>② section: fetching the list</text>
+      <text class='fill-dg-amber-ink' x='86' y='76' font-size='9.5'
+        >② section: fetching the list</text
+      >
       <rect
+        class='stroke-dg-amber'
         x='90'
         y='90'
         width='176'
         height='120'
         rx='6'
         fill='none'
-        stroke='#b45309'
         stroke-width='1.5'
         stroke-dasharray='5 4'></rect>
-      <text x='102' y='108' font-size='9.5' fill='#8a5a00'>③ widget: fetching stats</text>
-      <rect x='106' y='122' width='144' height='7' rx='3' fill='#f3e2c0'></rect>
-      <rect x='106' y='136' width='144' height='7' rx='3' fill='#f3e2c0'></rect>
-      <rect x='106' y='150' width='144' height='7' rx='3' fill='#f3e2c0'></rect>
-      <rect x='106' y='164' width='144' height='7' rx='3' fill='#f3e2c0'></rect>
-      <rect x='106' y='178' width='144' height='7' rx='3' fill='#f3e2c0'></rect>
-      <rect x='106' y='192' width='144' height='7' rx='3' fill='#f3e2c0'></rect>
-      <text x='178' y='262' font-size='10.5' fill='#b0483e' text-anchor='middle' font-weight='500'>
+      <text class='fill-dg-amber-ink' x='102' y='108' font-size='9.5'>③ widget: fetching stats</text
+      >
+      <rect class='fill-dg-amber-border' x='106' y='122' width='144' height='7' rx='3'></rect>
+      <rect class='fill-dg-amber-border' x='106' y='136' width='144' height='7' rx='3'></rect>
+      <rect class='fill-dg-amber-border' x='106' y='150' width='144' height='7' rx='3'></rect>
+      <rect class='fill-dg-amber-border' x='106' y='164' width='144' height='7' rx='3'></rect>
+      <rect class='fill-dg-amber-border' x='106' y='178' width='144' height='7' rx='3'></rect>
+      <rect class='fill-dg-amber-border' x='106' y='192' width='144' height='7' rx='3'></rect>
+      <text
+        class='fill-dg-clay-ink'
+        x='178'
+        y='262'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         first content: t₁ + t₂ + t₃ (serialized)
       </text>
 
       <!-- right: server-side single pass -->
-      <text x='542' y='12' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-ink'
+        x='542'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Server-rendered: one pass, awaits are values
       </text>
       <rect
+        class='fill-dg-white stroke-dg-green'
         x='422'
         y='26'
         width='240'
         height='216'
         rx='8'
-        fill='#ffffff'
-        stroke='#2ea06d'
         stroke-width='1.5'></rect>
-      <text x='434' y='44' font-size='9.5' fill='#157a4c'>
+      <text class='fill-dg-green-ink' x='434' y='44' font-size='9.5'>
         HTML arrives complete; no layer waits
       </text>
-      <rect x='434' y='58' width='216' height='16' rx='4' fill='#d8e8fc'></rect>
-      <rect x='434' y='84' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
-      <rect x='434' y='98' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
-      <rect x='434' y='112' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
-      <rect x='434' y='126' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
-      <rect x='434' y='140' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
-      <rect x='434' y='154' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
-      <rect x='434' y='168' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
-      <rect x='434' y='182' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
-      <rect x='434' y='196' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
-      <rect x='434' y='210' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
-      <rect x='434' y='224' width='216' height='7' rx='3' fill='#cfe9dd'></rect>
-      <text x='542' y='262' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+      <rect class='fill-dg-blue-fill-2' x='434' y='58' width='216' height='16' rx='4'></rect>
+      <rect class='fill-dg-green-skel' x='434' y='84' width='216' height='7' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='434' y='98' width='216' height='7' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='434' y='112' width='216' height='7' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='434' y='126' width='216' height='7' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='434' y='140' width='216' height='7' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='434' y='154' width='216' height='7' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='434' y='168' width='216' height='7' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='434' y='182' width='216' height='7' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='434' y='196' width='216' height='7' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='434' y='210' width='216' height='7' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='434' y='224' width='216' height='7' rx='3'></rect>
+      <text
+        class='fill-dg-green-ink'
+        x='542'
+        y='262'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         first content: t₁ (one server pass)
       </text>
     </svg>
@@ -363,75 +395,110 @@ flowchart LR
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-green-strong'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#0f7b48'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
         </marker>
       </defs>
-      <text x='174' y='12' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'
-        >Stays on the server</text
+      <text
+        class='fill-dg-blue-ink'
+        x='174'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'>Stays on the server</text
       >
-      <text x='572' y='12' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'
-        >What the client receives</text
+      <text
+        class='fill-dg-green-ink'
+        x='572'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'>What the client receives</text
       >
 
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='14'
         y='24'
         width='320'
         height='180'
         rx='8'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <rect x='30' y='40' width='288' height='30' rx='5' fill='#ffffff' stroke='#a9cdf5'></rect>
-      <text x='42' y='59' font-size='10' fill='#0757ba'>page.tsx, components, layouts</text>
-      <rect x='30' y='78' width='288' height='30' rx='5' fill='#ffffff' stroke='#a9cdf5'></rect>
-      <text x='42' y='97' font-size='10' fill='#0757ba'>getReports(): the data layer</text>
-      <rect x='30' y='116' width='288' height='30' rx='5' fill='#ffffff' stroke='#a9cdf5'></rect>
-      <text x='42' y='135' font-size='10' fill='#0757ba'>DATABASE_URL, API tokens, secrets</text>
-      <rect x='30' y='154' width='288' height='30' rx='5' fill='#ffffff' stroke='#a9cdf5'></rect>
-      <text x='42' y='173' font-size='10' fill='#0757ba'>markdown + charting libraries</text>
+      <rect class='fill-dg-white stroke-dg-blue-border' x='30' y='40' width='288' height='30' rx='5'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='42' y='59' font-size='10'
+        >page.tsx, components, layouts</text
+      >
+      <rect class='fill-dg-white stroke-dg-blue-border' x='30' y='78' width='288' height='30' rx='5'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='42' y='97' font-size='10'>getReports(): the data layer</text
+      >
+      <rect
+        class='fill-dg-white stroke-dg-blue-border'
+        x='30'
+        y='116'
+        width='288'
+        height='30'
+        rx='5'></rect>
+      <text class='fill-dg-blue-ink' x='42' y='135' font-size='10'
+        >DATABASE_URL, API tokens, secrets</text
+      >
+      <rect
+        class='fill-dg-white stroke-dg-blue-border'
+        x='30'
+        y='154'
+        width='288'
+        height='30'
+        rx='5'></rect>
+      <text class='fill-dg-blue-ink' x='42' y='173' font-size='10'
+        >markdown + charting libraries</text
+      >
 
-      <line x1='386' y1='24' x2='386' y2='204' stroke='#c9c9c9' stroke-dasharray='6 4'></line>
-      <text x='386' y='220' font-size='9.5' fill='#737373' text-anchor='middle'
+      <line class='stroke-dg-gray-border' x1='386' y1='24' x2='386' y2='204' stroke-dasharray='6 4'
+      ></line>
+      <text class='fill-dg-gray' x='386' y='220' font-size='9.5' text-anchor='middle'
         >the network boundary</text
       >
 
-      <text x='386' y='100' font-size='9.5' fill='#157a4c' text-anchor='middle'>rendered HTML</text>
+      <text class='fill-dg-green-ink' x='386' y='100' font-size='9.5' text-anchor='middle'
+        >rendered HTML</text
+      >
       <line
+        class='stroke-dg-green-strong'
         x1='334'
         y1='114'
         x2='434'
         y2='114'
-        stroke='#0f7b48'
         stroke-width='1.5'
         marker-end='url(#aWire)'></line>
-      <text x='386' y='132' font-size='9' fill='#737373' text-anchor='middle'>nothing else</text>
+      <text class='fill-dg-gray' x='386' y='132' font-size='9' text-anchor='middle'
+        >nothing else</text
+      >
 
       <rect
+        class='fill-dg-white stroke-dg-green'
         x='438'
         y='24'
         width='268'
         height='180'
         rx='8'
-        fill='#ffffff'
-        stroke='#2ea06d'
         stroke-width='1.5'></rect>
-      <rect x='454' y='44' width='236' height='26' rx='5' fill='#e7f5ee' stroke='#2ea06d'></rect>
-      <text x='572' y='61' font-size='10' fill='#157a4c' text-anchor='middle'
+      <rect class='fill-dg-green-soft stroke-dg-green' x='454' y='44' width='236' height='26' rx='5'
+      ></rect>
+      <text class='fill-dg-green-ink' x='572' y='61' font-size='10' text-anchor='middle'
         >Reports: finished markup</text
       >
-      <rect x='454' y='80' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
-      <rect x='454' y='96' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
-      <rect x='454' y='112' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
-      <rect x='454' y='128' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
-      <rect x='454' y='144' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
-      <rect x='454' y='160' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
-      <rect x='454' y='176' width='236' height='8' rx='3' fill='#cfe9dd'></rect>
+      <rect class='fill-dg-green-skel' x='454' y='80' width='236' height='8' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='454' y='96' width='236' height='8' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='454' y='112' width='236' height='8' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='454' y='128' width='236' height='8' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='454' y='144' width='236' height='8' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='454' y='160' width='236' height='8' rx='3'></rect>
+      <rect class='fill-dg-green-skel' x='454' y='176' width='236' height='8' rx='3'></rect>
     </svg>
     <pre
       slot='mermaid'
@@ -684,130 +751,128 @@ flowchart LR
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-gray'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#737373'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
         </marker>
       </defs>
       <!-- first visit -->
-      <text x='14' y='12' font-size='10.5' fill='#666666' font-weight='500'>
+      <text class='fill-dg-muted' x='14' y='12' font-size='10.5' font-weight='500'>
         first visit: server routing
       </text>
-      <rect x='14' y='22' width='200' height='46' rx='7' fill='#ffffff' stroke='#d4d4d4'></rect>
-      <text x='114' y='49' font-size='10' fill='#171717' text-anchor='middle'>
+      <rect class='fill-dg-white stroke-dg-line-strong' x='14' y='22' width='200' height='46' rx='7'
+      ></rect>
+      <text class='fill-dg-ink' x='114' y='49' font-size='10' text-anchor='middle'>
         GET /programs/42
       </text>
       <line
+        class='stroke-dg-gray'
         x1='218'
         y1='45'
         x2='252'
         y2='45'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#navArr)'></line>
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='260'
         y='22'
         width='200'
         height='46'
         rx='7'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='360' y='41' font-size='10' fill='#0757ba' text-anchor='middle'>
+      <text class='fill-dg-blue-ink' x='360' y='41' font-size='10' text-anchor='middle'>
         server renders the route
       </text>
-      <text x='360' y='56' font-size='9' fill='#56789e' text-anchor='middle'>
+      <text class='fill-dg-blue-ink-2' x='360' y='56' font-size='9' text-anchor='middle'>
         layouts, page, data
       </text>
       <line
+        class='stroke-dg-gray'
         x1='464'
         y1='45'
         x2='498'
         y2='45'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#navArr)'></line>
       <rect
+        class='fill-dg-green-soft stroke-dg-green'
         x='506'
         y='22'
         width='200'
         height='46'
         rx='7'
-        fill='#e7f5ee'
-        stroke='#2ea06d'
         stroke-width='1.5'></rect>
-      <text x='606' y='41' font-size='10' fill='#157a4c' text-anchor='middle'>
+      <text class='fill-dg-green-ink' x='606' y='41' font-size='10' text-anchor='middle'>
         a full HTML document
       </text>
-      <text x='606' y='56' font-size='9' fill='#3f8f68' text-anchor='middle'>
+      <text class='fill-dg-green-3' x='606' y='56' font-size='9' text-anchor='middle'>
         content paints before JS loads
       </text>
 
       <!-- navigations -->
-      <text x='14' y='100' font-size='10.5' fill='#666666' font-weight='500'>
+      <text class='fill-dg-muted' x='14' y='100' font-size='10.5' font-weight='500'>
         every navigation after: client routing
       </text>
       <rect
+        class='fill-dg-teal-fill stroke-dg-teal'
         x='14'
         y='110'
         width='200'
         height='46'
         rx='7'
-        fill='#e6f7fb'
-        stroke='#0891b2'
         stroke-width='1.5'></rect>
-      <text x='114' y='129' font-size='10' fill='#0891b2' text-anchor='middle'>
+      <text class='fill-dg-teal' x='114' y='129' font-size='10' text-anchor='middle'>
         &lt;Link&gt; click
       </text>
-      <text x='114' y='144' font-size='9' fill='#4d99a8' text-anchor='middle'>
+      <text class='fill-dg-teal-2' x='114' y='144' font-size='9' text-anchor='middle'>
         no document reload
       </text>
       <line
+        class='stroke-dg-gray'
         x1='218'
         y1='133'
         x2='252'
         y2='133'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#navArr)'></line>
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='260'
         y='110'
         width='200'
         height='46'
         rx='7'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='360' y='129' font-size='10' fill='#0757ba' text-anchor='middle'>
+      <text class='fill-dg-blue-ink' x='360' y='129' font-size='10' text-anchor='middle'>
         server renders only the
       </text>
-      <text x='360' y='144' font-size='10' fill='#0757ba' text-anchor='middle'>
+      <text class='fill-dg-blue-ink' x='360' y='144' font-size='10' text-anchor='middle'>
         changing segments
       </text>
       <line
+        class='stroke-dg-gray'
         x1='464'
         y1='133'
         x2='498'
         y2='133'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#navArr)'></line>
       <rect
+        class='fill-dg-blue-fill-2 stroke-dg-blue'
         x='506'
         y='110'
         width='200'
         height='46'
         rx='7'
-        fill='#d8e8fc'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='606' y='129' font-size='10' fill='#0757ba' text-anchor='middle'> RSC payload </text>
-      <text x='606' y='144' font-size='9' fill='#56789e' text-anchor='middle'>
+      <text class='fill-dg-blue-ink' x='606' y='129' font-size='10' text-anchor='middle'>
+        RSC payload
+      </text>
+      <text class='fill-dg-blue-ink-2' x='606' y='144' font-size='9' text-anchor='middle'>
         segments swap; layouts persist
       </text>
     </svg>

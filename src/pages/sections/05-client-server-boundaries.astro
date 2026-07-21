@@ -54,9 +54,9 @@ import Snippet from '../../components/Snippet.astro';
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-gray'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#737373'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
@@ -71,9 +71,9 @@ import Snippet from '../../components/Snippet.astro';
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-amber'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#b45309'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
@@ -81,162 +81,171 @@ import Snippet from '../../components/Snippet.astro';
       </defs>
       <!-- server zone -->
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='14'
         y='19.92'
         width='330'
         height='196'
         rx='10'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
       <text
+        class='fill-dg-blue-ink'
         x='179'
         y='41.92'
         font-size='10.5'
-        fill='#0757ba'
         text-anchor='middle'
         font-weight='500'
       >
         Server modules: 0 KB shipped
       </text>
-      <rect x='34' y='57.92' width='130' height='34' rx='6' fill='#ffffff' stroke='#0070f3'></rect>
-      <text x='99' y='78.92' font-size='10.5' fill='#0757ba' text-anchor='middle'> page.tsx </text>
-      <rect x='34' y='111.92' width='130' height='34' rx='6' fill='#ffffff' stroke='#0070f3'></rect>
-      <text x='99' y='132.92' font-size='10.5' fill='#0757ba' text-anchor='middle'>
+      <rect class='fill-dg-white stroke-dg-blue' x='34' y='57.92' width='130' height='34' rx='6'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='99' y='78.92' font-size='10.5' text-anchor='middle'>
+        page.tsx
+      </text>
+      <rect class='fill-dg-white stroke-dg-blue' x='34' y='111.92' width='130' height='34' rx='6'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='99' y='132.92' font-size='10.5' text-anchor='middle'>
         ProgramHeader.tsx
       </text>
-      <rect x='34' y='165.92' width='130' height='34' rx='6' fill='#ffffff' stroke='#0070f3'></rect>
-      <text x='99' y='186.92' font-size='10.5' fill='#0757ba' text-anchor='middle'>
+      <rect class='fill-dg-white stroke-dg-blue' x='34' y='165.92' width='130' height='34' rx='6'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='99' y='186.92' font-size='10.5' text-anchor='middle'>
         data/programs.ts
       </text>
-      <rect x='196' y='111.92' width='130' height='34' rx='6' fill='#ffffff' stroke='#0070f3'
+      <rect class='fill-dg-white stroke-dg-blue' x='196' y='111.92' width='130' height='34' rx='6'
       ></rect>
-      <text x='261' y='132.92' font-size='10.5' fill='#0757ba' text-anchor='middle'>
+      <text class='fill-dg-blue-ink' x='261' y='132.92' font-size='10.5' text-anchor='middle'>
         format.ts · icons
       </text>
       <line
+        class='stroke-dg-gray'
         x1='99'
         y1='91.92'
         x2='99'
         y2='107.92'
-        stroke='#737373'
         stroke-width='1.2'
         marker-end='url(#mA)'></line>
       <line
+        class='stroke-dg-gray'
         x1='99'
         y1='145.92'
         x2='99'
         y2='161.92'
-        stroke='#737373'
         stroke-width='1.2'
         marker-end='url(#mA)'></line>
       <line
+        class='stroke-dg-gray'
         x1='164'
         y1='128.92'
         x2='192'
         y2='128.92'
-        stroke='#737373'
         stroke-width='1.2'
         marker-end='url(#mA)'></line>
 
       <!-- boundary -->
       <line
+        class='stroke-dg-amber'
         x1='360'
         y1='19.92'
         x2='360'
         y2='215.92'
-        stroke='#b45309'
         stroke-width='2'
         stroke-dasharray='7 5'></line>
-      <text x='360' y='9.92' font-size='10.5' fill='#8a5a00' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-amber-ink'
+        x='360'
+        y='9.92'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         the boundary: "use client"
       </text>
 
       <!-- client zone -->
       <rect
+        class='fill-dg-teal-soft stroke-dg-teal'
         x='376'
         y='19.92'
         width='330'
         height='196'
         rx='10'
-        fill='#e0f5f9'
-        stroke='#0891b2'
         stroke-width='1.5'></rect>
       <text
+        class='fill-dg-teal-ink'
         x='541'
         y='41.92'
         font-size='10.5'
-        fill='#0e7490'
         text-anchor='middle'
         font-weight='500'
       >
         Client modules: bundled, hydrated
       </text>
-      <rect x='431' y='57.92' width='220' height='34' rx='6' fill='#ffffff' stroke='#0891b2'></rect>
-      <text x='541' y='72.92' font-size='10.5' fill='#0e7490' text-anchor='middle'>
+      <rect class='fill-dg-white stroke-dg-teal' x='431' y='57.92' width='220' height='34' rx='6'
+      ></rect>
+      <text class='fill-dg-teal-ink' x='541' y='72.92' font-size='10.5' text-anchor='middle'>
         SearchInput.tsx
       </text>
-      <text x='541' y='85.92' font-size='8.5' fill='#3f8a99' text-anchor='middle'>
+      <text class='fill-dg-teal-ink-2' x='541' y='85.92' font-size='8.5' text-anchor='middle'>
         "use client": entry point
       </text>
       <rect
+        class='fill-dg-white stroke-dg-teal'
         x='431'
         y='111.92'
         width='220'
         height='34'
         rx='6'
-        fill='#ffffff'
-        stroke='#0891b2'
         stroke-dasharray='5 3'></rect>
-      <text x='541' y='126.92' font-size='10.5' fill='#0e7490' text-anchor='middle'>
+      <text class='fill-dg-teal-ink' x='541' y='126.92' font-size='10.5' text-anchor='middle'>
         useDebounce.ts
       </text>
-      <text x='541' y='139.92' font-size='8.5' fill='#3f8a99' text-anchor='middle'>
+      <text class='fill-dg-teal-ink-2' x='541' y='139.92' font-size='8.5' text-anchor='middle'>
         no directive, dragged across anyway
       </text>
       <rect
+        class='fill-dg-white stroke-dg-teal'
         x='431'
         y='165.92'
         width='220'
         height='34'
         rx='6'
-        fill='#ffffff'
-        stroke='#0891b2'
         stroke-dasharray='5 3'></rect>
-      <text x='541' y='180.92' font-size='10.5' fill='#0e7490' text-anchor='middle'>
+      <text class='fill-dg-teal-ink' x='541' y='180.92' font-size='10.5' text-anchor='middle'>
         Input.tsx · Spinner.tsx
       </text>
-      <text x='541' y='193.92' font-size='8.5' fill='#3f8a99' text-anchor='middle'>
+      <text class='fill-dg-teal-ink-2' x='541' y='193.92' font-size='8.5' text-anchor='middle'>
         imported by an entry point = client
       </text>
       <line
+        class='stroke-dg-gray'
         x1='541'
         y1='91.92'
         x2='541'
         y2='107.92'
-        stroke='#737373'
         stroke-width='1.2'
         marker-end='url(#mA)'></line>
       <line
+        class='stroke-dg-gray'
         x1='541'
         y1='145.92'
         x2='541'
         y2='161.92'
-        stroke='#737373'
         stroke-width='1.2'
         marker-end='url(#mA)'></line>
       <line
+        class='stroke-dg-amber'
         x1='166'
         y1='74.92'
         x2='427'
         y2='74.92'
-        stroke='#b45309'
         stroke-width='1.5'
         marker-end='url(#mAa)'></line>
-      <text x='254' y='91.92' font-size='10' fill='#8a5a00' text-anchor='middle'>
+      <text class='fill-dg-amber-ink' x='254' y='91.92' font-size='10' text-anchor='middle'>
         server renders it,
       </text>
-      <text x='254' y='104.92' font-size='10' fill='#8a5a00' text-anchor='middle'>
+      <text class='fill-dg-amber-ink' x='254' y='104.92' font-size='10' text-anchor='middle'>
         props must serialize
       </text>
     </svg>
@@ -418,161 +427,180 @@ flowchart LR
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
-      <text x='178' y='14' font-size='10.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-red'
+        x='178'
+        y='14'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Boundary at the top: "just add use client"
       </text>
-      <text x='540' y='14' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-ink'
+        x='540'
+        y='14'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Boundary at the leaves
       </text>
-      <line x1='360' y1='2' x2='360' y2='346' stroke='#e0e0e0'></line>
+      <line class='stroke-dg-line' x1='360' y1='2' x2='360' y2='346'></line>
 
       <!-- LEFT: everything client. Right panel is this grid shifted +362. -->
       <rect
+        class='fill-dg-teal-soft stroke-dg-teal'
         x='58'
         y='30'
         width='240'
         height='272'
         rx='8'
-        fill='#e0f5f9'
-        stroke='#0891b2'
         stroke-width='1.5'></rect>
-      <text x='178' y='50' font-size='10.5' fill='#0e7490' text-anchor='middle'>
+      <text class='fill-dg-teal-ink' x='178' y='50' font-size='10.5' text-anchor='middle'>
         page.tsx: "use client"
       </text>
-      <rect x='74' y='62' width='208' height='40' rx='6' fill='#ffffff' stroke='#0891b2'></rect>
-      <text x='178' y='86' font-size='10.5' fill='#0e7490' text-anchor='middle'>
+      <rect class='fill-dg-white stroke-dg-teal' x='74' y='62' width='208' height='40' rx='6'
+      ></rect>
+      <text class='fill-dg-teal-ink' x='178' y='86' font-size='10.5' text-anchor='middle'>
         ReportSection
       </text>
-      <rect x='74' y='114' width='208' height='58' rx='6' fill='#ffffff' stroke='#0891b2'></rect>
-      <text x='178' y='134' font-size='10.5' fill='#0e7490' text-anchor='middle'> Toolbar </text>
-      <rect x='86' y='146' width='86' height='16' rx='4' fill='#e0f5f9' stroke='#0891b2'></rect>
+      <rect class='fill-dg-white stroke-dg-teal' x='74' y='114' width='208' height='58' rx='6'
+      ></rect>
+      <text class='fill-dg-teal-ink' x='178' y='134' font-size='10.5' text-anchor='middle'>
+        Toolbar
+      </text>
+      <rect class='fill-dg-teal-soft stroke-dg-teal' x='86' y='146' width='86' height='16' rx='4'
+      ></rect>
       <text
+        class='fill-dg-teal-ink'
         x='129'
         y='154'
         font-size='8.5'
-        fill='#0e7490'
         text-anchor='middle'
         dominant-baseline='central'
       >
         SearchInput
       </text>
-      <rect x='184' y='146' width='86' height='16' rx='4' fill='#e0f5f9' stroke='#0891b2'></rect>
+      <rect class='fill-dg-teal-soft stroke-dg-teal' x='184' y='146' width='86' height='16' rx='4'
+      ></rect>
       <text
+        class='fill-dg-teal-ink'
         x='227'
         y='154'
         font-size='8.5'
-        fill='#0e7490'
         text-anchor='middle'
         dominant-baseline='central'
       >
         ExportButton
       </text>
-      <rect x='74' y='182' width='208' height='106' rx='6' fill='#ffffff' stroke='#0891b2'></rect>
-      <text x='178' y='202' font-size='10.5' fill='#0e7490' text-anchor='middle'>
+      <rect class='fill-dg-white stroke-dg-teal' x='74' y='182' width='208' height='106' rx='6'
+      ></rect>
+      <text class='fill-dg-teal-ink' x='178' y='202' font-size='10.5' text-anchor='middle'>
         Table: header, rows, cells,
       </text>
-      <text x='178' y='216' font-size='10.5' fill='#0e7490' text-anchor='middle'>
+      <text class='fill-dg-teal-ink' x='178' y='216' font-size='10.5' text-anchor='middle'>
         formatters, icons, badges…
       </text>
-      <rect x='90' y='232' width='176' height='8' rx='3' fill='#bfe4ec'></rect>
-      <rect x='90' y='248' width='176' height='8' rx='3' fill='#bfe4ec'></rect>
-      <rect x='90' y='264' width='176' height='8' rx='3' fill='#bfe4ec'></rect>
-      <text x='178' y='324' font-size='10.5' fill='#b3261e' text-anchor='middle'>
+      <rect class='fill-dg-teal-border' x='90' y='232' width='176' height='8' rx='3'></rect>
+      <rect class='fill-dg-teal-border' x='90' y='248' width='176' height='8' rx='3'></rect>
+      <rect class='fill-dg-teal-border' x='90' y='264' width='176' height='8' rx='3'></rect>
+      <text class='fill-dg-red' x='178' y='324' font-size='10.5' text-anchor='middle'>
         everything ships &amp; hydrates; the whole tree
       </text>
-      <text x='178' y='340' font-size='10.5' fill='#b3261e' text-anchor='middle'>
+      <text class='fill-dg-red' x='178' y='340' font-size='10.5' text-anchor='middle'>
         gave up async data access for two inputs
       </text>
 
       <!-- RIGHT: leaves client; every coordinate = left + 362 -->
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='420'
         y='30'
         width='240'
         height='272'
         rx='8'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='540' y='50' font-size='10.5' fill='#0757ba' text-anchor='middle'>
+      <text class='fill-dg-blue-ink' x='540' y='50' font-size='10.5' text-anchor='middle'>
         page.tsx: server
       </text>
-      <rect x='436' y='62' width='208' height='40' rx='6' fill='#ffffff' stroke='#0070f3'></rect>
-      <text x='540' y='86' font-size='10.5' fill='#0757ba' text-anchor='middle'>
+      <rect class='fill-dg-white stroke-dg-blue' x='436' y='62' width='208' height='40' rx='6'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='540' y='86' font-size='10.5' text-anchor='middle'>
         ReportSection: async, awaits data
       </text>
-      <rect x='436' y='114' width='208' height='58' rx='6' fill='#ffffff' stroke='#0070f3'></rect>
-      <text x='540' y='134' font-size='10.5' fill='#0757ba' text-anchor='middle'>
+      <rect class='fill-dg-white stroke-dg-blue' x='436' y='114' width='208' height='58' rx='6'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='540' y='134' font-size='10.5' text-anchor='middle'>
         Toolbar: server markup
       </text>
       <rect
+        class='fill-dg-teal-soft stroke-dg-teal'
         x='448'
         y='146'
         width='86'
         height='16'
         rx='4'
-        fill='#e0f5f9'
-        stroke='#0891b2'
         stroke-width='1.5'></rect>
       <text
+        class='fill-dg-teal-ink'
         x='491'
         y='154'
         font-size='8.5'
-        fill='#0e7490'
         text-anchor='middle'
         dominant-baseline='central'
       >
         SearchInput ✦
       </text>
       <rect
+        class='fill-dg-teal-soft stroke-dg-teal'
         x='546'
         y='146'
         width='86'
         height='16'
         rx='4'
-        fill='#e0f5f9'
-        stroke='#0891b2'
         stroke-width='1.5'></rect>
       <text
+        class='fill-dg-teal-ink'
         x='589'
         y='154'
         font-size='8.5'
-        fill='#0e7490'
         text-anchor='middle'
         dominant-baseline='central'
       >
         ExportButton ✦
       </text>
-      <rect x='436' y='182' width='208' height='106' rx='6' fill='#ffffff' stroke='#0070f3'></rect>
-      <text x='540' y='202' font-size='10.5' fill='#0757ba' text-anchor='middle'>
+      <rect class='fill-dg-white stroke-dg-blue' x='436' y='182' width='208' height='106' rx='6'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='540' y='202' font-size='10.5' text-anchor='middle'>
         Table: server-rendered rows
       </text>
-      <rect x='452' y='218' width='176' height='8' rx='3' fill='#c4dbf7'></rect>
-      <rect x='452' y='234' width='176' height='8' rx='3' fill='#c4dbf7'></rect>
-      <rect x='452' y='250' width='176' height='8' rx='3' fill='#c4dbf7'></rect>
+      <rect class='fill-dg-blue-fill-3' x='452' y='218' width='176' height='8' rx='3'></rect>
+      <rect class='fill-dg-blue-fill-3' x='452' y='234' width='176' height='8' rx='3'></rect>
+      <rect class='fill-dg-blue-fill-3' x='452' y='250' width='176' height='8' rx='3'></rect>
       <rect
+        class='fill-dg-teal-soft stroke-dg-teal'
         x='546'
         y='264'
         width='86'
         height='16'
         rx='4'
-        fill='#e0f5f9'
-        stroke='#0891b2'
         stroke-width='1.5'></rect>
       <text
+        class='fill-dg-teal-ink'
         x='589'
         y='272'
         font-size='8.5'
-        fill='#0e7490'
         text-anchor='middle'
         dominant-baseline='central'
       >
         RowActions ✦
       </text>
-      <text x='540' y='324' font-size='10.5' fill='#2e7d5b' text-anchor='middle'>
+      <text class='fill-dg-green-2' x='540' y='324' font-size='10.5' text-anchor='middle'>
         ✦ = the only JS shipped: three small leaves
       </text>
-      <text x='540' y='340' font-size='10.5' fill='#2e7d5b' text-anchor='middle'>
+      <text class='fill-dg-green-2' x='540' y='340' font-size='10.5' text-anchor='middle'>
         structure &amp; data render server-side, streamed
       </text>
     </svg>
@@ -1322,128 +1350,152 @@ flowchart TB
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-gray'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#737373'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
         </marker>
       </defs>
-      <text x='360' y='10' font-size='9.5' fill='#666666' text-anchor='middle'>
+      <text class='fill-dg-muted' x='360' y='10' font-size='9.5' text-anchor='middle'>
         renders the leaf
       </text>
-      <text x='360' y='23' font-size='9.5' fill='#666666' text-anchor='middle'>
+      <text class='fill-dg-muted' x='360' y='23' font-size='9.5' text-anchor='middle'>
         one serializable prop
       </text>
 
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='14'
         y='4'
         width='260'
         height='64'
         rx='8'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='144' y='30' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-blue-ink'
+        x='144'
+        y='30'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Server component parent
       </text>
-      <text x='144' y='48' font-size='9.5' fill='#56789e' text-anchor='middle'>
+      <text class='fill-dg-blue-ink-2' x='144' y='48' font-size='9.5' text-anchor='middle'>
         getProgram(id), tagged 'program-42'
       </text>
 
       <rect
+        class='fill-dg-teal-fill stroke-dg-teal'
         x='446'
         y='4'
         width='260'
         height='64'
         rx='8'
-        fill='#e6f7fb'
-        stroke='#0891b2'
         stroke-width='1.5'></rect>
-      <text x='576' y='30' font-size='10.5' fill='#0891b2' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-teal'
+        x='576'
+        y='30'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Client leaf: PublishButton
       </text>
-      <text x='576' y='48' font-size='9.5' fill='#4d99a8' text-anchor='middle'>
+      <text class='fill-dg-teal-2' x='576' y='48' font-size='9.5' text-anchor='middle'>
         owns the click and its pending state
       </text>
 
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='446'
         y='124'
         width='260'
         height='64'
         rx='8'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='576' y='150' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-blue-ink'
+        x='576'
+        y='150'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Server action
       </text>
-      <text x='576' y='168' font-size='9.5' fill='#56789e' text-anchor='middle'>
+      <text class='fill-dg-blue-ink-2' x='576' y='168' font-size='9.5' text-anchor='middle'>
         mutates, then revalidateTag('program-42')
       </text>
 
       <rect
+        class='fill-dg-green-soft stroke-dg-green'
         x='14'
         y='124'
         width='260'
         height='64'
         rx='8'
-        fill='#e7f5ee'
-        stroke='#2ea06d'
         stroke-width='1.5'></rect>
-      <text x='144' y='150' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-ink'
+        x='144'
+        y='150'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Fresh RSC payload
       </text>
-      <text x='144' y='168' font-size='9.5' fill='#3f8f68' text-anchor='middle'>
+      <text class='fill-dg-green-3' x='144' y='168' font-size='9.5' text-anchor='middle'>
         streamed back over the same request
       </text>
 
       <line
+        class='stroke-dg-gray'
         x1='278'
         y1='36'
         x2='442'
         y2='36'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#mB)'></line>
       <line
+        class='stroke-dg-gray'
         x1='576'
         y1='72'
         x2='576'
         y2='120'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#mB)'></line>
       <line
+        class='stroke-dg-gray'
         x1='442'
         y1='156'
         x2='278'
         y2='156'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#mB)'></line>
       <line
+        class='stroke-dg-gray'
         x1='144'
         y1='120'
         x2='144'
         y2='72'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#mB)'></line>
 
-      <text x='564' y='90' font-size='9.5' fill='#666666' text-anchor='end'>onClick:</text>
-      <text x='564' y='103' font-size='9.5' fill='#666666' text-anchor='end'>
+      <text class='fill-dg-muted' x='564' y='90' font-size='9.5' text-anchor='end'>onClick:</text>
+      <text class='fill-dg-muted' x='564' y='103' font-size='9.5' text-anchor='end'>
         publishProgram(id)
       </text>
-      <text x='156' y='90' font-size='9.5' fill='#666666'>parent re-renders</text>
-      <text x='156' y='103' font-size='9.5' fill='#666666'>fresh data, no reload</text>
-      <text x='360' y='176' font-size='9.5' fill='#666666' text-anchor='middle'>
+      <text class='fill-dg-muted' x='156' y='90' font-size='9.5'>parent re-renders</text>
+      <text class='fill-dg-muted' x='156' y='103' font-size='9.5'>fresh data, no reload</text>
+      <text class='fill-dg-muted' x='360' y='176' font-size='9.5' text-anchor='middle'>
         revalidateTag
       </text>
-      <text x='360' y='189' font-size='9.5' fill='#666666' text-anchor='middle'>
+      <text class='fill-dg-muted' x='360' y='189' font-size='9.5' text-anchor='middle'>
         re-renders every reader
       </text>
     </svg>
@@ -1756,213 +1808,305 @@ flowchart LR
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-gray'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#737373'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
         </marker>
       </defs>
-      <text x='178' y='12' font-size='10.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-red'
+        x='178'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         One client boundary at the top
       </text>
-      <text x='542' y='12' font-size='10.5' fill='#157a4c' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-ink'
+        x='542'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Server tree, client leaf
       </text>
-      <line x1='360' y1='2' x2='360' y2='304' stroke='#e0e0e0'></line>
+      <line class='stroke-dg-line' x1='360' y1='2' x2='360' y2='304'></line>
 
       <!-- LEFT: god tree -->
       <rect
+        class='fill-dg-red-soft stroke-dg-red-strong'
         x='58'
         y='26'
         width='240'
         height='40'
         rx='7'
-        fill='#fdecea'
-        stroke='#d93025'
         stroke-width='1.5'></rect>
-      <text x='178' y='42' font-size='10.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-red'
+        x='178'
+        y='42'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         "use client": ProgramsManager
       </text>
-      <text x='178' y='56' font-size='9' fill='#b0483e' text-anchor='middle'>
+      <text class='fill-dg-clay-ink' x='178' y='56' font-size='9' text-anchor='middle'>
         fetches + UI state + callbacks, all in one
       </text>
       <rect
+        class='fill-dg-teal-fill stroke-dg-teal'
         x='58'
         y='92'
         width='240'
         height='40'
         rx='7'
-        fill='#e6f7fb'
-        stroke='#0891b2'
         stroke-width='1.5'></rect>
-      <text x='178' y='108' font-size='10.5' fill='#0891b2' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-teal'
+        x='178'
+        y='108'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         SectionLayout
       </text>
-      <text x='178' y='122' font-size='9' fill='#4d99a8' text-anchor='middle'>
+      <text class='fill-dg-teal-2' x='178' y='122' font-size='9' text-anchor='middle'>
         client, dragged in by the import graph
       </text>
       <rect
+        class='fill-dg-teal-fill stroke-dg-teal'
         x='58'
         y='158'
         width='240'
         height='40'
         rx='7'
-        fill='#e6f7fb'
-        stroke='#0891b2'
         stroke-width='1.5'></rect>
-      <text x='178' y='174' font-size='10.5' fill='#0891b2' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-teal'
+        x='178'
+        y='174'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         ProgramsTable
       </text>
-      <text x='178' y='188' font-size='9' fill='#4d99a8' text-anchor='middle'>
+      <text class='fill-dg-teal-2' x='178' y='188' font-size='9' text-anchor='middle'>
         client, waits for props from the top
       </text>
       <rect
+        class='fill-dg-teal-fill stroke-dg-teal'
         x='58'
         y='224'
         width='240'
         height='40'
         rx='7'
-        fill='#e6f7fb'
-        stroke='#0891b2'
         stroke-width='1.5'></rect>
-      <text x='178' y='240' font-size='10.5' fill='#0891b2' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-teal'
+        x='178'
+        y='240'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         PublishButton
       </text>
-      <text x='178' y='254' font-size='9' fill='#4d99a8' text-anchor='middle'>
+      <text class='fill-dg-teal-2' x='178' y='254' font-size='9' text-anchor='middle'>
         client, handed onSave it didn't ask for
       </text>
 
       <line
+        class='stroke-dg-gray'
         x1='178'
         y1='70'
         x2='178'
         y2='88'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#mC)'></line>
       <line
+        class='stroke-dg-gray'
         x1='178'
         y1='136'
         x2='178'
         y2='154'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#mC)'></line>
       <line
+        class='stroke-dg-gray'
         x1='178'
         y1='202'
         x2='178'
         y2='220'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#mC)'></line>
-      <text x='190' y='82' font-size='9.5' fill='#b0483e'>props + callbacks</text>
-      <text x='190' y='148' font-size='9.5' fill='#b0483e'>props + callbacks</text>
-      <text x='190' y='214' font-size='9.5' fill='#b0483e'>props + callbacks</text>
+      <text class='fill-dg-clay-ink' x='190' y='82' font-size='9.5'>props + callbacks</text>
+      <text class='fill-dg-clay-ink' x='190' y='148' font-size='9.5'>props + callbacks</text>
+      <text class='fill-dg-clay-ink' x='190' y='214' font-size='9.5'>props + callbacks</text>
 
-      <text x='178' y='286' font-size='10.5' fill='#b0483e' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-clay-ink'
+        x='178'
+        y='286'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         client-rendered from the root:
       </text>
-      <text x='178' y='300' font-size='10.5' fill='#b0483e' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-clay-ink'
+        x='178'
+        y='300'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         streaming, caching, actions: all foreclosed
       </text>
 
       <!-- RIGHT: server tree -->
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='422'
         y='26'
         width='240'
         height='40'
         rx='7'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='542' y='42' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-blue-ink'
+        x='542'
+        y='42'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Page: server
       </text>
-      <text x='542' y='56' font-size='9' fill='#56789e' text-anchor='middle'>
+      <text class='fill-dg-blue-ink-2' x='542' y='56' font-size='9' text-anchor='middle'>
         async: awaits tagged data, streams HTML
       </text>
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='422'
         y='92'
         width='240'
         height='40'
         rx='7'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='542' y='108' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-blue-ink'
+        x='542'
+        y='108'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         SectionLayout: server
       </text>
-      <text x='542' y='122' font-size='9' fill='#56789e' text-anchor='middle'>
+      <text class='fill-dg-blue-ink-2' x='542' y='122' font-size='9' text-anchor='middle'>
         zero JavaScript shipped
       </text>
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='422'
         y='158'
         width='240'
         height='40'
         rx='7'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='542' y='174' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-blue-ink'
+        x='542'
+        y='174'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         ProgramsTable: server
       </text>
-      <text x='542' y='188' font-size='9' fill='#56789e' text-anchor='middle'>
+      <text class='fill-dg-blue-ink-2' x='542' y='188' font-size='9' text-anchor='middle'>
         rows rendered as HTML on the server
       </text>
       <rect
+        class='fill-dg-teal-fill stroke-dg-teal'
         x='422'
         y='224'
         width='240'
         height='40'
         rx='7'
-        fill='#e6f7fb'
-        stroke='#0891b2'
         stroke-width='1.5'></rect>
-      <text x='542' y='240' font-size='10.5' fill='#0891b2' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-teal'
+        x='542'
+        y='240'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         PublishButton: client leaf
       </text>
-      <text x='542' y='254' font-size='9' fill='#4d99a8' text-anchor='middle'>
+      <text class='fill-dg-teal-2' x='542' y='254' font-size='9' text-anchor='middle'>
         owns its click, pending state, and dialog
       </text>
 
       <line
+        class='stroke-dg-gray'
         x1='542'
         y1='70'
         x2='542'
         y2='88'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#mC)'></line>
       <line
+        class='stroke-dg-gray'
         x1='542'
         y1='136'
         x2='542'
         y2='154'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#mC)'></line>
       <line
+        class='stroke-dg-gray'
         x1='542'
         y1='202'
         x2='542'
         y2='220'
-        stroke='#737373'
         stroke-width='1.5'
         marker-end='url(#mC)'></line>
-      <text x='530' y='82' font-size='9.5' fill='#2e7d5b' text-anchor='end'>children</text>
-      <text x='530' y='148' font-size='9.5' fill='#2e7d5b' text-anchor='end'>children</text>
-      <text x='530' y='214' font-size='9.5' fill='#2e7d5b' text-anchor='end'>children</text>
+      <text class='fill-dg-green-2' x='530' y='82' font-size='9.5' text-anchor='end'>children</text>
+      <text class='fill-dg-green-2' x='530' y='148' font-size='9.5' text-anchor='end'>children</text
+      >
+      <text class='fill-dg-green-2' x='530' y='214' font-size='9.5' text-anchor='end'>children</text
+      >
 
-      <text x='542' y='286' font-size='10.5' fill='#2e7d5b' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-2'
+        x='542'
+        y='286'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         server renders everything it can;
       </text>
-      <text x='542' y='300' font-size='10.5' fill='#2e7d5b' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-2'
+        x='542'
+        y='300'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         the only JavaScript is the leaf
       </text>
     </svg>
@@ -2061,9 +2205,9 @@ flowchart TB
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-green-strong'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#0f7b48'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
@@ -2078,106 +2222,172 @@ flowchart TB
           orient='auto-start-reverse'
         >
           <path
+            class='stroke-dg-amber'
             d='M 2.5 1.5 L 8 5 L 2.5 8.5'
             fill='none'
-            stroke='#b45309'
             stroke-width='1.8'
             stroke-linecap='round'
             stroke-linejoin='round'></path>
         </marker>
       </defs>
-      <text x='180' y='12' font-size='10.5' fill='#0f7b48' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-strong'
+        x='180'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Server action: direct
       </text>
-      <text x='540' y='12' font-size='10.5' fill='#b45309' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-amber'
+        x='540'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Proxy route: HTTP middlemen
       </text>
-      <line x1='360' y1='2' x2='360' y2='278' stroke='#e0e0e0'></line>
-      <rect x='40' y='32' width='280' height='42' rx='6' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='180' y='50' font-size='10' fill='#0757ba' text-anchor='middle'> Client form </text>
-      <text x='180' y='64' font-size='9' fill='#527dad' text-anchor='middle'>
+      <line class='stroke-dg-line' x1='360' y1='2' x2='360' y2='278'></line>
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='40' y='32' width='280' height='42' rx='6'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='180' y='50' font-size='10' text-anchor='middle'>
+        Client form
+      </text>
+      <text class='fill-dg-blue-ink-soft' x='180' y='64' font-size='9' text-anchor='middle'>
         action=&#123;archiveProgram&#125;
       </text>
       <line
+        class='stroke-dg-green-strong'
         x1='180'
         y1='74'
         x2='180'
         y2='102'
-        stroke='#0f7b48'
         stroke-width='1.5'
         marker-end='url(#a5d)'></line>
-      <text x='192' y='91' font-size='9' fill='#3e7d5c'>one typed call</text>
-      <rect x='40' y='106' width='280' height='42' rx='6' fill='#e7f5ee' stroke='#0f7b48'></rect>
-      <text x='180' y='124' font-size='10' fill='#0f7b48' text-anchor='middle'>
+      <text class='fill-dg-green-ink-soft' x='192' y='91' font-size='9'>one typed call</text>
+      <rect
+        class='fill-dg-green-soft stroke-dg-green-strong'
+        x='40'
+        y='106'
+        width='280'
+        height='42'
+        rx='6'></rect>
+      <text class='fill-dg-green-strong' x='180' y='124' font-size='10' text-anchor='middle'>
         Server Function
       </text>
-      <text x='180' y='138' font-size='9' fill='#3e7d5c' text-anchor='middle'>
+      <text class='fill-dg-green-ink-soft' x='180' y='138' font-size='9' text-anchor='middle'>
         "use server", runs in-process
       </text>
       <line
+        class='stroke-dg-green-strong'
         x1='180'
         y1='148'
         x2='180'
         y2='176'
-        stroke='#0f7b48'
         stroke-width='1.5'
         marker-end='url(#a5d)'></line>
-      <text x='192' y='165' font-size='9' fill='#3e7d5c'>direct call</text>
-      <rect x='40' y='180' width='280' height='48' rx='6' fill='#e7f5ee' stroke='#0f7b48'></rect>
-      <text x='180' y='199' font-size='10' fill='#0f7b48' text-anchor='middle'>
+      <text class='fill-dg-green-ink-soft' x='192' y='165' font-size='9'>direct call</text>
+      <rect
+        class='fill-dg-green-soft stroke-dg-green-strong'
+        x='40'
+        y='180'
+        width='280'
+        height='48'
+        rx='6'></rect>
+      <text class='fill-dg-green-strong' x='180' y='199' font-size='10' text-anchor='middle'>
         Prisma / your service
       </text>
-      <text x='180' y='214' font-size='9' fill='#3e7d5c' text-anchor='middle'>
+      <text class='fill-dg-green-ink-soft' x='180' y='214' font-size='9' text-anchor='middle'>
         not-found, forbidden: distinct + typed
       </text>
-      <text x='180' y='266' font-size='10' fill='#0f7b48' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-green-strong'
+        x='180'
+        y='266'
+        font-size='10'
+        text-anchor='middle'
+        font-weight='500'
+      >
         One boundary. End-to-end types.
       </text>
-      <rect x='400' y='32' width='280' height='38' rx='6' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='540' y='55' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='400' y='32' width='280' height='38' rx='6'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='540' y='55' font-size='9.5' text-anchor='middle'>
         Client: fetch("/api/proxy/...")
       </text>
       <line
+        class='stroke-dg-amber'
         x1='540'
         y1='70'
         x2='540'
         y2='92'
-        stroke='#b45309'
         stroke-width='1.5'
         marker-end='url(#a5p)'></line>
-      <text x='552' y='85' font-size='9' fill='#8f6b2e'>HTTP hop</text>
-      <rect x='400' y='96' width='280' height='34' rx='6' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='540' y='117' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
+      <text class='fill-dg-amber-ink-soft' x='552' y='85' font-size='9'>HTTP hop</text>
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='400' y='96' width='280' height='34' rx='6'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='540' y='117' font-size='9.5' text-anchor='middle'>
         Next.js API route (proxy)
       </text>
       <line
+        class='stroke-dg-amber'
         x1='540'
         y1='130'
         x2='540'
         y2='152'
-        stroke='#b45309'
         stroke-width='1.5'
         marker-end='url(#a5p)'></line>
-      <text x='552' y='145' font-size='9' fill='#8f6b2e'>HTTP hop</text>
-      <rect x='400' y='156' width='280' height='34' rx='6' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='540' y='177' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
+      <text class='fill-dg-amber-ink-soft' x='552' y='145' font-size='9'>HTTP hop</text>
+      <rect
+        class='fill-dg-amber-soft stroke-dg-amber'
+        x='400'
+        y='156'
+        width='280'
+        height='34'
+        rx='6'></rect>
+      <text class='fill-dg-amber-ink' x='540' y='177' font-size='9.5' text-anchor='middle'>
         Upstream service
       </text>
       <line
+        class='stroke-dg-amber'
         x1='540'
         y1='190'
         x2='540'
         y2='212'
-        stroke='#b45309'
         stroke-width='1.5'
         marker-end='url(#a5p)'></line>
-      <text x='552' y='205' font-size='9' fill='#8f6b2e'>HTTP</text>
-      <rect x='400' y='216' width='280' height='34' rx='6' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='540' y='237' font-size='9.5' fill='#8a5a00' text-anchor='middle'> Database </text>
-      <text x='540' y='262' font-size='10' fill='#b45309' text-anchor='middle' font-weight='500'>
+      <text class='fill-dg-amber-ink-soft' x='552' y='205' font-size='9'>HTTP</text>
+      <rect
+        class='fill-dg-amber-soft stroke-dg-amber'
+        x='400'
+        y='216'
+        width='280'
+        height='34'
+        rx='6'></rect>
+      <text class='fill-dg-amber-ink' x='540' y='237' font-size='9.5' text-anchor='middle'>
+        Database
+      </text>
+      <text
+        class='fill-dg-amber'
+        x='540'
+        y='262'
+        font-size='10'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Types lost at every hop;
       </text>
-      <text x='540' y='276' font-size='10' fill='#b45309' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-amber'
+        x='540'
+        y='276'
+        font-size='10'
+        text-anchor='middle'
+        font-weight='500'
+      >
         + network errors, timeouts.
       </text>
     </svg>
@@ -2344,91 +2554,125 @@ flowchart LR
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
-      <text x='360' y='12' font-size='10.5' fill='#171717' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-ink'
+        x='360'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         Every middleman multiplies the error surface, and hides the layer beneath it
       </text>
 
       <!-- LAYER 1: the ORM -->
       <text
+        class='fill-dg-green-ink'
         x='12'
         y='48'
         font-size='10.5'
-        fill='#157a4c'
         font-weight='500'
         dominant-baseline='central'
       >
         1 · the data layer
       </text>
-      <text x='12' y='61' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+      <text class='fill-dg-green-ink-soft' x='12' y='61' font-size='9' dominant-baseline='central'>
         (the ORM, direct)
       </text>
-      <rect x='190' y='32' width='200' height='44' rx='6' fill='#e7f5ee' stroke='#2ea06d'></rect>
-      <text x='202' y='47' font-size='8.5' fill='#157a4c' dominant-baseline='central'>
+      <rect class='fill-dg-green-soft stroke-dg-green' x='190' y='32' width='200' height='44' rx='6'
+      ></rect>
+      <text class='fill-dg-green-ink' x='202' y='47' font-size='8.5' dominant-baseline='central'>
         null, or the record?
       </text>
-      <text x='202' y='61' font-size='8.5' fill='#157a4c' dominant-baseline='central'>
+      <text class='fill-dg-green-ink' x='202' y='61' font-size='8.5' dominant-baseline='central'>
         allowed, readonly, or invalid input?
       </text>
-      <text x='402' y='54' font-size='9' fill='#3e7d5c' dominant-baseline='central'>
+      <text class='fill-dg-green-ink-soft' x='402' y='54' font-size='9' dominant-baseline='central'>
         a handful of cases: typed, distinct, exhaustive
       </text>
 
       <!-- LAYER 2: + one HTTP API -->
       <text
+        class='fill-dg-amber-ink'
         x='12'
         y='118'
         font-size='10.5'
-        fill='#8a5a00'
         font-weight='500'
         dominant-baseline='central'
       >
         2 · + an HTTP API
       </text>
-      <text x='12' y='131' font-size='9' fill='#8f6b2e' dominant-baseline='central'>
+      <text class='fill-dg-amber-ink-soft' x='12' y='131' font-size='9' dominant-baseline='central'>
         (types end at the wire)
       </text>
-      <rect x='190' y='94' width='340' height='58' rx='6' fill='#fdf3e3' stroke='#b45309'></rect>
-      <text x='202' y='108' font-size='8.5' fill='#8a5a00' dominant-baseline='central'>
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='190' y='94' width='340' height='58' rx='6'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='202' y='108' font-size='8.5' dominant-baseline='central'>
         everything above, plus:
       </text>
-      <text x='202' y='122' font-size='8.5' fill='#8a5a00' dominant-baseline='central'>
+      <text class='fill-dg-amber-ink' x='202' y='122' font-size='8.5' dominant-baseline='central'>
         network error · timeout · 404: bad route, or missing record?
       </text>
-      <text x='202' y='136' font-size='8.5' fill='#8a5a00' dominant-baseline='central'>
+      <text class='fill-dg-amber-ink' x='202' y='136' font-size='8.5' dominant-baseline='central'>
         unparseable JSON · unexpected shape · a status with no body
       </text>
-      <text x='542' y='123' font-size='9' fill='#8f6b2e' dominant-baseline='central'>
+      <text
+        class='fill-dg-amber-ink-soft'
+        x='542'
+        y='123'
+        font-size='9'
+        dominant-baseline='central'
+      >
         every case now arrives as
       </text>
-      <text x='542' y='136' font-size='9' fill='#8f6b2e' dominant-baseline='central'>
+      <text
+        class='fill-dg-amber-ink-soft'
+        x='542'
+        y='136'
+        font-size='9'
+        dominant-baseline='central'
+      >
         untyped bytes to re-interpret
       </text>
 
       <!-- LAYER 3: + a proxy -->
       <text
+        class='fill-dg-red'
         x='12'
         y='196'
         font-size='10.5'
-        fill='#b3261e'
         font-weight='500'
         dominant-baseline='central'
       >
         3 · + a proxy
       </text>
-      <text x='12' y='209' font-size='9' fill='#b0483e' dominant-baseline='central'>
+      <text class='fill-dg-clay-ink' x='12' y='209' font-size='9' dominant-baseline='central'>
         (a layer that hides layers)
       </text>
-      <rect x='190' y='170' width='490' height='58' rx='6' fill='#fdecea' stroke='#d93025'></rect>
-      <text x='202' y='184' font-size='8.5' fill='#b3261e' dominant-baseline='central'>
+      <rect
+        class='fill-dg-red-soft stroke-dg-red-strong'
+        x='190'
+        y='170'
+        width='490'
+        height='58'
+        rx='6'></rect>
+      <text class='fill-dg-red' x='202' y='184' font-size='8.5' dominant-baseline='central'>
         everything above, doubled: two networks, two timeout budgets, two JSON contracts, plus:
       </text>
-      <text x='202' y='198' font-size='8.5' fill='#b3261e' dominant-baseline='central'>
+      <text class='fill-dg-red' x='202' y='198' font-size='8.5' dominant-baseline='central'>
         did the proxy fail, or the upstream? whose 500 is this? whose 404?
       </text>
-      <text x='202' y='212' font-size='8.5' fill='#b3261e' dominant-baseline='central'>
+      <text class='fill-dg-red' x='202' y='212' font-size='8.5' dominant-baseline='central'>
         translate the upstream's codes through, or pass them along blind?
       </text>
-      <text x='360' y='252' font-size='9.5' fill='#b3261e' text-anchor='middle' font-weight='500'>
+      <text
+        class='fill-dg-red'
+        x='360'
+        y='252'
+        font-size='9.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
         each layer widens the surface and blurs the one beneath: more cases, less type safety
       </text>
     </svg>

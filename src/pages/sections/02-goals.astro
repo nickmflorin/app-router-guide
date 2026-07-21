@@ -62,130 +62,135 @@ import CompareCol from '../../components/CompareCol.astro';
       font-family='Inter, system-ui, sans-serif'
     >
       <!-- browser frame -->
-      <rect x='8' y='2' width='704' height='360' rx='10' fill='#ffffff' stroke='#d4d4d4'></rect>
-      <circle cx='28' cy='20' r='4' fill='#c9c9c9'></circle>
-      <circle cx='42' cy='20' r='4' fill='#c9c9c9'></circle>
-      <circle cx='56' cy='20' r='4' fill='#c9c9c9'></circle>
-      <rect x='72' y='12' width='240' height='16' rx='8' fill='#f2f2f2' stroke='#e0e0e0'></rect>
-      <text x='84' y='24' font-size='10' fill='#737373'> app.crafteducation.com/programs/42 </text>
+      <rect class='fill-dg-white stroke-dg-line-strong' x='8' y='2' width='704' height='360' rx='10'
+      ></rect>
+      <circle class='fill-dg-gray-border' cx='28' cy='20' r='4'></circle>
+      <circle class='fill-dg-gray-border' cx='42' cy='20' r='4'></circle>
+      <circle class='fill-dg-gray-border' cx='56' cy='20' r='4'></circle>
+      <rect class='fill-dg-gray-fill-2 stroke-dg-line' x='72' y='12' width='240' height='16' rx='8'
+      ></rect>
+      <text class='fill-dg-gray' x='84' y='24' font-size='10'>
+        app.crafteducation.com/programs/42
+      </text>
 
       <!-- top nav: known -->
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='24'
         y='40'
         width='672'
         height='34'
         rx='6'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='36' y='61' font-size='11' fill='#0757ba'>Top navigation: layout.tsx</text>
-      <circle cx='676' cy='57' r='6' fill='none' stroke='#0891b2' stroke-width='1.5'></circle>
+      <text class='fill-dg-blue-ink' x='36' y='61' font-size='11'>Top navigation: layout.tsx</text>
+      <circle class='stroke-dg-teal' cx='676' cy='57' r='6' fill='none' stroke-width='1.5'></circle>
 
       <!-- sidebar: known -->
       <!-- data-lint-ignore: sidebar scene: nav items intentionally sit at the top -->
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         data-lint-ignore='scene'
         x='24'
         y='82'
         width='130'
         height='264'
         rx='6'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='36' y='102' font-size='11' fill='#0757ba'>Sidebar</text>
-      <text x='36' y='117' font-size='10' fill='#56789e'>layout.tsx</text>
-      <rect x='36' y='130' width='106' height='8' rx='4' fill='#c4dbf7'></rect>
-      <rect x='36' y='146' width='106' height='8' rx='4' fill='#c4dbf7'></rect>
-      <rect x='36' y='162' width='106' height='8' rx='4' fill='#c4dbf7'></rect>
+      <text class='fill-dg-blue-ink' x='36' y='102' font-size='11'>Sidebar</text>
+      <text class='fill-dg-blue-ink-2' x='36' y='117' font-size='10'>layout.tsx</text>
+      <rect class='fill-dg-blue-fill-3' x='36' y='130' width='106' height='8' rx='4'></rect>
+      <rect class='fill-dg-blue-fill-3' x='36' y='146' width='106' height='8' rx='4'></rect>
+      <rect class='fill-dg-blue-fill-3' x='36' y='162' width='106' height='8' rx='4'></rect>
 
       <!-- page header container: known, with unknown inside -->
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='166'
         y='82'
         width='530'
         height='70'
         rx='6'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='178' y='100' font-size='11' fill='#0757ba'>
+      <text class='fill-dg-blue-ink' x='178' y='100' font-size='11'>
         Page header container: reserves its space
       </text>
       <rect
+        class='fill-dg-amber-soft stroke-dg-amber'
         x='178'
         y='108'
         width='300'
         height='34'
         rx='5'
-        fill='#fdf3e3'
-        stroke='#b45309'
         stroke-width='1.5'
         stroke-dasharray='5 4'></rect>
-      <text x='190' y='129' font-size='11' fill='#8a5a00'> await program → title, status </text>
-      <circle cx='668' cy='117' r='6' fill='none' stroke='#0891b2' stroke-width='1.5'></circle>
-      <text x='600' y='121' font-size='10' fill='#0891b2'>actions</text>
+      <text class='fill-dg-amber-ink' x='190' y='129' font-size='11'>
+        await program → title, status
+      </text>
+      <circle class='stroke-dg-teal' cx='668' cy='117' r='6' fill='none' stroke-width='1.5'
+      ></circle>
+      <text class='fill-dg-teal' x='600' y='121' font-size='10'>actions</text>
 
       <!-- table container: known, with unknown inside -->
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='166'
         y='164'
         width='530'
         height='182'
         rx='6'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='178' y='182' font-size='11' fill='#0757ba'>
+      <text class='fill-dg-blue-ink' x='178' y='182' font-size='11'>
         Table container: toolbar, columns, reserved height
       </text>
-      <rect x='178' y='192' width='180' height='22' rx='5' fill='#d8e8fc'></rect>
-      <text x='188' y='207' font-size='10' fill='#527dad'>search</text>
-      <circle cx='348' cy='203' r='6' fill='none' stroke='#0891b2' stroke-width='1.5'></circle>
+      <rect class='fill-dg-blue-fill-2' x='178' y='192' width='180' height='22' rx='5'></rect>
+      <text class='fill-dg-blue-ink-soft' x='188' y='207' font-size='10'>search</text>
+      <circle class='stroke-dg-teal' cx='348' cy='203' r='6' fill='none' stroke-width='1.5'
+      ></circle>
       <!-- data-lint-ignore: reserved-height region: emptiness below the bars is the point -->
       <rect
+        class='fill-dg-amber-soft stroke-dg-amber'
         data-lint-ignore='scene'
         x='178'
         y='224'
         width='506'
         height='110'
         rx='5'
-        fill='#fdf3e3'
-        stroke='#b45309'
         stroke-width='1.5'
         stroke-dasharray='5 4'></rect>
-      <text x='190' y='245' font-size='11' fill='#8a5a00'> await rows → &lt;TableBody /&gt; </text>
-      <rect x='190' y='256' width='482' height='7' rx='3' fill='#f3e2c0'></rect>
-      <rect x='190' y='270' width='482' height='7' rx='3' fill='#f3e2c0'></rect>
-      <rect x='190' y='284' width='482' height='7' rx='3' fill='#f3e2c0'></rect>
+      <text class='fill-dg-amber-ink' x='190' y='245' font-size='11'>
+        await rows → &lt;TableBody /&gt;
+      </text>
+      <rect class='fill-dg-amber-border' x='190' y='256' width='482' height='7' rx='3'></rect>
+      <rect class='fill-dg-amber-border' x='190' y='270' width='482' height='7' rx='3'></rect>
+      <rect class='fill-dg-amber-border' x='190' y='284' width='482' height='7' rx='3'></rect>
 
       <!-- legend -->
       <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
         x='24'
         y='380'
         width='14'
         height='14'
         rx='3'
-        fill='#eaf3fe'
-        stroke='#0070f3'
         stroke-width='1.5'></rect>
-      <text x='46' y='392' font-size='12' fill='#171717'>
+      <text class='fill-dg-ink' x='46' y='392' font-size='12'>
         Known: streamed as HTML on first response
       </text>
       <rect
+        class='fill-dg-amber-soft stroke-dg-amber'
         x='344'
         y='380'
         width='14'
         height='14'
         rx='3'
-        fill='#fdf3e3'
-        stroke='#b45309'
         stroke-width='1.5'
         stroke-dasharray='4 3'></rect>
-      <text x='366' y='392' font-size='12' fill='#171717'> Unknown: suspended, streams in </text>
-      <circle cx='590' cy='387' r='6' fill='none' stroke='#0891b2' stroke-width='1.5'></circle>
-      <text x='604' y='392' font-size='12' fill='#171717'>Interactive leaf</text>
+      <text class='fill-dg-ink' x='366' y='392' font-size='12'>
+        Unknown: suspended, streams in
+      </text>
+      <circle class='stroke-dg-teal' cx='590' cy='387' r='6' fill='none' stroke-width='1.5'
+      ></circle>
+      <text class='fill-dg-ink' x='604' y='392' font-size='12'>Interactive leaf</text>
     </svg>
 
     <pre
