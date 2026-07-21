@@ -4,6 +4,8 @@ import Chip from '../../components/Chip.astro';
 import Callout from '../../components/Callout.astro';
 import GoDeeper from '../../components/GoDeeper.astro';
 import Diagram from '../../components/Diagram.astro';
+import CodeCaption from '../../components/CodeCaption.astro';
+import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='Designing for the Unknown - App Router Guide' root='..'>
@@ -829,7 +831,7 @@ flowchart LR
 
   <Diagram>
     <svg
-      viewBox='0 0 720 312'
+      viewBox='0 0 720 284'
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
@@ -865,7 +867,8 @@ flowchart LR
       <text x='180' y='152' font-size='8.5' fill='#8f6b2e' text-anchor='middle'>
         empty/loading center; lists scroll inside
       </text>
-      <rect x='52' y='214' width='256' height='30' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <!-- data-lint-ignore: footer scene - actions right-aligned by design -->
+      <rect data-lint-ignore='scene' x='52' y='214' width='256' height='30' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
       <rect x='176' y='220' width='58' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
       <text
         x='205'

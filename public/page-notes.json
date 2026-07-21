@@ -120,7 +120,7 @@
       "id": "nmruujoe2",
       "page": "12-designing-for-the-unknown.html",
       "ts": "2026-07-21T16:07:05.018Z",
-      "status": "open",
+      "status": "resolved",
       "text": "I want to include a more detailed section on this page that touches on the dialog flow example that is already on the page more thoroughly, but applied to both dialogs and drawers.  IT should be focused on wizard-style components, and how the container or shell and outer structure should remain static with just the inner content changing as the user progresses.  It should show a drawer example, where the drawer has multiple steps (next prev etc) and an example where the drawer has multiple tabs (i.e. non sequentail steps the user can skip around in) - each one should keep all of the non-dynamic per-step per-tab content static in a single drawer component that is dyanmically imported and mounted/unmounted when it is open/closed.  it should then show that the inner content changes as the step or tab changes, but not the outer content.  In the next/prev case, it should show the drawer container, structure, drawer header, and footer as static and the inner content as dynamic, with the inner content stretching with flex grow between the header and the footer and establishing min-h-0 and flex-grow and overflow hidden, and then should show how the dynamic inner content slots into that static structure, and how the inner content that is dynamic can show empty messages or loading indicators that are centered in the available height because of the flex grow and overflow hidden, but then list-style content that is dynamic can define max-h-0 and overflow-y-auto to force scroll.  the footer should have the next and previous buttons which are static, and it should emphasis that we don't unmount/remount 3 different drawers on each tab or prev/next change - the goal of everything we do in teh UI is to hold contsant what is static and unchanging, maximize that structure and minimize the dynamic.  the tabs case should be similar, but just doesn't have the footer at the bottom, and the tabs are static and at the top with the flex grow applied to the available space under it.",
       "target": {
         "anchor": null,
@@ -129,7 +129,9 @@
         ],
         "tag": "h1",
         "snippet": "Designing for the Unknown"
-      }
+      },
+      "resolution": "New §12.4 subsection \"Building the one frame: wizard drawers and dialogs\": one component per flow; shell (container/header/tabs/footer) static, one dynamic inner region stretched by min-h-0/grow/overflow-hidden; never unmount/remount a drawer per step; hold constant the static, maximize structure, minimize the dynamic; the drawer itself is the only mount/unmount, dynamically imported per §8.4; applies verbatim to dialogs. Two-panel anatomy diagram (sequential with static header + Prev/Next footer; tabbed with static tab bar, no footer) with twin. Three snippets: the sequential shell where only STEPS[step] changes, step content showing both fill modes (empty/loading centered by the grow+overflow-hidden geometry; lists claim the height with min-h-0 grow overflow-y-auto), and the tabbed variant (overlay tabs in useState = §9.3 ladder bottom rung, legitimately).",
+      "resolvedAt": "2026-07-20"
     }
   ]
 }
