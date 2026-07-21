@@ -1022,7 +1022,7 @@ flowchart LR
     </CodeCaption>
   </Snippet>
 
-  <h4 id='wizard-shell-sequential'>Sequential flows: one shell, a swappable step</h4>
+  <h4 id='wizard-flow'>Wizard flows: one shell, a swappable step</h4>
   <p>
     The correct shape mounts one drawer for the whole flow. The shell (container, header, footer)
     renders once per open; between the static pieces sits a <strong>static content region</strong>
@@ -1033,7 +1033,7 @@ flowchart LR
 
   <Diagram>
     <svg
-      viewBox='0 0 720 346'
+      viewBox='0 0 690 290'
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
@@ -1073,147 +1073,147 @@ flowchart LR
             stroke-linejoin='round'></path>
         </marker>
       </defs>
-      <text x='478' y='12' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
-        Sequential: next / prev
-      </text>
 
       <!-- candidate step components, on the left -->
-      <text x='95' y='40' font-size='8.5' fill='#8a5a00' text-anchor='middle' font-weight='500'>
+      <text x='80' y='10' font-size='8.5' fill='#8a5a00' text-anchor='middle' font-weight='500'>
         empty / loading state
       </text>
-      <rect x='20' y='46' width='150' height='96' rx='6' fill='#ffffff' stroke='#b45309'></rect>
-      <rect x='68' y='72' width='54' height='40' rx='4' fill='#eef2f7' stroke='#c9c9c9'></rect>
-      <circle cx='82' cy='86' r='5' fill='#d4dde8'></circle>
-      <path d='M 74 106 L 88 92 L 98 102 L 116 88' fill='none' stroke='#d4dde8' stroke-width='2'
-      ></path>
-      <text x='95' y='156' font-size='8' fill='#8f6b2e' text-anchor='middle'>
+      <rect x='10' y='18' width='140' height='92' rx='6' fill='#ffffff' stroke='#b45309'></rect>
+      <rect x='54' y='44' width='52' height='40' rx='4' fill='#eef2f7' stroke='#c9c9c9'></rect>
+      <circle cx='67' cy='57' r='5' fill='#d4dde8'></circle>
+      <path d='M 60 78 L 73 65 L 82 74 L 98 60' fill='none' stroke='#d4dde8' stroke-width='2'></path>
+      <text x='80' y='122' font-size='8' fill='#8f6b2e' text-anchor='middle'>
         fills full height &amp; width;
       </text>
-      <text x='95' y='166' font-size='8' fill='#8f6b2e' text-anchor='middle'>
-        content centered
-      </text>
+      <text x='80' y='132' font-size='8' fill='#8f6b2e' text-anchor='middle'> content centered </text>
 
-      <text x='95' y='196' font-size='8.5' fill='#8a5a00' text-anchor='middle' font-weight='500'>
+      <text x='80' y='152' font-size='8.5' fill='#8a5a00' text-anchor='middle' font-weight='500'>
         list state
       </text>
-      <rect x='20' y='202' width='150' height='96' rx='6' fill='#ffffff' stroke='#b45309'></rect>
-      <rect x='32' y='212' width='126' height='9' rx='3' fill='#eef2f7'></rect>
-      <rect x='32' y='226' width='126' height='9' rx='3' fill='#eef2f7'></rect>
-      <rect x='32' y='240' width='126' height='9' rx='3' fill='#eef2f7'></rect>
-      <rect x='32' y='254' width='126' height='9' rx='3' fill='#eef2f7'></rect>
-      <rect x='32' y='268' width='126' height='9' rx='3' fill='#eef2f7'></rect>
-      <rect x='32' y='282' width='126' height='9' rx='3' fill='#eef2f7'></rect>
-      <text x='95' y='312' font-size='8' fill='#8f6b2e' text-anchor='middle'>
+      <!-- data-lint-ignore: scene - skeleton rows are top-aligned like a real list -->
+      <rect
+        data-lint-ignore='scene'
+        x='10'
+        y='158'
+        width='140'
+        height='92'
+        rx='6'
+        fill='#ffffff'
+        stroke='#b45309'></rect>
+      <rect x='22' y='168' width='116' height='9' rx='3' fill='#eef2f7'></rect>
+      <rect x='22' y='182' width='116' height='9' rx='3' fill='#eef2f7'></rect>
+      <rect x='22' y='196' width='116' height='9' rx='3' fill='#eef2f7'></rect>
+      <rect x='22' y='210' width='116' height='9' rx='3' fill='#eef2f7'></rect>
+      <rect x='22' y='224' width='116' height='9' rx='3' fill='#eef2f7'></rect>
+      <rect x='22' y='238' width='116' height='9' rx='3' fill='#eef2f7'></rect>
+      <text x='80' y='262' font-size='8' fill='#8f6b2e' text-anchor='middle'>
         at most full height;
       </text>
-      <text x='95' y='322' font-size='8' fill='#8f6b2e' text-anchor='middle'>
-        scrolls inside
-      </text>
+      <text x='80' y='272' font-size='8' fill='#8f6b2e' text-anchor='middle'> scrolls inside </text>
 
-      <!-- arrows: either candidate slots into the same dynamic region -->
+      <!-- arrows: either candidate slots into the dynamic region, reaching into it -->
       <path
-        d='M 172 108 L 300 108 L 300 152 L 350 152'
+        d='M 150 64 L 250 64 L 250 118 L 334 118'
         fill='none'
         stroke='#b45309'
         stroke-width='1.2'
         marker-end='url(#aWzA)'></path>
+      <text x='290' y='112' font-size='7.5' fill='#8f6b2e' text-anchor='middle'>slots in</text>
       <path
-        d='M 172 250 L 300 250 L 300 198 L 350 198'
+        d='M 150 204 L 250 204 L 250 172 L 334 172'
         fill='none'
         stroke='#b45309'
         stroke-width='1.2'
         marker-end='url(#aWzA)'></path>
-      <text x='250' y='92' font-size='8' fill='#8f6b2e' text-anchor='middle'>
-        one of these slots in
-      </text>
+      <text x='290' y='166' font-size='7.5' fill='#8f6b2e' text-anchor='middle'>slots in</text>
 
       <!-- the drawer shell, on the right -->
-      <rect x='330' y='40' width='290' height='280' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='308' y='18' width='282' height='250' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
       <line
-        x1='628'
-        y1='40'
-        x2='628'
-        y2='320'
+        x1='596'
+        y1='18'
+        x2='596'
+        y2='268'
         stroke='#737373'
         stroke-width='1.2'
         marker-start='url(#aWzG)'
         marker-end='url(#aWzG)'></line>
-      <text x='636' y='171' font-size='7.5' fill='#737373'>fills viewport</text>
-      <text x='636' y='182' font-size='7.5' fill='#737373'>height;</text>
-      <text x='636' y='193' font-size='7.5' fill='#737373'>disallows overflow</text>
-      <rect x='342' y='52' width='266' height='26' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='352' y='65' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+      <text x='602' y='133' font-size='7.5' fill='#737373'>fills viewport</text>
+      <text x='602' y='144' font-size='7.5' fill='#737373'>height;</text>
+      <text x='602' y='155' font-size='7.5' fill='#737373'>disallows overflow</text>
+      <rect x='320' y='28' width='258' height='26' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='330' y='41' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
         Drawer header (static)
       </text>
       <!-- data-lint-ignore: nested scene - static content region wrapping the dynamic inner frame -->
       <rect
         data-lint-ignore='scene'
-        x='342'
-        y='86'
-        width='266'
-        height='176'
+        x='320'
+        y='62'
+        width='258'
+        height='152'
         rx='5'
         fill='#ffffff'
         stroke='#0070f3'></rect>
-      <text x='480' y='97' font-size='8' fill='#0757ba' text-anchor='middle'>
+      <text x='449' y='72' font-size='8' fill='#0757ba' text-anchor='middle'>
         content region (static): reserves &amp; fills the space
       </text>
-      <text x='480' y='108' font-size='8' fill='#0757ba' text-anchor='middle'>
+      <text x='449' y='81' font-size='8' fill='#0757ba' text-anchor='middle'>
         for the dynamic content below
       </text>
       <line
-        x1='349'
-        y1='92'
-        x2='349'
-        y2='256'
+        x1='572'
+        y1='66'
+        x2='572'
+        y2='210'
         stroke='#737373'
         stroke-width='1.2'
         marker-start='url(#aWzG)'
         marker-end='url(#aWzG)'></line>
       <rect
-        x='356'
-        y='118'
-        width='244'
-        height='134'
+        x='334'
+        y='90'
+        width='232'
+        height='116'
         rx='4'
         fill='#fdf3e3'
         stroke='#b45309'
         stroke-dasharray='5 4'></rect>
-      <text x='480' y='188' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
+      <text x='450' y='150' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
         step content (dynamic)
       </text>
       <!-- data-lint-ignore: footer scene - actions right-aligned by design -->
       <rect
         data-lint-ignore='scene'
-        x='342'
-        y='270'
-        width='266'
+        x='320'
+        y='222'
+        width='258'
         height='34'
         rx='5'
         fill='#eaf3fe'
         stroke='#0070f3'></rect>
-      <rect x='470' y='278' width='58' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
+      <rect x='450' y='230' width='56' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
       <text
-        x='499'
-        y='287'
+        x='478'
+        y='239'
         font-size='8.5'
         fill='#527dad'
         text-anchor='middle'
         dominant-baseline='central'>Previous</text
       >
-      <rect x='534' y='278' width='58' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
+      <rect x='512' y='230' width='56' height='18' rx='4' fill='#ffffff' stroke='#a9cdf5'></rect>
       <text
-        x='563'
-        y='287'
+        x='540'
+        y='239'
         font-size='8.5'
         fill='#527dad'
         text-anchor='middle'
         dominant-baseline='central'>Next</text
       >
-      <text x='352' y='287' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+      <text x='330' y='239' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
         Footer (static)
       </text>
-      <text x='478' y='340' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
+      <text x='449' y='284' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
         one drawer; only STEPS[step] swaps inside
       </text>
     </svg>
@@ -1224,9 +1224,9 @@ flowchart LR
 flowchart LR
   EM("empty / loading state<br/>fills full height &amp; width; content centered"):::amber
   LS("list state<br/>at most full height; scrolls inside"):::amber
-  EM -->|"one of these slots in"| C1
-  LS -->|"one of these slots in"| C1
-  subgraph SW["Sequential drawer · fills viewport height; disallows overflow"]
+  EM -->|"slots in"| C1
+  LS -->|"slots in"| C1
+  subgraph SW["Wizard drawer · fills viewport height; disallows overflow"]
     direction TB
     h1("Drawer header · static"):::blue
     h1 --> r1("content region · static: reserves &amp; fills the space<br/>for the dynamic content below"):::blue
@@ -1241,7 +1241,7 @@ flowchart LR
 </pre>
 
     <Fragment slot='caption'>
-      The sequential anatomy. The outer double-headed arrow: the drawer fills the viewport height and
+      The wizard-flow anatomy. The outer double-headed arrow: the drawer fills the viewport height and
       disallows overflow, so the frame itself can never grow or scroll. The inner double-headed
       arrow: the static blue content region is what reserves and fills the space between the header
       and the footer, so nothing shifts when the step changes. Either kind of step content then slots
@@ -1335,7 +1335,7 @@ flowchart LR
     </CodeCaption>
   </Snippet>
 
-  <h4 id='wizard-shell-tabs'>Non-sequential flows: tabs in the static shell</h4>
+  <h4 id='tabbed-flow'>Tabbed flows: tabs in the static shell</h4>
   <p>
     When the "steps" aren't ordered, the shell gains a tab bar and loses the footer, and the
     doctrine doesn't change: the tab bar is part of the static frame, the content region below it is
@@ -1344,7 +1344,7 @@ flowchart LR
 
   <Diagram>
     <svg
-      viewBox='0 0 720 346'
+      viewBox='0 0 690 290'
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
@@ -1384,101 +1384,101 @@ flowchart LR
             stroke-linejoin='round'></path>
         </marker>
       </defs>
-      <text x='478' y='12' font-size='10.5' fill='#0757ba' text-anchor='middle' font-weight='500'>
-        Non-sequential: tabs
-      </text>
-
       <!-- candidate tab components, on the left -->
-      <text x='95' y='40' font-size='8.5' fill='#8a5a00' text-anchor='middle' font-weight='500'>
+      <text x='80' y='10' font-size='8.5' fill='#8a5a00' text-anchor='middle' font-weight='500'>
         empty / loading state
       </text>
-      <rect x='20' y='46' width='150' height='96' rx='6' fill='#ffffff' stroke='#b45309'></rect>
-      <rect x='68' y='72' width='54' height='40' rx='4' fill='#eef2f7' stroke='#c9c9c9'></rect>
-      <circle cx='82' cy='86' r='5' fill='#d4dde8'></circle>
-      <path d='M 74 106 L 88 92 L 98 102 L 116 88' fill='none' stroke='#d4dde8' stroke-width='2'
-      ></path>
-      <text x='95' y='156' font-size='8' fill='#8f6b2e' text-anchor='middle'>
+      <rect x='10' y='18' width='140' height='92' rx='6' fill='#ffffff' stroke='#b45309'></rect>
+      <rect x='54' y='44' width='52' height='40' rx='4' fill='#eef2f7' stroke='#c9c9c9'></rect>
+      <circle cx='67' cy='57' r='5' fill='#d4dde8'></circle>
+      <path d='M 60 78 L 73 65 L 82 74 L 98 60' fill='none' stroke='#d4dde8' stroke-width='2'></path>
+      <text x='80' y='122' font-size='8' fill='#8f6b2e' text-anchor='middle'>
         fills full height &amp; width;
       </text>
-      <text x='95' y='166' font-size='8' fill='#8f6b2e' text-anchor='middle'>
-        content centered
-      </text>
+      <text x='80' y='132' font-size='8' fill='#8f6b2e' text-anchor='middle'> content centered </text>
 
-      <text x='95' y='196' font-size='8.5' fill='#8a5a00' text-anchor='middle' font-weight='500'>
+      <text x='80' y='152' font-size='8.5' fill='#8a5a00' text-anchor='middle' font-weight='500'>
         list state
       </text>
-      <rect x='20' y='202' width='150' height='96' rx='6' fill='#ffffff' stroke='#b45309'></rect>
-      <rect x='32' y='212' width='126' height='9' rx='3' fill='#eef2f7'></rect>
-      <rect x='32' y='226' width='126' height='9' rx='3' fill='#eef2f7'></rect>
-      <rect x='32' y='240' width='126' height='9' rx='3' fill='#eef2f7'></rect>
-      <rect x='32' y='254' width='126' height='9' rx='3' fill='#eef2f7'></rect>
-      <rect x='32' y='268' width='126' height='9' rx='3' fill='#eef2f7'></rect>
-      <rect x='32' y='282' width='126' height='9' rx='3' fill='#eef2f7'></rect>
-      <text x='95' y='312' font-size='8' fill='#8f6b2e' text-anchor='middle'>
+      <!-- data-lint-ignore: scene - skeleton rows are top-aligned like a real list -->
+      <rect
+        data-lint-ignore='scene'
+        x='10'
+        y='158'
+        width='140'
+        height='92'
+        rx='6'
+        fill='#ffffff'
+        stroke='#b45309'></rect>
+      <rect x='22' y='168' width='116' height='9' rx='3' fill='#eef2f7'></rect>
+      <rect x='22' y='182' width='116' height='9' rx='3' fill='#eef2f7'></rect>
+      <rect x='22' y='196' width='116' height='9' rx='3' fill='#eef2f7'></rect>
+      <rect x='22' y='210' width='116' height='9' rx='3' fill='#eef2f7'></rect>
+      <rect x='22' y='224' width='116' height='9' rx='3' fill='#eef2f7'></rect>
+      <rect x='22' y='238' width='116' height='9' rx='3' fill='#eef2f7'></rect>
+      <text x='80' y='262' font-size='8' fill='#8f6b2e' text-anchor='middle'>
         at most full height;
       </text>
-      <text x='95' y='322' font-size='8' fill='#8f6b2e' text-anchor='middle'>
-        scrolls inside
-      </text>
+      <text x='80' y='272' font-size='8' fill='#8f6b2e' text-anchor='middle'> scrolls inside </text>
 
+      <!-- arrows: either candidate slots into the dynamic region, reaching into it -->
       <path
-        d='M 172 108 L 300 108 L 300 168 L 350 168'
+        d='M 150 64 L 250 64 L 250 140 L 334 140'
         fill='none'
         stroke='#b45309'
         stroke-width='1.2'
         marker-end='url(#aWzA2)'></path>
+      <text x='290' y='134' font-size='7.5' fill='#8f6b2e' text-anchor='middle'>slots in</text>
       <path
-        d='M 172 250 L 300 250 L 300 210 L 350 210'
+        d='M 150 204 L 250 204 L 250 210 L 334 210'
         fill='none'
         stroke='#b45309'
         stroke-width='1.2'
         marker-end='url(#aWzA2)'></path>
-      <text x='250' y='92' font-size='8' fill='#8f6b2e' text-anchor='middle'>
-        one of these slots in
-      </text>
+      <text x='290' y='204' font-size='7.5' fill='#8f6b2e' text-anchor='middle'>slots in</text>
 
       <!-- the drawer shell, on the right -->
-      <rect x='330' y='40' width='290' height='280' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
+      <rect x='308' y='18' width='282' height='250' rx='8' fill='#ffffff' stroke='#c9c9c9'></rect>
       <line
-        x1='628'
-        y1='40'
-        x2='628'
-        y2='320'
+        x1='596'
+        y1='18'
+        x2='596'
+        y2='268'
         stroke='#737373'
         stroke-width='1.2'
         marker-start='url(#aWzG2)'
         marker-end='url(#aWzG2)'></line>
-      <text x='636' y='171' font-size='7.5' fill='#737373'>fills viewport</text>
-      <text x='636' y='182' font-size='7.5' fill='#737373'>height;</text>
-      <text x='636' y='193' font-size='7.5' fill='#737373'>disallows overflow</text>
-      <rect x='342' y='52' width='266' height='26' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
-      <text x='352' y='65' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
+      <text x='602' y='133' font-size='7.5' fill='#737373'>fills viewport</text>
+      <text x='602' y='144' font-size='7.5' fill='#737373'>height;</text>
+      <text x='602' y='155' font-size='7.5' fill='#737373'>disallows overflow</text>
+      <rect x='320' y='28' width='258' height='26' rx='5' fill='#eaf3fe' stroke='#0070f3'></rect>
+      <text x='330' y='41' font-size='9.5' fill='#0757ba' dominant-baseline='central'>
         Drawer header (static)
       </text>
       <!-- tab tiles: active tab is the darker filled tile -->
-      <rect x='342' y='84' width='84' height='22' rx='4' fill='#cfe3fb' stroke='#0070f3'></rect>
+      <rect x='320' y='60' width='82' height='22' rx='4' fill='#cfe3fb' stroke='#0070f3'></rect>
       <text
-        x='384'
-        y='95'
+        x='361'
+        y='71'
         font-size='8.5'
         fill='#0757ba'
         text-anchor='middle'
         dominant-baseline='central'
         font-weight='600'>Details</text
       >
-      <rect x='430' y='84' width='84' height='22' rx='4' fill='#f5f9fe' stroke='#a9cdf5'></rect>
+      <rect x='406' y='60' width='82' height='22' rx='4' fill='#f5f9fe' stroke='#a9cdf5'></rect>
       <text
-        x='472'
-        y='95'
+        x='447'
+        y='71'
         font-size='8.5'
         fill='#527dad'
         text-anchor='middle'
         dominant-baseline='central'>Schedule</text
       >
-      <rect x='518' y='84' width='84' height='22' rx='4' fill='#f5f9fe' stroke='#a9cdf5'></rect>
+      <rect x='492' y='60' width='82' height='22' rx='4' fill='#f5f9fe' stroke='#a9cdf5'></rect>
       <text
-        x='560'
-        y='95'
+        x='533'
+        y='71'
         font-size='8.5'
         fill='#527dad'
         text-anchor='middle'
@@ -1487,41 +1487,41 @@ flowchart LR
       <!-- data-lint-ignore: nested scene - static content region wrapping the dynamic inner frame -->
       <rect
         data-lint-ignore='scene'
-        x='342'
-        y='114'
-        width='266'
-        height='190'
+        x='320'
+        y='88'
+        width='258'
+        height='172'
         rx='5'
         fill='#ffffff'
         stroke='#0070f3'></rect>
-      <text x='480' y='125' font-size='8' fill='#0757ba' text-anchor='middle'>
+      <text x='449' y='98' font-size='8' fill='#0757ba' text-anchor='middle'>
         content region (static): reserves &amp; fills the space
       </text>
-      <text x='480' y='136' font-size='8' fill='#0757ba' text-anchor='middle'>
+      <text x='449' y='107' font-size='8' fill='#0757ba' text-anchor='middle'>
         for the dynamic content below
       </text>
       <line
-        x1='349'
-        y1='120'
-        x2='349'
-        y2='298'
+        x1='572'
+        y1='92'
+        x2='572'
+        y2='256'
         stroke='#737373'
         stroke-width='1.2'
         marker-start='url(#aWzG2)'
         marker-end='url(#aWzG2)'></line>
       <rect
-        x='356'
-        y='146'
-        width='244'
-        height='150'
+        x='334'
+        y='116'
+        width='232'
+        height='132'
         rx='4'
         fill='#fdf3e3'
         stroke='#b45309'
         stroke-dasharray='5 4'></rect>
-      <text x='480' y='224' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
+      <text x='450' y='185' font-size='9.5' fill='#8a5a00' text-anchor='middle'>
         tab content (dynamic)
       </text>
-      <text x='478' y='340' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
+      <text x='449' y='284' font-size='9.5' fill='#3e7d5c' text-anchor='middle'>
         one drawer; only TABS[tab] swaps inside
       </text>
     </svg>
@@ -1532,8 +1532,8 @@ flowchart LR
 flowchart LR
   EM("empty / loading state<br/>fills full height &amp; width; content centered"):::amber
   LS("list state<br/>at most full height; scrolls inside"):::amber
-  EM -->|"one of these slots in"| C2
-  LS -->|"one of these slots in"| C2
+  EM -->|"slots in"| C2
+  LS -->|"slots in"| C2
   subgraph TD["Tabbed drawer · fills viewport height; disallows overflow"]
     direction TB
     h2("Drawer header + tab tiles · static<br/>active tab is the darker tile"):::blue
@@ -1551,7 +1551,7 @@ flowchart LR
       The tabbed anatomy: the same two double-headed arrows (the drawer fills the viewport height and
       disallows overflow; the static blue content region reserves and fills the space below the tab
       bar), with the active tab shown as a darker filled tile rather than an underline. The user skips
-      around freely, and just as in the sequential case, either kind of content slots into the same
+      around freely, and just as in the wizard-flow case, either kind of content slots into the same
       fixed region: only the amber inner frame ever changes.
     </Fragment>
   </Diagram>
@@ -1559,7 +1559,7 @@ flowchart LR
   <Snippet>
     <pre
       class='code v-good'
-      is:raw><span class="filename">ProgramDetailsDrawer.tsx - non-sequential steps: static tabs, same doctrine</span><span class="tok-dir">"use client"</span>;
+      is:raw><span class="filename">ProgramDetailsDrawer.tsx - tabbed flow: static tabs, same doctrine</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">const</span> TABS = { <span class="tok-prop">details</span>: DetailsTab, <span class="tok-prop">schedule</span>: ScheduleTab, <span class="tok-prop">history</span>: HistoryTab } <span class="tok-kw">as const</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramDetailsDrawer</span>({ programId, onClose }: <span class="tok-fn">Props</span>) {

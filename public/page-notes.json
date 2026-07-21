@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-21T17:08:18.671Z",
+  "updatedAt": "2026-07-21T17:33:35.621Z",
   "notes": [
     {
       "id": "nmrutjyb3",
@@ -389,6 +389,84 @@
         "snippet": "What a tab click re-renders, per approach Layout Tab bar Panel 1 \u00b7 bar in each page (zero "
       },
       "resolution": "Added a paragraph explaining segment swap vs slot swap: a segment swap replaces the single active child segment beneath a persistent layout (ordinary nested routing), while a slot swap navigates one named parallel-route slot while the layout other children and sibling slots keep their state, which is why Approach 3 can hold sibling state the others cannot."
+    },
+    {
+      "id": "nmrux0cmr",
+      "page": "12-designing-for-the-unknown.html",
+      "ts": "2026-07-21T17:16:02.163Z",
+      "status": "resolved",
+      "text": "lets jus tmake the section header here something that says wizard flow or something like that - lets remove sequential vs non sequential language from all parts of this doc and say its either a wizard flow or a tabbed flow.",
+      "target": {
+        "anchor": "wizard-shell",
+        "path": [
+          37
+        ],
+        "tag": "p",
+        "snippet": "The correct shape mounts one drawer for the whole flow. The shell (container, header, foot"
+      },
+      "resolution": "Removed sequential/non-sequential language from \u00a712: the subsection is now \"Wizard flows\" (id wizard-flow) and \"Tabbed flows\" (id tabbed-flow); diagram titles, mermaid twins, captions, and the ProgramDetailsDrawer filename all updated to wizard flow / tabbed flow."
+    },
+    {
+      "id": "nmrux119o",
+      "page": "12-designing-for-the-unknown.html",
+      "ts": "2026-07-21T17:16:34.092Z",
+      "status": "resolved",
+      "text": "for bth this diagram and the next, the amber lines pointing at the step content should be arrows that reach into the view and touch the amber dotted lines.  also - there is way too much dead space above the drawer view and the top border of the overall diagram widget and we should just remove the sequential: next/prev text and shrink that space to be consistent with the bottom padding of hte whole widget.  additionally, the text on the amber line should be duplicated for both lines but be written more concisely and live closer to the line so its obvious it is referring to that arrow/line",
+      "target": {
+        "anchor": "wizard-shell",
+        "path": [
+          38
+        ],
+        "tag": "figure",
+        "snippet": "Sequential: next / prev empty / loading state fills full height & width; content centered "
+      },
+      "resolution": "Wizard-flow diagram: the amber arrows now reach into the view and terminate with arrowheads touching the amber dotted region; removed the \"Sequential: next / prev\" title and shrank the top dead space to match the bottom padding; each arrow carries its own concise \"slots in\" label sitting right on the line; trimmed horizontal padding (viewBox 720->690)."
+    },
+    {
+      "id": "nmrux3gyz",
+      "page": "12-designing-for-the-unknown.html",
+      "ts": "2026-07-21T17:18:27.755Z",
+      "status": "resolved",
+      "text": "same commenst as above diagram.  for both diagrams lets also shrink horixontal padding a bit",
+      "target": {
+        "anchor": "wizard-shell",
+        "path": [
+          43
+        ],
+        "tag": "figure",
+        "snippet": "Non-sequential: tabs empty / loading state fills full height & width; content centered lis"
+      },
+      "resolution": "Tabbed-flow diagram: same treatment applied (arrows reach into and touch the dotted region, title removed, top space trimmed, per-arrow \"slots in\" labels, horizontal padding trimmed)."
+    },
+    {
+      "id": "nmruxcq9p",
+      "page": "11-suspense-streaming.html",
+      "ts": "2026-07-21T17:25:39.709Z",
+      "status": "open",
+      "text": "the 'riding along the way' sentence makes 0 sense and should be written more clearly, but the chunks resolving should also show concurrency",
+      "target": {
+        "anchor": "wire",
+        "path": [
+          26
+        ],
+        "tag": "figure",
+        "snippet": "The HTML stream, chunk by chunk chunk 0 \u00b7 the static shell layout, nav, containers, every "
+      }
+    },
+    {
+      "id": "nmruxgntm",
+      "page": "06-bootstrapping-first-paint.html",
+      "ts": "2026-07-21T17:28:43.162Z",
+      "status": "open",
+      "text": "the red and green supplementary text under the bars is not aligned - each should be left aligned with the start of the bar and should be closer (maybe 2px) to the bars",
+      "target": {
+        "anchor": "auth-chain",
+        "path": [
+          18
+        ],
+        "tag": "figure",
+        "snippet": "The auth chain, before and after bootstrapping The gate chain (each blocks the next) JS + "
+      }
     }
   ]
 }
