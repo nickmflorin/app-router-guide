@@ -299,32 +299,32 @@ flowchart LR
   <p>
     With segments, each tab is a page: server-rendered with real content, prefetched by its
     <code>&lt;Link&gt;</code> before the click (<a href='04-ssr.html#prefetching'>§4.5</a>), and
-    addressable from anywhere. The layout (header, tab bar, containers) persists across switches
-    without re-rendering (<a href='03-mental-model.html#rendering-model'>§3.1</a>,
-    <a href='10-containers-content-shifting.html#layouts'>§10.4</a>). The tab bar itself is a row of
-    links; its only client concern is knowing which one is active:
+    addressable from anywhere. That leaves one real decision: <strong>where does the tab bar live,
+    and how does it know which tab is active?</strong> There are three URL-backed approaches, and
+    they are not equal. In order of preference:
+  </p>
+
+  <h3 id='tabs-page'>Approach 1: segments, with the bar in each page</h3>
+  <p>
+    The page already knows which page it is. So let each sibling page render the tab bar and
+    <em>tell it</em> which tab is active, as a plain prop. The bar becomes a pure server component:
+    no directive, no hook, no hydration, nothing read back from the URL at runtime, because the
+    active tab is a static fact of the file it is rendered from.
+    <Chip k='react' />
+    <Chip k='very' />
   </p>
 
   <Snippet>
     <pre
       class='code v-good'
-      is:raw><span class="filename">components/program/ProgramTabs.tsx</span><span class="tok-dir">"use client"</span>;
-<span class="tok-kw">import</span> { usePathname } <span class="tok-kw">from</span> <span class="tok-str">"next/navigation"</span>;
-
-<span class="tok-com">/* A tab bar is a row of links. Active state comes from the URL, so it
-   survives refresh, travels in a shared link, and the server renders the
-   right panel on the first response. usePathname doesn't need a Suspense
-   boundary; only the query string is per-request (§5.6). */</span>
-<span class="tok-kw">export function</span> <span class="tok-fn">ProgramTabs</span>({ programId }: { programId: <span class="tok-kw">string</span> }) {
-  <span class="tok-kw">const</span> pathname = <span class="tok-fn">usePathname</span>();
-
+      is:raw><span class="filename">components/program/ProgramTabs.tsx - a server component; no directive, no hook</span><span class="tok-kw">export function</span> <span class="tok-fn">ProgramTabs</span>({ programId, active }: { programId: <span class="tok-kw">string</span>; active: <span class="tok-fn">TabId</span> }) {
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">TabList</span>&gt;
       {TABS.map((tab) =&gt; (
         &lt;<span class="tok-fn">TabLink</span>
           <span class="tok-prop">key</span>={tab.href}
           <span class="tok-prop">href</span>={<span class="tok-str">`/programs/${programId}/${tab.href}`</span>}
-          <span class="tok-prop">active</span>={pathname.<span class="tok-fn">endsWith</span>(tab.href)}
+          <span class="tok-prop">active</span>={tab.href === active}
         &gt;
           {tab.label}
         &lt;/<span class="tok-fn">TabLink</span>&gt;
@@ -334,13 +334,181 @@ flowchart LR
 }</pre>
   </Snippet>
 
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/programs/[programId]/reports/page.tsx - the page declares its own identity</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ReportsPage</span>({ params }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">ProgramTabs</span> <span class="tok-prop">programId</span>={programId} <span class="tok-prop">active</span>=<span class="tok-str">"reports"</span> /&gt;
+      &lt;<span class="tok-fn">Reports</span> <span class="tok-prop">programId</span>={programId} /&gt;
+    &lt;/&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The benefit is purity: zero client JavaScript for the strip, and the active state never has
+      to be computed because it was never unknown. The costs are two. The bar lives at page level,
+      so it re-renders on every tab change (cheaply: it is a row of links, and the swap is
+      invisible when the markup is identical), and every sibling page must remember to render it,
+      which a shared server wrapper mitigates but does not delete.
+    </CodeCaption>
+  </Snippet>
+
+  <h3 id='tabs-layout'>Approach 2: segments, with the bar in the layout</h3>
   <p>
-    When segments are too heavy for the case (small toggle-like tabs inside one page), the fallback
-    is still the URL: a <code>?view=</code> search param the server page switches on, not <code
-      >useState</code
-    >. The ladder is
-    <strong>segments, then a search param, then (for genuinely cosmetic switches) state</strong>,
-    and each step down the ladder should be a deliberate decision, not a habit.
+    If the bar should be written once and <em>never repaint</em> across tab changes, it belongs in
+    the (group) layout (<a href='10-containers-content-shifting.html#layouts'>§10.4</a>). That buys
+    the strongest stability the router offers, and it costs exactly one small client boundary:
+    layouts persist across navigations without re-rendering (<a
+      href='03-mental-model.html#rendering-model'>§3.1</a
+    >), so a server-rendered active state in a layout would go stale on the first click. Only a
+    client component re-renders during navigation, and the platform ships a purpose-built hook for
+    precisely this: <code>useSelectedLayoutSegment</code>, which reads the active route segment one
+    level below the layout. Prefer it over <code>usePathname</code> string-matching: it is
+    semantic, and it doesn't break when routes nest.
+    <Chip k='next' />
+    <Chip k='very' />
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">components/program/ProgramTabs.tsx - the one client leaf a layout-resident bar needs</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { useSelectedLayoutSegment } <span class="tok-kw">from</span> <span class="tok-str">"next/navigation"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramTabs</span>({ programId }: { programId: <span class="tok-kw">string</span> }) {
+  <span class="tok-com">/* The segment one level below the layout: "reports" | "roster" |
+     "settings". Re-renders on navigation because this is a client leaf;
+     the layout around it never does. */</span>
+  <span class="tok-kw">const</span> segment = <span class="tok-fn">useSelectedLayoutSegment</span>();
+
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">TabList</span>&gt;
+      {TABS.map((tab) =&gt; (
+        &lt;<span class="tok-fn">TabLink</span>
+          <span class="tok-prop">key</span>={tab.href}
+          <span class="tok-prop">href</span>={<span class="tok-str">`/programs/${programId}/${tab.href}`</span>}
+          <span class="tok-prop">active</span>={tab.href === segment}
+        &gt;
+          {tab.label}
+        &lt;/<span class="tok-fn">TabLink</span>&gt;
+      ))}
+    &lt;/<span class="tok-fn">TabList</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Rendered once from the layout, persistent across every tab change, and the active indicator
+      updates because this leaf (alone) re-renders. The trade against Approach 1 is one small
+      client boundary and its hydration, purchased deliberately for the never-repaints guarantee.
+      Between the two segment approaches the choice is taste and stakes: bar-in-page when zero
+      client JS matters most, bar-in-layout when the persistent frame does.
+    </CodeCaption>
+  </Snippet>
+
+  <h3 id='tabs-param'>Approach 3: a query param (the last URL resort)</h3>
+  <p>
+    The third shape keeps one route and rides the tab on the query string: <code>?tab=roster</code>,
+    with the server page switching on <code>searchParams</code>. It is still the URL, so it keeps
+    the non-negotiables (shareable, refresh-proof, server-resolvable), which places it far above
+    <code>useState</code>. But among the URL options it should be the <strong>deliberate last
+    choice</strong> for tabs, because it discards everything the router grants to segments:
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-warn'
+      is:raw><span class="filename">app/programs/[programId]/page.tsx - one route; the tab rides the query string</span><span class="tok-kw">export default async function</span> <span class="tok-fn">ProgramPage</span>({ params, searchParams }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">const</span> { programId } = <span class="tok-kw">await</span> params;
+  <span class="tok-kw">const</span> { tab = <span class="tok-str">"reports"</span> } = <span class="tok-kw">await</span> searchParams;
+
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">ViewTabs</span> <span class="tok-prop">active</span>={tab} /&gt;
+      {tab === <span class="tok-str">"reports"</span> ? &lt;<span class="tok-fn">Reports</span> /&gt; : tab === <span class="tok-str">"roster"</span> ? &lt;<span class="tok-fn">Roster</span> /&gt; : &lt;<span class="tok-fn">Settings</span> /&gt;}
+    &lt;/&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Legitimate, and sometimes right; but notice that the page is now doing by hand (the switch,
+      the boundaries, the code loading) everything the file system would have done for it.
+    </CodeCaption>
+  </Snippet>
+
+  <ul>
+    <li>
+      <strong>No per-tab code splitting.</strong> The router splits by route segment, and it cannot
+      split what the URL doesn't distinguish: all three panels' code belongs to one page module and
+      loads together (<a href='08-bundle-size-code-splitting.html'>§8</a>). With segments, only the
+      visited tab's panel ships.
+    </li>
+    <li>
+      <strong>No per-tab file conventions.</strong> Segments get their own <code>loading.tsx</code>
+      and <code>error.tsx</code> for free; a query-param page hand-builds every boundary, and an
+      error in one panel is contained only as well as you remembered to contain it.
+    </li>
+    <li>
+      <strong>Coarser re-renders, weaker prefetch.</strong> A tab change re-renders the entire page
+      segment on the server rather than swapping one child segment beneath a persistent parent. And
+      <code>&lt;Link&gt;</code> prefetches route segments: three tabs as segments are each
+      prefetched before the click, while <code>?tab=</code> variants of one route are not
+      prefetched apiece.
+    </li>
+    <li>
+      <strong>Wrong semantics.</strong> Query parameters parameterize a view (sort, filter, page);
+      tabs <em>are</em> views. A thing with an identity deserves an address, and downstream
+      machinery (caching, analytics, error reporting) all keys more usefully on paths than on
+      params.
+    </li>
+  </ul>
+  <p>
+    Where the param version is genuinely fine: toggle-like variations of one view that share the
+    same data and nearly the same code, where separate folders would be ceremony; and embedded
+    sub-switches too minor to deserve routes. When you do use it,
+    <a href='#url-writes'>§9.4</a>'s transition-plus-optimistic recipe is what keeps it feeling
+    native.
+  </p>
+
+  <table class='tbl'>
+    <thead>
+      <tr>
+        <th>Approach</th>
+        <th>Client JS</th>
+        <th>Bar persistence</th>
+        <th>Per-tab splitting + loading/error files</th>
+        <th>Prefetched per tab</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1 · Segments, bar in each page</strong></td>
+        <td>None</td>
+        <td>Re-renders per change (cheap)</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td><strong>2 · Segments, bar in the layout</strong></td>
+        <td>One small leaf</td>
+        <td>Never repaints</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td><strong>3 · Query param</strong></td>
+        <td>None required</td>
+        <td>Re-renders with the page</td>
+        <td>No: one module, hand-built boundaries</td>
+        <td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    So the full ladder reads:
+    <strong>segments (bar in the page, or in the layout with the one-leaf indicator), then a search
+    param, then, for genuinely cosmetic switches only, state</strong>. Each step down should be a
+    deliberate decision, not a habit.
     <Chip k='next' />
     <Chip k='very' />
   </p>

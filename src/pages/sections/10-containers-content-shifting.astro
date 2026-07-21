@@ -922,7 +922,8 @@ flowchart LR
     <Chip k='very' /> define the header, the tab bar, and the table container once in the group's <code
       >layout.tsx</code
     >, and all three routes render inside it. Navigating between them swaps each page's table and
-    moves the active-tab highlight (derived from the pathname), while the frame never repaints.
+    moves the active-tab highlight (a one-leaf <code>useSelectedLayoutSegment</code> read,
+    <a href='09-server-resolvable-state.html#tabs-layout'>§9.3</a>), while the frame never repaints.
     Being siblings rather than children is not a reason to skip the shared layout; it's the reason
     to reach for the group. The common layout should be leveraged as much as humanly possible, never
     repeated redundantly at the top of each sibling page, where every navigation would tear it down
@@ -1116,7 +1117,7 @@ flowchart LR
       The sibling version of the previous figure. The three routes are peers with different paths,
       yet the header, the tab bar, and the table container belong to the <code>(program)</code>
       group's layout, so a navigation between them re-renders only the page's table; the active-tab
-      highlight is derived from the pathname by a tiny leaf, not by re-rendering the bar. The wrong
+      highlight comes from a tiny <code>useSelectedLayoutSegment</code> leaf, not from re-rendering the bar. The wrong
       version of this page repeats the header and tabs inside each sibling's page file, and every
       navigation tears down and rebuilds the exact chrome the user is staring at.
     </Fragment>

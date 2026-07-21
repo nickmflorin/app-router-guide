@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-20T19:53:45.382Z",
+  "updatedAt": "2026-07-21T15:17:10.035Z",
   "notes": [
     {
       "id": "nmrpnee5v",
@@ -1476,8 +1476,7 @@
         "tag": "h2",
         "snippet": "6.6 The honest caveat: this is a pages-router pattern at heart"
       },
-      "resolution": "§6.6 reframed: heading is now \"The honest caveat: more applicable in the pages-router era\", and the prose says bootstrapping was THE tool of that era, remains fully applicable in the App Router (nothing broke), and is simply needed less often because the App Router covers more of its old territory natively.",
-      "resolvedAt": "2026-07-20"
+      "resolution": "§6.6 reframed: heading is now \"The honest caveat: more applicable in the pages-router era\", and the prose says bootstrapping was THE tool of that era, remains fully applicable in the App Router (nothing broke), and is simply needed less often because the App Router covers more of its old territory natively."
     },
     {
       "id": "nmrtn2xmb",
@@ -1493,7 +1492,24 @@
         "tag": "h2",
         "snippet": "5.10 Server actions and the HTTP middleman"
       },
-      "resolution": "New diagram in §5.10 between the gradient paragraphs and the step-back passage: three stacked layers whose boxes literally widen: (1) the data layer direct (null or the record? allowed/readonly/invalid? typed, distinct, exhaustive), (2) + an HTTP API (everything above plus network errors, timeouts, 404 bad-route-or-missing-record ambiguity, unparseable JSON, unexpected shapes, statuses with no body; every case arriving as untyped bytes), (3) + a proxy (everything doubled: two networks, two timeout budgets, two JSON contracts, plus whose failure/whose 500/translate-or-pass-blind), with the closing line that each layer widens the surface and blurs the one beneath. Caption states this compounding is precisely what the App Router and Next generally set out to eliminate: run the logic next to the data and the surface stays at row one. Mermaid twin included.",
+      "resolution": "New diagram in §5.10 between the gradient paragraphs and the step-back passage: three stacked layers whose boxes literally widen: (1) the data layer direct (null or the record? allowed/readonly/invalid? typed, distinct, exhaustive), (2) + an HTTP API (everything above plus network errors, timeouts, 404 bad-route-or-missing-record ambiguity, unparseable JSON, unexpected shapes, statuses with no body; every case arriving as untyped bytes), (3) + a proxy (everything doubled: two networks, two timeout budgets, two JSON contracts, plus whose failure/whose 500/translate-or-pass-blind), with the closing line that each layer widens the surface and blurs the one beneath. Caption states this compounding is precisely what the App Router and Next generally set out to eliminate: run the logic next to the data and the surface stays at row one. Mermaid twin included."
+    },
+    {
+      "id": "nmrusquyw",
+      "page": "09-server-resolvable-state.html",
+      "ts": "2026-07-21T15:16:40.904Z",
+      "status": "resolved",
+      "text": "I think it makes sense to show the program tabs without the client dependency here - since we can actually just have the active tab be passed in from the server.  Can you do some research on that though and let me know what you find before changing?",
+      "target": {
+        "anchor": "tabs",
+        "path": [
+          17,
+          0
+        ],
+        "tag": "pre",
+        "snippet": "components/program/ProgramTabs.tsx\"use client\";import { usePathname } from \"next/navigatio"
+      },
+      "resolution": "Research reported in chat, then (per your follow-up) §9.3 restructured into a documented three-approach comparison. Approach 1: segments with the bar in each page: fully-server ProgramTabs taking an active prop, each page declaring its own identity; benefits (zero client JS, active state never unknown) and costs (cheap per-navigation re-render, every sibling must render it) stated. Approach 2: segments with the bar in the layout: the purpose-built useSelectedLayoutSegment client leaf (preferred over usePathname string-matching), never-repaints guarantee vs one small hydrated boundary; explains WHY it must be client (layouts persist without re-rendering). Approach 3: query param, marked v-warn and ranked the deliberate last URL choice with the detailed why: no per-tab code splitting (router splits by segment), no per-tab loading/error files, coarser re-renders and no per-tab prefetch, wrong semantics (params parameterize a view; tabs ARE views), plus when it is genuinely fine and the §9.4 optimistic recipe pointer. Comparison table + updated closing ladder. §10.4 captions now name useSelectedLayoutSegment.",
       "resolvedAt": "2026-07-20"
     }
   ]
