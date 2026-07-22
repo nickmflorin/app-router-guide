@@ -63,3 +63,8 @@ export async function upsertNote(n) {
   });
   return toWire(row);
 }
+
+export async function deleteNote(id) {
+  // Ignore "record not found" so deleting an unsynced/already-gone note is a no-op.
+  await prisma.note.delete({ where: { id } }).catch(() => {});
+}

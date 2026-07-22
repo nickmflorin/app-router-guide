@@ -1,4 +1,4 @@
-import { listNotes, upsertNote } from './db.mjs';
+import { listNotes, upsertNote, deleteNote } from './db.mjs';
 
 function readBody(req) {
   return new Promise((resolve, reject) => {
@@ -34,6 +34,13 @@ export async function handleNotes(req, res) {
         if (n && n.id) saved.push(await upsertNote(n));
       }
       return json(res, 200, { notes: saved });
+    }
+
+    if (req.method === 'DELETE') {
+      const id = url.searchParams.get('id');
+      if (id) await deleteNote(id);
+      res.statusCode = 204;
+      return res.end();
     }
 
     res.statusCode = 405;
