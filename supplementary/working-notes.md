@@ -22,7 +22,7 @@ clarification before proceeding.
       SVG+markdown pipeline, so it's a multi-frame static diagram.)
 - [ ] Do's and Don'ts Summaries for Each Page
 
-## Automation
+## Ideas
 
 - [ ] Working notes for Slide Deck.
 - [ ] Productionizing working notes via API/ORM instead of JSON, use sqlite.
@@ -37,3 +37,10 @@ clarification before proceeding.
       the modal for modifying the working note by clicking on the number. Notes at the top showing
       all notes unresolved as well as just the notes for that page. Ability to keep dialog open when
       hot refresh fires.
+- [ ] Slide deck should reference common components for different chunks of page so its easier to
+      keep them consistent.
+- [ ] Maybe better leverage of subsections? Use subsections in the sidenav? Expand behavior so that
+      opening a page automatically expands just that page's side nav sub headings but they can still
+      be collapsed?
+- [ ] Better treatment of examples as separate things, maybe use collapsable sections for them? Try
+      to put them on the side?

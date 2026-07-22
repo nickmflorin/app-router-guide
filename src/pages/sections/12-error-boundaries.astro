@@ -228,7 +228,134 @@ flowchart LR
     </CodeCaption>
   </Snippet>
 
-  <h2 id='granularity'>12.2 Granularity is a function of where the file sits</h2>
+  <h2 id='container'>12.2 The fallback slots into a reserved container</h2>
+  <p>
+    An error fallback is the definition of unknown content: you cannot know in advance whether it
+    will render, or when. So it obeys the rule every unknown obeys (<a
+      href='10-containers-content-shifting.html'>§10</a
+    >): the container is static and known, it reserves the space, and the fallback slots into it.
+    <Chip k='react' />
+    <Chip k='very' /> The boundary does not replace the container or collapse the layout around it; it
+    swaps what fills a box the layout already drew and sized. Keep the fallback itself plain, an image
+    and a message centered in the reserved space, so a failure reads as "this region could not load" and
+    not as a hole where a region used to be.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 172'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker
+          id='aRes'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            class='stroke-dg-gray'
+            d='M 2 1 L 8.5 5 L 2 9'
+            fill='none'
+            stroke-width='1.5'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+      <text
+        class='fill-dg-ink'
+        x='360'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
+        The fallback fills the reserved container, centered
+      </text>
+
+      <line
+        class='stroke-dg-gray'
+        x1='198'
+        y1='30'
+        x2='198'
+        y2='168'
+        stroke-width='1.2'
+        marker-start='url(#aRes)'
+        marker-end='url(#aRes)'></line>
+      <text
+        class='fill-dg-gray'
+        x='190'
+        y='99'
+        font-size='8'
+        text-anchor='end'
+        dominant-baseline='central'>reserved</text
+      >
+
+      <!-- data-lint-ignore: scene - reserved container holding the centered fallback -->
+      <rect
+        class='fill-dg-white stroke-dg-blue'
+        data-lint-ignore='scene'
+        x='210'
+        y='30'
+        width='300'
+        height='138'
+        rx='6'></rect>
+      <text class='fill-dg-blue-ink' x='360' y='44' font-size='8.5' text-anchor='middle'
+        >content container: reserved &amp; static (§10.4)</text
+      >
+      <g transform='translate(340 58) scale(0.0625)'>
+        <path
+          class='fill-dg-border'
+          d='M160 144C151.2 144 144 151.2 144 160L144 480C144 488.8 151.2 496 160 496L480 496C488.8 496 496 488.8 496 480L496 160C496 151.2 488.8 144 480 144L160 144zM96 160C96 124.7 124.7 96 160 96L480 96C515.3 96 544 124.7 544 160L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 160zM224 192C241.7 192 256 206.3 256 224C256 241.7 241.7 256 224 256C206.3 256 192 241.7 192 224C192 206.3 206.3 192 224 192zM360 264C368.5 264 376.4 268.5 380.7 275.8L460.7 411.8C465.1 419.2 465.1 428.4 460.8 435.9C456.5 443.4 448.6 448 440 448L200 448C191.1 448 182.8 443 178.7 435.1C174.6 427.2 175.2 417.6 180.3 410.3L236.3 330.3C240.8 323.9 248.1 320.1 256 320.1C263.9 320.1 271.2 323.9 275.7 330.3L292.9 354.9L339.4 275.9C343.7 268.6 351.6 264.1 360.1 264.1z'
+        ></path>
+      </g>
+      <text class='fill-dg-gray' x='360' y='120' font-size='9' text-anchor='middle'
+        >Couldn't load this program</text
+      >
+      <rect class='fill-dg-white stroke-dg-red' x='332' y='132' width='56' height='18' rx='4'
+      ></rect>
+      <text
+        class='fill-dg-red'
+        x='360'
+        y='141'
+        font-size='8.5'
+        text-anchor='middle'
+        dominant-baseline='central'>Retry</text
+      >
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart TB
+  C("content container: reserved &amp; static (§10.4)"):::blue
+  C --> E("error fallback: image + message + retry, centered in the reserved space"):::red
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef red fill:#fdecea,stroke:#b3261e,color:#b3261e
+</pre>
+
+    <Fragment slot='caption'>
+      The container is drawn and sized by the layout; the double-headed arrow is the height it
+      reserves. When the subtree throws, the boundary drops the fallback (an image and a message,
+      centered) into that same box. The box does not resize or collapse, so neighbours never shift.
+    </Fragment>
+  </Diagram>
+
+  <p>
+    This is why loading, empty, and error are three fills of one box (<a
+      href='11-suspense-streaming.html#orthogonal'>§11.6</a
+    >): each is unknown content dropped into the same reserved container, centered the same way,
+    leaving the same footprint. Size the container once, in the layout or scaffold (<a
+      href='10-containers-content-shifting.html#layouts'>§10.4</a
+    >), and every one of those states inherits a stable place to live.
+  </p>
+
+  <h2 id='granularity'>12.3 Granularity is a function of where the file sits</h2>
   <p>
     A thrown error <strong>bubbles up to the nearest ancestor boundary</strong> and no further.
     <Chip k='next' />
@@ -376,7 +503,7 @@ flowchart TB
     </Fragment>
   </Diagram>
 
-  <h2 id='not-caught'>12.3 What error.tsx will not catch</h2>
+  <h2 id='not-caught'>12.4 What error.tsx will not catch</h2>
   <p>
     The boundary sits <em>inside</em> the segment's layout, wrapping the page. Three consequences follow,
     and each is a common surprise.
@@ -431,7 +558,7 @@ flowchart TB
     </CodeCaption>
   </Snippet>
 
-  <h2 id='parallel-routes'>12.4 Isolate regions with parallel routes</h2>
+  <h2 id='parallel-routes'>12.5 Isolate regions with parallel routes</h2>
   <p>
     Segment boundaries follow the URL, but a single page often shows several independent regions
     that can fail on their own: a summary card, a header, an activity feed, each with its own data.
@@ -539,7 +666,7 @@ flowchart TB
     </CodeCaption>
   </Snippet>
 
-  <h2 id='custom-boundaries'>12.5 Below the segment: wrap the component yourself</h2>
+  <h2 id='custom-boundaries'>12.6 Below the segment: wrap the component yourself</h2>
   <p>
     The file conventions stop at the route segment. When you need finer isolation than the smallest
     segment, a grid of a dozen widgets where any one can fail on its own data, a list where a single
@@ -604,7 +731,7 @@ flowchart TB
     </CodeCaption>
   </Snippet>
 
-  <h2 id='no-own-errors'>12.6 Components must not define their own error states</h2>
+  <h2 id='no-own-errors'>12.7 Components must not define their own error states</h2>
   <p>
     This is the error twin of <a href='11-suspense-streaming.html#no-own-loading'>§11.3</a>, and it
     is the mistake that makes a codebase impossible to make resilient later.
@@ -640,10 +767,47 @@ flowchart TB
         class='code v-good'
         is:raw><span class="filename">Widget.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">Widget</span>({ id }: <span class="tok-fn">Props</span>) {
   <span class="tok-com">// Let it throw. The boundary the PARENT
-  // placed (§12.1, §12.5) picks the fallback,
+  // placed (§12.1, §12.6) picks the fallback,
   // can retry it, and reports it.</span>
   <span class="tok-kw">const</span> data = <span class="tok-kw">await</span> <span class="tok-fn">getWidget</span>(id);
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">WidgetBody</span> <span class="tok-prop">data</span>={data} /&gt;;
+}</pre>
+    </CompareCol>
+  </Compare>
+
+  <p>
+    The trap wears a client disguise too, and it is the more common one. A data hook returns
+    <code>{'{'} data, error {'}'}</code>, which practically invites you to branch on
+    <code>error</code> in the component and render a private message, burying the failure exactly as the
+    server <code>try/catch</code> did: the boundary you placed never fires, and your logging never sees
+    it. <strong>Make the hook throw instead</strong>, so the same boundary catches server and client
+    failures alike. Most libraries have a switch for it (SWR's <code>suspense</code>, TanStack
+    Query's <code>throwOnError</code> or <code>useSuspenseQuery</code>); if yours does not, rethrow
+    it yourself.
+  </p>
+
+  <Compare>
+    <CompareCol kind='bad' label='✕ Branch on the hook' s error'>
+      <pre
+        class='code v-bad'
+        is:raw><span class="filename">ProgramCard.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramCard</span>({ id }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">const</span> { data, error } = <span class="tok-fn">useProgram</span>(id);
+  <span class="tok-com">// same swallow, client-side: the
+  // boundary and the logs never see it
+  if</span> (error) <span class="tok-kw">return</span> &lt;div&gt;Couldn't load.&lt;/div&gt;;
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">CardBody</span> <span class="tok-prop">data</span>={data} /&gt;;
+}</pre>
+    </CompareCol>
+    <CompareCol kind='good' label='✓ Let the hook throw to the boundary'>
+      <pre
+        class='code v-good'
+        is:raw><span class="filename">ProgramCard.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramCard</span>({ id }: <span class="tok-fn">Props</span>) {
+  <span class="tok-com">// throwOnError (or suspense) sends the
+  // failure to the nearest boundary, §12.1</span>
+  <span class="tok-kw">const</span> { data } = <span class="tok-fn">useProgram</span>(id, { throwOnError: <span class="tok-kw">true</span> });
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">CardBody</span> <span class="tok-prop">data</span>={data} /&gt;;
 }</pre>
     </CompareCol>
   </Compare>
