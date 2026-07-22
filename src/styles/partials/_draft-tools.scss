@@ -231,32 +231,23 @@ body.note-mode .content-inner {
 }
 
 /* ---------- dev-only sidebar deck link ---------- */
-/* Matches a normal .toc-item (muted, aligned to the number column via the ▶ in
-   .n), with a hairline separator above and an accent colour to mark it dev. */
-.sidebar a.toc-item.deck-link {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--color-accent-soft);
-  color: var(--color-accent);
-}
-.sidebar a.toc-item.deck-link:hover {
-  color: var(--color-accent);
-}
-.sidebar a.toc-item.deck-link .n {
-  color: var(--color-accent);
+/* The link is a plain .toc-item — no colour/border/padding overrides — so its
+   hover background and metrics match every other nav item exactly. The divider
+   is a SEPARATE element above it (a flat hairline, no radius, not hoverable), so
+   the hover fill never reaches the divider. Only a faint DEV marker sets it apart. */
+.deck-sep {
+  height: 0;
+  border-top: 1px solid var(--color-line);
+  border-radius: 0;
+  margin: 10px 0 6px;
 }
 .toc-item.deck-link .deck-dev-tag {
-  font-size: 9px;
-  font-weight: 650;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-amber-ink, #8a5a00);
-  background: var(--color-amber-soft, #fdf3e3);
-  border: 1px solid var(--note-badge-border, #e7c983);
-  border-radius: 5px;
-  padding: 0 5px;
   margin-left: 8px;
-  align-self: center;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-faint);
 }
 
 /* ---------- deck mode: designation UI ---------- */

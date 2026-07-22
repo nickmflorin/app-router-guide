@@ -191,7 +191,7 @@ const TOC = [
     }
     html += '</div>';
     if (IS_DEV) {
-      html += `<a class="toc-item deck-link" href="${deckHref}"><span class="n">▶</span>Slide deck<span class="deck-dev-tag">dev</span></a>`;
+      html += `<div class="deck-sep"></div><a class="toc-item deck-link" href="${deckHref}"><span class="n"></span>Slide deck<span class="deck-dev-tag">dev</span></a>`;
     }
     sidebar.innerHTML = html;
 
