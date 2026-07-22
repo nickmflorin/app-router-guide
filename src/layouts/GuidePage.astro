@@ -5,6 +5,7 @@ import '../styles/tailwind.css';
 // tailwind.css so its cascade order matches the old static <link> (which sat
 // below the tailwind import in the head).
 import '../styles/style.scss';
+import { stampContentIds } from '../lib/content-ids.mjs';
 // The draft layer (badge + annotation styles) is dev-only. This branch is
 // dead-code-eliminated from the production build (import.meta.env.DEV is a
 // compile-time false), so the draft CSS never ships — replacing the old
@@ -17,6 +18,17 @@ if (import.meta.env.DEV) {
 const { title, root = '..', cover = false } = Astro.props;
 /* '' for the index, '../' for section pages, matching the original pages' relative URLs exactly. */
 const prefix = root === '.' ? '' : `${root}/`;
+
+/* Deck-addressable ids: render the page content to HTML and stamp a stable
+   data-content-id onto every block-level region (see src/lib/content-ids.mjs),
+   so the slide-deck tooling can designate any block, not just the ids
+   Diagram/Snippet emit themselves. Same code path in dev and `astro build`,
+   so the ids are identical in both. */
+const slug = (Astro.url.pathname.split('/').filter(Boolean).pop() || 'index').replace(
+  /\.html$/,
+  '',
+);
+const content = stampContentIds(await Astro.slots.render('default'), slug);
 ---
 
 <!doctype html>
@@ -32,7 +44,7 @@ const prefix = root === '.' ? '' : `${root}/`;
       <nav class='sidebar' id='sidebar'></nav>
       <main class='content'>
         <div class={cover ? 'content-inner cover' : 'content-inner'}>
-          <slot />
+          <Fragment set:html={content} />
           {!cover && <div id='pager' />}
         </div>
       </main>

@@ -74,7 +74,7 @@ def extract_block(html, content_id):
     """Return the outerHTML of the element carrying data-content-id=content_id,
     matching nested tags of the same name to find the correct close."""
     m = re.search(
-        r'<(figure|div)\b[^>]*\bdata-content-id="' + re.escape(content_id) + r'"[^>]*>',
+        r'<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*\bdata-content-id="' + re.escape(content_id) + r'"[^>]*>',
         html,
     )
     if not m:

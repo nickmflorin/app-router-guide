@@ -116,6 +116,23 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 
 ## Decisions log
 
+- 2026-07-22: **Deck designation covers EVERY block region (per Nick: "+ To deck" must select
+  regions like note mode does).** Root cause of the "green plus cursor but nothing selectable"
+  report: only Diagram/Snippet emitted `data-content-id`, so 95% of the page ignored deck-mode
+  clicks. Fix: `src/lib/content-ids.mjs` (server-side, imported by GuidePage.astro, which now
+  renders its slot via `Astro.slots.render` + `set:html`) stamps `"<page>::<type>::<n>"` ids onto
+  p/h1/h2/h3/table/ul/ol and div.callout/.compare/.goal-card in document order, identically in dev
+  and build (same code path). Stamped regions are ATOMIC (nothing stamped inside a stamped block,
+  nor inside svg/template/existing-id elements), so regions tile the page: clicking anywhere in a
+  list adds the whole list, snippets inside a Compare stay individually selectable. Ids are
+  positional: restructuring a page shifts later ordinals of that type (same tradeoff as
+  diagram/snippet ids). build_deck.py's extract_block now matches any tag, not just figure|div.
+  Also fixed: `Slide.autoTitle` existed in schema.prisma but not in the committed DB (db:push was
+  never run); the column was added directly via sqlite (BOOLEAN NOT NULL DEFAULT true). NOTE for
+  sandbox sessions: sqlite WRITES on the mounted repo fail (disk I/O error: the mount forbids
+  unlink, which breaks sqlite journaling) — copy the DB to /tmp, write there, `cp` back, and
+  truncate (never rm) any stale `notes.db-journal`.
+
 - 2026-07-13: Folder-with-index structure (not single file).
 - 2026-07-13: Examples = both generic in main flow + "applied to recraft" material using real
   before/after from the audit.

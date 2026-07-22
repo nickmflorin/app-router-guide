@@ -915,8 +915,10 @@ const TOC = [
     }
   }
   /* ==================== deck mode ====================
-     Designate document blocks (diagrams/snippets, addressed by their stable
-     data-content-id) into slides. The DB stores only references + arrangement;
+     Designate document blocks into slides: any block region carrying a stable
+     data-content-id (paragraphs, headings, lists, tables, callouts, compares,
+     goal cards, diagrams, snippets; stamped by src/lib/content-ids.mjs and the
+     Diagram/Snippet components). The DB stores only references + arrangement;
      the content is pulled from the live doc when the deck renders. Dev-only. */
   const DECK_API = '/api/deck';
   let deck = { slides: [] };

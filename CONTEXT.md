@@ -66,8 +66,11 @@ slide-deck authoring system (see below).
 (`/api/notes`). `Note` model; `surface` = `doc`. Claude resolves a note by setting
 `status='resolved'` + a `resolution` string in the DB.
 
-**Slide deck** — designate doc blocks (diagrams/snippets, addressed by a stable `data-content-id` =
-`"<page>::<type>::<n>"`) into `Slide`s (which hold ordered `SlideItem`s). The DB stores only
+**Slide deck** — designate doc blocks into `Slide`s (which hold ordered `SlideItem`s). Any block
+region is designatable via its stable `data-content-id` = `"<page>::<type>::<n>"`: paragraphs,
+headings, lists, tables, callouts, compares, goal cards (stamped by `src/lib/content-ids.mjs` from
+`GuidePage.astro`) plus diagrams/snippets (stamped by their components). Stamped regions are atomic
+(no ids nested inside a stamped block) and ids are positional per type per page. The DB stores only
 references + arrangement + notes; **content is always pulled live from the document** at view/build
 time (never copied into the DB). Slide titles are **stored** in `Slide.title` (never derived at
 render); `autoTitle` marks a title as Claude-managed. Deck notes use `Note.surface='deck'`;
@@ -145,5 +148,6 @@ When in doubt about whether a task needs its own worktree, ask.
 - Guide: 21 chapters, complete and building clean.
 - Notes system: done (create-on-type → DB, doc-wide panel, cross-page jump, cancel/click-out).
 - Deck system: Phase 1–3 built (models, `/api/deck`, deck mode + panel, `/deck` presentation,
-  distributable, deck-surface + inclusion notes, stored/auto titles). **Needs `npm run db:push`** on
-  the dev machine to create the `Slide`/`SlideItem` tables before use.
+  distributable, deck-surface + inclusion notes, stored/auto titles). The schema is in sync: the
+  `Slide.autoTitle` column was added directly in the committed DB (2026-07-22), so no `db:push` is
+  pending. Designation covers every block region, not just diagrams/snippets (2026-07-22).
