@@ -1326,7 +1326,7 @@ flowchart LR
 
   <Diagram>
     <svg
-      viewBox='0 0 720 280'
+      viewBox='0 0 720 312'
       xmlns='http://www.w3.org/2000/svg'
       font-family='Inter, system-ui, sans-serif'
     >
@@ -1369,7 +1369,7 @@ flowchart LR
         x='20'
         y='40'
         width='680'
-        height='236'
+        height='268'
         rx='8'></rect>
       <text class='fill-dg-muted' x='30' y='53' font-size='8'>app/layout.tsx</text>
       <rect class='fill-dg-blue-soft stroke-dg-blue' x='32' y='58' width='656' height='24' rx='5'
@@ -1385,12 +1385,12 @@ flowchart LR
         text-anchor='end'
         dominant-baseline='central'>app shell: declared once</text
       >
-      <rect class='fill-dg-blue-soft stroke-dg-blue' x='32' y='90' width='92' height='176' rx='5'
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='32' y='92' width='92' height='208' rx='5'
       ></rect>
       <text
         class='fill-dg-blue-ink'
         x='78'
-        y='104'
+        y='106'
         font-size='9'
         text-anchor='middle'
         dominant-baseline='central'>Sidebar</text
@@ -1398,83 +1398,97 @@ flowchart LR
       <text
         class='fill-dg-blue-ink-soft'
         x='78'
-        y='117'
+        y='119'
         font-size='8'
         text-anchor='middle'
         dominant-baseline='central'>once</text
       >
 
-      <!-- main: the app shell's content slot; reserves the space -->
+      <!-- app main: the app shell's content slot; reserves the space -->
       <!-- data-lint-ignore: scene - the content slot wraps the nested layout + page -->
       <rect
         class='fill-dg-blue-soft stroke-dg-blue'
         data-lint-ignore='scene'
         x='132'
-        y='90'
+        y='92'
         width='556'
-        height='176'
+        height='208'
         rx='6'></rect>
-      <text class='fill-dg-blue-ink-soft' x='142' y='101' font-size='8'
+      <text class='fill-dg-blue-ink-soft' x='142' y='103' font-size='8'
         >&lt;main&gt; (app/layout.tsx) · reserves the space</text
       >
-      <text class='fill-dg-blue-ink-soft' x='678' y='101' font-size='8' text-anchor='end'
+      <text class='fill-dg-blue-ink-soft' x='678' y='103' font-size='8' text-anchor='end'
         >overflow-hidden</text
       >
 
-      <!-- fills-height arrow: the page stretches to fill the reserved slot -->
-      <text class='fill-dg-muted' x='157' y='147' font-size='7.5' text-anchor='middle'>fills</text>
-      <line
-        class='stroke-dg-gray'
-        x1='157'
-        y1='153'
-        x2='157'
-        y2='249'
-        stroke-width='1.4'
-        marker-start='url(#aFill)'
-        marker-end='url(#aFill)'></line>
-
-      <!-- section layout, nested in main -->
+      <!-- section layout, nested in the app main -->
       <rect
         class='fill-dg-white stroke-dg-blue'
         data-lint-ignore='scene'
         x='172'
-        y='108'
+        y='110'
         width='504'
-        height='150'
+        height='182'
         rx='5'></rect>
-      <text class='fill-dg-blue-ink-soft' x='182' y='120' font-size='8'
+      <text class='fill-dg-blue-ink-soft' x='182' y='122' font-size='8'
         >app/programs/[id]/layout.tsx</text
       >
-      <rect class='fill-dg-blue-soft stroke-dg-blue' x='182' y='126' width='484' height='20' rx='4'
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='182' y='128' width='484' height='20' rx='4'
       ></rect>
-      <text class='fill-dg-blue-ink' x='192' y='136' font-size='9' dominant-baseline='central'
+      <text class='fill-dg-blue-ink' x='192' y='138' font-size='9' dominant-baseline='central'
         >Program header + tabs</text
       >
       <text
         class='fill-dg-blue-ink-soft'
         x='656'
-        y='136'
+        y='138'
         font-size='8'
         text-anchor='end'
         dominant-baseline='central'>section chrome: once</text
       >
 
-      <!-- page, fills the reserved slot -->
+      <!-- section main: the section layout's content slot; reserves the space for the page -->
+      <!-- data-lint-ignore: scene - the section's content slot wraps the page -->
+      <rect
+        class='fill-dg-blue-soft stroke-dg-blue'
+        data-lint-ignore='scene'
+        x='182'
+        y='154'
+        width='484'
+        height='130'
+        rx='5'></rect>
+      <text class='fill-dg-blue-ink-soft' x='192' y='165' font-size='8'
+        >&lt;main&gt; (app/programs/[id]/layout.tsx) · reserves the space</text
+      >
+
+      <!-- fills-height arrow: the page stretches to fill the section's reserved slot -->
+      <text class='fill-dg-muted' x='152' y='167' font-size='7.5' text-anchor='middle'>fills</text>
+      <line
+        class='stroke-dg-gray'
+        x1='152'
+        y1='173'
+        x2='152'
+        y2='275'
+        stroke-width='1.4'
+        marker-start='url(#aFill)'
+        marker-end='url(#aFill)'></line>
+
+      <!-- page, fills the section's reserved slot -->
       <rect
         class='fill-dg-white stroke-dg-green'
         data-lint-ignore='scene'
-        x='182'
-        y='152'
-        width='484'
-        height='100'
+        x='192'
+        y='172'
+        width='464'
+        height='104'
         rx='5'></rect>
-      <text class='fill-dg-green-ink' x='192' y='164' font-size='8'
+      <text class='fill-dg-green-ink' x='202' y='184' font-size='8'
         >reports/page.tsx · fills the slot</text
       >
-      <rect class='fill-dg-green-skel' x='192' y='176' width='466' height='10' rx='4'></rect>
-      <rect class='fill-dg-green-skel' x='192' y='192' width='440' height='10' rx='4'></rect>
-      <rect class='fill-dg-green-skel' x='192' y='208' width='470' height='10' rx='4'></rect>
-      <text class='fill-dg-green-ink' x='424' y='238' font-size='8' text-anchor='middle'
+      <rect class='fill-dg-green-skel' x='202' y='196' width='446' height='10' rx='4'></rect>
+      <rect class='fill-dg-green-skel' x='202' y='212' width='420' height='10' rx='4'></rect>
+      <rect class='fill-dg-green-skel' x='202' y='228' width='450' height='10' rx='4'></rect>
+      <text class='fill-dg-green-ink' x='424' y='262' font-size='8' text-anchor='middle'
         >stretches to fill the reserved height; overflow clipped</text
       >
     </svg>
@@ -1484,24 +1498,25 @@ flowchart LR
       is:raw>
 flowchart TB
   root("app/layout.tsx · app shell: header + sidebar (once)"):::blue
-  root -->|"renders {children} into"| main("&lt;main&gt; · reserves the space, overflow-hidden"):::blue
+  root -->|"renders {children} into"| main("&lt;main&gt; (app layout) · reserves the space, overflow-hidden"):::blue
   main -->|"the section layout fills it"| sec("app/programs/[id]/layout.tsx · section header + tabs (once)"):::blue
-  sec -->|"children"| page("reports/page.tsx · content, fills the slot"):::green
+  sec -->|"renders {children} into"| smain("&lt;main&gt; (section layout) · reserves the space"):::blue
+  smain -->|"the page fills it"| page("reports/page.tsx · content, fills the slot"):::green
   linkStyle default stroke:#737373,stroke-width:1.5px
   classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
   classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
 </pre>
 
     <Fragment slot='caption'>
-      Four layers, each owning exactly one slice of the frame. The root layout renders the app
+      Layers of chrome, each owning exactly one slice of the frame. The root layout renders the app
       header and sidebar and drops its <code>&lt;main&gt;</code> in the middle; that <code
         >&lt;main&gt;</code
       >
-      is a fixed content slot that reserves the space and clips overflow, so the frame never moves as
-      routes change. The section layout renders the program header and tabs and drops
-      <code>{'{'}children{'}'}</code> below them; the page renders only its content and stretches to fill
-      the reserved slot. Nesting composes them into the screen the user sees, and a navigation re-renders
-      only the innermost box that changed.
+      is a fixed content slot that reserves the space and clips overflow. The section layout renders the
+      program header and tabs and drops its own <code>&lt;main&gt;</code> below them, reserving the space
+      for the page in turn; the page renders only its content and stretches to fill that innermost reserved
+      slot. Every layout reserves a container for the layer beneath it, so nesting composes them into
+      the screen the user sees and a navigation re-renders only the innermost box that changed.
     </Fragment>
   </Diagram>
 
