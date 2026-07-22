@@ -457,10 +457,10 @@ flowchart LR
     A third segment-based shape exists for a specific composition: the tabbed area is <em>part</em>
     of the page, sitting beside content that must not re-render when the tab changes. Make the tabbed
     region a <strong>parallel-route slot</strong> (<a
-      href='13-blocking-requests.html#parallel-routes'>§13.3</a
+      href='14-blocking-requests.html#parallel-routes'>§14.3</a
     >) with its own sub-routes: the tab links are ordinary URLs, only the slot's subtree navigates,
     and every sibling region keeps its state untouched (<a
-      href='13-blocking-requests.html#slot-subroutes'>§13.3</a
+      href='14-blocking-requests.html#slot-subroutes'>§14.3</a
     >'s sub-navigation mechanics). Each tab is still a real segment, so the per-tab splitting,
     <code>loading.tsx</code>/<code>error.tsx</code>, and prefetching all survive.
   </p>
@@ -471,7 +471,7 @@ flowchart LR
       is:raw><span class="filename">app/programs/[programId]/ - the tabbed region is a slot beside the main content</span>[programId]/
 ├── layout.tsx              <span class="tok-com">renders children AND the view slot</span>
 ├── page.tsx                <span class="tok-com">the always-present summary</span>
-├── default.tsx             <span class="tok-com">children's fallback on hard loads (§13.3)</span>
+├── default.tsx             <span class="tok-com">children's fallback on hard loads (§14.3)</span>
 └── @view/
     ├── reports/page.tsx    <span class="tok-com">/programs/[id]/reports</span>
     ├── roster/page.tsx     <span class="tok-com">/programs/[id]/roster</span>
@@ -1346,7 +1346,7 @@ flowchart TB
       data while it renders, and its arguments are the URL params. This is the whole payoff of <a
         href='#url-state'>§9.2</a
       >: the query string is the page's function signature, and the server is free to cache and
-      dedupe the fetch (<a href='15-dedupe-caching.html'>§15</a>).
+      dedupe the fetch (<a href='16-dedupe-caching.html'>§16</a>).
     </CodeCaption>
   </Snippet>
 
@@ -1684,7 +1684,7 @@ flowchart LR
         href='https://nextjs.org/docs/app/getting-started/linking-and-navigating'
         target='_blank'
         rel='noopener'>Linking and Navigating</a
-      >. Full list in <a href='20-references.html'>§20</a>.
+      >. Full list in <a href='21-references.html'>§21</a>.
     </p>
   </GoDeeper>
 </GuidePage>

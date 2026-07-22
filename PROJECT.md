@@ -244,9 +244,9 @@ home per technique + cross-references).
 - Part D — Applied: §17 Signs You're Doing It Wrong (checklist, links back) · §18 Applied to
   Tracker (before/after from audit) (the Worked Example chapter was deleted 2026-07-19, never
   written)
-- §19 New Primitives (lower priority; details of Server Actions, form hooks, ViewTransition,
+- §20 New Primitives (lower priority; details of Server Actions, form hooks, ViewTransition,
   Activity, useEffectEvent, compiler)
-- §20 References
+- §21 References
 
 ## Working agreements (remember across sessions)
 

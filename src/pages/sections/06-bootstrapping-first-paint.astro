@@ -271,7 +271,7 @@ import Snippet from '../../components/Snippet.astro';
         font-size='9'
         dominant-baseline='central'
       >
-        from here on, this data is client-owned (§15.7)
+        from here on, this data is client-owned (§16.7)
       </text>
     </svg>
 
@@ -383,7 +383,7 @@ flowchart LR
     CDN. Each gate rendered a full-page loading screen while it waited, and each waited on the previous,
     so a cold load spent seconds inside the chain before the page shell appeared: hard-navigation TTI
     ran seconds long while soft navigations took a few hundred milliseconds, a split that averages quietly
-    hide. It is <a href='13-blocking-requests.html#csr-depth'>§13.5</a>'s serial-by-structure
+    hide. It is <a href='14-blocking-requests.html#csr-depth'>§14.5</a>'s serial-by-structure
     waterfall, wearing auth clothing.
   </p>
   <p>
@@ -601,7 +601,7 @@ flowchart LR
     refreshing: when any mutation during the session touches the user's profile, the cache
     invalidates the relevant typename, the subscribed query refires on its own, and the user in
     context updates everywhere, with no callback, no manual refetch, no wiring (<a
-      href='14-minimize-the-wires.html#callbacks'>§14.4</a
+      href='15-minimize-the-wires.html#callbacks'>§15.4</a
     >). The same holds for any bootstrapped GraphQL hook: the server seed buys the complete paint,
     and the idle-woken subscription buys automatic refetch whenever the data changes on the server
     or as a result of a client action. Drop the client query and the bootstrap goes stale; drop the
@@ -962,7 +962,7 @@ flowchart LR
       that <a href='#auth-chain'>§6.4</a> condenses · <a href='09-server-resolvable-state.html'
         >§9</a
       > for the URL-state default this pattern is the exception to · <a
-        href='15-dedupe-caching.html#client'>§15.3</a
+        href='16-dedupe-caching.html#client'>§16.3</a
       > for the client data layer the twin query lives in · <a href='04-ssr.html#routing'>§4.5</a> for
       the RSC-payload re-rendering that makes URL state the App Router's native answer.
     </p>

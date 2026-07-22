@@ -1,6 +1,6 @@
 # The App Router Guide (repo)
 
-This repo builds **The App Router Guide**, a 20-chapter document teaching server-first Next.js 16 /
+This repo builds **The App Router Guide**, a 21-chapter document teaching server-first Next.js 16 /
 React 19 patterns. This README is for maintaining the repo and producing the distributables. If you
 are here to _read_ the guide, build it (below) and open
 `build/output/app-router-guide_html/index.html`; the recipient-facing explanation of the outputs
@@ -18,7 +18,7 @@ lives in `build/README.md`.
   distributable. Zipping `build/` is the intended way to send the guide out.
 - `supplementary/` holds the working documents: `working-notes.md` (the running content queue; note
   its DO NOT AUTOMATICALLY ADDRESS sections), `audit.md`, and `references.md` (the external-sources
-  ledger that §20 renders).
+  ledger that §21 renders).
 - `PROJECT.md` is the project tracker and the canonical list of authoring conventions (naming,
   formatting rules, diagram style, snippet rules). Read it before writing content.
 

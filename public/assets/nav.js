@@ -35,30 +35,31 @@ const TOC = [
         file: '10-containers-content-shifting.html',
       },
       { n: '11', title: 'Suspense & Streaming', file: '11-suspense-streaming.html' },
-      { n: '12', title: 'Designing for the Unknown', file: '12-designing-for-the-unknown.html' },
-      { n: '13', title: 'Blocking Requests', file: '13-blocking-requests.html' },
+      { n: '12', title: 'Error Boundaries', file: '12-error-boundaries.html' },
+      { n: '13', title: 'Designing for the Unknown', file: '13-designing-for-the-unknown.html' },
+      { n: '14', title: 'Blocking Requests', file: '14-blocking-requests.html' },
     ],
   },
   {
     part: 'Part C: Decouple the Parts',
     items: [
-      { n: '14', title: 'Minimize the Wires', file: '14-minimize-the-wires.html' },
-      { n: '15', title: 'Dedupe & Caching', file: '15-dedupe-caching.html' },
-      { n: '16', title: 'Component Breakdown', file: '16-component-breakdown.html' },
+      { n: '15', title: 'Minimize the Wires', file: '15-minimize-the-wires.html' },
+      { n: '16', title: 'Dedupe & Caching', file: '16-dedupe-caching.html' },
+      { n: '17', title: 'Component Breakdown', file: '17-component-breakdown.html' },
     ],
   },
   {
     part: 'Part D: Applied',
     items: [
-      { n: '17', title: "Signs You're Doing It Wrong", file: '17-signs-doing-it-wrong.html' },
-      { n: '18', title: 'Applied to Tracker', file: '18-applied-to-tracker.html' },
+      { n: '18', title: "Signs You're Doing It Wrong", file: '18-signs-doing-it-wrong.html' },
+      { n: '19', title: 'Applied to Tracker', file: '19-applied-to-tracker.html' },
     ],
   },
   {
     part: 'Appendix',
     items: [
-      { n: '19', title: 'New Primitives', file: '19-new-primitives.html' },
-      { n: '20', title: 'References', file: '20-references.html' },
+      { n: '20', title: 'New Primitives', file: '20-new-primitives.html' },
+      { n: '21', title: 'References', file: '21-references.html' },
     ],
   },
 ];

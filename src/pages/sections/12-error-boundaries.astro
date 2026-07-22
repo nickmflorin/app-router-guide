@@ -1,0 +1,757 @@
+---
+import GuidePage from '../../layouts/GuidePage.astro';
+import Chip from '../../components/Chip.astro';
+import Callout from '../../components/Callout.astro';
+import GoDeeper from '../../components/GoDeeper.astro';
+import Diagram from '../../components/Diagram.astro';
+import Compare from '../../components/Compare.astro';
+import CompareCol from '../../components/CompareCol.astro';
+import CodeCaption from '../../components/CodeCaption.astro';
+import Snippet from '../../components/Snippet.astro';
+---
+
+<GuidePage title='Error Boundaries - App Router Guide' root='..'>
+  <div class='kicker'>Chapter 12 · Part B: Contain the Unknown</div>
+  <h1>Error Boundaries</h1>
+  <p class='lede'>
+    Failure is not a component concern either; it is structural, the exact twin of loading. An error
+    boundary moves "what shows when a subtree throws" out of the component and into the tree, so one
+    failure degrades one region instead of blanking the page. This chapter is <code>error.tsx</code>
+    and its granularity, isolating regions with parallel routes, and dropping to custom boundaries when
+    the file convention cannot reach far enough.
+  </p>
+
+  <p>
+    <a href='11-suspense-streaming.html'>§11</a> made the case that loading belongs to the tree, not the
+    component: a <code>&lt;Suspense&gt;</code> boundary above a component decides what shows while it
+    waits, and <code>loading.tsx</code> is that boundary drawn around a route segment. Errors are the
+    same story with a different verb. A component that throws should not decide what the user sees any
+    more than a component that suspends should; a boundary above it should. The App Router gives you the
+    same two tools it gave you for loading: a file convention (<code>error.tsx</code>) for the route
+    segment, and a plain React boundary you place by hand for anything finer.
+  </p>
+
+  <h2 id='mechanism'>12.1 The boundary catches the throw</h2>
+  <p>
+    An <code>error.tsx</code> file is a <strong
+      >Client Component that Next.js wraps as a React error boundary around the segment</strong
+    >: the page and everything rendered beneath it.
+    <Chip k='next' />
+    <Chip k='critical' /> When anything in that subtree throws while rendering, the boundary swaps the
+    subtree for the file's fallback and hands it two things: the <code>error</code> (with a
+    <code>digest</code> that ties the client fallback to the server-side stack trace in your logs) and
+    <code>reset()</code>, a function that re-renders the segment to retry. The symmetry with
+    <a href='11-suspense-streaming.html#mechanism'>§11.1</a> is exact:
+    <code>loading.tsx</code> is to <code>&lt;Suspense&gt;</code> what
+    <code>error.tsx</code> is to the error boundary. Next.js wraps every segment as roughly
+    <code
+      >&lt;ErrorBoundary&gt;&lt;Suspense&gt;{'{page}'}&lt;/Suspense&gt;&lt;/ErrorBoundary&gt;</code
+    >: the layout persists, Suspense contains the waiting, the boundary contains the failing.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 230'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker
+          id='aErr'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='7'
+          markerHeight='7'
+          orient='auto-start-reverse'
+        >
+          <path
+            class='stroke-dg-gray'
+            d='M 2 1 L 8.5 5 L 2 9'
+            fill='none'
+            stroke-width='1.6'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+      <text
+        class='fill-dg-ink'
+        x='360'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
+        A throw swaps only the boundary's subtree; the layout holds
+      </text>
+
+      <!-- LEFT: healthy -->
+      <rect class='fill-dg-white stroke-dg-border' x='30' y='30' width='280' height='196' rx='8'
+      ></rect>
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='42' y='42' width='256' height='24' rx='5'
+      ></rect>
+      <text
+        class='fill-dg-blue-ink'
+        x='170'
+        y='54'
+        font-size='9'
+        text-anchor='middle'
+        dominant-baseline='central'>Layout: header (persists)</text
+      >
+      <!-- data-lint-ignore: scene - error boundary wrapper around the page region -->
+      <rect
+        class='fill-dg-white stroke-dg-green'
+        data-lint-ignore='scene'
+        x='42'
+        y='74'
+        width='256'
+        height='140'
+        rx='6'></rect>
+      <text class='fill-dg-green-ink' x='54' y='88' font-size='8'>error boundary (error.tsx)</text>
+      <rect class='fill-dg-green-skel' x='54' y='100' width='232' height='10' rx='4'></rect>
+      <rect class='fill-dg-green-skel' x='54' y='116' width='196' height='10' rx='4'></rect>
+      <rect class='fill-dg-green-skel' x='54' y='132' width='218' height='10' rx='4'></rect>
+      <rect class='fill-dg-green-skel' x='54' y='148' width='176' height='10' rx='4'></rect>
+      <text class='fill-dg-green-ink' x='170' y='200' font-size='9' text-anchor='middle'
+        >the page renders</text
+      >
+
+      <line
+        class='stroke-dg-gray'
+        x1='318'
+        y1='128'
+        x2='398'
+        y2='128'
+        stroke-width='1.5'
+        marker-end='url(#aErr)'></line>
+      <text class='fill-dg-ink' x='358' y='116' font-size='9' text-anchor='middle' font-weight='500'
+        >throws</text
+      >
+
+      <!-- RIGHT: one throw -->
+      <rect class='fill-dg-white stroke-dg-border' x='410' y='30' width='280' height='196' rx='8'
+      ></rect>
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='422' y='42' width='256' height='24' rx='5'
+      ></rect>
+      <text
+        class='fill-dg-blue-ink'
+        x='550'
+        y='54'
+        font-size='9'
+        text-anchor='middle'
+        dominant-baseline='central'>Layout: header (persists)</text
+      >
+      <rect class='fill-dg-red-soft stroke-dg-red' x='422' y='74' width='256' height='140' rx='6'
+      ></rect>
+      <text class='fill-dg-red' x='434' y='88' font-size='8'>error boundary (error.tsx)</text>
+      <text
+        class='fill-dg-red'
+        x='550'
+        y='138'
+        font-size='9.5'
+        text-anchor='middle'
+        font-weight='500'>Something went wrong</text
+      >
+      <rect class='fill-dg-white stroke-dg-red' x='500' y='156' width='100' height='20' rx='4'
+      ></rect>
+      <text
+        class='fill-dg-red'
+        x='550'
+        y='166'
+        font-size='8.5'
+        text-anchor='middle'
+        dominant-baseline='central'>Try again → reset()</text
+      >
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart LR
+  subgraph H["healthy"]
+    direction TB
+    L1("Layout: header (persists)"):::blue
+    L1 --> P1("error boundary: the page renders"):::green
+  end
+  subgraph T["one throw"]
+    direction TB
+    L2("Layout: header (persists)"):::blue
+    L2 --> P2("error boundary: fallback + reset()"):::red
+  end
+  H -->|"a child throws"| T
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style H fill:#ffffff,stroke:#e0e0e0,color:#171717,rx:8px,ry:8px
+  style T fill:#ffffff,stroke:#e0e0e0,color:#171717,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef red fill:#fdecea,stroke:#b3261e,color:#b3261e
+</pre>
+
+    <Fragment slot='caption'>
+      The boundary wraps the page, not the layout. When a child throws, only the boundary's subtree
+      is replaced with the fallback; the layout's header, and everything outside the boundary, keeps
+      rendering. <code>reset()</code> re-renders the segment to retry, the error-handling counterpart
+      of a Suspense boundary revealing its content once the data arrives.
+    </Fragment>
+  </Diagram>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/programs/[id]/error.tsx - one segment's boundary</span><span class="tok-dir">"use client"</span>; <span class="tok-com">// error boundaries are client components</span>
+<span class="tok-kw">import</span> { useEffect } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+
+<span class="tok-kw">export default function</span> <span class="tok-fn">ProgramError</span>({
+  error,
+  reset,
+}: {
+  error: <span class="tok-fn">Error</span> &amp; { digest?: <span class="tok-kw">string</span> };
+  reset: () =&gt; <span class="tok-kw">void</span>;
+}) {
+  <span class="tok-fn">useEffect</span>(() =&gt; {
+    <span class="tok-com">/* Log to your error service; the digest ties this client
+       fallback to the server-side stack in the logs. */</span>
+    <span class="tok-fn">reportError</span>(error);
+  }, [error]);
+
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">ErrorState</span> <span class="tok-prop">title</span>=<span class="tok-str">"This program failed to load"</span>&gt;
+      &lt;button <span class="tok-prop">onClick</span>={reset}&gt;Try again&lt;/button&gt;
+    &lt;/<span class="tok-fn">ErrorState</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Next wraps the segment (the page and everything under it) in this boundary. A throw anywhere
+      in that subtree swaps it for this fallback; <code>reset()</code> re-renders the segment to retry.
+      Like every boundary, it is a client component, because catching a render error and holding fallback
+      state is inherently stateful client work.
+    </CodeCaption>
+  </Snippet>
+
+  <h2 id='granularity'>12.2 Granularity is a function of where the file sits</h2>
+  <p>
+    A thrown error <strong>bubbles up to the nearest ancestor boundary</strong> and no further.
+    <Chip k='next' />
+    <Chip k='critical' /> That single rule decides everything about how a failure degrades your UI. One
+    <code>error.tsx</code> at the app root means any throw, anywhere, blanks the entire app to a single
+    generic screen. An <code>error.tsx</code> at each meaningful segment means a throw is caught at the
+    smallest segment that has one: its layout, its siblings, and every ancestor keep rendering, and only
+    the failed segment shows a fallback. <strong
+      >How granular your error handling is equals how deep your <code>error.tsx</code> files go.</strong
+    > This is the exact parallel to granular Suspense boundaries in <a
+      href='11-suspense-streaming.html#streaming'>§11.2</a
+    >: more boundaries, smaller blast radius.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/ - error.tsx at each level you want to contain a failure</span>app/
+├── error.tsx                  <span class="tok-com">last resort for the app's own routes</span>
+├── layout.tsx                 <span class="tok-com">app shell (§10.4)</span>
+└── programs/
+    ├── error.tsx              <span class="tok-com">catches throws in the programs area</span>
+    ├── layout.tsx
+    └── [id]/
+        ├── error.tsx          <span class="tok-com">catches throws for one program</span>
+        └── reports/
+            ├── error.tsx      <span class="tok-com">catches throws in just the report</span>
+            └── page.tsx</pre>
+    <CodeCaption>
+      Each <code>error.tsx</code> catches throws from its own segment down to the next boundary below
+      it. A failure in the report is contained to the report; the program header, the sibling tabs, and
+      the app shell never find out. Delete the deep ones and the same failure bubbles up until it blanks
+      a much larger region.
+    </CodeCaption>
+  </Snippet>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 222'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <text
+        class='fill-dg-ink'
+        x='360'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
+        Same throw, two blast radii, decided by where the nearest error.tsx sits
+      </text>
+
+      <!-- LEFT: only a root boundary -->
+      <text class='fill-dg-ink' x='30' y='34' font-size='9.5' font-weight='500'
+        >only app/error.tsx</text
+      >
+      <rect class='fill-dg-red-soft stroke-dg-red' x='30' y='42' width='300' height='176' rx='8'
+      ></rect>
+      <text class='fill-dg-red' x='40' y='56' font-size='8'>app/error.tsx (catches it here)</text>
+      <rect class='fill-dg-red-soft stroke-dg-red' x='44' y='64' width='272' height='24' rx='4'
+      ></rect>
+      <text
+        class='fill-dg-red'
+        x='180'
+        y='76'
+        font-size='8.5'
+        text-anchor='middle'
+        dominant-baseline='central'>app header (gone)</text
+      >
+      <rect class='fill-dg-red-soft stroke-dg-red' x='44' y='94' width='272' height='114' rx='4'
+      ></rect>
+      <text
+        class='fill-dg-red'
+        x='180'
+        y='150'
+        font-size='9.5'
+        text-anchor='middle'
+        font-weight='500'>the whole app blanks</text
+      >
+
+      <!-- RIGHT: a deep boundary -->
+      <text class='fill-dg-ink' x='390' y='34' font-size='9.5' font-weight='500'
+        >reports/error.tsx present</text
+      >
+      <rect class='fill-dg-white stroke-dg-border' x='390' y='42' width='300' height='176' rx='8'
+      ></rect>
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='404' y='54' width='272' height='22' rx='4'
+      ></rect>
+      <text
+        class='fill-dg-blue-ink'
+        x='540'
+        y='65'
+        font-size='8.5'
+        text-anchor='middle'
+        dominant-baseline='central'>app header (renders)</text
+      >
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='404' y='82' width='272' height='22' rx='4'
+      ></rect>
+      <text
+        class='fill-dg-blue-ink'
+        x='540'
+        y='93'
+        font-size='8.5'
+        text-anchor='middle'
+        dominant-baseline='central'>program header + tabs (render)</text
+      >
+      <rect class='fill-dg-red-soft stroke-dg-red' x='404' y='110' width='272' height='98' rx='4'
+      ></rect>
+      <text class='fill-dg-red' x='414' y='123' font-size='8'
+        >reports/error.tsx (catches it here)</text
+      >
+      <text class='fill-dg-red' x='540' y='162' font-size='9' text-anchor='middle' font-weight='500'
+        >only the report shows the fallback</text
+      >
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart TB
+  subgraph A["only app/error.tsx"]
+    direction TB
+    a1("app/error.tsx catches the throw"):::red
+    a1 --> a2("app header + program chrome + report: all gone"):::red
+  end
+  subgraph B["reports/error.tsx present"]
+    direction TB
+    b1("app header renders"):::blue
+    b1 --> b2("program header + tabs render"):::blue
+    b2 --> b3("reports/error.tsx catches it: only the report falls back"):::red
+  end
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  style A fill:#ffffff,stroke:#e0e0e0,color:#171717,rx:8px,ry:8px
+  style B fill:#ffffff,stroke:#e0e0e0,color:#171717,rx:8px,ry:8px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef red fill:#fdecea,stroke:#b3261e,color:#b3261e
+</pre>
+
+    <Fragment slot='caption'>
+      The identical error, thrown in the report. With only a root boundary it bubbles all the way up
+      and the whole app is replaced by one generic screen. With an <code>error.tsx</code> in the report
+      segment, it is caught there: the app header and the program chrome render normally, and only the
+      report shows its fallback. The file's depth is the containment.
+    </Fragment>
+  </Diagram>
+
+  <h2 id='not-caught'>12.3 What error.tsx will not catch</h2>
+  <p>
+    The boundary sits <em>inside</em> the segment's layout, wrapping the page. Three consequences follow,
+    and each is a common surprise.
+    <Chip k='next' />
+    <Chip k='very' />
+  </p>
+  <ul>
+    <li>
+      <strong
+        >An error in the segment's own <code>layout.tsx</code> is not caught by that segment's
+        <code>error.tsx</code>.</strong
+      > The boundary is a child of the layout, so a throw in the layout is above it; it bubbles to the
+      <em>parent</em> segment's boundary. If a layout does real work that can fail, it needs a boundary
+      one level up.
+    </li>
+    <li>
+      <strong>An error in the root layout is caught only by <code>global-error.tsx</code>.</strong>
+      The root layout is above every <code>error.tsx</code>, so its failure needs the one special
+      boundary that replaces the root layout entirely, which is why global error UI must render its
+      own <code>&lt;html&gt;</code> and <code>&lt;body&gt;</code>.
+    </li>
+    <li>
+      <strong>Errors in event handlers and async callbacks are not render errors</strong>, so no
+      render boundary catches them. Handle those where they happen: catch and store in state, or let
+      a <code>startTransition</code> throw bubble to the nearest boundary (<a
+        href='09-server-resolvable-state.html#url-writes'>§9.4</a
+      >).
+    </li>
+  </ul>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/global-error.tsx - the last resort; replaces the root layout</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export default function</span> <span class="tok-fn">GlobalError</span>({ error, reset }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">return</span> (
+    <span class="tok-com">{/* It replaces the root layout, so it renders its own document. */}</span>
+    &lt;html&gt;
+      &lt;body&gt;
+        &lt;<span class="tok-fn">RootErrorState</span> <span class="tok-prop">onRetry</span>={reset} /&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  );
+}</pre>
+    <CodeCaption>
+      This runs only when the root layout itself failed, which means everything else has already
+      failed too. Keep it dead simple and dependency-free: it is the screen of last resort, and it
+      is the one boundary that must supply the <code>&lt;html&gt;</code> and <code
+        >&lt;body&gt;</code
+      >
+      the broken root layout would have.
+    </CodeCaption>
+  </Snippet>
+
+  <h2 id='parallel-routes'>12.4 Isolate regions with parallel routes</h2>
+  <p>
+    Segment boundaries follow the URL, but a single page often shows several independent regions
+    that can fail on their own: a summary card, a header, an activity feed, each with its own data.
+    <Chip k='next' />
+    <Chip k='very' /> Give each region its own <strong>parallel-route slot</strong> (<a
+      href='14-blocking-requests.html#parallel-routes'>§14.3</a
+    >), and each slot, being its own segment, takes its own <code>error.tsx</code> (and its own <code
+      >loading.tsx</code
+    >). Now a throw in the summary's data renders the summary slot's fallback while the header and
+    the feed keep rendering and streaming, untouched. This is the finest isolation the file system
+    alone can express: one region's failure contained to that region, decided by the route tree.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 194'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <text
+        class='fill-dg-ink'
+        x='360'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
+        Parallel slots: one region fails, its siblings render on
+      </text>
+
+      <!-- data-lint-ignore: scene - layout frame holding independent slots -->
+      <rect
+        class='fill-dg-white stroke-dg-border'
+        data-lint-ignore='scene'
+        x='40'
+        y='30'
+        width='640'
+        height='160'
+        rx='8'></rect>
+      <text class='fill-dg-muted' x='52' y='44' font-size='8'>app/programs/[id]/layout.tsx</text>
+
+      <!-- @header slot (ok) -->
+      <rect class='fill-dg-green-soft stroke-dg-green' x='52' y='52' width='616' height='30' rx='5'
+      ></rect>
+      <text class='fill-dg-green-ink' x='62' y='67' font-size='9' dominant-baseline='central'
+        >@header slot: renders</text
+      >
+
+      <!-- @summary slot (errored) -->
+      <rect class='fill-dg-red-soft stroke-dg-red' x='52' y='90' width='300' height='90' rx='5'
+      ></rect>
+      <text class='fill-dg-red' x='62' y='104' font-size='8'>@summary/error.tsx</text>
+      <text class='fill-dg-red' x='202' y='138' font-size='9' text-anchor='middle' font-weight='500'
+        >Summary unavailable · Retry</text
+      >
+
+      <!-- @feed slot (ok) -->
+      <rect class='fill-dg-green-soft stroke-dg-green' x='364' y='90' width='304' height='90' rx='5'
+      ></rect>
+      <text class='fill-dg-green-ink' x='374' y='104' font-size='8'>@feed slot</text>
+      <rect class='fill-dg-green-skel' x='374' y='116' width='284' height='9' rx='4'></rect>
+      <rect class='fill-dg-green-skel' x='374' y='130' width='240' height='9' rx='4'></rect>
+      <rect class='fill-dg-green-skel' x='374' y='144' width='268' height='9' rx='4'></rect>
+      <text class='fill-dg-green-ink' x='516' y='170' font-size='9' text-anchor='middle'
+        >the feed keeps streaming</text
+      >
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart TB
+  L("app/programs/[id]/layout.tsx"):::neutral
+  L --> H("@header slot: renders"):::green
+  L --> S("@summary/error.tsx: Summary unavailable · Retry"):::red
+  L --> F("@feed slot: keeps streaming"):::green
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef neutral fill:#ffffff,stroke:#c9c9c9,color:#525252
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef red fill:#fdecea,stroke:#b3261e,color:#b3261e
+</pre>
+
+    <Fragment slot='caption'>
+      Three parallel slots in one layout. The summary's data threw, so the summary slot shows its
+      own
+      <code>error.tsx</code>, while the header and the feed, being separate slots with separate
+      boundaries, render and stream as if nothing happened. The blast radius is one slot because the
+      route tree drew it that way (<a href='14-blocking-requests.html#parallel-routes'>§14.3</a>).
+    </Fragment>
+  </Diagram>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/programs/[id]/@summary/error.tsx - a fallback scoped to one slot</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">export default function</span> <span class="tok-fn">SummaryError</span>({ reset }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">SlotError</span> <span class="tok-prop">label</span>=<span class="tok-str">"Summary unavailable"</span> <span class="tok-prop">onRetry</span>={reset} /&gt;;
+}</pre>
+    <CodeCaption>
+      Each parallel slot is a segment, so it gets the full file toolkit: its own
+      <code>error.tsx</code>, its own <code>loading.tsx</code>, its own streaming lifecycle. The
+      layout renders the slots side by side (<a href='14-blocking-requests.html#parallel-routes'
+        >§14.3</a
+      >); their failures never reach one another.
+    </CodeCaption>
+  </Snippet>
+
+  <h2 id='custom-boundaries'>12.5 Below the segment: wrap the component yourself</h2>
+  <p>
+    The file conventions stop at the route segment. When you need finer isolation than the smallest
+    segment, a grid of a dozen widgets where any one can fail on its own data, a list where a single
+    row must degrade without taking its neighbors, you place the boundary by hand.
+    <Chip k='react' />
+    <Chip k='very' /> Wrap each unit in a custom error boundary (the community-standard
+    <code>react-error-boundary</code>, or a small class component) exactly the way you wrap it in
+    <code>&lt;Suspense&gt;</code>: the boundary is chosen by the composer and placed around the
+    unit, not baked into it. The boundary is a Client Component, but its children can be server
+    components, so the grid itself stays on the server.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">WidgetGrid.tsx - per-widget isolation, below what error.tsx can reach</span><span class="tok-kw">import</span> { ErrorBoundary } <span class="tok-kw">from</span> <span class="tok-str">"react-error-boundary"</span>;
+<span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+
+<span class="tok-com">/* A server component: it renders a client boundary around a server
+   child, which is allowed. No "use client" here. */</span>
+<span class="tok-kw">export function</span> <span class="tok-fn">WidgetGrid</span>({ widgets }: { widgets: <span class="tok-fn">Widget</span>[] }) {
+  <span class="tok-kw">return</span> (
+    &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"grid grid-cols-3 gap-4"</span>&gt;
+      {widgets.map((w) =&gt; (
+        &lt;<span class="tok-fn">ErrorBoundary</span> <span class="tok-prop">key</span>={w.id} <span class="tok-prop">FallbackComponent</span>={WidgetError}&gt;
+          &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">WidgetSkeleton</span> /&gt;}&gt;
+            &lt;<span class="tok-fn">Widget</span> <span class="tok-prop">id</span>={w.id} /&gt;
+          &lt;/<span class="tok-fn">Suspense</span>&gt;
+        &lt;/<span class="tok-fn">ErrorBoundary</span>&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}</pre>
+    <CodeCaption>
+      One widget can fail, show its fallback, and be retried without touching the other eleven. Each
+      unit owns its loading (<code>&lt;Suspense&gt;</code>) and its failure (<code
+        >&lt;ErrorBoundary&gt;</code
+      >) as a matched pair, the same shape as
+      <code>loading.tsx</code> + <code>error.tsx</code>, just below the granularity the file system
+      can express. The grid stays a server component; only the boundary is client.
+    </CodeCaption>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">WidgetError.tsx - the fallback the grid hands each boundary</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import type</span> { FallbackProps } <span class="tok-kw">from</span> <span class="tok-str">"react-error-boundary"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">WidgetError</span>({ error, resetErrorBoundary }: <span class="tok-fn">FallbackProps</span>) {
+  <span class="tok-kw">return</span> (
+    &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex min-h-full items-center justify-center"</span>&gt;
+      &lt;button <span class="tok-prop">onClick</span>={resetErrorBoundary}&gt;Couldn't load. Retry&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The same fill-the-reserved-space discipline as an empty or loading state (<a
+        href='10-containers-content-shifting.html'>§10</a
+      >): the fallback occupies the widget's cell, so a failure does not collapse the grid or shift
+      its neighbors.
+    </CodeCaption>
+  </Snippet>
+
+  <h2 id='no-own-errors'>12.6 Components must not define their own error states</h2>
+  <p>
+    This is the error twin of <a href='11-suspense-streaming.html#no-own-loading'>§11.3</a>, and it
+    is the mistake that makes a codebase impossible to make resilient later.
+    <Chip k='react' />
+    <Chip k='critical' /> A component that wraps its own render in <code>try/catch</code> and returns
+    a private "couldn't load" message has <strong
+      >swallowed a decision that belongs to whoever composed it</strong
+    >. The parent can no longer choose a different fallback for a different context, cannot <code
+      >reset()</code
+    > or retry it, and, worst of all, the error never reaches an error boundary or your logging, so a
+    real bug renders as a shrug and disappears. The boundary is placed <em>around</em> the component,
+    by its composer, exactly like Suspense.
+  </p>
+
+  <Compare>
+    <CompareCol kind='bad' label='✕ The component owns its failure'>
+      <pre
+        class='code v-bad'
+        is:raw><span class="filename">Widget.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">Widget</span>({ id }: <span class="tok-fn">Props</span>) {
+  <span class="tok-kw">let</span> data;
+  <span class="tok-kw">try</span> {
+    data = <span class="tok-kw">await</span> <span class="tok-fn">getWidget</span>(id);
+  } <span class="tok-kw">catch</span> {
+    <span class="tok-com">// swallows the throw; the parent, the
+    // boundary, and your logs never see it
+    return</span> &lt;div&gt;Couldn't load.&lt;/div&gt;;
+  }
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">WidgetBody</span> <span class="tok-prop">data</span>={data} /&gt;;
+}</pre>
+    </CompareCol>
+    <CompareCol kind='good' label='✓ The composer owns the boundary'>
+      <pre
+        class='code v-good'
+        is:raw><span class="filename">Widget.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">Widget</span>({ id }: <span class="tok-fn">Props</span>) {
+  <span class="tok-com">// Let it throw. The boundary the PARENT
+  // placed (§12.1, §12.5) picks the fallback,
+  // can retry it, and reports it.</span>
+  <span class="tok-kw">const</span> data = <span class="tok-kw">await</span> <span class="tok-fn">getWidget</span>(id);
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">WidgetBody</span> <span class="tok-prop">data</span>={data} /&gt;;
+}</pre>
+    </CompareCol>
+  </Compare>
+
+  <p>
+    The caveat is the same one as loading and empty (<a href='11-suspense-streaming.html#orthogonal'
+      >§11.6</a
+    >): <strong>an expected condition is not an error.</strong> An empty result, a failed form validation,
+    a missing record the user asked for by id, these are normal outcomes you
+    <em>return</em> (a value, an empty state, <code>notFound()</code>), not exceptions you throw.
+    Boundaries are for the genuinely unexpected: the fetch that fell over, the invariant that broke.
+    Throwing for the expected turns a boundary into control flow and buries real failures in the
+    noise.
+  </p>
+
+  <Callout kind='voice' title='Loading and failing are the same shape'>
+    <p>
+      Everything in this chapter rhymes with <a href='11-suspense-streaming.html'>§11</a> on purpose.
+      A region has two ways to not-yet-show its content: it is still waiting, or it broke. Suspense handles
+      the first, an error boundary the second, and in well-built UI they are declared together, around
+      the same region, at the same granularity. A widget that has its own
+      <code>&lt;Suspense&gt;</code> but no boundary is half-finished; a segment with
+      <code>loading.tsx</code> but no <code>error.tsx</code> is a page that streams beautifully right
+      up until the moment it blanks.
+    </p>
+  </Callout>
+
+  <h2 id='rules'>The rules</h2>
+  <table class='tbl'>
+    <thead>
+      <tr>
+        <th>Rule</th>
+        <th>Scope</th>
+        <th>Importance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          Components <strong>never define their own error states</strong>; a boundary placed around
+          them does.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
+          Put an <strong><code>error.tsx</code> at every segment</strong> you want a failure contained
+          to; depth is the blast radius.
+        </td>
+        <td><Chip k='next' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
+          Remember what a segment's <code>error.tsx</code>
+          <strong>cannot catch</strong>: its own layout, the root layout (<code
+            >global-error.tsx</code
+          >), and event handlers.
+        </td>
+        <td><Chip k='next' /></td>
+        <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>
+          Isolate independent regions with <strong>parallel-route slots</strong>, each with its own
+          <code>error.tsx</code>.
+        </td>
+        <td><Chip k='next' /></td>
+        <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>
+          Below the segment, wrap units in a <strong>custom boundary paired with Suspense</strong>;
+          the grid stays a server component.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>
+          <strong>Expected conditions are not errors</strong>: return an empty state or
+          <code>notFound()</code>; throw only the unexpected.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <GoDeeper>
+    <p>
+      <a
+        href='https://nextjs.org/docs/app/getting-started/error-handling'
+        target='_blank'
+        rel='noopener'>Next.js: Error Handling</a
+      >
+      is the reference for <code>error.tsx</code>, <code>global-error.tsx</code>, and the
+      expected-vs-uncaught distinction.
+      <a
+        href='https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary'
+        target='_blank'
+        rel='noopener'>React: error boundaries</a
+      >
+      explains what render boundaries do and do not catch, and
+      <a href='https://github.com/bvaughn/react-error-boundary' target='_blank' rel='noopener'
+        >react-error-boundary</a
+      > is the component most teams reach for below the segment level.
+    </p>
+  </GoDeeper>
+</GuidePage>

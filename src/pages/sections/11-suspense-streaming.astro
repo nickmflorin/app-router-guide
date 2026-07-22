@@ -665,7 +665,7 @@ flowchart LR
     containers, everything known) goes out immediately, and each suspended region follows as its
     data resolves, injected into its reserved slot without re-rendering anything around it. (Making
     the waits themselves small and parallel, rather than just streaming around them, is
-    <a href='13-blocking-requests.html'>§13</a>'s subject.)
+    <a href='14-blocking-requests.html'>§14</a>'s subject.)
   </p>
 
   <Diagram>
@@ -856,7 +856,7 @@ flowchart LR
     </li>
     <li>
       <strong>Granular boundaries around each data-dependent region</strong>: one per self-fetching
-      component (<a href='14-minimize-the-wires.html#streaming'>§14.3</a>), placed inside the known
+      component (<a href='15-minimize-the-wires.html#streaming'>§15.3</a>), placed inside the known
       container (<a href='10-containers-content-shifting.html'>§10</a>). This is also what Partial
       Prerendering builds on: with
       <code>cacheComponents</code>, everything outside your Suspense boundaries becomes the static
@@ -1416,7 +1416,7 @@ flowchart LR
     The same trick crosses into client components. A server component can <strong>start</strong> a fetch
     and hand the unresolved promise to a client component as a prop; the promise can pass through as many
     layers as needed, and only the component that finally reads it with <code>use()</code> (<a
-      href='19-new-primitives.html'>§19</a
+      href='20-new-primitives.html'>§20</a
     >) needs a Suspense boundary above it. This is the right shape when the <em>rendering</em> genuinely
     needs the client (a chart library, a canvas) but the <em>data</em> has no business being fetched from
     the browser:
@@ -1461,7 +1461,7 @@ flowchart LR
     and the page reveals itself outside-in: details first, reviews after, never reviews-before-details
     no matter which fetch wins the race. Use nesting when one region's content is meaningless without
     another's (a comments list before the post it belongs to reads as broken); use siblings (<a
-      href='13-blocking-requests.html'>§13</a
+      href='14-blocking-requests.html'>§14</a
     >) everywhere else, so independent regions never wait on each other.
   </p>
 
@@ -1587,7 +1587,7 @@ flowchart LR
     advance, the swap will shift content no matter how careful the skeleton is; if the data resolves
     in a handful of milliseconds, the fallback is a flash of noise that was never worth painting. In
     those cases it is legitimate to let the server block on the fetch, provided the wait is kept
-    small and parallel (<a href='13-blocking-requests.html'>§13</a>).
+    small and parallel (<a href='14-blocking-requests.html'>§14</a>).
   </p>
   <Callout kind='voice' title='The two questions to ask per region'>
     <p>
@@ -1705,7 +1705,7 @@ flowchart LR
         href='08-bundle-size-code-splitting.html#wholesale'>§8.2</a
       >, drawn in fallback form. Draw the boundary tightly around the data; everything outside it
       renders real and interactive immediately. (This is one of <a
-        href='17-signs-doing-it-wrong.html'>§17</a
+        href='18-signs-doing-it-wrong.html'>§18</a
       >'s signs.)
     </li>
   </ul>
@@ -1908,7 +1908,7 @@ flowchart LR
     <pre
       class='code v-good'
       is:raw><span class="filename">ReportRows.tsx - server: only ever renders finished knowledge</span><span class="tok-kw">export async function</span> <span class="tok-fn">ReportRows</span>({ query }) {
-  <span class="tok-com">// The data layer call is cached and deduped (§15).</span>
+  <span class="tok-com">// The data layer call is cached and deduped (§16).</span>
   <span class="tok-kw">const</span> rows = <span class="tok-kw">await</span> <span class="tok-fn">getReportRows</span>(query);
 
   <span class="tok-com">/* The await above has finished by the time this renders, so "empty" here can
@@ -2746,7 +2746,7 @@ flowchart LR
 
   <p>
     The API reference for <code>useTransition</code> and <code>useDeferredValue</code> is in
-    <a href='19-new-primitives.html#use-transition'>§19.3</a>; the caveat list lives in the
+    <a href='20-new-primitives.html#use-transition'>§20.3</a>; the caveat list lives in the
     <a href='https://react.dev/reference/react/startTransition' target='_blank' rel='noopener'
       >React docs</a
     >.
@@ -2861,7 +2861,7 @@ flowchart LR
         href='https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents'
         target='_blank'
         rel='noopener'>cacheComponents / PPR</a
-      >. Full list in <a href='20-references.html'>§20</a>.
+      >. Full list in <a href='21-references.html'>§21</a>.
     </p>
   </GoDeeper>
 </GuidePage>

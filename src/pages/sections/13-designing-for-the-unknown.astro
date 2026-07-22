@@ -9,7 +9,7 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='Designing for the Unknown - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 12 · Part B: Contain the Unknown</div>
+  <div class='kicker'>Chapter 13 · Part B: Contain the Unknown</div>
   <h1>Designing for the Unknown</h1>
   <p class='lede'>
     Everything in <a href='10-containers-content-shifting.html'>§10</a> and
@@ -38,7 +38,7 @@ import Snippet from '../../components/Snippet.astro';
     </p>
   </Callout>
 
-  <h2 id='shared-goal'>12.1 Stability is a cross-team goal</h2>
+  <h2 id='shared-goal'>13.1 Stability is a cross-team goal</h2>
   <p>
     Cumulative Layout Shift is the engineering measurement of a goal that is fundamentally shared: <strong
       >the page must not move under the user.</strong
@@ -72,7 +72,7 @@ import Snippet from '../../components/Snippet.astro';
     </p>
   </Callout>
 
-  <h2 id='happy-path'>12.2 The comp is a happy path</h2>
+  <h2 id='happy-path'>13.2 The comp is a happy path</h2>
   <p>
     A Figma comp is a snapshot of exactly one state: the <strong>happy path</strong>. The data has
     arrived, every region is populated, and the row counts were chosen so the composition looks
@@ -128,7 +128,7 @@ import Snippet from '../../components/Snippet.astro';
     </li>
   </ul>
   <p>
-    These questions are the channel from <a href='#shared-goal'>§12.1</a> in practice, and they flow both
+    These questions are the channel from <a href='#shared-goal'>§13.1</a> in practice, and they flow both
     ways. The more consistently they get asked, the more natural they become on both sides: engineers
     start noticing containment problems in mocks reflexively and raising them while the design is still
     cheap to change, and UX starts anticipating the unknown-size states in the compositions themselves,
@@ -136,7 +136,7 @@ import Snippet from '../../components/Snippet.astro';
     up thinking in states by default.
   </p>
 
-  <h2 id='stacked-tables'>12.3 The worked example: two stacked tables</h2>
+  <h2 id='stacked-tables'>13.3 The worked example: two stacked tables</h2>
   <p>
     Here is a common hard case, and it looks completely innocent in a comp: two tables stacked
     vertically inside the app chrome, say <em>Assignments</em> above
@@ -600,11 +600,11 @@ flowchart LR
     further upstream, where the composition never puts two unbounded regions on top of each other in
     the first place: tabs, a capped secondary list, a master-detail split. Engineering cannot get
     there alone, because "don't stack these" is a design decision; this is
-    <a href='#shared-goal'>§12.1's channel</a> paying for itself. When the conversation happens at mock
+    <a href='#shared-goal'>§13.1's channel</a> paying for itself. When the conversation happens at mock
     time, the answer is a better composition; when it happens at build time, the answer is a partition.
   </p>
 
-  <h2 id='hard-patterns'>12.4 Other patterns that fight containment</h2>
+  <h2 id='hard-patterns'>13.4 Other patterns that fight containment</h2>
   <p>
     Stacked unbounded regions are the most common offender, but the same analysis (walk the states,
     find who moves) catches a family of patterns worth recognizing on sight, in review, before they
@@ -1487,7 +1487,7 @@ flowchart LR
       message takes the full height (<code>h-full</code>) and centers within it; a list caps at that
       height (<code>max-h-full</code>) and scrolls inside it with <code>overflow-y-auto</code>; and
       in neither case does the drawer's frame move a pixel. The panel showing its own loading
-      indicator is the legitimate case (<a href='15-dedupe-caching.html#when-client'>§15.7</a>): the
+      indicator is the legitimate case (<a href='16-dedupe-caching.html#when-client'>§16.7</a>): the
       drawer is the container, and its content was never knowable before the click.
     </CodeCaption>
   </Snippet>
@@ -1791,7 +1791,7 @@ flowchart LR
     </CodeCaption>
   </Snippet>
 
-  <h2 id='seed-data'>12.5 Seed data is part of the discipline</h2>
+  <h2 id='seed-data'>13.5 Seed data is part of the discipline</h2>
   <p>
     There is a development-side habit that keeps all of the above honest:
     <strong>test with data volumes that vary wildly.</strong>

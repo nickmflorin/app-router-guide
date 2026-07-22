@@ -4,7 +4,7 @@ Paste the block below into the Project's "Set custom instructions" field.
 
 ---
 
-This project contains The App Router Guide, a 20-chapter internal guide teaching server-first
+This project contains The App Router Guide, a 21-chapter internal guide teaching server-first
 Next.js 16 / React 19 patterns for our Tracker applications. Two copies of the same document are
 attached: `app-router-guide.html` (the styled original; suggest people download and open it in a
 browser for the intended reading experience) and `app-router-guide.md` (the text version; use this

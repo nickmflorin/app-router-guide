@@ -9,7 +9,7 @@ import CompareCol from '../../components/CompareCol.astro';
 ---
 
 <GuidePage title='Applied to Tracker - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 18 · Part D: Applied</div>
+  <div class='kicker'>Chapter 19 · Part D: Applied</div>
   <h1>Applied to Tracker</h1>
   <p class='lede'>
     Everything before this chapter was the model. This chapter is the mirror: a July 2026 audit of
@@ -17,7 +17,7 @@ import CompareCol from '../../components/CompareCol.astro';
     lives.
   </p>
 
-  <h2 id='why'>18.1 Why the codebase was audited</h2>
+  <h2 id='why'>19.1 Why the codebase was audited</h2>
   <p>
     The audit exists to answer one question: how far the repo's actual usage of the App Router
     diverges from the model React 19 and the App Router require in order to work well? Not the model
@@ -45,7 +45,7 @@ import CompareCol from '../../components/CompareCol.astro';
     </p>
   </Callout>
 
-  <h2 id='verdict'>18.2 The verdict</h2>
+  <h2 id='verdict'>19.2 The verdict</h2>
   <p>
     <strong>The apps are SPAs wearing an App Router costume.</strong> The Next server is used almost exclusively
     to serve an empty shell and proxy API calls; nearly all data fetching, authorization, and loading-state
@@ -336,7 +336,7 @@ flowchart TB
     is <strong>a choice, not a constraint</strong>, which is exactly why it is fixable.
   </p>
 
-  <h2 id='numbers'>18.3 The numbers</h2>
+  <h2 id='numbers'>19.3 The numbers</h2>
   <p>
     Counted across the monorepo on 2026-07-08, all six apps, Next.js 16. The
     <code>"use client"</code> column reads "directive files / total source files".
@@ -444,7 +444,7 @@ flowchart TB
     </p>
   </Callout>
 
-  <h2 id='findings'>18.4 The findings</h2>
+  <h2 id='findings'>19.4 The findings</h2>
   <p>
     Eight findings, each with representative evidence and a pointer to the chapter that covers the
     correct pattern. File paths and counts are from the full audit; this is the condensed version.
@@ -466,7 +466,7 @@ flowchart TB
   <p>
     <strong>Where the fix lives:</strong> page-level reads become async server components calling the
     upstream API directly (<a href='04-ssr.html'>§4</a>), backed by a
-    <code>cache()</code>-wrapped server data layer (<a href='15-dedupe-caching.html#server'>§15.2</a
+    <code>cache()</code>-wrapped server data layer (<a href='16-dedupe-caching.html#server'>§16.2</a
     >).
   </p>
 
@@ -504,8 +504,8 @@ flowchart TB
   <p>
     <strong>Where the fix lives:</strong> initial data moves to server components (<a
       href='04-ssr.html'>§4</a
-    >), client-side needs go through one shared data layer (<a href='15-dedupe-caching.html#client'
-      >§15.3</a
+    >), client-side needs go through one shared data layer (<a href='16-dedupe-caching.html#client'
+      >§16.3</a
     >), mutations become server actions (<a href='05-client-server-boundaries.html#self-contained'
       >§5.7</a
     >), and React's own
@@ -558,9 +558,9 @@ flowchart TB
   </p>
   <p>
     <strong>Where the fix lives:</strong> parallel fetching and minimized fetch dependencies (<a
-      href='13-blocking-requests.html#parallel'>§13.2</a
+      href='14-blocking-requests.html#parallel'>§14.2</a
     >); invalidate-don't-orchestrate for the post-mutation refresh (<a
-      href='15-dedupe-caching.html#server'>§15.2</a
+      href='16-dedupe-caching.html#server'>§16.2</a
     >).
   </p>
 
@@ -575,7 +575,7 @@ flowchart TB
   <p>
     <strong>Where the fix lives:</strong> scope <code>force-dynamic</code> to what needs it and restore
     the layers deliberately: <code>cache()</code> per request,
-    <code>"use cache"</code> across requests (<a href='15-dedupe-caching.html'>§15</a>).
+    <code>"use cache"</code> across requests (<a href='16-dedupe-caching.html'>§16</a>).
   </p>
 
   <h3 id='finding-8'>Finding 8: App Router features missing entirely</h3>
@@ -585,17 +585,17 @@ flowchart TB
       >§9.3</a
     >). No server actions despite dozens of form mutations. No
     <code>not-found.tsx</code> outside the roots. These are not exotic extras; they are the primitives
-    Part B and <a href='19-new-primitives.html'>§19</a> are about, and their absence is why the apps re-implement
+    Part B and <a href='20-new-primitives.html'>§20</a> are about, and their absence is why the apps re-implement
     what the framework provides.
   </p>
   <p>
     <strong>Where the fix lives:</strong> parallel routes and <code>default.tsx</code> (<a
-      href='13-blocking-requests.html#parallel-routes'>§13.3</a
+      href='14-blocking-requests.html#parallel-routes'>§14.3</a
     >), server actions (<a href='05-client-server-boundaries.html#self-contained'>§5.7</a>,
-    <a href='19-new-primitives.html'>§19</a>).
+    <a href='20-new-primitives.html'>§20</a>).
   </p>
 
-  <h2 id='path'>18.5 The path out</h2>
+  <h2 id='path'>19.5 The path out</h2>
   <p>
     The fixes are ordered so that each one makes the next cheaper: server reads make leaf boundaries
     natural, leaf boundaries make streaming possible, streaming makes the hand-rolled state
@@ -618,7 +618,7 @@ flowchart TB
           Fetch upstream APIs directly with the cookie,
           <code>Promise.all</code> for parallel loads.
         </td>
-        <td><a href='04-ssr.html'>§4</a>, <a href='13-blocking-requests.html'>§13</a></td>
+        <td><a href='04-ssr.html'>§4</a>, <a href='14-blocking-requests.html'>§14</a></td>
       </tr>
       <tr>
         <td>2</td>
@@ -663,7 +663,7 @@ flowchart TB
         </td>
         <td>
           <a href='05-client-server-boundaries.html#self-contained'>§5.7</a>,
-          <a href='15-dedupe-caching.html#client'>§15.3</a>
+          <a href='16-dedupe-caching.html#client'>§16.3</a>
         </td>
       </tr>
       <tr>
@@ -673,7 +673,7 @@ flowchart TB
           it, <code>cache()</code> for per-request dedupe,
           <code>"use cache"</code> with tags for shared reference data.
         </td>
-        <td><a href='15-dedupe-caching.html'>§15</a></td>
+        <td><a href='16-dedupe-caching.html'>§16</a></td>
       </tr>
     </tbody>
   </table>
@@ -704,7 +704,7 @@ flowchart TB
       ·
       <a href='https://react.dev/reference/rsc/use-client' target='_blank' rel='noopener'
         >React: "use client"</a
-      >. Full list in <a href='20-references.html'>§20</a>.
+      >. Full list in <a href='21-references.html'>§21</a>.
     </p>
   </GoDeeper>
 </GuidePage>

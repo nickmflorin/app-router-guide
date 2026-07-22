@@ -585,7 +585,7 @@ flowchart LR
     inch apart in the same mock. The structural consequence:
     <strong>the trigger and the panel it opens should be separate components, side by side,</strong> so
     the trigger can ship in the first-paint bundle while the panel's import is deferred until someone
-    actually clicks. <a href='16-component-breakdown.html#worked'>§16.2</a>'s card menu is exactly
+    actually clicks. <a href='17-component-breakdown.html#worked'>§17.2</a>'s card menu is exactly
     this shape: a trigger file that owns the open state, and a panel file behind a dynamic import.
   </p>
   <p>
@@ -696,7 +696,7 @@ flowchart LR
     three-line panel out of reflex, split when the panel has weight. Second, when you design your
     <em>own</em> trigger-plus-floating components, bake the seam into the API from the start: a trigger
     that owns the open state and mounts a lazy panel, as in
-    <a href='16-component-breakdown.html#worked'>§16.2</a>, rather than a component that needs the
+    <a href='17-component-breakdown.html#worked'>§17.2</a>, rather than a component that needs the
     panel's module just to render the button. It is <a href='#wholesale'>§8.2</a>'s lesson rotated
     ninety degrees: don't weld the always-visible to the almost-never-visible.
   </p>
@@ -744,7 +744,7 @@ flowchart LR
     <strong>don't ship <code>index.ts</code> barrels for your own component libraries</strong>. This
     is also where bundle size meets component design: barrels tend to grow around files that hold
     too many components, which is the same instinct
-    <a href='16-component-breakdown.html'>§16</a>
+    <a href='17-component-breakdown.html'>§17</a>
     argues against. One component per file, imported directly, is both cleaner to read and cheaper to
     ship.
   </p>
@@ -863,7 +863,7 @@ flowchart LR
       >
       (bundle analyzer, <code>optimizePackageImports</code>) ·
       <a href='https://react.dev/reference/react/lazy' target='_blank' rel='noopener'>React: lazy</a
-      >. Full list in <a href='20-references.html'>§20</a>.
+      >. Full list in <a href='21-references.html'>§21</a>.
     </p>
   </GoDeeper>
 </GuidePage>

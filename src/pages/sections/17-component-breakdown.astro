@@ -9,7 +9,7 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='Component Breakdown - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 16 · Part C: Decouple the Parts</div>
+  <div class='kicker'>Chapter 17 · Part C: Decouple the Parts</div>
   <h1>Component Breakdown</h1>
   <p class='lede'>
     Every chapter so far has quietly been about where to draw component lines. This one makes it the
@@ -32,7 +32,7 @@ import Snippet from '../../components/Snippet.astro';
     </p>
   </Callout>
 
-  <h2 id='axes'>16.1 The axes of a split have changed</h2>
+  <h2 id='axes'>17.1 The axes of a split have changed</h2>
   <p>
     Traditional React taught one decomposition instinct: split by <em>visual shape and reuse</em>. A
     card here, a toolbar there, extract when you see it twice. Those considerations still exist, but
@@ -50,8 +50,8 @@ import Snippet from '../../components/Snippet.astro';
     <li>
       <strong>The data axis: one component per independent question.</strong> Each independent data need
       becomes its own <code>async</code> server component, because the component is the unit that can
-      await, suspend, and stream on its own (<a href='13-blocking-requests.html'>§13</a>,
-      <a href='14-minimize-the-wires.html'>§14</a>). Splitting by data is what makes parallelism and
+      await, suspend, and stream on its own (<a href='14-blocking-requests.html'>§14</a>,
+      <a href='15-minimize-the-wires.html'>§15</a>). Splitting by data is what makes parallelism and
       streaming fall out for free.
     </li>
     <li>
@@ -81,7 +81,7 @@ import Snippet from '../../components/Snippet.astro';
     </p>
   </Callout>
 
-  <h2 id='worked'>16.2 The same card, broken both ways</h2>
+  <h2 id='worked'>17.2 The same card, broken both ways</h2>
   <p>
     Here is the old-world version: one file, one component, visually faithful to the mock, and wrong
     on all three axes.
@@ -156,7 +156,7 @@ import Snippet from '../../components/Snippet.astro';
     <pre
       class='code v-good'
       is:raw><span class="filename">ProgramCardStats.tsx - server, async: exactly one question</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramCardStats</span>({ programId }: { programId: number }) {
-  <span class="tok-com">// React.cache'd (§15): duplicate askers collapse into one execution.</span>
+  <span class="tok-com">// React.cache'd (§16): duplicate askers collapse into one execution.</span>
   <span class="tok-kw">const</span> stats = <span class="tok-kw">await</span> <span class="tok-fn">getProgramStats</span>(programId);
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">StatRow</span> <span class="tok-prop">stats</span>={stats} /&gt;;
 }</pre>
@@ -246,14 +246,14 @@ import Snippet from '../../components/Snippet.astro';
     <a href='11-suspense-streaming.html'>§11</a>), the menu trigger is the entire first-paint bundle
     cost and the panel behind it downloads only for users who open it (<a
       href='08-bundle-size-code-splitting.html'>§8</a
-    >), the data question dedupes with every other asker (<a href='15-dedupe-caching.html'>§15</a>),
-    and all five files are independently portable (<a href='14-minimize-the-wires.html#portability'
-      >§14.5</a
+    >), the data question dedupes with every other asker (<a href='16-dedupe-caching.html'>§16</a>),
+    and all five files are independently portable (<a href='15-minimize-the-wires.html#portability'
+      >§15.5</a
     >). None of that is achievable while the card is one component, because every one of those
     behaviors attaches to a component boundary.
   </p>
 
-  <h2 id='catalog'>16.3 The pattern catalog</h2>
+  <h2 id='catalog'>17.3 The pattern catalog</h2>
   <p>
     The recurring shapes, in one place. Each is defined in depth in its home chapter; this table is
     the index you skim while decomposing a feature.
@@ -283,7 +283,7 @@ import Snippet from '../../components/Snippet.astro';
         </td>
         <td>
           <a href='11-suspense-streaming.html'>§11</a>,
-          <a href='13-blocking-requests.html'>§13</a>
+          <a href='14-blocking-requests.html'>§14</a>
         </td>
       </tr>
       <tr>
@@ -310,7 +310,7 @@ import Snippet from '../../components/Snippet.astro';
         </td>
         <td>
           <a href='05-client-server-boundaries.html#children-pattern'>§5.4</a>,
-          <a href='14-minimize-the-wires.html#portability'>§14.5</a>
+          <a href='15-minimize-the-wires.html#portability'>§15.5</a>
         </td>
       </tr>
       <tr>
@@ -340,7 +340,7 @@ import Snippet from '../../components/Snippet.astro';
     </tbody>
   </table>
 
-  <h2 id='sequence'>16.4 The decomposition sequence</h2>
+  <h2 id='sequence'>17.4 The decomposition sequence</h2>
   <p>Applied in order, the axes become a repeatable procedure for any page or feature:</p>
 
   <Diagram>
@@ -395,7 +395,7 @@ import Snippet from '../../components/Snippet.astro';
       <text class='fill-dg-gray' x='126' y='99' font-size='9'>
         independent questions fetch in parallel, never chained
       </text>
-      <text class='fill-dg-gray' x='516' y='92' font-size='9'>§13, §14</text>
+      <text class='fill-dg-gray' x='516' y='92' font-size='9'>§14, §15</text>
       <line
         class='stroke-dg-gray'
         x1='305'
@@ -454,7 +454,7 @@ import Snippet from '../../components/Snippet.astro';
       <text class='fill-dg-green-ink-soft' x='126' y='285' font-size='9'>
         the file is the unit of the boundary; splits stay cheap
       </text>
-      <text class='fill-dg-gray' x='516' y='278' font-size='9'>§8, §16.5</text>
+      <text class='fill-dg-gray' x='516' y='278' font-size='9'>§8, §17.5</text>
     </svg>
 
     <pre
@@ -462,7 +462,7 @@ import Snippet from '../../components/Snippet.astro';
       is:raw>
 flowchart TB
   S1("1 · Draw the known frame<br/>layout, containers, chrome: renders on the first byte · §2, §10"):::blue
-  S1 --> S2("2 · One async component per data question<br/>independent questions fetch in parallel, never chained · §13, §14"):::neutral
+  S1 --> S2("2 · One async component per data question<br/>independent questions fetch in parallel, never chained · §14, §15"):::neutral
   S2 --> S3("3 · Contain each unknown<br/>reserved container + Suspense + colocated skeleton · §10, §11"):::neutral
   S3 --> S4("4 · Push interactivity into leaves<br/>'use client' on interaction atoms; shells receive slots · §5, §7"):::neutral
   S4 --> S5("5 · One component per file, always<br/>the file is the unit of the boundary; splits stay cheap · §8"):::green
@@ -479,7 +479,7 @@ flowchart TB
     </Fragment>
   </Diagram>
 
-  <h2 id='one-per-file'>16.5 One component per file</h2>
+  <h2 id='one-per-file'>17.5 One component per file</h2>
   <p>
     This habit sounds like style guidance. In the App Router it is structural, because
     <strong
@@ -502,7 +502,7 @@ flowchart TB
     card, moving a leaf across the boundary, lazy-loading a heavyweight, swapping a shell: each is a
     file operation when components live alone, and an untangling when they don't. The
     awkward-at-first splits of
-    <a href='#axes'>§16.1</a> stay painless only under this rule; it is the difference between "decomposition
+    <a href='#axes'>§17.1</a> stay painless only under this rule; it is the difference between "decomposition
     is how the code gets written" and "decomposition is a refactor to schedule." The guide's own examples
     practice it everywhere: the sidebar split in
     <a href='05-client-server-boundaries.html#library-leaves'>§5.5</a>, the SWR pair in

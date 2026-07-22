@@ -11,7 +11,7 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='Minimize the Wires - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 14 · Part C: Decouple the Parts</div>
+  <div class='kicker'>Chapter 15 · Part C: Decouple the Parts</div>
   <h1>Minimize the Wires</h1>
   <p class='lede'>
     Every prop, callback, and context read is a wire: a dependency connecting two parts of the UI.
@@ -19,7 +19,7 @@ import Snippet from '../../components/Snippet.astro';
     about keeping components independent, and why repetition beats plumbing.
   </p>
 
-  <h2 id='cost'>14.1 The cost of a wire</h2>
+  <h2 id='cost'>15.1 The cost of a wire</h2>
   <p>
     When a parent fetches data and passes it down, the parent stops being a layout concern and
     becomes a <strong>data router</strong>. It must know what every descendant needs, fetch the
@@ -359,12 +359,12 @@ flowchart TB
     <Fragment slot='caption'>
       The same three components, wired two ways. Left: the parent fetches once and drills: every
       requirement change touches three files. Right: children ask the data layer themselves; the
-      dedupe layer (<a href='15-dedupe-caching.html'>§15</a>) collapses their identical questions
+      dedupe layer (<a href='16-dedupe-caching.html'>§16</a>) collapses their identical questions
       into one real request.
     </Fragment>
   </Diagram>
 
-  <h2 id='repetition'>14.2 Repetition over dependency</h2>
+  <h2 id='repetition'>15.2 Repetition over dependency</h2>
   <p>
     The instinct that produces drilling is a good one:
     <em>don't fetch the same thing twice</em>. For most of React's history, the only way to honor it
@@ -425,7 +425,7 @@ flowchart TB
           class='code v-good'
           is:raw><span class="filename">components/program/ProgramHeader.tsx</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramHeader</span>({ programId }) {
   <span class="tok-com">/* It asks for itself; the dedupe layer
-     makes this free (§15). */</span>
+     makes this free (§16). */</span>
   <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> <span class="tok-fn">getProgram</span>(programId);
   <span class="tok-kw">return</span> &lt;header&gt;{program.name} …&lt;/header&gt;;
 }</pre>
@@ -435,7 +435,7 @@ flowchart TB
   <p>
     Both <code>ProgramHeader</code> and <code>ProgramStats</code> call
     <code>getProgram(id)</code>; only one real request happens, because the data layer is deduped (<a
-      href='15-dedupe-caching.html'>§15</a
+      href='16-dedupe-caching.html'>§16</a
     > covers the mechanics:
     <code>cache()</code>, fetch dedupe, SWR keys). The page went from a data router back to what it
     should be: structure. And each child is now <strong>portable</strong>: drop it into any page,
@@ -653,7 +653,7 @@ flowchart LR
       Writing two narrow queries (or drilling one fetch down from the page) would save nothing measurable
       and cost the independence: with the shared query, either region can move, stream, or disappear without
       the other noticing. The same logic holds client-side with a shared SWR key (<a
-        href='15-dedupe-caching.html#client'>§15.3</a
+        href='16-dedupe-caching.html#client'>§16.3</a
       >).
     </Fragment>
   </Diagram>
@@ -662,7 +662,7 @@ flowchart LR
     The same two regions also split cleanly along <em>route</em> lines. If the details region should change
     with nested sub-views (activity, history, settings) while the header stays put, make the regions <strong
       >parallel-route slots</strong
-    > (<a href='13-blocking-requests.html#parallel-routes'>§13.3</a>): the layout renders <code
+    > (<a href='14-blocking-requests.html#parallel-routes'>§14.3</a>): the layout renders <code
       >@header</code
     > and <code>@details</code> side by side, and
     <code>@details</code> carries its own sub-routes, so a navigation swaps only that slot. The dedupe
@@ -685,14 +685,14 @@ flowchart LR
     └── default.tsx</pre>
     <CodeCaption>
       Navigating to a nested sub-view re-renders the <code>@details</code> subtree alone; the header slot
-      keeps its state on soft navigations (<a href='13-blocking-requests.html#slot-subroutes'
-        >§13.3</a
+      keeps its state on soft navigations (<a href='14-blocking-requests.html#slot-subroutes'
+        >§14.3</a
       >) and falls back to its <code>default.tsx</code> on hard loads. Each slot still asks the canonical
       question for itself, and the request-scoped cache still answers it once.
     </CodeCaption>
   </Snippet>
 
-  <h2 id='streaming'>14.3 Independence changes how the page streams</h2>
+  <h2 id='streaming'>15.3 Independence changes how the page streams</h2>
   <p>
     Wiring isn't just a maintenance cost; it determines where your Suspense boundaries
     <em>can go</em>. A boundary must sit above whatever awaits. If the parent fetches and drills,
@@ -864,7 +864,7 @@ flowchart TB
     </Fragment>
   </Diagram>
 
-  <h2 id='callbacks'>14.4 Callbacks up are wires too</h2>
+  <h2 id='callbacks'>15.4 Callbacks up are wires too</h2>
   <p>
     Passing data down is half the coupling story; the other half is children reporting back up. A
     callback prop that exists so a child can tell its parent "something changed, please
@@ -885,7 +885,7 @@ flowchart TB
       <strong>Cache invalidation</strong>: after a mutation,
       <code>revalidatePath</code>/<code>revalidateTag</code> on the server, or SWR/React Query invalidation
       on the client. Every component reading that data updates, with no parent orchestrating (<a
-        href='15-dedupe-caching.html'>§15</a
+        href='16-dedupe-caching.html'>§16</a
       >; the full mutation cycle is drawn in <a href='05-client-server-boundaries.html#refresh'
         >§5.8</a
       >).
@@ -985,7 +985,7 @@ flowchart TB
     app-level data flow through the component tree.
   </p>
 
-  <h2 id='portability'>14.5 Portability: components you can pick up and move</h2>
+  <h2 id='portability'>15.5 Portability: components you can pick up and move</h2>
   <p>
     Everything above argued wires are expensive to <em>maintain</em>. The payoff for cutting them
     has a name: <strong>portability</strong>. A component whose data arrives through props can never
@@ -994,7 +994,7 @@ flowchart TB
     becomes a plumbing project. A component that addresses its data by name (a fetch keyed by its
     own props on the server, an SWR key on the client, a search param it reads itself) moves as <strong
       >one line of JSX</strong
-    >. The dedupe layers of <a href='15-dedupe-caching.html'>§15</a> are what make this free: wherever
+    >. The dedupe layers of <a href='16-dedupe-caching.html'>§16</a> are what make this free: wherever
     the component lands, its question collapses into the cache with everyone else's.
   </p>
 
@@ -1152,7 +1152,7 @@ flowchart TB
         ProgramStats
       </text>
       <text class='fill-dg-green-ink-soft' x='540' y='243' font-size='8' text-anchor='middle'>
-        same key, same cache (§15)
+        same key, same cache (§16)
       </text>
       <text class='fill-dg-green-ink' x='540' y='290' font-size='10' text-anchor='middle'>
         the component carries its own supply
@@ -1180,7 +1180,7 @@ flowchart LR
     direction LR
     SA("Page A: just places it"):::blue
     SA --> SS("ProgramStats<br/>asks for its own data, by key"):::green
-    SS -->|"move it: one line"| SB("Page B: same key,<br/>same cache (§15)"):::green
+    SS -->|"move it: one line"| SB("Page B: same key,<br/>same cache (§16)"):::green
   end
   linkStyle default stroke:#737373,stroke-width:1.5px
   style SE fill:#ffffff,stroke:#e0e0e0,color:#157a4c,rx:8px,ry:8px
@@ -1341,7 +1341,7 @@ flowchart LR
         href='https://nextjs.org/docs/app/api-reference/functions/revalidateTag'
         target='_blank'
         rel='noopener'>revalidateTag</a
-      >. Full list in <a href='20-references.html'>§20</a>.
+      >. Full list in <a href='21-references.html'>§21</a>.
     </p>
   </GoDeeper>
 </GuidePage>

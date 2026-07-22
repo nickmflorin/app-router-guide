@@ -10,7 +10,7 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='New Primitives - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 19 · Appendix</div>
+  <div class='kicker'>Chapter 20 · Appendix</div>
   <h1>New Primitives</h1>
   <p class='lede'>
     The reference catalog behind <a href='01-introduction.html#direction'>§1</a>'s direction of
@@ -44,7 +44,7 @@ import Snippet from '../../components/Snippet.astro';
     entry links there instead of repeating the doctrine.
   </p>
 
-  <h2 id='map'>19.1 The map</h2>
+  <h2 id='map'>20.1 The map</h2>
   <table class='tbl'>
     <thead>
       <tr>
@@ -192,14 +192,14 @@ import Snippet from '../../components/Snippet.astro';
     </tbody>
   </table>
 
-  <h2 id='actions'>19.2 Actions and mutations</h2>
+  <h2 id='actions'>20.2 Actions and mutations</h2>
 
   <h3 id='use-server'>Server Functions (<code>"use server"</code>)</h3>
   <p>
     A server function is an async function that runs on the server but is
     <strong>callable from client code as if it were local</strong>. React serializes the call across
     the network; Next.js wires it to an endpoint automatically. This is the primitive that makes the
-    73 pass-through proxy handlers (<a href='18-applied-to-tracker.html#finding-1'>§18</a>)
+    73 pass-through proxy handlers (<a href='19-applied-to-tracker.html#finding-1'>§19</a>)
     unnecessary for mutations: no route handler, no manual fetch, and end-to-end type safety,
     because the function's signature <em>is</em> the contract.
   </p>
@@ -218,7 +218,7 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     The calling side, with its pending state, is the self-contained button pattern that
     <a href='05-client-server-boundaries.html#self-contained'>§5.7</a> owns; the post-mutation refresh
-    channel is <a href='15-dedupe-caching.html#server'>§15.2</a>'s invalidation story; the
+    channel is <a href='16-dedupe-caching.html#server'>§16.2</a>'s invalidation story; the
     architecture, and why to prefer actions over proxy routes, is the focus of <a
       href='05-client-server-boundaries.html#server-actions'>§5.10</a
     >. Docs:
@@ -313,7 +313,7 @@ import Snippet from '../../components/Snippet.astro';
     Reads <strong>the pending state of the nearest ancestor form</strong> from anywhere inside it. Its
     point is composition: a shared submit button can disable itself in any form it's dropped into, without
     a single prop being threaded to it (the
-    <a href='14-minimize-the-wires.html'>§14</a> spirit, applied to forms).
+    <a href='15-minimize-the-wires.html'>§15</a> spirit, applied to forms).
   </p>
   <Snippet>
     <pre
@@ -379,7 +379,7 @@ import Snippet from '../../components/Snippet.astro';
     >.
   </p>
 
-  <h2 id='async'>19.3 Async UI and transitions</h2>
+  <h2 id='async'>20.3 Async UI and transitions</h2>
 
   <h3 id='use'><code>use()</code></h3>
   <p>
@@ -551,7 +551,7 @@ import Snippet from '../../components/Snippet.astro';
     </p>
   </Callout>
 
-  <h2 id='utilities'>19.4 Utilities</h2>
+  <h2 id='utilities'>20.4 Utilities</h2>
 
   <h3 id='use-effect-event'><code>useEffectEvent</code></h3>
   <p>
@@ -559,7 +559,7 @@ import Snippet from '../../components/Snippet.astro';
     the latest props and state, but is not a dependency, so the effect stops re-running (and
     re-connecting, re-subscribing, re-firing) when those values change. Stable as of React 19.2. It
     is a scalpel for the few legitimate effects that remain after <a
-      href='18-applied-to-tracker.html#finding-3'>§18's Finding 3</a
+      href='19-applied-to-tracker.html#finding-3'>§19's Finding 3</a
     > is fixed; it is not a license to write more effects.
   </p>
   <Snippet>
@@ -657,7 +657,7 @@ import Snippet from '../../components/Snippet.astro';
     Per-request memoization for server functions:
     <strong>same arguments, one execution, per request</strong>. It is the foundation of the server
     data layer, and it already has a full treatment in
-    <a href='15-dedupe-caching.html#server'>§15.2</a>; it appears here only so the catalog is
+    <a href='16-dedupe-caching.html#server'>§16.2</a>; it appears here only so the catalog is
     complete. Docs:
     <a href='https://react.dev/reference/react/cache' target='_blank' rel='noopener'>React: cache</a
     >.
@@ -705,7 +705,7 @@ import Snippet from '../../components/Snippet.astro';
     >.
   </p>
 
-  <h2 id='compiler'>19.5 The React Compiler</h2>
+  <h2 id='compiler'>20.5 The React Compiler</h2>
   <p>
     The compiler (1.0, October 2025) memoizes automatically at build time: it analyzes component
     code and skips re-renders that provably change nothing, which is the work
@@ -714,8 +714,8 @@ import Snippet from '../../components/Snippet.astro';
     <strong>new code should not hand-roll memoization</strong>; write plain idiomatic components and
     let the compiler prove what's stable. Second, the compiler rewards the exact discipline this
     guide teaches: small, decoupled components with narrow props (<a
-      href='14-minimize-the-wires.html'>§14</a
-    >, <a href='16-component-breakdown.html'>§16</a>) give it clean units to optimize, while God
+      href='15-minimize-the-wires.html'>§15</a
+    >, <a href='17-component-breakdown.html'>§17</a>) give it clean units to optimize, while God
     components (<a href='05-client-server-boundaries.html#god-components'>§5.9</a>) give it one
     giant opaque one. It changes none of the architecture in this guide; it removes the busywork
     that made bad architecture feel cheap. Docs:
@@ -746,7 +746,7 @@ import Snippet from '../../components/Snippet.astro';
       ·
       <a href='https://nextjs.org/docs/app/api-reference/functions' target='_blank' rel='noopener'
         >Next.js: API reference</a
-      >. Full list in <a href='20-references.html'>§20</a>.
+      >. Full list in <a href='21-references.html'>§21</a>.
     </p>
   </GoDeeper>
 </GuidePage>

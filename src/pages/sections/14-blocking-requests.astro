@@ -11,7 +11,7 @@ import Snippet from '../../components/Snippet.astro';
 ---
 
 <GuidePage title='Blocking Requests - App Router Guide' root='..'>
-  <div class='kicker'>Chapter 13 · Part B: Contain the Unknown</div>
+  <div class='kicker'>Chapter 14 · Part B: Contain the Unknown</div>
   <h1>Blocking Requests</h1>
   <p class='lede'>
     Every await is a gate, and everything rendered behind it waits. The goal: make the region behind
@@ -19,7 +19,7 @@ import Snippet from '../../components/Snippet.astro';
     time, on the server and on the client alike.
   </p>
 
-  <h2 id='scope'>13.1 What sits behind a request</h2>
+  <h2 id='scope'>14.1 What sits behind a request</h2>
   <p>
     When a component awaits, everything it renders waits with it. That's the
     <strong>blocking scope</strong> of the request, and it's determined entirely by
@@ -35,7 +35,7 @@ import Snippet from '../../components/Snippet.astro';
     <strong>await where the data is used, not where it's convenient to write.</strong>
     <Chip k='react' />
     <Chip k='critical' /> This is the same force behind
-    <a href='14-minimize-the-wires.html'>§14</a>'s independence argument: self-fetching children
+    <a href='15-minimize-the-wires.html'>§15</a>'s independence argument: self-fetching children
     don't just decouple the code, they shrink each request's blast radius to the component that
     needed it.
   </p>
@@ -211,7 +211,7 @@ flowchart LR
     </Fragment>
   </Diagram>
 
-  <h2 id='parallel'>13.2 Parallel by default</h2>
+  <h2 id='parallel'>14.2 Parallel by default</h2>
   <p>
     The second half of the discipline: independent requests must not wait for
     <em>each other</em>. Sequential awaits in one component are the classic server-side waterfall -
@@ -247,7 +247,7 @@ flowchart LR
   <span class="tok-kw">const</span> { id } = <span class="tok-kw">await</span> params;
 
   <span class="tok-com">/* Three self-fetching server components
-     (§14). The server renders siblings
+     (§15). The server renders siblings
      concurrently: all fetches start at t₀. */</span>
   <span class="tok-kw">return</span> (
     &lt;&gt;
@@ -275,7 +275,7 @@ flowchart LR
   <p>
     Two mechanics worth knowing precisely.
     <strong>Sibling async server components render concurrently</strong> - composing self-fetching components
-    (<a href='14-minimize-the-wires.html'>§14</a>) gives you parallelism for free, which is another
+    (<a href='15-minimize-the-wires.html'>§15</a>) gives you parallelism for free, which is another
     reason independence beats drilling.
     <Chip k='react' />
     <Chip k='critical' /> And
@@ -299,17 +299,17 @@ flowchart LR
       is:raw><span class="filename">ProgramManagerCard.tsx - the chain waits here, not at the page</span><span class="tok-kw">export async function</span> <span class="tok-fn">ProgramManagerCard</span>({ programId }) {
   <span class="tok-com">/* getUser genuinely depends on the program's answer. Because the chain
      lives in this leaf, only this card pays for two round trips - the page,
-     the stats, and the table never knew. Both calls are deduped (§15). */</span>
+     the stats, and the table never knew. Both calls are deduped (§16). */</span>
   <span class="tok-kw">const</span> program = <span class="tok-kw">await</span> <span class="tok-fn">getProgram</span>(programId);
   <span class="tok-kw">const</span> manager = <span class="tok-kw">await</span> <span class="tok-fn">getUser</span>(program.managerId);
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">ContactCard</span> <span class="tok-prop">person</span>={manager} /&gt;;
 }</pre>
   </Snippet>
 
-  <h2 id='parallel-routes'>13.3 Parallel routes: independence with a file address</h2>
+  <h2 id='parallel-routes'>14.3 Parallel routes: independence with a file address</h2>
   <p>
     <a href='10-containers-content-shifting.html#layouts'>§10.4</a> put the containers in the layout;
-    <a href='14-minimize-the-wires.html'>§14</a> made the regions self-fetching;
+    <a href='15-minimize-the-wires.html'>§15</a> made the regions self-fetching;
     <a href='11-suspense-streaming.html'>§11</a> gave each one a boundary.
     <strong>Parallel routes</strong> are the framework formalizing that whole pattern as filesystem structure:
     a layout declares named <em>slots</em> (<code>@header</code>,
@@ -1325,7 +1325,7 @@ flowchart LR
     </Fragment>
   </Diagram>
 
-  <h2 id='client'>13.4 The client has waterfalls too</h2>
+  <h2 id='client'>14.4 The client has waterfalls too</h2>
   <p>
     Everything above has a client-side mirror, and it's the expensive one - each client-side gate is
     a full network round trip <em>plus</em> a render cycle. The patterns to hunt:
@@ -1340,11 +1340,11 @@ flowchart LR
   </p>
   <p>
     The fixes, in order: <strong>move the chain to the server</strong>, where the dependency is an
-    in-datacenter hop inside one request (<a href='#parallel'>§13.2</a>'s dependent-chain pattern) -
+    in-datacenter hop inside one request (<a href='#parallel'>§14.2</a>'s dependent-chain pattern) -
     this is the structural fix and it's usually available;
     <strong>collapse the chain's key</strong>, so the client asks one question ("dashboard for
     current user") and the server resolves the intermediate steps; and where client fetching is
-    legitimate (<a href='15-dedupe-caching.html#client'>§15.3</a>),
+    legitimate (<a href='16-dedupe-caching.html#client'>§16.3</a>),
     <strong>make sibling queries independent</strong> - two hooks with no
     <code>enabled:</code> coupling fire in parallel.
   </p>
@@ -1948,7 +1948,7 @@ flowchart LR
 
   <p>
     So the standing rule for the cases where client fetching is genuinely required (<a
-      href='15-dedupe-caching.html#when-client'>§15.7</a
+      href='16-dedupe-caching.html#when-client'>§16.7</a
     >): <strong>the client data flow must never be serial.</strong> If you find a request that can't start
     until another finishes, that is not a fact of life to be styled around with spinners; it is a signal
     that something upstream is shaped wrong. Either the earlier request should
@@ -2038,7 +2038,7 @@ flowchart LR
         href='https://nextjs.org/docs/app/api-reference/file-conventions/parallel-routes'
         target='_blank'
         rel='noopener'>Parallel Routes</a
-      >. Full list in <a href='20-references.html'>§20</a>.
+      >. Full list in <a href='21-references.html'>§21</a>.
     </p>
   </GoDeeper>
 </GuidePage>

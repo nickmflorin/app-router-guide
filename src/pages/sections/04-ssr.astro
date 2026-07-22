@@ -40,7 +40,7 @@ import Snippet from '../../components/Snippet.astro';
     carved-out surface small (<a href='05-client-server-boundaries.html'>§5</a>–<a
       href='09-server-resolvable-state.html'>§9</a
     >); Part B is about handling what remains (<a href='10-containers-content-shifting.html'>§10</a
-    >–<a href='13-blocking-requests.html'>§13</a>).
+    >–<a href='14-blocking-requests.html'>§14</a>).
   </p>
 
   <h2 id='benefits'>4.2 What you get for it</h2>
@@ -89,7 +89,7 @@ import Snippet from '../../components/Snippet.astro';
         <td>
           Rendered output is an artifact the framework can
           <strong>cache and reuse across users</strong>; see
-          <a href='#page-cache'>§4.4</a> and <a href='15-dedupe-caching.html'>§15</a>.
+          <a href='#page-cache'>§4.4</a> and <a href='16-dedupe-caching.html'>§16</a>.
         </td>
       </tr>
       <tr>
@@ -567,7 +567,7 @@ flowchart LR
     can change freely because nothing in the browser ever depended on it. (Mutations get the same collapse
     from server actions, <a href='05-client-server-boundaries.html#server-actions'>§5.8</a>: a typed
     call instead of a hand-built endpoint. Building JSON routes for your own pages' first-render
-    data is the pattern the audit flagged, <a href='18-applied-to-tracker.html'>§18</a>.)
+    data is the pattern the audit flagged, <a href='19-applied-to-tracker.html'>§19</a>.)
   </p>
   <p>
     And there is a name for where this is heading. The pattern emerging across the ecosystem is that <strong
@@ -685,7 +685,7 @@ flowchart LR
     <em>does</em> need request-time data, the modern model (Partial Prerendering /
     <code>cacheComponents</code>) caches the static shell and streams only the dynamic holes into
     it. The mechanics (<code>"use cache"</code>, revalidation, cache tags) live in
-    <a href='15-dedupe-caching.html'>§15</a>; what belongs here is the architectural point:
+    <a href='16-dedupe-caching.html'>§16</a>; what belongs here is the architectural point:
   </p>
   <p>
     <strong>Only server-rendered content can participate in this cache.</strong>
@@ -923,7 +923,7 @@ flowchart LR
     without building either by hand. But notice it's conditional: the seamless merge works because the
     server renders segments the router can splice. A page that client-fetches everything after mount gets
     neither benefit: its first visit is a shell, and its navigations re-run the whole fetch choreography
-    (<a href='13-blocking-requests.html#client'>§13.4</a>).
+    (<a href='14-blocking-requests.html#client'>§14.4</a>).
   </p>
 
   <h3 id='prefetching'>Links and prefetching</h3>
@@ -1051,7 +1051,7 @@ flowchart LR
       trap) ·
       <a href='https://nextjs.org/docs/app/guides/prefetching' target='_blank' rel='noopener'
         >Prefetching guide</a
-      >. Full list in <a href='20-references.html'>§20</a>.
+      >. Full list in <a href='21-references.html'>§21</a>.
     </p>
   </GoDeeper>
 </GuidePage>
