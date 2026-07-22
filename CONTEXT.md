@@ -117,38 +117,26 @@ Commits are authored **as Nick**:
 
 ---
 
-## Parallel work: disjoint lanes (the coordination rule)
+## Parallel work: prefer worktrees, and always ask first
 
-Every Cowork thread edits the **same working folder on disk**, so two threads touching the same file
-at once corrupt each other. The rule: **each active thread stays inside one lane, and never edits
-another lane's files or a shared hotspot while another thread is active.** Scope each task to a
-single lane.
+Every Cowork thread edits the **same working folder on disk**, so two threads changing files at once
+in that one folder corrupt each other. To run work in parallel without blocking, the default is an
+**isolated git worktree** — a separate branch checked out in its own directory — so each thread has
+its own copy and they merge back cleanly.
 
-**Lanes (disjoint file sets):**
+**The rule: never spin up a worktree (or branch) on your own — always ask the user first.** Confirm
+the branch name and the scope before creating one. Do not assume parallelism.
 
-| Lane          | Owns (edit freely)                                                                                                                                                  |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Content A** | `src/pages/sections/01…10-*.astro`                                                                                                                                  |
-| **Content B** | `src/pages/sections/11…21-*.astro`, `src/pages/index.astro`                                                                                                         |
-| **Deck**      | `src/pages/deck.astro`, `public/assets/deck-view.js`, `src/styles/partials/_deck-view.scss`, `server/deck-*.mjs`, `scripts/build_deck.py`, `scripts/deck_titles.py` |
-| **Notes**     | `server/db.mjs`, `server/note-enums.mjs`, `server/notes-middleware.mjs`                                                                                             |
-| **Infra**     | `scripts/build_*.py` (except build_deck), `build_search_index.py`, `postbuild_relativize.py`, `svg_lint.py`                                                         |
+- **Nontrivial / parallel / long-running work → propose a worktree** (e.g. "the deck work and a
+  content pass at the same time"): ask, then create a branch + `git worktree` for it, work there,
+  and merge back (fast-forward or PR) when done, cleaning up the worktree.
+- **Lightweight cases may skip the worktree** — a quick single-file edit, a read-only task,
+  resolving a note, or a DB-only change can just happen in the main tree. Still avoid editing a file
+  another active thread is in.
+- Either way: commit small and often (each commit passes the build gate) so branches/worktrees stay
+  easy to merge.
 
-**Shared hotspots — one owner at a time, announce before touching:** `public/assets/nav.js` (holds
-BOTH the notes and deck-authoring UI), `prisma/schema.prisma`, `package.json`, `astro.config.mjs`,
-`src/styles/style.scss`, `src/styles/partials/_draft-tools.scss`, `src/components/Diagram.astro` /
-`Snippet.astro`, `prisma/notes.db`.
-
-**Protocol:**
-
-- State your lane at the start of a thread; keep the whole task within it.
-- Commit small and often (each commit passes the gate) so other lanes can pull cleanly.
-- Never run two threads in the same lane, and never edit a shared hotspot from two threads at once.
-  If a task needs a hotspot, it should be the only active thread, or split so the hotspot edit is
-  isolated.
-- Content lanes (A/B) are the safest to parallelize; they rarely touch anything outside `sections/`.
-  Tooling lanes (Deck/Notes/Infra) share `nav.js` and `schema.prisma`, so parallelize those against
-  Content lanes, not against each other.
+When in doubt about whether a task needs its own worktree, ask.
 
 ---
 
