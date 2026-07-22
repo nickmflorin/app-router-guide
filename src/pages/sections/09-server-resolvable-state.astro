@@ -1595,6 +1595,59 @@ flowchart LR
     answers are no, it's interaction state: keep it in the leaf, in memory, where it costs nothing.
   </p>
 
+  <h2 id='nuqs'>9.8 Less plumbing: typed search params with nuqs</h2>
+  <p>
+    Everything in this chapter works with nothing but the framework:
+    <code>useSearchParams</code>, <code>URLSearchParams</code>, <code>router.replace()</code>, a
+    transition, and <code>useOptimistic</code> when the highlight must not lag. But the wiring in
+    <a href='#url-writes'>§9.4</a> is boilerplate you will rewrite once per control, and there are packages
+    that fold it into a single hook. The one worth knowing is
+    <a href='https://nuqs.dev' target='_blank' rel='noopener'>nuqs</a>: type-safe search-param state
+    for the App Router (among others), with a <code>useState</code>-shaped API.
+    <Chip k='next' />
+    <Chip k='imp' /> Setup is one provider (wrap the root layout in its <code>NuqsAdapter</code>);
+    after that, a query param reads like local state:
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">SearchInput.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { useQueryState, parseAsString } <span class="tok-kw">from</span> <span class="tok-str">"nuqs"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">SearchInput</span>() {
+  <span class="tok-com">/* Reads and writes ?q= like useState. shallow: false is the mechanic of
+     §9.4: the URL write notifies the server, which re-renders the page
+     with the new searchParams. */</span>
+  <span class="tok-kw">const</span> [query, setQuery] = <span class="tok-fn">useQueryState</span>(
+    <span class="tok-str">"q"</span>,
+    parseAsString.<span class="tok-fn">withDefault</span>(<span class="tok-str">""</span>).<span class="tok-fn">withOptions</span>({ <span class="tok-prop">shallow</span>: <span class="tok-kw">false</span> }),
+  );
+
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">SearchField</span> <span class="tok-prop">value</span>={query} <span class="tok-prop">onChange</span>={(v) =&gt; <span class="tok-fn">setQuery</span>(v)} /&gt;;
+}</pre>
+    <CodeCaption>
+      One hook replaces the manual read-parse-write pipeline: the typed parser owns defaults and
+      serialization, and setting the state writes the URL. Everything stays inspectable in the
+      address bar; nothing moved into component memory.
+    </CodeCaption>
+  </Snippet>
+
+  <p>
+    The defaults deserve attention: nuqs updates the URL <em>shallowly</em> (client-only) unless you pass
+    <code>shallow: false</code>, so opting into the server re-render stays a deliberate choice,
+    exactly as this chapter frames it. Beyond that it covers the refinements of
+    <a href='#url-writes'>§9.4</a> for free: a <code>startTransition</code> option surfaces
+    <code>isPending</code> while the server render is in flight, a <code>history</code> option chooses
+    replace-vs-push per control (<a href='#url-state'>§9.2</a>), and built-in throttling and
+    debouncing tame high-frequency writers like search inputs. On the server, companion helpers (<code
+      >createSearchParamsCache</code
+    >, <code>createLoader</code>) parse the same param definitions inside server components, so
+    client and server share one typed schema instead of two hand-rolled parsers. None of this
+    changes the doctrine: the URL is still the state manager; a library like nuqs just makes the
+    right pattern the ergonomic one.
+  </p>
+
   <h2 id='rules'>The rules</h2>
   <table class='tbl'>
     <thead>

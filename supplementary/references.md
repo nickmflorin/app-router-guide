@@ -143,6 +143,8 @@ Every external source used in the guide. Rendered at the bottom of all derived d
 - [SWR docs](https://swr.vercel.app) - client-side dedupe/cache (stale-while-revalidate)
 - [SWR mutate](https://swr.vercel.app/docs/mutation) - keyed revalidation: the key replaces the
   refetch callback (§5.8, §11.4)
+- [nuqs docs](https://nuqs.dev) - type-safe search-param state (`useQueryState`), shallow vs
+  server-notifying URL writes, server-side parsing helpers (§9.8)
 
 ## Community / secondary (verification & narrative only; prefer official above)
 
