@@ -1,8 +1,3 @@
-// Dev-only notes store: a Prisma client over the committed SQLite DB, plus the
-// wire<->row mapping the browser annotation layer expects. Imported only by the
-// dev server (astro.config.mjs) and the seed script; never bundled into the
-// static build.
-
 import { PrismaClient } from '@prisma/client';
 import { NoteStatus, NoteKind, assertStatus, assertKind } from './note-enums.mjs';
 

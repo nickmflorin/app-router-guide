@@ -1,8 +1,3 @@
-// Connect-style handler mounted at /api/notes by the dev server.
-//   GET  /api/notes[?page=NN-slug.html]  -> { notes: [...] }
-//   POST /api/notes  body: a note, or { notes: [...] }  -> upsert -> { notes: [...] }
-// Dev-only; loaded lazily by astro.config.mjs so `astro build` never imports it.
-
 import { listNotes, upsertNote } from './db.mjs';
 
 function readBody(req) {

@@ -1,13 +1,3 @@
-// Working-notes store for the guide's dev-only annotation layer.
-//
-// This is dev tooling: the SQLite file (prisma/notes.db) is committed to source
-// control and read/written only by `astro dev` (see astro.config.mjs) and the
-// seed script. `astro build` never loads Prisma or this DB; the shipped site is
-// static HTML.
-//
-// `kind` is a discriminator so the same table can later hold slide-deck
-// designations (kind = "slide") without a schema change.
-
 generator client {
   provider = "prisma-client-js"
 }

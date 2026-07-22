@@ -391,10 +391,12 @@ const TOC = [
    stripped from it at build time (scripts/postbuild_relativize.py).
 
    "Add note" arms note mode: click any block (paragraph, diagram, code,
-   table, callout...) and type a note. Notes render as numbered amber pins
-   in the left gutter, persist in localStorage, and sync against the
-   append-only ledger in public/page-notes.json so Claude can act on them.
-   Keyboard: Escape exits note mode or closes the dialog. */
+   table, callout...) and type a note. Notes render as numbered pins in the
+   left gutter and, on the astro dev server, write straight through to the
+   committed SQLite DB via /api/notes as you type, resolve, or delete them. If
+   that endpoint isn't reachable (a plain static server, file://, an older
+   checkout) it silently falls back to localStorage + the page-notes.json
+   ledger. Keyboard: Escape exits note mode or closes the dialog. */
 (function () {
   const IS_DEV =
     (location.hostname === 'localhost' || location.hostname === '127.0.0.1') &&
@@ -419,6 +421,66 @@ const TOC = [
   }
   let data = load();
   const pageNotes = () => data.notes.filter(n => n.page === page);
+
+  /* ---------- dev DB sync (/api/notes) ----------
+     On the astro dev server every note write goes straight through to the
+     committed SQLite DB (Prisma), and the page hydrates from it on load.
+     localStorage stays as an optimistic cache. If the endpoint is unreachable
+     (plain static server, file://, older checkout), apiUp flips to false and we
+     fall back to the localStorage + page-notes.json flow below, so wiring this
+     can never break annotating. */
+  const API = '/api/notes';
+  let apiUp = null; // null = not yet probed; true/false once known
+  async function apiSend(method, query, body) {
+    const res = await fetch(API + (query || ''), {
+      method,
+      headers: body ? { 'content-type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error('api ' + res.status);
+    return res.status === 204 ? null : res.json();
+  }
+  function pushNote(note) {
+    if (apiUp === false) return; // known-down: local flow owns persistence
+    apiSend('POST', '', note).then(
+      () => {
+        apiUp = true;
+      },
+      () => {
+        apiUp = false;
+      },
+    );
+  }
+  function deleteNoteRemote(id) {
+    if (apiUp === false) return;
+    apiSend('DELETE', '?id=' + encodeURIComponent(id)).catch(() => {});
+  }
+  async function syncFromApi() {
+    try {
+      const d = await apiSend('GET', '?page=' + encodeURIComponent(page));
+      if (!d || !Array.isArray(d.notes)) throw new Error('shape');
+      apiUp = true;
+      /* The DB is the source of truth for THIS page: replace this page's notes
+         with the DB's, and keep notes from other pages (localStorage is a
+         per-page island under file://, so those only live locally). */
+      const byId = {};
+      data.notes.forEach(n => {
+        if (n.page !== page) byId[n.id] = n;
+      });
+      d.notes.forEach(n => {
+        byId[n.id] = n;
+      });
+      data = { notes: Object.values(byId) };
+      persist();
+      renderPins();
+      renderPanel();
+      return true;
+    } catch (e) {
+      apiUp = false;
+      return false;
+    }
+  }
 
   /* ---------- targeting: describe a block so it can be found again ---------- */
   function nearestHeading(el) {
@@ -592,6 +654,7 @@ const TOC = [
   function removeNote(note) {
     data.notes = data.notes.filter(x => x.id !== note.id);
     persist();
+    deleteNoteRemote(note.id);
     renderPins();
     renderPanel();
   }
@@ -627,6 +690,7 @@ const TOC = [
       clearTimeout(autosaveTimer);
       note.text = ta.value.trim();
       persist();
+      if (note.text) pushNote(note); // don't write empty (about-to-be-discarded) notes
       renderPins();
       renderPanel();
     }
@@ -693,8 +757,10 @@ const TOC = [
       navigator.clipboard.writeText(payload()).then(() => toast('Copied'));
     });
     panel.querySelector('[data-act="clear"]').addEventListener('click', () => {
+      const gone = data.notes.filter(n => n.status === 'resolved');
       data.notes = data.notes.filter(n => n.status !== 'resolved');
       persist();
+      gone.forEach(n => deleteNoteRemote(n.id));
       renderPins();
       renderPanel();
     });
@@ -737,14 +803,12 @@ const TOC = [
       item.querySelector('[data-act="resolve"]').addEventListener('click', () => {
         n.status = n.status === 'resolved' ? 'open' : 'resolved';
         persist();
+        pushNote(n);
         renderPins();
         renderPanel();
       });
       item.querySelector('[data-act="delete"]').addEventListener('click', () => {
-        data.notes = data.notes.filter(x => x.id !== n.id);
-        persist();
-        renderPins();
-        renderPanel();
+        removeNote(n);
       });
       list.appendChild(item);
     });
@@ -882,7 +946,11 @@ const TOC = [
       /* No server (file://) or no ledger yet: manual Load still works. */
     }
   }
-  syncFromFile();
+  /* Hydrate from the dev DB; fall back to the page-notes.json ledger if the
+     endpoint isn't there. */
+  syncFromApi().then(ok => {
+    if (!ok) syncFromFile();
+  });
 
   /* Initial render, after fonts/layout settle. */
   renderPins();

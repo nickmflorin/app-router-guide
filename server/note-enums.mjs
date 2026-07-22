@@ -1,11 +1,3 @@
-// Single source of truth for the note enums.
-//
-// SQLite can't store a native Prisma enum, so the enum lives here instead of in
-// schema.prisma. Every writer (the /api/notes middleware, the seed script, and
-// later nav.js) imports these and validates against them, so the string columns
-// `status` and `kind` only ever hold a value from this list. Add a member here
-// and it is available everywhere; no migration required.
-
 /** @typedef {'open' | 'resolved'} NoteStatusValue */
 /** @typedef {'note' | 'slide'} NoteKindValue */
 
