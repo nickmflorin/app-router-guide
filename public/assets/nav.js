@@ -420,7 +420,11 @@ const TOC = [
     localStorage.setItem(KEY, JSON.stringify(data));
   }
   let data = load();
-  const pageNotes = () => data.notes.filter(n => n.page === page);
+  /* A plain document note: a page annotation, not a deck-inclusion note (those
+     carry a slideId/slideItemId) and not a deck-surface note. Only these show
+     as pins and in the notes panel. */
+  const isDocNote = n => n.surface !== 'deck' && !n.slideId && !n.slideItemId;
+  const pageNotes = () => data.notes.filter(n => n.page === page && isDocNote(n));
 
   /* ---------- dev DB sync (/api/notes) ----------
      On the astro dev server every note write goes straight through to the
@@ -528,10 +532,14 @@ const TOC = [
   tools.innerHTML =
     '<span class="draft-badge">DRAFT</span>' +
     '<button type="button" class="note-btn" data-act="panel"></button>' +
-    '<button type="button" class="note-btn" data-act="arm">+ Add note</button>';
+    '<button type="button" class="note-btn" data-act="arm">+ Add note</button>' +
+    '<button type="button" class="note-btn" data-act="deckpanel"></button>' +
+    '<button type="button" class="note-btn" data-act="deckarm">+ To deck</button>';
   document.body.appendChild(tools);
   const panelBtn = tools.querySelector('[data-act="panel"]');
   const armBtn = tools.querySelector('[data-act="arm"]');
+  const deckBtn = tools.querySelector('[data-act="deckpanel"]');
+  const deckArmBtn = tools.querySelector('[data-act="deckarm"]');
 
   /* ---------- pins ---------- */
   const pinLayer = document.createElement('div');
@@ -541,14 +549,14 @@ const TOC = [
      Resolving a note renumbers the rest. */
   function numberMap() {
     const sorted = data.notes
-      .filter(n => n.status !== 'resolved')
+      .filter(n => n.status !== 'resolved' && isDocNote(n))
       .sort((a, b) => String(a.ts || '').localeCompare(String(b.ts || '')));
     const m = {};
     sorted.forEach((n, i) => (m[n.id] = i + 1));
     return m;
   }
   function updatePanelBtn() {
-    const openAll = data.notes.filter(n => n.status !== 'resolved').length;
+    const openAll = data.notes.filter(n => n.status !== 'resolved' && isDocNote(n)).length;
     const openHere = pageNotes().filter(n => n.status !== 'resolved').length;
     panelBtn.textContent = 'Notes ' + openAll + ' · ' + openHere + ' on page';
   }
@@ -582,7 +590,10 @@ const TOC = [
   let repositionTimer = null;
   window.addEventListener('resize', () => {
     clearTimeout(repositionTimer);
-    repositionTimer = setTimeout(renderPins, 150);
+    repositionTimer = setTimeout(() => {
+      renderPins();
+      renderDeckDecorations();
+    }, 150);
   });
   function flash(el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -613,8 +624,9 @@ const TOC = [
   }
   armBtn.addEventListener('click', () => setArmed(!armed));
   document.addEventListener('mouseover', e => {
-    if (!armed) return;
-    const block = e.target.closest && e.target.closest(BLOCKS);
+    if (!armed && !deckArmed) return;
+    const sel = deckArmed ? '[data-content-id]' : BLOCKS;
+    const block = e.target.closest && e.target.closest(sel);
     if (hovered && hovered !== block) hovered.classList.remove('note-hover-outline');
     hovered = block;
     if (block) block.classList.add('note-hover-outline');
@@ -622,12 +634,14 @@ const TOC = [
   document.addEventListener(
     'click',
     e => {
-      if (!armed) return;
-      if (e.target.closest('.draft-tools, .notes-panel, .note-dialog, .note-pin')) return;
-      const block = e.target.closest(BLOCKS);
+      if (!armed && !deckArmed) return;
+      if (e.target.closest('.draft-tools, .notes-panel, .note-dialog, .note-pin, .deck-panel'))
+        return;
+      const sel = deckArmed ? '[data-content-id]' : BLOCKS;
+      const block = e.target.closest(sel);
       if (!block) {
-        /* Never navigate while note mode is armed: links without a
-           selectable block just swallow the click. */
+        /* Never navigate while a mode is armed: links without a selectable
+           block just swallow the click. */
         if (e.target.closest('a')) {
           e.preventDefault();
           e.stopPropagation();
@@ -636,14 +650,23 @@ const TOC = [
       }
       e.preventDefault();
       e.stopPropagation();
-      setArmed(false);
-      openDialog(block);
+      if (deckArmed) {
+        addBlockToDeck(block); // stay armed to add several blocks to the active slide
+        if (hovered) {
+          hovered.classList.remove('note-hover-outline');
+          hovered = null;
+        }
+      } else {
+        setArmed(false);
+        openDialog(block);
+      }
     },
     true,
   );
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       setArmed(false);
+      setDeckArmed(false);
       closeDialog();
     }
   });
@@ -779,7 +802,7 @@ const TOC = [
     /* Every unresolved note in the whole document, in global creation order.
        Resolved notes are never shown (you resolve them via Claude). */
     const open = data.notes
-      .filter(n => n.status !== 'resolved')
+      .filter(n => n.status !== 'resolved' && isDocNote(n))
       .sort((a, b) => (nums[a.id] || 0) - (nums[b.id] || 0));
     panel.innerHTML =
       '<div class="np-head"><span>Unresolved notes · ' +
@@ -882,6 +905,416 @@ const TOC = [
       /* No server (file://) or no ledger yet: manual Load still works. */
     }
   }
+  /* ==================== deck mode ====================
+     Designate document blocks (diagrams/snippets, addressed by their stable
+     data-content-id) into slides. The DB stores only references + arrangement;
+     the content is pulled from the live doc when the deck renders. Dev-only. */
+  const DECK_API = '/api/deck';
+  let deck = { slides: [] };
+  let deckArmed = false;
+  let activeSlideId = null;
+  let deckApiUp = null;
+  const deckLayer = document.createElement('div');
+  document.body.appendChild(deckLayer);
+  let deckPanel = null;
+
+  function newId(p) {
+    return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+  function currentPageSlug() {
+    return (page || '').replace(/\.html$/, '');
+  }
+  async function deckSend(method, q, body) {
+    const res = await fetch(DECK_API + (q || ''), {
+      method,
+      headers: body ? { 'content-type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error('deck api ' + res.status);
+    return res.status === 204 ? null : res.json();
+  }
+  async function deckLoad() {
+    try {
+      const d = await deckSend('GET', '');
+      deck = { slides: (d && d.slides) || [] };
+      deckApiUp = true;
+    } catch (e) {
+      deckApiUp = false;
+      deck = { slides: [] };
+    }
+    if (!activeSlideId && deck.slides.length)
+      activeSlideId = deck.slides[deck.slides.length - 1].id;
+    renderDeckDecorations();
+    renderDeckPanel();
+    updateDeckBtn();
+  }
+  function saveSlideRemote(s) {
+    if (deckApiUp === false) return;
+    deckSend('POST', '/slide', {
+      slide: { id: s.id, order: s.order, title: s.title || null, layout: s.layout || 'free' },
+    }).catch(() => {});
+  }
+  function saveItemRemote(it) {
+    if (deckApiUp === false) return;
+    deckSend('POST', '/item', {
+      item: {
+        id: it.id,
+        slideId: it.slideId,
+        page: it.page,
+        contentRef: it.contentRef,
+        order: it.order,
+        included: it.included !== false,
+      },
+    }).catch(() => {});
+  }
+  function addSlide() {
+    const slide = {
+      id: newId('s'),
+      order: deck.slides.length,
+      title: '',
+      layout: 'free',
+      items: [],
+    };
+    deck.slides.push(slide);
+    activeSlideId = slide.id;
+    saveSlideRemote(slide);
+    renderDeckPanel();
+    updateDeckBtn();
+    return slide;
+  }
+  function addBlockToDeck(block) {
+    const contentRef = block.getAttribute('data-content-id');
+    if (!contentRef) {
+      toast('Not a deck-able block');
+      return;
+    }
+    let slide = deck.slides.find(s => s.id === activeSlideId);
+    if (!slide) slide = addSlide();
+    if (slide.items.some(it => it.contentRef === contentRef)) {
+      toast('Already on this slide');
+      return;
+    }
+    const item = {
+      id: newId('i'),
+      slideId: slide.id,
+      page: contentRef.split('::')[0],
+      contentRef,
+      order: slide.items.length,
+      included: true,
+    };
+    slide.items.push(item);
+    saveItemRemote(item);
+    flash(block);
+    renderDeckDecorations();
+    renderDeckPanel();
+    updateDeckBtn();
+    toast('Added to slide ' + (deck.slides.indexOf(slide) + 1));
+  }
+  function removeDeckItem(item) {
+    const s = deck.slides.find(x => x.id === item.slideId);
+    if (s) s.items = s.items.filter(x => x.id !== item.id);
+    if (deckApiUp !== false)
+      deckSend('DELETE', '/item?id=' + encodeURIComponent(item.id)).catch(() => {});
+    saveInclusionNote({ slideItemId: item.id }, ''); // drop its inclusion note too
+    renderDeckDecorations();
+    renderDeckPanel();
+    updateDeckBtn();
+  }
+  function removeSlide(slide) {
+    deck.slides = deck.slides.filter(s => s.id !== slide.id);
+    if (activeSlideId === slide.id) activeSlideId = deck.slides.length ? deck.slides[0].id : null;
+    deck.slides.forEach((s, i) => {
+      if (s.order !== i) {
+        s.order = i;
+        saveSlideRemote(s);
+      }
+    });
+    if (deckApiUp !== false)
+      deckSend('DELETE', '/slide?id=' + encodeURIComponent(slide.id)).catch(() => {});
+    renderDeckDecorations();
+    renderDeckPanel();
+    updateDeckBtn();
+  }
+  function moveSlide(slide, dir) {
+    const i = deck.slides.indexOf(slide);
+    const j = i + dir;
+    if (j < 0 || j >= deck.slides.length) return;
+    deck.slides.splice(i, 1);
+    deck.slides.splice(j, 0, slide);
+    deck.slides.forEach((s, k) => {
+      s.order = k;
+      saveSlideRemote(s);
+    });
+    renderDeckPanel();
+    renderDeckDecorations();
+  }
+  function moveItem(slide, item, dir) {
+    const i = slide.items.indexOf(item);
+    const j = i + dir;
+    if (j < 0 || j >= slide.items.length) return;
+    slide.items.splice(i, 1);
+    slide.items.splice(j, 0, item);
+    slide.items.forEach((it, k) => {
+      it.order = k;
+      saveItemRemote(it);
+    });
+    renderDeckPanel();
+  }
+  function reassignItem(item, newSlideId) {
+    if (newSlideId === item.slideId) return;
+    const from = deck.slides.find(s => s.id === item.slideId);
+    const to = deck.slides.find(s => s.id === newSlideId);
+    if (!to) return;
+    if (from) from.items = from.items.filter(x => x.id !== item.id);
+    item.slideId = newSlideId;
+    item.order = to.items.length;
+    to.items.push(item);
+    saveItemRemote(item);
+    renderDeckPanel();
+    renderDeckDecorations();
+    updateDeckBtn();
+  }
+
+  /* Inclusion notes ride the notes store (surface=doc + slideId/slideItemId),
+     so isDocNote keeps them out of the page-notes pins and panel. */
+  function inclusionNote(link) {
+    return data.notes.find(n =>
+      link.slideItemId
+        ? n.slideItemId === link.slideItemId
+        : n.slideId === link.slideId && !n.slideItemId,
+    );
+  }
+  function saveInclusionNote(link, text) {
+    text = (text || '').trim();
+    let note = inclusionNote(link);
+    if (!text) {
+      if (note) {
+        data.notes = data.notes.filter(x => x.id !== note.id);
+        deleteNoteRemote(note.id);
+      }
+      return;
+    }
+    if (!note) {
+      note = {
+        id: newId('dn'),
+        page: 'deck',
+        surface: 'doc',
+        status: 'open',
+        text: '',
+        target: {},
+        slideId: link.slideId || undefined,
+        slideItemId: link.slideItemId || undefined,
+      };
+      data.notes.push(note);
+    }
+    note.text = text;
+    persist();
+    pushNote(note);
+  }
+
+  function updateDeckBtn() {
+    const items = deck.slides.reduce(
+      (a, s) => a + s.items.filter(it => it.included !== false).length,
+      0,
+    );
+    deckBtn.textContent = 'Deck ' + deck.slides.length + ' slides · ' + items + ' items';
+  }
+  function setDeckArmed(on) {
+    deckArmed = on;
+    document.body.classList.toggle('deck-mode', on);
+    deckArmBtn.classList.toggle('active', on);
+    if (on) {
+      setArmed(false);
+      if (!deckPanel) openDeckPanel();
+      let s = deck.slides.find(x => x.id === activeSlideId);
+      if (!s) s = deck.slides.length ? deck.slides[deck.slides.length - 1] : addSlide();
+      activeSlideId = s.id;
+      deckArmBtn.textContent = 'Click blocks → slide ' + (deck.slides.indexOf(s) + 1) + ' (Esc)';
+    } else {
+      deckArmBtn.textContent = '+ To deck';
+      if (hovered) {
+        hovered.classList.remove('note-hover-outline');
+        hovered = null;
+      }
+    }
+  }
+  deckArmBtn.addEventListener('click', () => setDeckArmed(!deckArmed));
+  deckBtn.addEventListener('click', () => (deckPanel ? closeDeckPanel() : openDeckPanel()));
+
+  function renderDeckDecorations() {
+    deckLayer.textContent = '';
+    document.querySelectorAll('.deck-included').forEach(el => el.classList.remove('deck-included'));
+    const slug = currentPageSlug();
+    deck.slides.forEach((s, si) => {
+      s.items.forEach(it => {
+        if (it.contentRef.split('::')[0] !== slug) return;
+        const ref = window.CSS && CSS.escape ? CSS.escape(it.contentRef) : it.contentRef;
+        const el = document.querySelector('[data-content-id="' + ref + '"]');
+        if (!el) return;
+        el.classList.add('deck-included');
+        const r = el.getBoundingClientRect();
+        const badge = document.createElement('div');
+        badge.className = 'deck-badge' + (s.id === activeSlideId ? ' active' : '');
+        badge.textContent = 'S' + (si + 1);
+        badge.title = 'Slide ' + (si + 1) + (it.included === false ? ' · excluded' : '');
+        badge.style.top = window.scrollY + r.top + 6 + 'px';
+        badge.style.left = window.scrollX + r.right - 30 + 'px';
+        badge.addEventListener('click', () => {
+          activeSlideId = s.id;
+          openDeckPanel();
+        });
+        deckLayer.appendChild(badge);
+      });
+    });
+  }
+
+  function openDeckPanel() {
+    if (!deckPanel) {
+      deckPanel = document.createElement('div');
+      deckPanel.className = 'deck-panel';
+      document.body.appendChild(deckPanel);
+    }
+    renderDeckPanel();
+  }
+  function closeDeckPanel() {
+    if (deckPanel) {
+      deckPanel.remove();
+      deckPanel = null;
+    }
+  }
+  function debounced(fn, ms) {
+    let t = null;
+    return function (...a) {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(null, a), ms || 300);
+    };
+  }
+  function renderDeckPanel() {
+    if (!deckPanel) return;
+    const slug = currentPageSlug();
+    const deckHref = location.pathname.includes('/sections/') ? '../deck' : 'deck';
+    deckPanel.innerHTML =
+      '<div class="np-head"><span>Deck · ' +
+      deck.slides.length +
+      ' slides</span><span><a class="dp-open" href="' +
+      deckHref +
+      '" target="_blank">Open deck ↗</a><button type="button" class="note-btn" data-act="close">×</button></span></div>' +
+      '<div class="dp-list"></div>' +
+      '<div class="np-foot"><button type="button" data-act="addslide">+ Slide</button>' +
+      '<button type="button" data-act="copy">Copy JSON</button></div>';
+    deckPanel.querySelector('[data-act="close"]').addEventListener('click', closeDeckPanel);
+    deckPanel.querySelector('[data-act="addslide"]').addEventListener('click', () => addSlide());
+    deckPanel.querySelector('[data-act="copy"]').addEventListener('click', () => {
+      navigator.clipboard.writeText(JSON.stringify(deck, null, 2)).then(() => toast('Copied'));
+    });
+    const list = deckPanel.querySelector('.dp-list');
+    if (!deck.slides.length) {
+      list.innerHTML =
+        '<div class="np-item">No slides yet. Use “+ To deck”, then click blocks.</div>';
+      return;
+    }
+    const slideOpts = deck.slides
+      .map((s, i) => '<option value="' + s.id + '">Slide ' + (i + 1) + '</option>')
+      .join('');
+    deck.slides.forEach((s, si) => {
+      const box = document.createElement('div');
+      box.className = 'dp-slide' + (s.id === activeSlideId ? ' active' : '');
+      box.innerHTML =
+        '<div class="dp-slide-head"><strong>Slide ' +
+        (si + 1) +
+        '</strong><span class="dp-actions">' +
+        '<button type="button" data-a="up">↑</button><button type="button" data-a="down">↓</button>' +
+        '<button type="button" data-a="active">' +
+        (s.id === activeSlideId ? '● active' : 'set active') +
+        '</button><button type="button" data-a="del">Delete</button></span></div>' +
+        '<div class="dp-slide-controls"><input class="dp-title" placeholder="Slide title (optional)" />' +
+        '<select class="dp-layout">' +
+        ['free', 'row', 'column', 'grid']
+          .map(
+            l =>
+              '<option value="' +
+              l +
+              '"' +
+              (s.layout === l ? ' selected' : '') +
+              '>' +
+              l +
+              '</option>',
+          )
+          .join('') +
+        '</select></div>' +
+        '<textarea class="dp-slidenote" placeholder="Note for this slide (how it should look)"></textarea>' +
+        '<div class="dp-items"></div>';
+      box.querySelector('.dp-title').value = s.title || '';
+      box.querySelector('.dp-title').addEventListener(
+        'input',
+        debounced(e => {
+          s.title = e.target.value;
+          saveSlideRemote(s);
+        }),
+      );
+      box.querySelector('.dp-layout').addEventListener('change', e => {
+        s.layout = e.target.value;
+        saveSlideRemote(s);
+      });
+      const sn = box.querySelector('.dp-slidenote');
+      const snote = inclusionNote({ slideId: s.id });
+      sn.value = snote ? snote.text : '';
+      sn.addEventListener(
+        'input',
+        debounced(e => saveInclusionNote({ slideId: s.id }, e.target.value)),
+      );
+      box.querySelector('[data-a="up"]').addEventListener('click', () => moveSlide(s, -1));
+      box.querySelector('[data-a="down"]').addEventListener('click', () => moveSlide(s, 1));
+      box.querySelector('[data-a="active"]').addEventListener('click', () => {
+        activeSlideId = s.id;
+        renderDeckPanel();
+        renderDeckDecorations();
+      });
+      box.querySelector('[data-a="del"]').addEventListener('click', () => removeSlide(s));
+      const items = box.querySelector('.dp-items');
+      if (!s.items.length) items.innerHTML = '<div class="dp-empty">No items yet.</div>';
+      s.items.forEach(it => {
+        const row = document.createElement('div');
+        row.className =
+          'dp-item' +
+          (it.included === false ? ' excluded' : '') +
+          (it.page === slug ? '' : ' offpage');
+        row.innerHTML =
+          '<label class="dp-inc"><input type="checkbox" ' +
+          (it.included !== false ? 'checked' : '') +
+          '/></label><span class="dp-ref"></span>' +
+          '<span class="dp-actions"><button type="button" data-a="up">↑</button>' +
+          '<button type="button" data-a="down">↓</button><select class="dp-move">' +
+          slideOpts +
+          '</select><button type="button" data-a="rm">✕</button></span>' +
+          '<textarea class="dp-itemnote" placeholder="Note for this block"></textarea>';
+        row.querySelector('.dp-ref').textContent = it.contentRef;
+        row.querySelector('.dp-inc input').addEventListener('change', e => {
+          it.included = e.target.checked;
+          saveItemRemote(it);
+          renderDeckDecorations();
+          updateDeckBtn();
+        });
+        row.querySelector('[data-a="up"]').addEventListener('click', () => moveItem(s, it, -1));
+        row.querySelector('[data-a="down"]').addEventListener('click', () => moveItem(s, it, 1));
+        const mv = row.querySelector('.dp-move');
+        mv.value = it.slideId;
+        mv.addEventListener('change', e => reassignItem(it, e.target.value));
+        row.querySelector('[data-a="rm"]').addEventListener('click', () => removeDeckItem(it));
+        const inb = row.querySelector('.dp-itemnote');
+        const inote = inclusionNote({ slideItemId: it.id });
+        inb.value = inote ? inote.text : '';
+        inb.addEventListener(
+          'input',
+          debounced(e => saveInclusionNote({ slideItemId: it.id }, e.target.value)),
+        );
+        items.appendChild(row);
+      });
+      list.appendChild(box);
+    });
+  }
+
   /* Arriving via a panel "jump" from another page: open that note's editor and
      scroll to its block once the page has hydrated. The hash is cleared so a
      later manual refresh doesn't reopen it. */
@@ -904,10 +1337,16 @@ const TOC = [
   syncFromApi().then(ok => {
     if (!ok) syncFromFile();
     openFromHash();
+    deckLoad(); // hydrate the deck after notes (inclusion notes live in the notes store)
   });
 
   /* Initial render, after fonts/layout settle. */
   renderPins();
-  window.addEventListener('load', () => setTimeout(renderPins, 250));
+  window.addEventListener('load', () =>
+    setTimeout(() => {
+      renderPins();
+      renderDeckDecorations();
+    }, 250),
+  );
 })();
 /* @dev-only:end */
