@@ -1,5 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import { NoteStatus, NoteKind, assertStatus, assertKind } from './note-enums.mjs';
+import {
+  NoteStatus,
+  NoteKind,
+  NoteSurface,
+  assertStatus,
+  assertKind,
+  assertSurface,
+} from './note-enums.mjs';
 
 // A singleton that survives Vite's dev-server HMR (which re-evaluates modules),
 // so we don't open a new connection pool on every reload.
@@ -14,10 +21,13 @@ function toWire(n) {
     id: n.id,
     page: n.page,
     kind: n.kind,
+    surface: n.surface,
     status: n.status,
     text: n.text,
     resolution: n.resolution ?? undefined,
     ts: n.createdAt.toISOString(),
+    slideId: n.slideId ?? undefined,
+    slideItemId: n.slideItemId ?? undefined,
     target: {
       anchor: n.targetAnchor ?? undefined,
       tag: n.targetTag ?? undefined,
@@ -32,9 +42,11 @@ function toColumns(n) {
   const t = n.target ?? {};
   const kind = assertKind(n.kind ?? NoteKind.Note);
   const status = assertStatus(n.status ?? NoteStatus.Open);
+  const surface = assertSurface(n.surface ?? NoteSurface.Doc);
   return {
     page: n.page,
     kind,
+    surface,
     status,
     text: n.text ?? '',
     resolution: n.resolution ?? null,
@@ -42,6 +54,8 @@ function toColumns(n) {
     targetTag: t.tag ?? null,
     targetSnippet: t.snippet ?? null,
     targetPath: t.path != null ? JSON.stringify(t.path) : null,
+    slideId: n.slideId ?? null,
+    slideItemId: n.slideItemId ?? null,
   };
 }
 

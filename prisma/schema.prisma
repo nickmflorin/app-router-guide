@@ -1,3 +1,13 @@
+// Dev-only store for the guide's annotation + slide-deck tooling.
+//
+// This is dev tooling: prisma/notes.db is committed to source control and
+// read/written only by `astro dev` (see astro.config.mjs) and build/seed
+// scripts. `astro build` ships static HTML; it never bundles Prisma or the DB.
+//
+// Enums (status, kind, surface, layout) can't be native Prisma enums on SQLite,
+// so they are plain string columns whose allowed values live in
+// server/note-enums.mjs and server/deck-enums.mjs; every writer validates.
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,8 +19,9 @@ datasource db {
 
 model Note {
   id         String  @id
-  page       String // section file, e.g. "09-server-resolvable-state.html"
-  kind       String  @default("note") // NoteKind: "note" | "slide"
+  page       String // section file, e.g. "09-server-resolvable-state.html"; or "deck" for deck notes
+  kind       String  @default("note") // NoteKind: "note"
+  surface    String  @default("doc") // NoteSurface: "doc" | "deck"
   status     String  @default("open") // NoteStatus: "open" | "resolved"
   text       String
   resolution String?
@@ -21,9 +32,53 @@ model Note {
   targetSnippet String? // a bit of the target's text, for disambiguation
   targetPath    String? // JSON-encoded child-index path, e.g. "[26]"
 
+  // Deck-inclusion notes link to the slide or item they annotate (else null).
+  slideId     String?
+  slide       Slide?     @relation(fields: [slideId], references: [id], onDelete: Cascade)
+  slideItemId String?
+  slideItem   SlideItem? @relation(fields: [slideItemId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([page])
   @@index([status])
+  @@index([surface])
+  @@index([slideId])
+  @@index([slideItemId])
+}
+
+// A single slide in the deck. Holds one or more referenced content blocks.
+model Slide {
+  id        String   @id
+  order     Int      @default(0) // position of the slide in the deck
+  title     String? // optional slide title/override
+  layout    String   @default("free") // SlideLayout: "free" | "row" | "column" | "grid"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items SlideItem[]
+  notes Note[]
+
+  @@index([order])
+}
+
+// A reference to one doc content block placed on a slide. Stores only the
+// reference (page + stable contentRef); the content itself is resolved from the
+// live document at dev/build time, never copied here.
+model SlideItem {
+  id         String   @id
+  slideId    String
+  slide      Slide    @relation(fields: [slideId], references: [id], onDelete: Cascade)
+  page       String // section file the referenced block lives on
+  contentRef String // stable id of the block in the doc (e.g. "diagram:12.1-...")
+  order      Int      @default(0) // position within the slide
+  included   Boolean  @default(true) // staged in but temporarily excluded when false
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  notes Note[]
+
+  @@index([slideId])
+  @@index([page])
 }

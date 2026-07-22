@@ -14,6 +14,10 @@ const notesApiDev = {
       const { handleNotes } = await import('./server/notes-middleware.mjs');
       return handleNotes(req, res);
     });
+    server.middlewares.use('/api/deck', async (req, res) => {
+      const { handleDeck } = await import('./server/deck-middleware.mjs');
+      return handleDeck(req, res);
+    });
   },
 };
 
