@@ -808,7 +808,7 @@ flowchart LR
         text-anchor='middle'
         font-weight='500'
       >
-        Route change: the layout holds, the content swaps
+        Switching tabs: the layout holds, the content swaps
       </text>
 
       <!-- LEFT PANEL: /programs/42/report -->
@@ -874,7 +874,7 @@ flowchart LR
       <rect class='fill-dg-green-skel' x='54' y='182' width='218' height='10' rx='4'></rect>
       <rect class='fill-dg-green-skel' x='54' y='198' width='176' height='10' rx='4'></rect>
       <rect class='fill-dg-green-skel' x='54' y='214' width='208' height='10' rx='4'></rect>
-      <text class='fill-dg-green-ink' x='54' y='238' font-size='9'>rows for program 42</text>
+      <text class='fill-dg-green-ink' x='54' y='238' font-size='9'>the Report tab: a table</text>
       <text
         class='fill-dg-blue-ink'
         x='170'
@@ -906,7 +906,7 @@ flowchart LR
         navigate
       </text>
 
-      <!-- RIGHT PANEL: /programs/43/report -->
+      <!-- RIGHT PANEL: /programs/42/people (same program, People tab) -->
       <rect class='fill-dg-white stroke-dg-border' x='410' y='28' width='280' height='234' rx='8'
       ></rect>
       <rect class='fill-dg-blue-soft stroke-dg-blue' x='422' y='40' width='256' height='20' rx='6'
@@ -917,7 +917,7 @@ flowchart LR
         y='50'
         font-size='9.5'
         text-anchor='middle'
-        dominant-baseline='central'>/programs/43/report</text
+        dominant-baseline='central'>/programs/42/people</text
       >
       <rect class='fill-dg-blue-soft stroke-dg-blue' x='422' y='68' width='256' height='22' rx='5'
       ></rect>
@@ -929,20 +929,20 @@ flowchart LR
         text-anchor='middle'
         dominant-baseline='central'>Program header (layout)</text
       >
-      <rect class='fill-dg-blue-soft stroke-dg-blue' x='422' y='98' width='76' height='16' rx='4'
+      <rect class='fill-dg-white stroke-dg-blue-border' x='422' y='98' width='76' height='16' rx='4'
       ></rect>
       <text
-        class='fill-dg-blue-ink'
+        class='fill-dg-blue-ink-soft'
         x='460'
         y='106'
         font-size='9'
         text-anchor='middle'
         dominant-baseline='central'>Report</text
       >
-      <rect class='fill-dg-white stroke-dg-blue-border' x='512' y='98' width='76' height='16' rx='4'
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='512' y='98' width='76' height='16' rx='4'
       ></rect>
       <text
-        class='fill-dg-blue-ink-soft'
+        class='fill-dg-blue-ink'
         x='550'
         y='106'
         font-size='9'
@@ -962,23 +962,31 @@ flowchart LR
       <rect class='fill-dg-white stroke-dg-blue' x='422' y='122' width='256' height='128' rx='6'
       ></rect>
       <text class='fill-dg-blue-ink-soft' x='434' y='138' font-size='9'
-        >table container (layout)</text
+        >same container (layout)</text
       >
-      <rect class='fill-dg-green-skel' x='434' y='150' width='170' height='10' rx='4'></rect>
-      <rect class='fill-dg-green-skel' x='434' y='166' width='226' height='10' rx='4'></rect>
-      <rect class='fill-dg-green-skel' x='434' y='182' width='142' height='10' rx='4'></rect>
-      <rect class='fill-dg-green-skel' x='434' y='198' width='232' height='10' rx='4'></rect>
-      <rect class='fill-dg-green-skel' x='434' y='214' width='188' height='10' rx='4'></rect>
-      <text class='fill-dg-green-ink' x='434' y='238' font-size='9'>rows for program 43</text>
+      <!-- People tab content: a profile (skeleton lines + a photo), amber -->
+      <rect class='fill-dg-amber-border' x='434' y='150' width='150' height='10' rx='4'></rect>
+      <rect class='fill-dg-amber-border' x='434' y='166' width='120' height='10' rx='4'></rect>
+      <rect class='fill-dg-amber-border' x='434' y='190' width='150' height='10' rx='4'></rect>
+      <rect class='fill-dg-amber-border' x='434' y='206' width='96' height='10' rx='4'></rect>
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='600' y='150' width='66' height='66' rx='6'
+      ></rect>
+      <circle class='fill-dg-amber-border' cx='620' cy='172' r='8'></circle>
+      <path
+        class='stroke-dg-amber'
+        d='M 606 206 L 624 186 L 636 198 L 660 178'
+        fill='none'
+        stroke-width='2'></path>
+      <text class='fill-dg-amber-ink' x='434' y='238' font-size='9'>the People tab: a profile</text>
       <text
-        class='fill-dg-green-ink'
+        class='fill-dg-amber-ink'
         x='550'
         y='280'
         font-size='9.5'
         text-anchor='middle'
         font-weight='500'
       >
-        same scaffold, new rows: nothing repaints but the content
+        same scaffold, a different tab's content: only the region swaps
       </text>
     </svg>
 
@@ -986,34 +994,37 @@ flowchart LR
       slot='mermaid'
       is:raw>
 flowchart LR
-  subgraph RA["/programs/42/report"]
+  subgraph RA["/programs/42/report · Report tab"]
     direction TB
-    L1("Layout: header + tabs + table container<br/>painted once"):::blue
-    L1 --> C1("rows for program 42"):::green
+    L1("Layout: header + tabs + content container<br/>painted once"):::blue
+    L1 --> C1("the Report tab: a table"):::green
   end
-  subgraph RB["/programs/43/report"]
+  subgraph RB["/programs/42/people · People tab"]
     direction TB
-    L2("Layout: header + tabs + table container<br/>NOT re-rendered"):::blue
-    L2 --> C2("rows for program 43"):::green
+    L2("same Layout: header + tabs + container<br/>NOT re-rendered"):::blue
+    L2 --> C2("the People tab: a profile"):::amber
   end
-  RA -->|"navigate: only the content swaps"| RB
+  RA -->|"switch tab: only the content swaps"| RB
   linkStyle default stroke:#737373,stroke-width:1.5px
   style RA fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
   style RB fill:#ffffff,stroke:#e0e0e0,color:#0757ba,rx:8px,ry:8px
   classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
   classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
 </pre>
 
     <Fragment slot='caption'>
-      A navigation between sibling routes, drawn as what actually re-renders. Everything blue is the
-      layout's scaffold (header, tabs, the table container): it was painted on the first visit and
-      persists across the route change, untouched (<a href='03-mental-model.html#rendering-model'
-        >§3.1</a
-      >). Only the green content inside the container is torn down and replaced. The frame the user
-      is looking at, and the space every region occupies, never move.
+      A tab change within one program, drawn as what actually re-renders. Everything blue is the
+      layout's scaffold (the program header, the tab bar, the content container): it was painted on
+      the first visit and persists across the navigation, untouched (<a
+        href='03-mental-model.html#rendering-model'>§3.1</a
+      >). Only the region inside the container is torn down and replaced, and note it is not just
+      different rows but a different shape entirely, the Report tab's table giving way to the People
+      tab's profile, yet the frame it sits in never moves.
     </Fragment>
   </Diagram>
 
+  <h3 id='route-groups'>Route groups: peers share one layout</h3>
   <p>
     The same persistence extends to <strong>siblings</strong>, and this is where it's most often
     thrown away. Routes like <code>/learners</code>, <code>/evaluators</code>, and
@@ -1229,23 +1240,31 @@ flowchart LR
       <rect class='fill-dg-white stroke-dg-blue' x='422' y='122' width='256' height='128' rx='6'
       ></rect>
       <text class='fill-dg-blue-ink-soft' x='434' y='138' font-size='9'
-        >table container (group layout)</text
+        >same container (group layout)</text
       >
-      <rect class='fill-dg-green-skel' x='434' y='150' width='170' height='10' rx='4'></rect>
-      <rect class='fill-dg-green-skel' x='434' y='166' width='226' height='10' rx='4'></rect>
-      <rect class='fill-dg-green-skel' x='434' y='182' width='142' height='10' rx='4'></rect>
-      <rect class='fill-dg-green-skel' x='434' y='198' width='232' height='10' rx='4'></rect>
-      <rect class='fill-dg-green-skel' x='434' y='214' width='188' height='10' rx='4'></rect>
-      <text class='fill-dg-green-ink' x='434' y='238' font-size='9'>the evaluators table</text>
+      <!-- evaluators page: a different content shape + colour (a detail card) -->
+      <rect class='fill-dg-amber-border' x='434' y='150' width='150' height='10' rx='4'></rect>
+      <rect class='fill-dg-amber-border' x='434' y='166' width='120' height='10' rx='4'></rect>
+      <rect class='fill-dg-amber-border' x='434' y='190' width='150' height='10' rx='4'></rect>
+      <rect class='fill-dg-amber-border' x='434' y='206' width='96' height='10' rx='4'></rect>
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='600' y='150' width='66' height='66' rx='6'
+      ></rect>
+      <circle class='fill-dg-amber-border' cx='620' cy='172' r='8'></circle>
+      <path
+        class='stroke-dg-amber'
+        d='M 606 206 L 624 186 L 636 198 L 660 178'
+        fill='none'
+        stroke-width='2'></path>
+      <text class='fill-dg-amber-ink' x='434' y='238' font-size='9'>the evaluators detail</text>
       <text
-        class='fill-dg-green-ink'
+        class='fill-dg-amber-ink'
         x='550'
         y='280'
         font-size='9.5'
         text-anchor='middle'
         font-weight='500'
       >
-        the table and the active tab change; the frame never repaints
+        different page, different content; the frame never repaints
       </text>
     </svg>
 
@@ -1261,7 +1280,7 @@ flowchart LR
   subgraph SG2["/evaluators"]
     direction TB
     G2("(program) layout: NOT re-rendered<br/>siblings share it via the route group"):::blue
-    G2 --> H2("the evaluators table · Evaluators tab active"):::green
+    G2 --> H2("the evaluators detail · Evaluators tab active"):::amber
   end
   SG1 -->|"navigate: only the page content swaps"| SG2
   linkStyle default stroke:#737373,stroke-width:1.5px
@@ -1269,17 +1288,256 @@ flowchart LR
   style SG2 fill:#ffffff,stroke:#e0e0e0,color:#171717,rx:8px,ry:8px
   classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
   classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
 </pre>
 
     <Fragment slot='caption'>
-      The sibling version of the previous figure. The three routes are peers with different paths,
-      yet the header, the tab bar, and the table container belong to the <code>(program)</code>
-      group's layout, so a navigation between them re-renders only the page's table; the active-tab highlight
-      comes from a tiny <code>useSelectedLayoutSegment</code> leaf, not from re-rendering the bar. The
-      wrong version of this page repeats the header and tabs inside each sibling's page file, and every
-      navigation tears down and rebuilds the exact chrome the user is staring at.
+      The sibling version of the previous figure. The routes are peers with different paths, yet the
+      header, the tab bar, and the content container belong to the <code>(program)</code> group's layout,
+      so a navigation between them re-renders only the page inside; the active-tab highlight comes from
+      a tiny <code>useSelectedLayoutSegment</code> leaf, not from re-rendering the bar. The two pages
+      even hold different shapes, a table for learners and a detail card for evaluators, and still the
+      frame never moves. The wrong version repeats the header and tabs inside each sibling's page file,
+      and every navigation tears down and rebuilds the exact chrome the user is staring at.
     </Fragment>
   </Diagram>
+
+  <h3 id='layout-hierarchy'>The layout hierarchy: shared chrome, declared once</h3>
+  <p>
+    Route groups are one instance of a rule that governs the whole app directory:
+    <strong
+      >chrome is composed by nesting layouts, and each piece of it is declared exactly once, in the
+      layout at the level where it applies.</strong
+    >
+    <Chip k='next' />
+    <Chip k='critical' /> The root layout (<code>app/layout.tsx</code>) owns the app-wide shell: the
+    header bar, the primary sidebar, whatever frames every screen. A section's layout owns that
+    section's chrome (a secondary nav, a section header, a tab bar). A page owns only its content.
+    Each layout renders its own chrome plus <code>{'{'}children{'}'}</code>, and the next layer down
+    (a nested layout, then a page) renders into that slot. The header and sidebar are written once,
+    in the root, and every page in the application renders within them.
+  </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 720 280'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <text
+        class='fill-dg-ink'
+        x='360'
+        y='12'
+        font-size='10.5'
+        text-anchor='middle'
+        font-weight='500'
+      >
+        Chrome nests: each layer is declared once, in its own layout
+      </text>
+
+      <!-- root layout: the app shell -->
+      <!-- data-lint-ignore: scene - nested layout regions, chrome laid out by design -->
+      <rect
+        class='fill-dg-white stroke-dg-border'
+        data-lint-ignore='scene'
+        x='20'
+        y='40'
+        width='680'
+        height='236'
+        rx='8'></rect>
+      <text class='fill-dg-muted' x='30' y='53' font-size='8'>app/layout.tsx</text>
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='32' y='58' width='656' height='24' rx='5'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='44' y='70' font-size='9.5' dominant-baseline='central'
+        >App header</text
+      >
+      <text
+        class='fill-dg-blue-ink-soft'
+        x='676'
+        y='70'
+        font-size='8'
+        text-anchor='end'
+        dominant-baseline='central'>app shell: declared once</text
+      >
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='32' y='90' width='92' height='176' rx='5'
+      ></rect>
+      <text
+        class='fill-dg-blue-ink'
+        x='78'
+        y='104'
+        font-size='9'
+        text-anchor='middle'
+        dominant-baseline='central'>Sidebar</text
+      >
+      <text
+        class='fill-dg-blue-ink-soft'
+        x='78'
+        y='117'
+        font-size='8'
+        text-anchor='middle'
+        dominant-baseline='central'>once</text
+      >
+
+      <!-- section layout, nested in the root's children slot -->
+      <rect
+        class='fill-dg-white stroke-dg-blue'
+        data-lint-ignore='scene'
+        x='136'
+        y='90'
+        width='552'
+        height='176'
+        rx='6'></rect>
+      <text class='fill-dg-blue-ink-soft' x='146' y='102' font-size='8'
+        >app/programs/[id]/layout.tsx</text
+      >
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='148' y='110' width='528' height='22' rx='4'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='160' y='121' font-size='9' dominant-baseline='central'
+        >Program header + tabs</text
+      >
+      <text
+        class='fill-dg-blue-ink-soft'
+        x='664'
+        y='121'
+        font-size='8'
+        text-anchor='end'
+        dominant-baseline='central'>section chrome: once</text
+      >
+
+      <!-- page, nested in the section layout's children slot -->
+      <rect
+        class='fill-dg-white stroke-dg-green'
+        data-lint-ignore='scene'
+        x='148'
+        y='142'
+        width='528'
+        height='120'
+        rx='5'></rect>
+      <text class='fill-dg-green-ink' x='160' y='154' font-size='8'
+        >reports/page.tsx: content only</text
+      >
+      <rect class='fill-dg-green-skel' x='160' y='166' width='496' height='10' rx='4'></rect>
+      <rect class='fill-dg-green-skel' x='160' y='182' width='452' height='10' rx='4'></rect>
+      <rect class='fill-dg-green-skel' x='160' y='198' width='486' height='10' rx='4'></rect>
+      <rect class='fill-dg-green-skel' x='160' y='214' width='420' height='10' rx='4'></rect>
+      <rect class='fill-dg-green-skel' x='160' y='230' width='470' height='10' rx='4'></rect>
+    </svg>
+
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart TB
+  root("app/layout.tsx · app shell: header + sidebar (once)"):::blue
+  root -->|"children"| sec("app/programs/[id]/layout.tsx · section header + tabs (once)"):::blue
+  sec -->|"children"| page("reports/page.tsx · content only"):::green
+  linkStyle default stroke:#737373,stroke-width:1.5px
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef green fill:#e7f5ee,stroke:#2ea06d,color:#157a4c
+</pre>
+
+    <Fragment slot='caption'>
+      Three files, three layers, each owning exactly one slice of the frame. The root layout renders
+      the app header and sidebar and drops <code>{'{'}children{'}'}</code> in the middle; the section
+      layout renders the program header and tabs and drops <code>{'{'}children{'}'}</code> below them;
+      the page renders only its content. Nesting composes them into the screen the user sees, and a navigation
+      re-renders only the innermost box that changed.
+    </Fragment>
+  </Diagram>
+
+  <p>
+    The failure mode is re-declaring the shell lower down: a page (or, worse, every nested layout)
+    imports <code>&lt;AppHeader /&gt;</code> and <code>&lt;Sidebar /&gt;</code> and wraps its own content
+    in them. It looks like it works, and it is three kinds of wrong. It <strong
+      >re-mounts the shell on every navigation</strong
+    > instead of letting it persist (<a href='03-mental-model.html#rendering-model'>§3.1</a>), so
+    the header and sidebar visibly rebuild as the user moves around. The copies <strong
+      >drift</strong
+    >: a change to the header lands in the routes that remembered to update and not the others. And
+    where a page sits under a section layout that <em>also</em> renders the shell, the app paints the
+    header <strong>twice</strong>.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-bad'
+      is:raw><span class="filename">app/programs/[id]/reports/page.tsx - the shell, wrongly re-declared in a page</span><span class="tok-kw">export default function</span> <span class="tok-fn">ReportsPage</span>() {
+  <span class="tok-com">/* AppHeader and Sidebar are app-wide chrome. Rendering them here
+     re-mounts them on every navigation and forks a private copy that
+     drifts from every other page's. A page should return content. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"app-shell"</span>&gt;
+      &lt;<span class="tok-fn">AppHeader</span> /&gt;
+      &lt;<span class="tok-fn">Sidebar</span> /&gt;
+      &lt;main <span class="tok-prop">className</span>=<span class="tok-str">"min-h-0 grow overflow-hidden"</span>&gt;
+        &lt;<span class="tok-fn">ReportsTable</span> /&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Every page that does this owns a private copy of the app shell. The header and sidebar rebuild
+      on each navigation instead of persisting, and the copies drift the moment one route updates
+      the header and the rest do not.
+    </CodeCaption>
+  </Snippet>
+
+  <p>
+    The fix is to hoist each piece of chrome to the highest layout that needs it and let composition
+    do the rest. The root owns the shell; a section layout owns its own header and tabs; the page is
+    a leaf.
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/layout.tsx - the app shell, declared once for every route</span><span class="tok-kw">export default function</span> <span class="tok-fn">RootLayout</span>({ children }: <span class="tok-fn">LayoutProps</span>) {
+  <span class="tok-kw">return</span> (
+    &lt;html <span class="tok-prop">lang</span>=<span class="tok-str">"en"</span>&gt;
+      &lt;body&gt;
+        &lt;<span class="tok-fn">AppHeader</span> /&gt;
+        &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex min-h-0 grow"</span>&gt;
+          &lt;<span class="tok-fn">Sidebar</span> /&gt;
+          <span class="tok-com">{/* Every route renders here. A navigation swaps this slot;
+              the header and sidebar persist, never re-rendering. */}</span>
+          &lt;main <span class="tok-prop">className</span>=<span class="tok-str">"min-h-0 grow overflow-hidden"</span>&gt;{children}&lt;/main&gt;
+        &lt;/div&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The app shell exists in exactly one file. Every page in the app is the <code
+        >{'{'}children{'}'}</code
+      >
+      here, so it renders inside the header and sidebar without knowing they exist, and a navigation leaves
+      them untouched (<a href='03-mental-model.html#rendering-model'>§3.1</a>).
+    </CodeCaption>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">app/programs/[id]/layout.tsx - the section's chrome, declared once</span><span class="tok-kw">export default function</span> <span class="tok-fn">ProgramLayout</span>({ children }: <span class="tok-fn">LayoutProps</span>) {
+  <span class="tok-kw">return</span> (
+    &lt;div <span class="tok-prop">className</span>=<span class="tok-str">"flex min-h-0 grow flex-col"</span>&gt;
+      &lt;<span class="tok-fn">ProgramHeader</span> /&gt;
+      &lt;<span class="tok-fn">ProgramTabs</span> /&gt;
+      <span class="tok-com">{/* reports / people / settings fill this slot; each returns
+          only its own content, never the header, tabs, or app shell */}</span>
+      {children}
+    &lt;/div&gt;
+  );
+}</pre>
+    <CodeCaption>
+      The section adds only its own chrome and nests inside the root's slot;
+      <code>reports/page.tsx</code> is then a two-liner that returns
+      <code>&lt;ReportsTable /&gt;</code> and nothing else. The rule, stated plainly: if you are importing
+      the app header or sidebar anywhere other than the one layout that owns it, that is the bug. It belongs
+      in an ancestor layout, and the page belongs in that layout's
+      <code>{'{'}children{'}'}</code>. Same statically-knowable composition as
+      <a href='03-mental-model.html#app-directory'>§3.2</a>: the folder tree is the layout tree.
+    </CodeCaption>
+  </Snippet>
 
   <p>
     This is also the bridge to <a href='13-blocking-requests.html'>§13</a>: once containers live in
