@@ -20,10 +20,10 @@ datasource db {
 model Note {
   id         String  @id
   page       String // section file, e.g. "09-server-resolvable-state.html"
-  kind       String  @default("note") // "note" | (future) "slide"
-  status     String  @default("open") // "open" | "resolved"
+  kind       String  @default("note") // plain string, not an enum; e.g. "note" (future: "slide")
+  status     String  @default("open") // plain string, not an enum; e.g. "open", "resolved"
   text       String
-  resolution String?
+  resolution String? // free-text resolution write-up (null until resolved)
 
   // How the pin re-anchors to a node in the rendered page.
   targetAnchor  String? // nearest id/anchor
