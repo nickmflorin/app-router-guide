@@ -133,6 +133,42 @@
 .deck-hud button:hover {
   background: rgba(255, 255, 255, 0.14);
 }
+.deck-hud button.has-note {
+  background: #0070f3;
+  border-color: #0070f3;
+}
+.deck-note-editor {
+  position: fixed;
+  right: 16px;
+  bottom: 60px;
+  z-index: 12;
+  width: 320px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  padding: 10px;
+}
+.deck-note-editor .dne-head {
+  font:
+    600 12px Inter,
+    system-ui,
+    sans-serif;
+  color: #171717;
+  margin-bottom: 6px;
+}
+.deck-note-editor textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 90px;
+  font:
+    13px Inter,
+    system-ui,
+    sans-serif;
+  border: 1px solid #d4d4d4;
+  border-radius: 6px;
+  padding: 8px;
+  resize: vertical;
+}
 .deck-empty {
   color: #fff;
   font:

@@ -8,6 +8,12 @@
 (function () {
   let cur = 0;
   let overview = null;
+  /* Dev shows the presentation from /api/deck and supports deck-surface notes
+     via /api/notes; the distributable is static (window.__DECK__) with no API. */
+  const IS_DEV = !window.__DECK__;
+  let slideIds = [];
+  let deckNotes = {}; // slideId -> note (surface="deck")
+  let noteEditor = null;
 
   function slidesEls() {
     return Array.prototype.slice.call(document.querySelectorAll('.slide'));
@@ -92,9 +98,79 @@
       sec.appendChild(canvas);
       root.appendChild(sec);
     });
+    slideIds = slides.map(s => s.id);
     cur = 0;
     show(0);
     buildOverviewData(slides);
+  }
+
+  /* ---- deck-surface notes: one comment per slide, keyed by slide id ---- */
+  async function loadDeckNotes() {
+    if (!IS_DEV) return;
+    try {
+      const r = await fetch('/api/notes', { cache: 'no-store' });
+      const d = await r.json();
+      (d.notes || []).forEach(n => {
+        if (n.surface === 'deck' && n.slideId) deckNotes[n.slideId] = n;
+      });
+    } catch (e) {}
+  }
+  function saveDeckNote(slideId, text) {
+    text = (text || '').trim();
+    let note = deckNotes[slideId];
+    if (!text) {
+      if (note && IS_DEV)
+        fetch('/api/notes?id=' + encodeURIComponent(note.id), { method: 'DELETE' }).catch(() => {});
+      delete deckNotes[slideId];
+      updateNoteBtn();
+      return;
+    }
+    if (!note) {
+      note = {
+        id: 'dk' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        page: 'deck',
+        surface: 'deck',
+        status: 'open',
+        text: '',
+        slideId,
+        target: {},
+      };
+      deckNotes[slideId] = note;
+    }
+    note.text = text;
+    if (IS_DEV)
+      fetch('/api/notes', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(note),
+      }).catch(() => {});
+    updateNoteBtn();
+  }
+  function toggleNoteEditor() {
+    if (noteEditor) {
+      noteEditor.remove();
+      noteEditor = null;
+      return;
+    }
+    const sid = slideIds[cur];
+    if (!sid) return;
+    noteEditor = document.createElement('div');
+    noteEditor.className = 'deck-note-editor';
+    noteEditor.innerHTML =
+      '<div class="dne-head">Note on slide ' + (cur + 1) + '</div><textarea></textarea>';
+    const ta = noteEditor.querySelector('textarea');
+    ta.value = deckNotes[sid] ? deckNotes[sid].text : '';
+    let t = null;
+    ta.addEventListener('input', () => {
+      clearTimeout(t);
+      t = setTimeout(() => saveDeckNote(sid, ta.value), 350);
+    });
+    document.body.appendChild(noteEditor);
+    ta.focus();
+  }
+  function updateNoteBtn() {
+    const b = document.querySelector('#deck-hud [data-a="note"]');
+    if (b) b.classList.toggle('has-note', !!(slideIds[cur] && deckNotes[slideIds[cur]]));
   }
 
   function show(i) {
@@ -104,6 +180,12 @@
     els.forEach((e, k) => e.classList.toggle('current', k === cur));
     fit();
     updateHud();
+    updateNoteBtn();
+    if (noteEditor) {
+      noteEditor.remove();
+      noteEditor = null;
+      toggleNoteEditor(); // reopen bound to the new current slide
+    }
   }
   function fit() {
     const els = slidesEls();
@@ -158,11 +240,14 @@
       '<span id="deck-counter">0 / 0</span>' +
       '<button data-a="next" title="Next (→)">›</button>' +
       '<button data-a="ov" title="Overview (o)">Overview</button>' +
+      (IS_DEV ? '<button data-a="note" title="Note on this slide (c)">Note</button>' : '') +
       '<button data-a="fs" title="Fullscreen (f)">⤢</button>';
     hud.querySelector('[data-a="prev"]').addEventListener('click', () => show(cur - 1));
     hud.querySelector('[data-a="next"]').addEventListener('click', () => show(cur + 1));
     hud.querySelector('[data-a="ov"]').addEventListener('click', toggleOverview);
     hud.querySelector('[data-a="fs"]').addEventListener('click', goFullscreen);
+    const nb = hud.querySelector('[data-a="note"]');
+    if (nb) nb.addEventListener('click', toggleNoteEditor);
   }
   function goFullscreen() {
     const d = document.documentElement;
@@ -183,8 +268,15 @@
       show(slidesEls().length - 1);
     } else if (e.key === 'f') {
       goFullscreen();
-    } else if (e.key === 'o' || e.key === 'Escape') {
+    } else if (e.key === 'o') {
       toggleOverview();
+    } else if (e.key === 'c' && IS_DEV) {
+      toggleNoteEditor();
+    } else if (e.key === 'Escape') {
+      if (noteEditor) {
+        noteEditor.remove();
+        noteEditor = null;
+      } else toggleOverview();
     }
   });
   window.addEventListener('resize', fit);
@@ -193,6 +285,7 @@
     buildHud();
     const deck = await getDeck();
     const blocks = await getBlocks(deck);
+    await loadDeckNotes();
     render(deck, blocks);
   })();
 })();
