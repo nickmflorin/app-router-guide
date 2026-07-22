@@ -29,8 +29,10 @@
   }
 
   async function getBlocks(deck) {
+    // Distributable: blocks are inlined by the build generator.
     if (window.__BLOCKS__) return window.__BLOCKS__;
     // Dev: fetch each referenced section page once and extract its blocks.
+    // Titles are NOT derived here; the slide's stored title is used verbatim.
     const slugs = {};
     (deck.slides || []).forEach(s =>
       (s.items || []).forEach(it => {

@@ -52,7 +52,8 @@ model Note {
 model Slide {
   id        String   @id
   order     Int      @default(0) // position of the slide in the deck
-  title     String? // optional slide title/override
+  title     String? // manual title (used only when autoTitle is false)
+  autoTitle Boolean  @default(true) // derive the title from the first block's nearest heading
   layout    String   @default("free") // SlideLayout: "free" | "row" | "column" | "grid"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

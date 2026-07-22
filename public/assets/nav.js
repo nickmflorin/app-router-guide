@@ -961,7 +961,13 @@ const TOC = [
   function saveSlideRemote(s) {
     if (deckApiUp === false) return;
     deckSend('POST', '/slide', {
-      slide: { id: s.id, order: s.order, title: s.title || null, layout: s.layout || 'free' },
+      slide: {
+        id: s.id,
+        order: s.order,
+        title: s.title || null,
+        autoTitle: s.autoTitle !== false,
+        layout: s.layout || 'free',
+      },
     }).catch(() => {});
   }
   function saveItemRemote(it) {
@@ -982,6 +988,7 @@ const TOC = [
       id: newId('s'),
       order: deck.slides.length,
       title: '',
+      autoTitle: true,
       layout: 'free',
       items: [],
     };
@@ -1237,7 +1244,11 @@ const TOC = [
         '<button type="button" data-a="active">' +
         (s.id === activeSlideId ? '● active' : 'set active') +
         '</button><button type="button" data-a="del">Delete</button></span></div>' +
-        '<div class="dp-slide-controls"><input class="dp-title" placeholder="Slide title (optional)" />' +
+        '<div class="dp-slide-controls">' +
+        '<label class="dp-auto"><input type="checkbox" class="dp-autotitle" ' +
+        (s.autoTitle !== false ? 'checked' : '') +
+        '/>auto title</label>' +
+        '<input class="dp-title" placeholder="Slide title" />' +
         '<select class="dp-layout">' +
         ['free', 'row', 'column', 'grid']
           .map(
@@ -1254,14 +1265,27 @@ const TOC = [
         '</select></div>' +
         '<textarea class="dp-slidenote" placeholder="Note for this slide (how it should look)"></textarea>' +
         '<div class="dp-items"></div>';
-      box.querySelector('.dp-title').value = s.title || '';
-      box.querySelector('.dp-title').addEventListener(
+      const titleInput = box.querySelector('.dp-title');
+      const autoCb = box.querySelector('.dp-autotitle');
+      const syncTitleEnabled = () => {
+        const auto = s.autoTitle !== false;
+        titleInput.disabled = auto;
+        titleInput.placeholder = auto ? 'Auto — Claude titles this slide' : 'Slide title';
+      };
+      titleInput.value = s.title || '';
+      syncTitleEnabled();
+      titleInput.addEventListener(
         'input',
         debounced(e => {
           s.title = e.target.value;
           saveSlideRemote(s);
         }),
       );
+      autoCb.addEventListener('change', e => {
+        s.autoTitle = e.target.checked;
+        syncTitleEnabled();
+        saveSlideRemote(s);
+      });
       box.querySelector('.dp-layout').addEventListener('change', e => {
         s.layout = e.target.value;
         saveSlideRemote(s);

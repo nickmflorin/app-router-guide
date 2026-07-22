@@ -21,6 +21,7 @@ function slideToWire(s) {
     id: s.id,
     order: s.order,
     title: s.title ?? undefined,
+    autoTitle: s.autoTitle !== false,
     layout: s.layout,
     items: (s.items ?? []).map(itemToWire),
   };
@@ -38,6 +39,7 @@ export async function upsertSlide(s) {
   const data = {
     order: Number.isFinite(s.order) ? s.order : 0,
     title: s.title ?? null,
+    autoTitle: s.autoTitle !== false,
     layout: assertLayout(s.layout ?? SlideLayout.Free),
   };
   const row = await prisma.slide.upsert({

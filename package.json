@@ -29,7 +29,8 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "node prisma/seed.mjs",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "deck:titles": "python3 scripts/deck_titles.py"
   },
   "dependencies": {
     "astro": "^6.0.0"
