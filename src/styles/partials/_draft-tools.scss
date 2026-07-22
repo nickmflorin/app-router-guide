@@ -357,16 +357,29 @@ body.deck-mode .content-inner {
 }
 .dp-slide-controls {
   display: flex;
+  align-items: stretch; /* equal-height input + select */
   gap: 6px;
   margin-bottom: 6px;
 }
+.dp-auto {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  user-select: none;
+}
+.dp-auto input {
+  margin: 0;
+}
 .dp-title {
   flex: 1;
+  min-width: 0;
   font: inherit;
   font-size: 11px;
   padding: 3px 6px;
   border: 1px solid var(--note-input-border);
   border-radius: 5px;
+  box-sizing: border-box;
 }
 .dp-layout,
 .dp-move {
@@ -374,6 +387,10 @@ body.deck-mode .content-inner {
   font-size: 10.5px;
   border: 1px solid var(--note-input-border);
   border-radius: 5px;
+}
+.dp-layout {
+  font-size: 11px;
+  padding: 0 4px;
 }
 .dp-move {
   max-width: 84px;
