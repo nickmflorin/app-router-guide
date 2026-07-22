@@ -18,12 +18,29 @@
 .slide {
   position: absolute;
   inset: 0;
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+  transform: translateX(100%);
+  transition:
+    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s ease;
+  pointer-events: none;
+  will-change: transform, opacity;
 }
 .slide.current {
-  display: flex;
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+.slide.is-before {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+.slide.is-after {
+  opacity: 0;
+  transform: translateX(100%);
 }
 .slide-canvas {
   width: 1280px;
@@ -103,6 +120,55 @@
   color: #b3261e;
 }
 
+.deck-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 11;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  font:
+    26px/1 Inter,
+    system-ui,
+    sans-serif;
+  opacity: 0.55;
+  transition:
+    background 0.15s ease,
+    opacity 0.15s ease;
+}
+.deck-arrow:hover {
+  background: rgba(255, 255, 255, 0.22);
+  opacity: 1;
+}
+.deck-arrow.left {
+  left: 22px;
+}
+.deck-arrow.right {
+  right: 22px;
+}
+.deck-arrow.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.deck-progress {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 0;
+  background: #0070f3;
+  z-index: 11;
+  transition: width 0.4s ease;
+}
 .deck-hud {
   position: fixed;
   bottom: 14px;

@@ -179,9 +179,16 @@
     const els = slidesEls();
     if (!els.length) return;
     cur = Math.max(0, Math.min(i, els.length - 1));
-    els.forEach((e, k) => e.classList.toggle('current', k === cur));
+    // Position each slide relative to the current one; CSS transitions the
+    // transform/opacity, so slides glide in from the right / out to the left.
+    els.forEach((e, k) => {
+      e.classList.toggle('current', k === cur);
+      e.classList.toggle('is-before', k < cur);
+      e.classList.toggle('is-after', k > cur);
+    });
     fit();
     updateHud();
+    updateChrome();
     updateNoteBtn();
     if (noteEditor) {
       noteEditor.remove();
@@ -190,11 +197,38 @@
     }
   }
   function fit() {
-    const els = slidesEls();
-    const c = els[cur] && els[cur].querySelector('.slide-canvas');
-    if (!c) return;
+    // Scale every canvas (not just the current one) so slides transitioning in
+    // are already sized correctly.
     const scale = Math.min((window.innerWidth * 0.94) / 1280, (window.innerHeight * 0.9) / 720);
-    c.style.transform = 'scale(' + scale + ')';
+    slidesEls().forEach(s => {
+      const c = s.querySelector('.slide-canvas');
+      if (c) c.style.transform = 'scale(' + scale + ')';
+    });
+  }
+  function updateChrome() {
+    const total = slidesEls().length;
+    const left = document.querySelector('.deck-arrow.left');
+    const right = document.querySelector('.deck-arrow.right');
+    if (left) left.classList.toggle('hidden', cur <= 0);
+    if (right) right.classList.toggle('hidden', cur >= total - 1);
+    const p = document.getElementById('deck-progress');
+    if (p) p.style.width = total ? ((cur + 1) / total) * 100 + '%' : '0';
+  }
+  function buildChrome() {
+    const arrow = (cls, txt, onClick) => {
+      const b = document.createElement('button');
+      b.className = 'deck-arrow ' + cls;
+      b.setAttribute('aria-label', cls === 'left' ? 'Previous slide' : 'Next slide');
+      b.textContent = txt;
+      b.addEventListener('click', onClick);
+      document.body.appendChild(b);
+    };
+    arrow('left', '‹', () => show(cur - 1));
+    arrow('right', '›', () => show(cur + 1));
+    const p = document.createElement('div');
+    p.className = 'deck-progress';
+    p.id = 'deck-progress';
+    document.body.appendChild(p);
   }
   function updateHud() {
     const el = document.getElementById('deck-counter');
@@ -238,14 +272,10 @@
     const hud = document.getElementById('deck-hud');
     if (!hud) return;
     hud.innerHTML =
-      '<button data-a="prev" title="Previous (←)">‹</button>' +
       '<span id="deck-counter">0 / 0</span>' +
-      '<button data-a="next" title="Next (→)">›</button>' +
       '<button data-a="ov" title="Overview (o)">Overview</button>' +
       (IS_DEV ? '<button data-a="note" title="Note on this slide (c)">Note</button>' : '') +
       '<button data-a="fs" title="Fullscreen (f)">⤢</button>';
-    hud.querySelector('[data-a="prev"]').addEventListener('click', () => show(cur - 1));
-    hud.querySelector('[data-a="next"]').addEventListener('click', () => show(cur + 1));
     hud.querySelector('[data-a="ov"]').addEventListener('click', toggleOverview);
     hud.querySelector('[data-a="fs"]').addEventListener('click', goFullscreen);
     const nb = hud.querySelector('[data-a="note"]');
@@ -285,6 +315,7 @@
 
   (async function () {
     buildHud();
+    buildChrome();
     const deck = await getDeck();
     const blocks = await getBlocks(deck);
     await loadDeckNotes();
