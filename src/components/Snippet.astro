@@ -4,9 +4,20 @@
    all compare-column flex behavior, so the caption's distance from the code
    box is identical everywhere (prose flow, list items, compare columns).
    Every pre.code in the guide lives inside one of these; never place a bare
-   pre or a sibling caption directly in the page. */
+   pre or a sibling caption directly in the page.
+
+   Emits a stable, deck-addressable data-content-id ("<page>::snippet::<n>");
+   see Diagram.astro for how the per-render counter works. */
+const loc = Astro.locals as Record<string, any>;
+loc.__cid ??= {};
+const __slug = (Astro.url.pathname.split('/').filter(Boolean).pop() || 'index').replace(
+  /\.html$/,
+  '',
+);
+loc.__cid.snippet = (loc.__cid.snippet || 0) + 1;
+const contentId = `${__slug}::snippet::${loc.__cid.snippet}`;
 ---
 
-<div class='snippet'>
+<div class='snippet' data-content-id={contentId}>
   <slot />
 </div>

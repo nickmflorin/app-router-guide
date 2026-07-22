@@ -9,9 +9,23 @@
    nothing); scripts/build_md.py extracts it into the Markdown forms as a
    ```mermaid fence. Keep the twin in sync when the SVG changes. */
 const hasMermaid = Astro.slots.has('mermaid');
+
+/* Stable, deck-addressable id for this block: "<page>::diagram::<n>", where n
+   is the diagram's 1-based order on the page. The counter lives in
+   Astro.locals, which is fresh per render, so ordinals are identical in dev and
+   in the build. The slide deck references blocks by this id (see server/deck
+   and the /deck route); nothing about the content is stored in the DB. */
+const loc = Astro.locals as Record<string, any>;
+loc.__cid ??= {};
+const __slug = (Astro.url.pathname.split('/').filter(Boolean).pop() || 'index').replace(
+  /\.html$/,
+  '',
+);
+loc.__cid.diagram = (loc.__cid.diagram || 0) + 1;
+const contentId = `${__slug}::diagram::${loc.__cid.diagram}`;
 ---
 
-<figure class='diagram'>
+<figure class='diagram' data-content-id={contentId}>
   <slot />
   {
     hasMermaid && (
