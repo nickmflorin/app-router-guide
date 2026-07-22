@@ -230,6 +230,27 @@ body.note-mode .content-inner {
   padding: 6px 14px;
 }
 
+/* ---------- dev-only sidebar deck link ---------- */
+.toc-item.deck-link {
+  color: var(--color-blue, #0070f3);
+  font-weight: 600;
+  border-top: 1px solid var(--note-line);
+  margin-top: 8px;
+  padding-top: 10px;
+}
+.toc-item.deck-link .deck-dev-tag {
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-amber-ink, #8a5a00);
+  background: var(--color-amber-soft, #fdf3e3);
+  border: 1px solid var(--note-badge-border, #e7c983);
+  border-radius: 5px;
+  padding: 0 5px;
+  margin-left: 6px;
+}
+
 /* ---------- deck mode: designation UI ---------- */
 body.deck-mode .content-inner {
   cursor: copy;

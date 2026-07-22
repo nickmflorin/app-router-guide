@@ -135,6 +135,12 @@ const TOC = [
   const inSections = location.pathname.includes('/sections/');
   const prefix = inSections ? '' : 'sections/';
   const homeHref = inSections ? '../index.html' : 'index.html';
+  /* Dev-only affordances (the slide-deck link) show only on the local dev
+     server, never in the shipped static guide. */
+  const IS_DEV =
+    (location.hostname === 'localhost' || location.hostname === '127.0.0.1') &&
+    location.protocol.startsWith('http');
+  const deckHref = inSections ? '../deck' : 'deck';
 
   const flat = TOC.flatMap(g => g.items);
   const idx = flat.findIndex(i => i.file === here);
@@ -184,6 +190,9 @@ const TOC = [
       }
     }
     html += '</div>';
+    if (IS_DEV) {
+      html += `<a class="toc-item deck-link" href="${deckHref}">▶ Slide deck <span class="deck-dev-tag">dev</span></a>`;
+    }
     sidebar.innerHTML = html;
 
     /* Keep the sidebar's scroll position across page loads. Each chapter is
