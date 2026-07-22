@@ -1,6 +1,22 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
+/* Dev-only notes API. `apply: 'serve'` and the configureServer hook mean this
+   runs ONLY under `astro dev`; `astro build` never applies it and never imports
+   the middleware (the import is lazy), so the shipped site stays pure static
+   HTML with no server code, no Prisma, and no DB. It serves /api/notes backed
+   by the committed SQLite DB, so annotating writes straight through. */
+const notesApiDev = {
+  name: 'notes-api-dev',
+  apply: 'serve',
+  configureServer(server) {
+    server.middlewares.use('/api/notes', async (req, res) => {
+      const { handleNotes } = await import('./server/notes-middleware.mjs');
+      return handleNotes(req, res);
+    });
+  },
+};
+
 /* The built site goes straight to build/output/app-router-guide_html/ (the
    distributable folder form), same URLs and file names as always
    (sections/NN-slug.html), so every downstream tool (svg_lint,
@@ -10,5 +26,5 @@ export default defineConfig({
   outDir: './build/output/app-router-guide_html',
   build: { format: 'file' },
   compressHTML: false,
-  vite: { plugins: [tailwindcss()] },
+  vite: { plugins: [tailwindcss(), notesApiDev] },
 });

@@ -1,0 +1,39 @@
+// Working-notes store for the guide's dev-only annotation layer.
+//
+// This is dev tooling: the SQLite file (prisma/notes.db) is committed to source
+// control and read/written only by `astro dev` (see astro.config.mjs) and the
+// seed script. `astro build` never loads Prisma or this DB; the shipped site is
+// static HTML.
+//
+// `kind` is a discriminator so the same table can later hold slide-deck
+// designations (kind = "slide") without a schema change.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./notes.db"
+}
+
+model Note {
+  id         String  @id
+  page       String // section file, e.g. "09-server-resolvable-state.html"
+  kind       String  @default("note") // "note" | (future) "slide"
+  status     String  @default("open") // "open" | "resolved"
+  text       String
+  resolution String?
+
+  // How the pin re-anchors to a node in the rendered page.
+  targetAnchor  String? // nearest id/anchor
+  targetTag     String? // element tag, e.g. "h3"
+  targetSnippet String? // a bit of the target's text, for disambiguation
+  targetPath    String? // JSON-encoded child-index path, e.g. "[26]"
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([page])
+  @@index([status])
+}

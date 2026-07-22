@@ -7,3 +7,10 @@ build/output/
 .preview/
 public/assets/search-index.js
 public/page-notes.json
+
+# Prisma: commit prisma/notes.db (the notes store) but not SQLite's transient
+# sidecar files or the generated client.
+prisma/notes.db-journal
+prisma/notes.db-wal
+prisma/notes.db-shm
+prisma/generated/

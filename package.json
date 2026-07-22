@@ -25,16 +25,22 @@
     "dist": "python3 scripts/build_dist.py",
     "preview": "astro preview",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "postinstall": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "node prisma/seed.mjs",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "astro": "^6.0.0"
   },
   "devDependencies": {
+    "@prisma/client": "^6.2.0",
     "@tailwindcss/vite": "^4.3.0",
-    "tailwindcss": "^4.3.0",
     "prettier": "^3.5.0",
     "prettier-plugin-astro": "^0.14.0",
-    "sass": "^1.80.0"
+    "prisma": "^6.2.0",
+    "sass": "^1.80.0",
+    "tailwindcss": "^4.3.0"
   }
 }
