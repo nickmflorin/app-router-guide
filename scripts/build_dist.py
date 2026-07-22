@@ -17,6 +17,7 @@ Output layout:
     ├── app-router-guide.html    html + file:   one self-contained document
     ├── app-router-guide_md/     md + folder:   multi-page markdown docs
     ├── app-router-guide.md      md + file:     one markdown document
+    ├── app-router-guide-deck.html  deck:       self-contained presentation
     (the Cowork DRAFT preview lives outside this folder, in .preview/,
      so zipping build/ ships only final outputs)
 
@@ -30,7 +31,7 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FORMATS = ("html", "md")
+FORMATS = ("html", "md", "deck")
 PACKAGINGS = ("folder", "file")
 
 
@@ -76,12 +77,19 @@ def main():
                              aliases={"module": "folder"})
 
     built, skipped = [], []
+    _state = {"html_built": False}
+
+    def ensure_html():
+        """Run the astro build once, no matter how many outputs depend on it."""
+        if not _state["html_built"]:
+            run(["npm", "run", "build"])
+            _state["html_built"] = True
 
     if "html" in formats:
         # The full pipeline: astro build (outDir = build/output/app-router-guide_html),
         # relativize + strip draft layer, regenerate the search index. The
         # folder form falls straight out of this; the file form bundles it.
-        run(["npm", "run", "build"])
+        ensure_html()
         if "folder" in packagings:
             built.append("build/output/app-router-guide_html/  (multi-page site)")
         if "file" in packagings:
@@ -92,8 +100,7 @@ def main():
 
     if "md" in formats:
         # md is derived from the built html site; make sure it exists/is fresh.
-        if "html" not in formats:
-            run(["npm", "run", "build"])
+        ensure_html()
         run([sys.executable, "scripts/build_md.py",
              "--packaging", ",".join(packagings)])
         if "folder" in packagings:
@@ -104,6 +111,14 @@ def main():
             built.append("build/output/app-router-guide_md/    (multi-page markdown)")
         if "file" in packagings:
             built.append("build/output/app-router-guide.md     (single-file markdown)")
+
+    if "deck" in formats:
+        # The slide deck: composed from the built guide HTML (blocks pulled by
+        # data-content-id) + the committed DB (which blocks, and their
+        # arrangement). Always one self-contained presentation file.
+        ensure_html()
+        run([sys.executable, "scripts/build_deck.py"])
+        built.append("build/output/app-router-guide-deck.html  (self-contained presentation)")
 
     print("\ndist summary")
     for b in built:
