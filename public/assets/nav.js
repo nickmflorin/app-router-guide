@@ -753,6 +753,13 @@ const TOC = [
     const m = /^(\d+)/.exec(p || '');
     return m ? '§' + parseInt(m[1], 10) : (p || '').replace(/\.html$/, '') || 'cover';
   }
+  /* Relative href from the current page to another note's page. Section pages
+     live under sections/; the cover is index.html at the root. */
+  function pageHref(p) {
+    const inSections = location.pathname.includes('/sections/');
+    if (!p || p === 'index.html') return inSections ? '../index.html' : 'index.html';
+    return inSections ? p : 'sections/' + p;
+  }
   function renderPanel() {
     if (!panel) return;
     const nums = numberMap();
@@ -793,11 +800,17 @@ const TOC = [
         ((n.target && n.target.snippet) || '').slice(0, 42) +
         '…”';
       item.querySelector('.np-text').textContent = n.text || '(empty)';
-      /* Click the item to edit; on-page notes locate their block first. */
+      /* Click the item to edit. On-page notes locate their block; off-page
+         notes navigate to their page and open there (see openFromHash). */
       item.addEventListener('click', e => {
         if (e.target.closest('[data-act="delete"]')) return;
-        const el = onThisPage ? resolveTarget(n.target) : null;
-        openDialog(el || document.body, n);
+        if (onThisPage) {
+          const el = resolveTarget(n.target);
+          if (el) flash(el);
+          openDialog(el || document.body, n);
+        } else {
+          location.href = pageHref(n.page) + '#note=' + encodeURIComponent(n.id);
+        }
       });
       item.querySelector('[data-act="delete"]').addEventListener('click', e => {
         e.stopPropagation();
@@ -856,10 +869,28 @@ const TOC = [
       /* No server (file://) or no ledger yet: manual Load still works. */
     }
   }
+  /* Arriving via a panel "jump" from another page: open that note's editor and
+     scroll to its block once the page has hydrated. The hash is cleared so a
+     later manual refresh doesn't reopen it. */
+  function openFromHash() {
+    const m = /#note=([^&]+)/.exec(location.hash);
+    if (!m) return;
+    const id = decodeURIComponent(m[1]);
+    const note = data.notes.find(x => x.id === id);
+    if (!note) return;
+    history.replaceState(null, '', location.pathname + location.search);
+    setTimeout(() => {
+      const el = resolveTarget(note.target);
+      if (el) flash(el);
+      openDialog(el || document.body, note);
+    }, 300);
+  }
+
   /* Hydrate from the dev DB; fall back to the page-notes.json ledger if the
-     endpoint isn't there. */
+     endpoint isn't there. Then honour a jump-to-note hash, if any. */
   syncFromApi().then(ok => {
     if (!ok) syncFromFile();
+    openFromHash();
   });
 
   /* Initial render, after fonts/layout settle. */
