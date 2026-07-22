@@ -488,8 +488,16 @@ const TOC = [
       pin.className = 'note-pin';
       pin.textContent = String(i + 1);
       pin.title = n.text;
-      pin.style.top = window.scrollY + r.top + 'px';
-      pin.style.left = Math.max(6, window.scrollX + r.left - 30) + 'px';
+      /* Align the pin's centre to the vertical middle of the target's FIRST
+         line (not the whole box), so it lines up with a heading or the top
+         line of a paragraph, and sits just left of the content. */
+      const PIN = 22;
+      const cs = getComputedStyle(el);
+      let lh = parseFloat(cs.lineHeight);
+      if (!lh || Number.isNaN(lh)) lh = parseFloat(cs.fontSize) * 1.4;
+      const firstLineCenter = r.top + Math.min(lh, r.height) / 2;
+      pin.style.top = window.scrollY + firstLineCenter - PIN / 2 + 'px';
+      pin.style.left = Math.max(6, window.scrollX + r.left - PIN - 10) + 'px';
       pin.addEventListener('click', () => {
         openPanel();
         flash(el);
