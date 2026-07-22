@@ -21,3 +21,19 @@ clarification before proceeding.
       Beyond React 16 (JSConf Iceland 2018) at the ~29min mark; a GIF isn't feasible in the
       SVG+markdown pipeline, so it's a multi-frame static diagram.)
 - [ ] Do's and Don'ts Summaries for Each Page
+
+## Automation
+
+- [ ] Working notes for Slide Deck.
+- [ ] Productionizing working notes via API/ORM instead of JSON, use sqlite.
+- [ ] Slide Deck "mode" to show what parts of the doc are in slide deck and allow me to select
+      things or deselect things for inclusion or exclusion. Should be able to add notes as well, to
+      existing selections or new selections, for inclusion in the slide deck. Will need a consistent
+      store for this, either JSON file or sqlite per above.
+- [ ] Slide Deck "mode" to fade all content not in the deck. Should be able to select things more
+      granularly.
+- [ ] Storing ongoing working notes that are not saved in local storage to prevent loss but
+      persisting them via API on save. Removing the save to file option and should be able to open
+      the modal for modifying the working note by clicking on the number. Notes at the top showing
+      all notes unresolved as well as just the notes for that page. Ability to keep dialog open when
+      hot refresh fires.
