@@ -28,6 +28,9 @@ const notesApiDev = {
    stays off so the output remains diffable. */
 export default defineConfig({
   outDir: './build/output/app-router-guide_html',
+  // The Astro dev toolbar floats bottom-center and collides with the deck HUD;
+  // this project doesn't use it, so turn it off (dev-only, no build impact).
+  devToolbar: { enabled: false },
   build: { format: 'file' },
   compressHTML: false,
   vite: { plugins: [tailwindcss(), notesApiDev] },

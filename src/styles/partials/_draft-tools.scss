@@ -231,12 +231,19 @@ body.note-mode .content-inner {
 }
 
 /* ---------- dev-only sidebar deck link ---------- */
-.toc-item.deck-link {
-  color: var(--color-blue, #0070f3);
-  font-weight: 600;
-  border-top: 1px solid var(--note-line);
-  margin-top: 8px;
+/* Matches a normal .toc-item (muted, aligned to the number column via the ▶ in
+   .n), with a hairline separator above and an accent colour to mark it dev. */
+.sidebar a.toc-item.deck-link {
+  margin-top: 10px;
   padding-top: 10px;
+  border-top: 1px solid var(--color-accent-soft);
+  color: var(--color-accent);
+}
+.sidebar a.toc-item.deck-link:hover {
+  color: var(--color-accent);
+}
+.sidebar a.toc-item.deck-link .n {
+  color: var(--color-accent);
 }
 .toc-item.deck-link .deck-dev-tag {
   font-size: 9px;
@@ -248,7 +255,8 @@ body.note-mode .content-inner {
   border: 1px solid var(--note-badge-border, #e7c983);
   border-radius: 5px;
   padding: 0 5px;
-  margin-left: 6px;
+  margin-left: 8px;
+  align-self: center;
 }
 
 /* ---------- deck mode: designation UI ---------- */
