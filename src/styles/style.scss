@@ -1,15 +1,18 @@
-// The guide's design system, authored in SCSS. Compiled by `npm run css`
-// (scripts/build_css.mjs) into public/assets/style.css, which is GENERATED:
-// never edit that file directly. Partials are grouped by the design-system
+// The guide's design system, authored in SCSS. Compiled by Vite (dart-sass)
+// when imported from src/layouts/GuidePage.astro: HMR in dev, emitted into
+// _astro/*.css by `astro build`. Partials are grouped by the design-system
 // sections; add new styles to the matching partial (or a new one, and @use
 // it here in order).
+//
+// NOTE: partials/draft-tools is intentionally NOT @use'd here. It is the
+// dev-only draft layer, imported separately (and DEV-gated) by GuidePage.astro
+// so it is dead-code-eliminated from the production build.
 
 @use 'partials/base';
 @use 'partials/layout';
 @use 'partials/sidebar-search';
 @use 'partials/typography';
 @use 'partials/chips';
-@use 'partials/draft-tools';
 @use 'partials/callouts';
 @use 'partials/goal-cards';
 @use 'partials/code-blocks-light';

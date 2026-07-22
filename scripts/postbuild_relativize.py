@@ -32,12 +32,16 @@ if os.path.exists(ledger):
     os.remove(ledger)
     print('page-notes.json stripped from build output')
 
-# Strip the dev-only draft layer (annotation module in nav.js, draft-tools
-# styles in style.css) from the BUILT copies. The source files in public/
-# keep the code between /* @dev-only:start */ ... /* @dev-only:end */
-# markers; the dev server serves those, the distributable never sees them.
+# Strip the dev-only draft layer (annotation module) from the BUILT nav.js.
+# The source file in public/ keeps the code between /* @dev-only:start */ ...
+# /* @dev-only:end */ markers; the dev server serves those, the distributable
+# never sees them.
+#
+# The draft-tools STYLES no longer need stripping here: they live in a separate
+# SCSS partial that GuidePage.astro imports only under import.meta.env.DEV, so
+# `astro build` dead-code-eliminates them and they never reach _astro/*.css.
 DEV_BLOCK = re.compile(r'/\* @dev-only:start \*/.*?/\* @dev-only:end \*/\n?', re.S)
-for rel in ('assets/nav.js', 'assets/style.css'):
+for rel in ('assets/nav.js',):
     p = os.path.join(OUT, rel)
     s = open(p).read()
     stripped, n = DEV_BLOCK.subn('', s)

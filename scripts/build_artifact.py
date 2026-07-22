@@ -189,18 +189,27 @@ script = r"""
 })();
 """
 
-# Draft mode needs the UNSTRIPPED css (public/) so the DRAFT badge stays
-# styled; final mode uses the built css, which has the draft layer removed.
-css = read("build/output/app-router-guide_html/assets/style.css") if ARGS.final else read("public/assets/style.css")
+# All page CSS Astro compiles (the SCSS design system + the Tailwind theme
+# tokens and fill-dg-*/stroke-dg-* diagram utilities) is emitted into
+# _astro/*.css and linked per page in the folder build. The single file has no
+# <link>s, so inline it or the guide loses all styling. We read the stylesheet
+# links from a built page in DOCUMENT ORDER so the inlined cascade matches what
+# the browser applies in the folder build (rather than a hash-sorted glob).
+# Built by `astro build`, so this exists in both modes.
+_index = read("build/output/app-router-guide_html/index.html")
+_css_rels = re.findall(r'<link rel="stylesheet" href="[^"]*?(_astro/[\w.-]+\.css)"', _index)
+assert _css_rels, "no _astro stylesheet links found in built index.html"
+astro_css = "".join(
+    read(f"build/output/app-router-guide_html/{rel}") + "\n" for rel in _css_rels
+)
 
-# The Tailwind bundle Astro emits (theme tokens + the fill-dg-*/stroke-dg-*
-# utilities the diagrams now use) lives in _astro/*.css and is linked per page
-# in the folder build. The single file has no <link>s, so inline it too or the
-# diagrams lose all color. Built by `astro build`, so it exists in both modes.
-import glob as _glob
-tailwind_css = "".join(
-    read(os.path.relpath(p, ROOT)) + "\n"
-    for p in sorted(_glob.glob(os.path.join(ROOT, "build/output/app-router-guide_html/_astro/*.css")))
+# The draft layer (badge + annotation styles) is compiled only in dev
+# (import.meta.env.DEV gates its import in GuidePage.astro), so it is absent
+# from `astro build` output. Final mode ships without it; the draft artifact
+# needs it to style the DRAFT badge, so inline the partial raw — it is plain
+# CSS — with only the /* @dev-only */ markers removed.
+draft_css = "" if ARGS.final else re.sub(
+    r'/\* @dev-only:(?:start|end) \*/\n?', '', read("src/styles/partials/_draft-tools.scss")
 )
 
 extra_css = """
@@ -217,8 +226,8 @@ doc = f"""<!DOCTYPE html>
 <title>The App Router Guide — Craft Education{'' if ARGS.final else ' (DRAFT)'}</title>
 <link rel="icon" href="{logo_uri}">
 <style>
-{tailwind_css}
-{css}
+{astro_css}
+{draft_css}
 {extra_css}
 </style>
 </head>

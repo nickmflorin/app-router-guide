@@ -1,5 +1,18 @@
 ---
 import '../styles/tailwind.css';
+// The design system, authored in SCSS. Vite compiles it (dart-sass) and gives
+// live HMR in dev; `astro build` emits it into _astro/*.css. Imported AFTER
+// tailwind.css so its cascade order matches the old static <link> (which sat
+// below the tailwind import in the head).
+import '../styles/style.scss';
+// The draft layer (badge + annotation styles) is dev-only. This branch is
+// dead-code-eliminated from the production build (import.meta.env.DEV is a
+// compile-time false), so the draft CSS never ships — replacing the old
+// post-build marker-strip. The annotation JS in nav.js is still gated to
+// localhost separately.
+if (import.meta.env.DEV) {
+  await import('../styles/partials/_draft-tools.scss');
+}
 
 const { title, root = '..', cover = false } = Astro.props;
 /* '' for the index, '../' for section pages, matching the original pages' relative URLs exactly. */
@@ -12,7 +25,6 @@ const prefix = root === '.' ? '' : `${root}/`;
     <meta charset='UTF-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
     <title>{title}</title>
-    <link rel='stylesheet' href={`${prefix}assets/style.css`} />
     <link rel='icon' href={`${prefix}assets/logomark.svg`} type='image/svg+xml' />
   </head>
   <body>
