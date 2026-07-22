@@ -1,0 +1,189 @@
+// Full-screen presentation view for the slide deck. NOT dev-only: the deck
+// distributable inlines these styles. Each slide is a fixed 1280x720 canvas
+// scaled to fit the viewport, so content sizing is consistent.
+
+.deck-view {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: #0b0b0c;
+}
+.deck-stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.slide {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.slide.current {
+  display: flex;
+}
+.slide-canvas {
+  width: 1280px;
+  height: 720px;
+  background: var(--color-white, #fff);
+  color: var(--color-fg, #171717);
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  transform-origin: center center;
+  display: flex;
+  flex-direction: column;
+  padding: 52px 64px;
+  box-sizing: border-box;
+}
+.slide-title {
+  font:
+    600 30px/1.2 Inter,
+    system-ui,
+    sans-serif;
+  margin: 0 0 22px;
+}
+.slide-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  justify-content: center;
+}
+.slide-body.layout-row {
+  flex-direction: row;
+}
+.slide-body.layout-column,
+.slide-body.layout-free {
+  flex-direction: column;
+}
+.slide-body.layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: center;
+}
+.slide-item {
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.slide-item .diagram {
+  margin: 0;
+  width: 100%;
+}
+.slide-item .diagram svg {
+  width: 100%;
+  height: auto;
+  max-height: 560px;
+}
+/* Deck is diagram-forward: hide the diagram caption unless a slide opts in. */
+.slide-item .diagram figcaption {
+  display: none;
+}
+.slide-item .snippet {
+  margin: 0;
+  width: 100%;
+}
+.slide-item .snippet pre.code {
+  font-size: 15px;
+}
+.deck-missing {
+  font:
+    13px ui-monospace,
+    monospace;
+  color: #b3261e;
+}
+
+.deck-hud {
+  position: fixed;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  color: #fff;
+  font:
+    12px Inter,
+    system-ui,
+    sans-serif;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 20px;
+  padding: 6px 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.deck-hud button {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  border-radius: 12px;
+  padding: 2px 9px;
+  cursor: pointer;
+  font: inherit;
+}
+.deck-hud button:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+.deck-empty {
+  color: #fff;
+  font:
+    15px Inter,
+    system-ui,
+    sans-serif;
+  text-align: center;
+  max-width: 460px;
+  line-height: 1.5;
+}
+
+.deck-overview {
+  position: fixed;
+  inset: 0;
+  background: #0b0b0c;
+  z-index: 20;
+  overflow: auto;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  align-content: start;
+}
+.deck-overview .ov-slide {
+  background: var(--color-white, #fff);
+  color: var(--color-fg, #171717);
+  border-radius: 8px;
+  min-height: 130px;
+  cursor: pointer;
+  padding: 12px 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+.deck-overview .ov-slide:hover {
+  outline: 2px solid #0070f3;
+}
+.deck-overview .ov-num {
+  font:
+    600 12px Inter,
+    sans-serif;
+  color: #737373;
+}
+.deck-overview .ov-title {
+  font:
+    600 15px Inter,
+    sans-serif;
+  margin: 2px 0 8px;
+}
+.deck-overview .ov-refs {
+  font:
+    11px ui-monospace,
+    monospace;
+  color: #525252;
+  white-space: pre-line;
+}

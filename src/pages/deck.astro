@@ -1,0 +1,22 @@
+---
+/* The slide deck, viewed inside the guide's Astro app (dev) at /deck.
+   Standalone (not the guide layout): a presentation shell whose slides are
+   composed from the live document by deck-view.js. In dev it reads /api/deck
+   and pulls blocks from the served section pages; the shipped presentation is
+   the separate distributable (scripts/build_deck.py), not this page. */
+import '../styles/style.scss';
+---
+
+<!doctype html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <title>App Router Guide — Deck</title>
+  </head>
+  <body class='deck-view'>
+    <div id='deck-root' class='deck-stage'></div>
+    <div id='deck-hud' class='deck-hud'></div>
+    <script src='/assets/deck-view.js' is:inline></script>
+  </body>
+</html>
