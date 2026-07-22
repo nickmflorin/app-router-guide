@@ -48,7 +48,7 @@
 }
 .side-search input:focus {
   border-color: var(--color-accent);
-  background: #fff;
+  background: var(--color-white);
   box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 .side-search input::placeholder {

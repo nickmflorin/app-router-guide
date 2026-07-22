@@ -21,15 +21,15 @@
   margin-bottom: 0;
 }
 .callout-info {
-  border-color: #cde0fb;
-  background: #f5f9ff;
+  border-color: var(--color-accent-border);
+  background: var(--color-accent-tint);
 }
 .callout-info .callout-title {
   color: var(--color-accent);
 }
 .callout-warn {
-  border-color: #f3e2c0;
-  background: #fdfaf3;
+  border-color: var(--color-amber-border);
+  background: var(--color-amber-tint);
 }
 .callout-warn .callout-title {
   color: var(--color-amber);
@@ -43,12 +43,12 @@
   color: var(--color-fg);
 }
 .callout-alert {
-  border: 1.5px solid #ecb4ae;
-  background: #fdf5f4;
+  border: 1.5px solid var(--color-red-border-strong);
+  background: var(--color-red-tint);
 }
 .callout-alert .callout-title {
-  color: #b3261e;
+  color: var(--color-red-ink);
 }
 .callout-alert strong {
-  color: #8f1d13;
+  color: var(--color-red-ink-strong);
 }

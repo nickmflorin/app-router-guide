@@ -28,32 +28,32 @@
 .chip-react {
   color: var(--color-react);
   background: var(--color-react-soft);
-  border-color: #cde7f0;
+  border-color: var(--color-react-border);
 }
 .chip-next {
-  color: #111;
-  background: #f2f2f2;
-  border-color: #e0e0e0;
+  color: var(--color-neutral-ink);
+  background: var(--color-neutral-fill);
+  border-color: var(--color-neutral-border);
 }
 /* general UI/UX practice, not tied to React or Next */
 .chip-ux {
   color: var(--color-purple);
   background: var(--color-purple-soft);
-  border-color: #ddc9f7;
+  border-color: var(--color-purple-border);
 }
 /* importance metric */
 .chip-critical {
   color: var(--color-red);
   background: var(--color-red-soft);
-  border-color: #f5c6c0;
+  border-color: var(--color-red-border);
 }
 .chip-very {
   color: var(--color-amber);
   background: var(--color-amber-soft);
-  border-color: #f3e2c0;
+  border-color: var(--color-amber-border);
 }
 .chip-imp {
   color: var(--color-accent);
   background: var(--color-accent-soft);
-  border-color: #cde0fb;
+  border-color: var(--color-accent-border);
 }

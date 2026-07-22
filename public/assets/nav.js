@@ -458,18 +458,15 @@ const TOC = [
   }
   async function syncFromApi() {
     try {
-      const d = await apiSend('GET', '?page=' + encodeURIComponent(page));
+      const d = await apiSend('GET', ''); // every note, all pages (panel is doc-wide)
       if (!d || !Array.isArray(d.notes)) throw new Error('shape');
       apiUp = true;
-      /* The DB is the source of truth for THIS page: replace this page's notes
-         with the DB's, and keep notes from other pages (localStorage is a
-         per-page island under file://, so those only live locally). */
+      /* The DB is the source of truth. Keep any local-only note not yet in the
+         DB (e.g. one created while the endpoint was briefly unreachable). */
       const byId = {};
+      d.notes.forEach(n => (byId[n.id] = n));
       data.notes.forEach(n => {
-        if (n.page !== page) byId[n.id] = n;
-      });
-      d.notes.forEach(n => {
-        byId[n.id] = n;
+        if (!byId[n.id]) byId[n.id] = n;
       });
       data = { notes: Object.values(byId) };
       persist();
@@ -539,17 +536,33 @@ const TOC = [
   /* ---------- pins ---------- */
   const pinLayer = document.createElement('div');
   document.body.appendChild(pinLayer);
+  /* Global creation-order number (1-based) for every note across all pages, so
+     a note's ①②③ is stable regardless of page or how many are resolved. */
+  function numberMap() {
+    const sorted = data.notes
+      .slice()
+      .sort((a, b) => String(a.ts || '').localeCompare(String(b.ts || '')));
+    const m = {};
+    sorted.forEach((n, i) => (m[n.id] = i + 1));
+    return m;
+  }
+  function updatePanelBtn() {
+    const openAll = data.notes.filter(n => n.status !== 'resolved').length;
+    const openHere = pageNotes().filter(n => n.status !== 'resolved').length;
+    panelBtn.textContent = 'Notes ' + openAll + ' · ' + openHere + ' on page';
+  }
   function renderPins() {
     pinLayer.textContent = '';
-    pageNotes().forEach((n, i) => {
+    const nums = numberMap();
+    pageNotes().forEach(n => {
       if (n.status === 'resolved') return;
       const el = resolveTarget(n.target);
       if (!el) return;
       const r = el.getBoundingClientRect();
       const pin = document.createElement('div');
       pin.className = 'note-pin';
-      pin.textContent = String(i + 1);
-      pin.title = n.text;
+      pin.textContent = String(nums[n.id] || '?');
+      pin.title = n.text || '(empty note)';
       /* Align the pin's centre to the vertical middle of the target's FIRST
          line (not the whole box), so it lines up with a heading or the top
          line of a paragraph, and sits just left of the content. */
@@ -560,14 +573,10 @@ const TOC = [
       const firstLineCenter = r.top + Math.min(lh, r.height) / 2;
       pin.style.top = window.scrollY + firstLineCenter - PIN / 2 + 'px';
       pin.style.left = Math.max(6, window.scrollX + r.left - PIN - 10) + 'px';
-      pin.addEventListener('click', () => {
-        openPanel();
-        flash(el);
-      });
+      pin.addEventListener('click', () => openDialog(el, n)); // click a pin to edit its note
       pinLayer.appendChild(pin);
     });
-    panelBtn.textContent =
-      'Notes (' + pageNotes().filter(n => n.status !== 'resolved').length + ')';
+    updatePanelBtn();
   }
   let repositionTimer = null;
   window.addEventListener('resize', () => {
@@ -672,6 +681,7 @@ const TOC = [
       };
       data.notes.push(note);
       persist();
+      pushNote(note); // save the moment it's created, before any typing
       renderPins();
     }
     dialog = document.createElement('div');
@@ -690,7 +700,7 @@ const TOC = [
       clearTimeout(autosaveTimer);
       note.text = ta.value.trim();
       persist();
-      if (note.text) pushNote(note); // don't write empty (about-to-be-discarded) notes
+      pushNote(note); // keep the backend copy current on every debounce/close
       renderPins();
       renderPanel();
     }
@@ -698,11 +708,13 @@ const TOC = [
       clearTimeout(autosaveTimer);
       autosaveTimer = setTimeout(commit, 250);
     });
-    /* Whatever closes the dialog (Done, Escape, another dialog opening),
-       the latest text is flushed first; empty notes are dropped. */
+    /* Whatever closes the dialog (Done, Escape, another dialog opening): save
+       the latest text, or delete the note outright if it was left empty. */
     dialog._flush = () => {
-      commit();
-      if (!note.text) removeNote(note);
+      clearTimeout(autosaveTimer);
+      note.text = ta.value.trim();
+      if (note.text) commit();
+      else removeNote(note);
     };
     dialog.querySelector('[data-act="discard"]').addEventListener('click', () => {
       dialog._flush = null;
@@ -737,169 +749,67 @@ const TOC = [
     }
   }
   panelBtn.addEventListener('click', () => (panel ? closePanel() : openPanel()));
+  function pageLabel(p) {
+    const m = /^(\d+)/.exec(p || '');
+    return m ? '§' + parseInt(m[1], 10) : (p || '').replace(/\.html$/, '') || 'cover';
+  }
   function renderPanel() {
     if (!panel) return;
-    const openCount = data.notes.filter(n => n.status !== 'resolved').length;
+    const nums = numberMap();
+    /* Every unresolved note in the whole document, in global creation order.
+       Resolved notes are never shown (you resolve them via Claude). */
+    const open = data.notes
+      .filter(n => n.status !== 'resolved')
+      .sort((a, b) => (nums[a.id] || 0) - (nums[b.id] || 0));
     panel.innerHTML =
-      '<div class="np-head"><span>Notes on this page · ' +
-      openCount +
-      ' open total</span><button type="button" class="note-btn" data-act="close">×</button></div>' +
+      '<div class="np-head"><span>Unresolved notes · ' +
+      open.length +
+      ' across all pages</span><button type="button" class="note-btn" data-act="close">×</button></div>' +
       '<div class="np-list"></div>' +
-      '<div class="np-foot">' +
-      '<button type="button" data-act="export">Save to file</button>' +
-      '<button type="button" data-act="import">Load file</button>' +
-      '<button type="button" data-act="copy">Copy JSON</button>' +
-      '<button type="button" data-act="clear">Clear resolved</button></div>';
+      '<div class="np-foot"><button type="button" data-act="copy">Copy JSON</button></div>';
     panel.querySelector('[data-act="close"]').addEventListener('click', closePanel);
-    panel.querySelector('[data-act="export"]').addEventListener('click', exportFile);
-    panel.querySelector('[data-act="import"]').addEventListener('click', importFile);
     panel.querySelector('[data-act="copy"]').addEventListener('click', () => {
       navigator.clipboard.writeText(payload()).then(() => toast('Copied'));
     });
-    panel.querySelector('[data-act="clear"]').addEventListener('click', () => {
-      const gone = data.notes.filter(n => n.status === 'resolved');
-      data.notes = data.notes.filter(n => n.status !== 'resolved');
-      persist();
-      gone.forEach(n => deleteNoteRemote(n.id));
-      renderPins();
-      renderPanel();
-    });
     const list = panel.querySelector('.np-list');
-    const notes = pageNotes();
-    if (!notes.length) {
-      list.innerHTML = '<div class="np-item">No notes on this page yet.</div>';
+    if (!open.length) {
+      list.innerHTML = '<div class="np-item">No unresolved notes.</div>';
       return;
     }
-    notes.forEach((n, i) => {
+    open.forEach(n => {
+      const onThisPage = n.page === page;
       const item = document.createElement('div');
-      item.className = 'np-item' + (n.status === 'resolved' ? ' resolved' : '');
+      item.className = 'np-item';
+      item.style.cursor = 'pointer';
       item.innerHTML =
         '<div class="np-where"></div><div class="np-text"></div>' +
-        '<div class="np-actions">' +
-        '<button type="button" data-act="jump">Jump</button>' +
-        '<button type="button" data-act="edit">Edit</button>' +
-        '<button type="button" data-act="resolve"></button>' +
-        '<button type="button" data-act="delete">Delete</button></div>';
+        '<div class="np-actions"><button type="button" data-act="delete">Delete</button></div>';
       item.querySelector('.np-where').textContent =
         '#' +
-        (i + 1) +
-        (n.target.anchor ? ' · §' + n.target.anchor : '') +
+        (nums[n.id] || '?') +
+        ' · ' +
+        pageLabel(n.page) +
         ' · “' +
-        n.target.snippet.slice(0, 46) +
+        ((n.target && n.target.snippet) || '').slice(0, 42) +
         '…”';
-      item.querySelector('.np-text').textContent =
-        n.text + (n.resolution ? '\n↳ ' + n.resolution : '');
-      item.querySelector('[data-act="resolve"]').textContent =
-        n.status === 'resolved' ? 'Reopen' : 'Resolve';
-      item.querySelector('[data-act="jump"]').addEventListener('click', () => {
-        const el = resolveTarget(n.target);
-        if (el) flash(el);
-        else toast('Could not locate this block');
-      });
-      item.querySelector('[data-act="edit"]').addEventListener('click', () => {
-        const el = resolveTarget(n.target);
+      item.querySelector('.np-text').textContent = n.text || '(empty)';
+      /* Click the item to edit; on-page notes locate their block first. */
+      item.addEventListener('click', e => {
+        if (e.target.closest('[data-act="delete"]')) return;
+        const el = onThisPage ? resolveTarget(n.target) : null;
         openDialog(el || document.body, n);
       });
-      item.querySelector('[data-act="resolve"]').addEventListener('click', () => {
-        n.status = n.status === 'resolved' ? 'open' : 'resolved';
-        persist();
-        pushNote(n);
-        renderPins();
-        renderPanel();
-      });
-      item.querySelector('[data-act="delete"]').addEventListener('click', () => {
+      item.querySelector('[data-act="delete"]').addEventListener('click', e => {
+        e.stopPropagation();
         removeNote(n);
       });
       list.appendChild(item);
     });
   }
 
-  /* ---------- export / import (supplementary/page-notes.json) ---------- */
+  /* ---------- Copy JSON ---------- */
   function payload() {
     return JSON.stringify({ updatedAt: new Date().toISOString(), notes: data.notes }, null, 2);
-  }
-  async function exportFile() {
-    if (window.showSaveFilePicker) {
-      try {
-        const handle = await window.showSaveFilePicker({
-          suggestedName: 'page-notes.json',
-          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }],
-        });
-        /* MERGE with what the file already holds instead of overwriting.
-           Under file:// the browser gives every page its own private
-           localStorage, so the notes file is the union of each page's
-           island; saving from one page must never clobber another's notes.
-           A "resolved" status already in the file wins over a stale local
-           "open" (Claude marks notes resolved in the file). */
-        const merged = {};
-        try {
-          const existing = JSON.parse(await (await handle.getFile()).text());
-          (existing.notes || []).forEach(n => {
-            merged[n.id] = n;
-          });
-        } catch (e) {
-          /* New or non-JSON file: nothing to merge. */
-        }
-        data.notes.forEach(n => {
-          const prev = merged[n.id];
-          if (prev && prev.status === 'resolved' && n.status === 'open') return;
-          merged[n.id] = n;
-        });
-        const out = JSON.stringify(
-          { updatedAt: new Date().toISOString(), notes: Object.values(merged) },
-          null,
-          2,
-        );
-        const w = await handle.createWritable();
-        await w.write(out);
-        await w.close();
-        toast('Merged into page-notes.json');
-        return;
-      } catch (e) {
-        if (e && e.name === 'AbortError') return;
-      }
-    }
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([payload()], { type: 'application/json' }));
-    a.download = 'page-notes.json';
-    a.click();
-    toast('Downloaded page-notes.json');
-  }
-  function importFile() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json,application/json';
-    input.addEventListener('change', () => {
-      const f = input.files && input.files[0];
-      if (!f) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const d = JSON.parse(reader.result);
-          if (!d || !Array.isArray(d.notes)) throw new Error('bad shape');
-          /* MERGE rather than replace, so loading can never lose local notes
-             that haven't been saved yet. The file wins for notes both sides
-             know (that's how Claude's resolutions arrive); local-only notes
-             (new, unsaved) survive. */
-          const merged = {};
-          data.notes.forEach(n => {
-            merged[n.id] = n;
-          });
-          d.notes.forEach(n => {
-            merged[n.id] = n;
-          });
-          data = { notes: Object.values(merged) };
-          persist();
-          renderPins();
-          renderPanel();
-          toast('Notes merged from file');
-        } catch (e) {
-          toast('Not a valid notes file');
-        }
-      };
-      reader.readAsText(f);
-    });
-    input.click();
   }
 
   /* ---------- auto-sync from the notes ledger on page load ----------

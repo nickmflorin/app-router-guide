@@ -684,8 +684,8 @@ flowchart LR
         height='180'
         rx='6'
         stroke-width='1.5'></rect>
-      <text class='fill-dg-blue-ink' x='208' y='162' font-size='9.5' font-weight='500'>
-        &lt;main&gt; · grow · overflow-y-auto
+      <text class='fill-dg-blue-ink' x='188' y='156' font-size='9.5' font-weight='500'>
+        &lt;main&gt; · grow · min-h-0 · overflow-hidden
       </text>
       <line
         class='stroke-dg-blue'
@@ -705,7 +705,6 @@ flowchart LR
         rx='5'
         stroke-width='1.5'
         stroke-dasharray='5 4'></rect>
-      <rect class='fill-dg-amber-border' x='196' y='176' width='440' height='12' rx='3'></rect>
       <rect class='fill-dg-amber-border' x='196' y='194' width='440' height='12' rx='3'></rect>
       <rect class='fill-dg-amber-border' x='196' y='212' width='440' height='12' rx='3'></rect>
       <rect class='fill-dg-amber-border' x='196' y='230' width='440' height='12' rx='3'></rect>
@@ -714,6 +713,9 @@ flowchart LR
       <rect class='fill-dg-amber-border' x='196' y='284' width='440' height='12' rx='3'></rect>
       <rect class='fill-dg-skel' x='652' y='176' width='6' height='120' rx='3'></rect>
       <rect class='fill-dg-border' x='652' y='176' width='6' height='44' rx='3'></rect>
+      <text class='fill-dg-amber-ink' x='198' y='184' font-size='9.5' font-weight='500'>
+        page · max-h-full · overflow-y-auto · grow · min-h-0
+      </text>
     </svg>
 
     <pre
@@ -741,10 +743,10 @@ flowchart LR
       > is a page-level header (not the app header), sized by its content; the main region takes <code
         >grow</code
       > and
-      <code>overflow-y-auto</code>, stretching to fill everything beneath the reports header and
-      scrolling its rows internally when they overflow. The chrome, the frame, and both headers stay
-      put no matter how much data lands. Color coding: gray is app chrome (context, not this
-      chapter's subject), blue is the known frame that
+      <code>overflow-hidden</code>, stretching to fill everything beneath the reports header and
+      preventing overflow so scroll behavior can be defined by children content. The chrome, the
+      frame, the layout content main, and both headers stay put no matter how much data lands. Color
+      coding: gray is app chrome, blue is the known frame that
       <code>ReportsLayout</code> owns and reserves, and amber is the unknown: the rows that stream into
       the scroll region later, landing inside space that never moves.
     </Fragment>

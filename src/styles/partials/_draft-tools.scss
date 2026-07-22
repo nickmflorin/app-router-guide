@@ -1,5 +1,25 @@
 /* @dev-only:start */
 /* ---------- draft tools: badge + annotation layer (remove when the guide ships) ---------- */
+
+/* Dev-tool chrome grays. Kept LOCAL (not in the tailwind.css @theme palette)
+   on purpose: this whole layer is dev-only and dead-code-eliminated from the
+   production build, so its colors must not leak into the shipped token set.
+   Brand colors reused by these tools reference the real @theme tokens
+   (var(--color-amber), var(--color-white), etc.) directly. */
+:root {
+  --note-ink: #444;
+  --note-hover: #f5f5f5;
+  --note-btn-bg: #f7f7f7;
+  --note-btn-hover: #eee;
+  --note-btn-border: #ddd;
+  --note-line: #e8e8e8;
+  --note-line-soft: #f0f0f0;
+  --note-input-border: #ccc;
+  --note-pin-hover-border: #b0b0b0;
+  --note-badge-border: #e7c983;
+  --note-flash: #e7a94b;
+}
+
 .draft-tools {
   position: fixed;
   top: 10px;
@@ -13,9 +33,9 @@
   font-size: 11px;
   font-weight: 650;
   letter-spacing: 0.09em;
-  color: #8a5a00;
-  background: #fdf3e3;
-  border: 1px solid #e7c983;
+  color: var(--color-amber-ink);
+  background: var(--color-amber-soft);
+  border: 1px solid var(--note-badge-border);
   border-radius: 6px;
   padding: 3px 10px;
 }
@@ -23,26 +43,26 @@
   font: inherit;
   font-size: 11px;
   font-weight: 600;
-  color: #444;
-  background: #fff;
-  border: 1px solid #d4d4d4;
+  color: var(--note-ink);
+  background: var(--color-white);
+  border: 1px solid var(--color-line-strong);
   border-radius: 6px;
   padding: 3px 10px;
   cursor: pointer;
 }
 .note-btn:hover {
-  background: #f5f5f5;
+  background: var(--note-hover);
 }
 .note-btn.active {
-  color: #fff;
-  background: #b45309;
-  border-color: #b45309;
+  color: var(--color-white);
+  background: var(--color-amber);
+  border-color: var(--color-amber);
 }
 body.note-mode .content-inner {
   cursor: crosshair;
 }
 .note-hover-outline {
-  outline: 2px dashed #b45309;
+  outline: 2px dashed var(--color-amber);
   outline-offset: 4px;
   border-radius: 4px;
 }
@@ -52,9 +72,9 @@ body.note-mode .content-inner {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #fff;
-  border: 1px solid #d4d4d4;
-  color: #444;
+  background: var(--color-white);
+  border: 1px solid var(--color-line-strong);
+  color: var(--note-ink);
   font: inherit;
   font-size: 11px;
   font-weight: 600;
@@ -70,9 +90,9 @@ body.note-mode .content-inner {
     color 0.12s ease;
 }
 .note-pin:hover {
-  background: #f5f5f5;
-  border-color: #b0b0b0;
-  color: #111;
+  background: var(--note-hover);
+  border-color: var(--note-pin-hover-border);
+  color: var(--color-neutral-ink);
 }
 .note-flash {
   animation: note-flash 1.6s ease-out;
@@ -80,7 +100,7 @@ body.note-mode .content-inner {
 @keyframes note-flash {
   0%,
   60% {
-    outline: 3px solid #e7a94b;
+    outline: 3px solid var(--note-flash);
     outline-offset: 4px;
   }
   100% {
@@ -97,8 +117,8 @@ body.note-mode .content-inner {
   max-height: 55vh;
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border: 1px solid #d4d4d4;
+  background: var(--color-white);
+  border: 1px solid var(--color-line-strong);
   border-radius: 10px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
   font-size: 12.5px;
@@ -108,7 +128,7 @@ body.note-mode .content-inner {
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--note-line);
   font-weight: 650;
 }
 .notes-panel .np-list {
@@ -117,13 +137,13 @@ body.note-mode .content-inner {
 }
 .notes-panel .np-item {
   padding: 8px 12px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--note-line-soft);
 }
 .notes-panel .np-item.resolved {
   opacity: 0.5;
 }
 .notes-panel .np-where {
-  color: #8a5a00;
+  color: var(--color-amber-ink);
   font-size: 11px;
   margin-bottom: 2px;
 }
@@ -140,23 +160,23 @@ body.note-mode .content-inner {
 .notes-panel .np-foot button {
   font: inherit;
   font-size: 11px;
-  color: #444;
-  background: #f7f7f7;
-  border: 1px solid #ddd;
+  color: var(--note-ink);
+  background: var(--note-btn-bg);
+  border: 1px solid var(--note-btn-border);
   border-radius: 5px;
   padding: 2px 8px;
   cursor: pointer;
 }
 .notes-panel .np-actions button:hover,
 .notes-panel .np-foot button:hover {
-  background: #eee;
+  background: var(--note-btn-hover);
 }
 .notes-panel .np-foot {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   padding: 8px 12px;
-  border-top: 1px solid #e8e8e8;
+  border-top: 1px solid var(--note-line);
 }
 .note-dialog {
   position: fixed;
@@ -165,8 +185,8 @@ body.note-mode .content-inner {
   transform: translateX(-50%);
   z-index: 80;
   width: 380px;
-  background: #fff;
-  border: 1px solid #d4d4d4;
+  background: var(--color-white);
+  border: 1px solid var(--color-line-strong);
   border-radius: 10px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
   padding: 12px;
@@ -176,7 +196,7 @@ body.note-mode .content-inner {
   min-height: 90px;
   font: inherit;
   font-size: 13px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--note-input-border);
   border-radius: 6px;
   padding: 8px;
   box-sizing: border-box;
@@ -194,8 +214,8 @@ body.note-mode .content-inner {
   left: 50%;
   transform: translateX(-50%);
   z-index: 90;
-  background: #171717;
-  color: #fff;
+  background: var(--color-fg);
+  color: var(--color-white);
   font-size: 12px;
   border-radius: 6px;
   padding: 6px 14px;

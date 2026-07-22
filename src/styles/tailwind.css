@@ -24,26 +24,70 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Guide palette — the single runtime source of these CSS variables. */
+  /* Guide palette — the single runtime source of these CSS variables.
+     Per semantic family the shade suffixes are:
+       (base)  the color itself           -soft   chip/badge background
+       -tint   lightest wash (callout bg)  -border 1px outline shade
+       -ink    darker-than-base text       -ink-strong  strongest text
+     Edit a value here to recolor everywhere it is used. */
+
+  /* neutral */
   --color-bg: #ffffff;
+  --color-white: #ffffff; /* explicit white for on-color text / raised surfaces */
   --color-fg: #171717;
+  --color-neutral-ink: #111111; /* near-black text on neutral chips/pins */
   --color-muted: #666666;
   --color-faint: #999999;
+  --color-neutral-faint: #c4c4c4; /* faint UI glyphs (e.g. sidebar markers) */
   --color-line: #eaeaea;
   --color-line-strong: #d4d4d4;
+  --color-neutral-border: #e0e0e0; /* neutral chip border */
+  --color-neutral-fill: #f2f2f2; /* neutral chip background */
   --color-surface: #fafafa;
+
+  /* accent (blue) */
   --color-accent: #0070f3;
   --color-accent-soft: #e6f0fd;
+  --color-accent-tint: #f5f9ff;
+  --color-accent-border: #cde0fb;
+
+  /* purple */
   --color-purple: #7c3aed;
   --color-purple-soft: #f1e9fe;
+  --color-purple-border: #ddc9f7;
+
+  /* react (teal) */
   --color-react: #087ea4;
   --color-react-soft: #e6f4f9;
+  --color-react-border: #cde7f0;
+
+  /* amber */
   --color-amber: #b45309;
   --color-amber-soft: #fdf3e3;
+  --color-amber-tint: #fdfaf3;
+  --color-amber-border: #f3e2c0;
+  --color-amber-ink: #8a5a00;
+
+  /* green */
   --color-green: #0f7b48;
   --color-green-soft: #e7f5ee;
+
+  /* red */
   --color-red: #d93025;
   --color-red-soft: #fdecea;
+  --color-red-tint: #fdf5f4;
+  --color-red-border: #f5c6c0;
+  --color-red-border-strong: #ecb4ae;
+  --color-red-ink: #b3261e;
+  --color-red-ink-strong: #8f1d13;
+
+  /* code-syntax palette (Next.js-docs light style; .tok-* in code blocks) */
+  --color-syntax-kw: #c41d7f; /* keywords */
+  --color-syntax-fn: #0068d6; /* function / component names */
+  --color-syntax-str: #1a7f37; /* strings */
+  --color-syntax-com: #6e7781; /* comments */
+  --color-syntax-dir: #b25000; /* directives ("use client") */
+  --color-syntax-prop: #6f42c1; /* props / attributes */
 
   /* Dark panel surface (diagrams / code blocks in dark form). */
   --color-panel: #0a0a0a;

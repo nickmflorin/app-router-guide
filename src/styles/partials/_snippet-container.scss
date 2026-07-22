@@ -50,26 +50,26 @@ pre.code.v-bad .filename::after {
 }
 pre.code.v-warn .filename::after {
   content: '!';
-  color: #8a5a00;
+  color: var(--color-amber-ink);
 }
 .tok-kw {
-  color: #c41d7f;
+  color: var(--color-syntax-kw);
 } /* keywords: magenta (next docs light style) */
 .tok-fn {
-  color: #0068d6;
+  color: var(--color-syntax-fn);
 } /* fn / component names: blue */
 .tok-str {
-  color: #1a7f37;
+  color: var(--color-syntax-str);
 } /* strings: green */
 .tok-com {
-  color: #6e7781;
+  color: var(--color-syntax-com);
   font-style: italic;
 }
 .tok-dir {
-  color: #b25000;
+  color: var(--color-syntax-dir);
 } /* "use client" etc: amber */
 .tok-prop {
-  color: #6f42c1;
+  color: var(--color-syntax-prop);
 } /* props/attrs: violet */
 
 /* code compare: bad vs good.

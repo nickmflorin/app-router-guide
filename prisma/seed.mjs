@@ -1,9 +1,3 @@
-// One-time, idempotent import of the existing JSON ledger into the DB.
-// Upserts by id, so it is safe to re-run. Keep public/page-notes.json around
-// until every resolved note it holds is confirmed present in the DB.
-//
-//   npm run db:seed
-
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
