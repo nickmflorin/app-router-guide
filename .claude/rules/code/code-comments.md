@@ -262,8 +262,5 @@ const buildFrameAncestorsDirective = (): string =>
 
 ## Line Length
 
-- Comments and JSDoc must respect the `@stylistic/max-len` limit of 100 characters and must never
-  exceed it.
+- Comments and JSDoc must respect the hard limit of 100 characters and must never exceed it.
 - Pack each line as close to 100 characters as possible before wrapping; do not wrap early.
-- This is mechanical: agents adding or editing comments must wrap to fit automatically as part of
-  the change, and again as part of the PR creation process.

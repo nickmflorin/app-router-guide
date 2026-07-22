@@ -9,7 +9,7 @@ description: 'Resolving cspell spell-check flags in generated code and docs'
 # Spelling (cspell)
 
 Spelling is checked by cspell, configured in `cspell.config.mjs`, with a project-specific word list
-in `craft-dictionary.txt` (lowercase, one word per line; the dictionary is configured with
+in `dictionary.txt` (lowercase, one word per line; the dictionary is configured with
 `addWords: true`). When generating or editing code or documentation, proactively resolve any word
 that cspell would flag rather than leaving it for later. For each flagged word, take exactly one of
 the three actions below, chosen by what the word actually is.
@@ -22,9 +22,9 @@ place. This is the default and most common case.
 ## 2. Correctly Spelled Domain Term: Add It to the Dictionary
 
 If the word is spelled correctly but is a real project, product, library, or domain term that is
-simply absent from the English dictionary and `craft-dictionary.txt`, add it to
-`craft-dictionary.txt` as a new lowercase entry on its own line. cspell matches case-insensitively,
-so a single lowercase entry covers every casing of the word.
+simply absent from the English dictionary and `dictionary.txt`, add it to `dictionary.txt` as a new
+lowercase entry on its own line. cspell matches case-insensitively, so a single lowercase entry
+covers every casing of the word.
 
 A strong signal that a flagged word belongs in the dictionary is repetition. If the same word
 appears several times in a file (for example `spdd` referenced six times), the flag almost certainly
