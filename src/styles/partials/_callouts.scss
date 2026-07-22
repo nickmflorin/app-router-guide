@@ -6,49 +6,56 @@
   margin: 20px 0;
   font-size: 15px;
   background: var(--color-surface);
-}
-.callout .callout-title {
-  font-weight: 650;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.callout p:last-child {
-  margin-bottom: 0;
+
+  .callout-title {
+    font-weight: 650;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
 }
 .callout-info {
   border-color: var(--color-accent-border);
   background: var(--color-accent-tint);
-}
-.callout-info .callout-title {
-  color: var(--color-accent);
+
+  .callout-title {
+    color: var(--color-accent);
+  }
 }
 .callout-warn {
   border-color: var(--color-amber-border);
   background: var(--color-amber-tint);
-}
-.callout-warn .callout-title {
-  color: var(--color-amber);
+
+  .callout-title {
+    color: var(--color-amber);
+  }
 }
 .callout-voice {
   border-left: 3px solid var(--color-fg);
   border-radius: 0 10px 10px 0;
   background: var(--color-surface);
-}
-.callout-voice .callout-title {
-  color: var(--color-fg);
+
+  .callout-title {
+    color: var(--color-fg);
+  }
 }
 .callout-alert {
   border: 1.5px solid var(--color-red-border-strong);
   background: var(--color-red-tint);
-}
-.callout-alert .callout-title {
-  color: var(--color-red-ink);
-}
-.callout-alert strong {
-  color: var(--color-red-ink-strong);
+
+  .callout-title {
+    color: var(--color-red-ink);
+  }
+
+  strong {
+    color: var(--color-red-ink-strong);
+  }
 }

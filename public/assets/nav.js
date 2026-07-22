@@ -180,6 +180,7 @@ const TOC = [
           </svg>
         </button>
       </div>
+      <div id="side-scroll" class="side-scroll">
       <div id="side-search-results" hidden></div>`;
     html += '<div id="side-toc">';
     for (const group of TOC) {
@@ -191,8 +192,9 @@ const TOC = [
     }
     html += '</div>';
     if (IS_DEV) {
-      html += `<div class="deck-sep"></div><a class="toc-item deck-link" href="${deckHref}"><span class="n"></span>Slide deck<span class="deck-dev-tag">dev</span></a>`;
+      html += `<div class="deck-sep"></div><a class="toc-item deck-link" href="${deckHref}"><span class="n"><svg class="deck-play" viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="M2.6 1.4 L8.6 5 L2.6 8.6 Z" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg></span>Slide deck<span class="deck-dev-tag">dev</span></a>`;
     }
+    html += '</div>'; /* /side-scroll */
     sidebar.innerHTML = html;
 
     /* Keep the sidebar's scroll position across page loads. Each chapter is
@@ -201,23 +203,25 @@ const TOC = [
        back to scrolling the current item into view (first visit, deep link,
        or a stale position that would hide it). */
     const SCROLL_KEY = 'arg-sidebar-scroll';
+    const scroller = document.getElementById('side-scroll');
     const saved = sessionStorage.getItem(SCROLL_KEY);
-    if (saved !== null) sidebar.scrollTop = parseInt(saved, 10) || 0;
+    if (saved !== null) scroller.scrollTop = parseInt(saved, 10) || 0;
     const current = sidebar.querySelector('.toc-item.current');
     if (current) {
-      const top = current.offsetTop - sidebar.scrollTop;
-      if (top < 0 || top > sidebar.clientHeight - current.offsetHeight) {
-        sidebar.scrollTop = current.offsetTop - sidebar.clientHeight / 2 + current.offsetHeight / 2;
+      const top = current.offsetTop - scroller.scrollTop;
+      if (top < 0 || top > scroller.clientHeight - current.offsetHeight) {
+        scroller.scrollTop =
+          current.offsetTop - scroller.clientHeight / 2 + current.offsetHeight / 2;
       }
     }
-    sessionStorage.setItem(SCROLL_KEY, String(sidebar.scrollTop));
-    sidebar.addEventListener(
+    sessionStorage.setItem(SCROLL_KEY, String(scroller.scrollTop));
+    scroller.addEventListener(
       'scroll',
       () => {
         // Don't record positions from the search-results view; only the TOC's.
         const toc = document.getElementById('side-toc');
         if (toc && toc.hidden) return;
-        sessionStorage.setItem(SCROLL_KEY, String(sidebar.scrollTop));
+        sessionStorage.setItem(SCROLL_KEY, String(scroller.scrollTop));
       },
       { passive: true },
     );
@@ -314,7 +318,7 @@ const TOC = [
             );
           })
           .join('');
-        sidebar.scrollTop = 0;
+        scroller.scrollTop = 0;
       };
 
       const setActive = next => {
@@ -415,7 +419,7 @@ const TOC = [
   const page = location.pathname.split('/').pop() || 'index.html';
   const BLOCKS =
     'figure.diagram, pre.code, table, .callout, .compare, .goal-card, li, p, h1, h2, h3, ' +
-    'a.toc-row, #side-toc a';
+    'a.toc-row, #side-toc a, a.deck-link';
 
   function load() {
     try {
@@ -543,11 +547,13 @@ const TOC = [
     '<button type="button" class="note-btn" data-act="panel"></button>' +
     '<button type="button" class="note-btn" data-act="arm">+ Add note</button>' +
     '<button type="button" class="note-btn" data-act="deckpanel"></button>' +
+    '<button type="button" class="note-btn" data-act="deckmarks">Deck marks</button>' +
     '<button type="button" class="note-btn" data-act="deckarm">+ To deck</button>';
   document.body.appendChild(tools);
   const panelBtn = tools.querySelector('[data-act="panel"]');
   const armBtn = tools.querySelector('[data-act="arm"]');
   const deckBtn = tools.querySelector('[data-act="deckpanel"]');
+  const deckMarksBtn = tools.querySelector('[data-act="deckmarks"]');
   const deckArmBtn = tools.querySelector('[data-act="deckarm"]');
 
   /* ---------- pins ---------- */
@@ -923,6 +929,12 @@ const TOC = [
   const DECK_API = '/api/deck';
   let deck = { slides: [] };
   let deckArmed = false;
+  /* "Deck marks": show the on-page deck highlights/badges. Off by default;
+     persisted across pages. Arming deck mode always shows them. */
+  let deckMarks = false;
+  try {
+    deckMarks = localStorage.getItem('arg-deck-marks') === '1';
+  } catch (e) {}
   let activeSlideId = null;
   let deckApiUp = null;
   const deckLayer = document.createElement('div');
@@ -960,9 +972,12 @@ const TOC = [
     renderDeckPanel();
     updateDeckBtn();
   }
+  /* Saves always ATTEMPT the API (no permanent dead latch) and FAIL LOUDLY:
+     a save that doesn't persist toasts, and flushDeckToApi() re-pushes the
+     whole local arrangement the next time the mode is armed or the panel is
+     opened after an outage (server upserts make that idempotent). */
   function saveSlideRemote(s) {
-    if (deckApiUp === false) return;
-    deckSend('POST', '/slide', {
+    return deckSend('POST', '/slide', {
       slide: {
         id: s.id,
         order: s.order,
@@ -970,11 +985,18 @@ const TOC = [
         autoTitle: s.autoTitle !== false,
         layout: s.layout || 'free',
       },
-    }).catch(() => {});
+    }).then(
+      () => {
+        deckApiUp = true;
+      },
+      () => {
+        deckApiUp = false;
+        toast('Deck save FAILED: not in the DB (re-arm deck mode to retry)');
+      },
+    );
   }
   function saveItemRemote(it) {
-    if (deckApiUp === false) return;
-    deckSend('POST', '/item', {
+    return deckSend('POST', '/item', {
       item: {
         id: it.id,
         slideId: it.slideId,
@@ -983,7 +1005,27 @@ const TOC = [
         order: it.order,
         included: it.included !== false,
       },
-    }).catch(() => {});
+    }).then(
+      () => {
+        deckApiUp = true;
+      },
+      () => {
+        deckApiUp = false;
+        toast('Deck save FAILED: not in the DB (re-arm deck mode to retry)');
+      },
+    );
+  }
+  async function flushDeckToApi() {
+    try {
+      await deckSend('GET', '');
+      deckApiUp = true;
+    } catch (e) {
+      return; /* still unreachable; saves keep toasting */
+    }
+    for (const s of deck.slides) {
+      await saveSlideRemote(s); /* slide before its items (FK order) */
+      for (const it of s.items) await saveItemRemote(it);
+    }
   }
   function addSlide() {
     const slide = {
@@ -1032,8 +1074,15 @@ const TOC = [
   function removeDeckItem(item) {
     const s = deck.slides.find(x => x.id === item.slideId);
     if (s) s.items = s.items.filter(x => x.id !== item.id);
-    if (deckApiUp !== false)
-      deckSend('DELETE', '/item?id=' + encodeURIComponent(item.id)).catch(() => {});
+    deckSend('DELETE', '/item?id=' + encodeURIComponent(item.id)).then(
+      () => {
+        deckApiUp = true;
+      },
+      () => {
+        deckApiUp = false;
+        toast('Deck delete FAILED: not in the DB');
+      },
+    );
     saveInclusionNote({ slideItemId: item.id }, ''); // drop its inclusion note too
     renderDeckDecorations();
     renderDeckPanel();
@@ -1048,8 +1097,15 @@ const TOC = [
         saveSlideRemote(s);
       }
     });
-    if (deckApiUp !== false)
-      deckSend('DELETE', '/slide?id=' + encodeURIComponent(slide.id)).catch(() => {});
+    deckSend('DELETE', '/slide?id=' + encodeURIComponent(slide.id)).then(
+      () => {
+        deckApiUp = true;
+      },
+      () => {
+        deckApiUp = false;
+        toast('Deck delete FAILED: not in the DB');
+      },
+    );
     renderDeckDecorations();
     renderDeckPanel();
     updateDeckBtn();
@@ -1144,6 +1200,7 @@ const TOC = [
     deckArmBtn.classList.toggle('active', on);
     if (on) {
       setArmed(false);
+      if (deckApiUp === false) flushDeckToApi();
       if (!deckPanel) openDeckPanel();
       let s = deck.slides.find(x => x.id === activeSlideId);
       if (!s) s = deck.slides.length ? deck.slides[deck.slides.length - 1] : addSlide();
@@ -1156,13 +1213,25 @@ const TOC = [
         hovered = null;
       }
     }
+    renderDeckDecorations();
   }
   deckArmBtn.addEventListener('click', () => setDeckArmed(!deckArmed));
+  function setDeckMarks(on) {
+    deckMarks = on;
+    try {
+      localStorage.setItem('arg-deck-marks', on ? '1' : '0');
+    } catch (e) {}
+    deckMarksBtn.classList.toggle('active', on);
+    renderDeckDecorations();
+  }
+  deckMarksBtn.classList.toggle('active', deckMarks);
+  deckMarksBtn.addEventListener('click', () => setDeckMarks(!deckMarks));
   deckBtn.addEventListener('click', () => (deckPanel ? closeDeckPanel() : openDeckPanel()));
 
   function renderDeckDecorations() {
     deckLayer.textContent = '';
     document.querySelectorAll('.deck-included').forEach(el => el.classList.remove('deck-included'));
+    if (!deckMarks && !deckArmed) return; /* doc stays clean by default */
     const slug = currentPageSlug();
     deck.slides.forEach((s, si) => {
       s.items.forEach(it => {
@@ -1188,6 +1257,7 @@ const TOC = [
   }
 
   function openDeckPanel() {
+    if (deckApiUp === false) flushDeckToApi();
     if (!deckPanel) {
       deckPanel = document.createElement('div');
       deckPanel.className = 'deck-panel';

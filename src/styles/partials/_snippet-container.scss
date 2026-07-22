@@ -5,53 +5,60 @@
    everywhere: prose flow, list items, compare columns. */
 .snippet {
   margin: 18px 0;
+
+  .code-caption {
+    /* Hug the code box; slight left pad so text clears the border radius. */
+    margin: 6px 2px 0;
+    padding-left: 3px;
+  }
 }
-.snippet .code-caption {
-  /* Hug the code box; slight left pad so text clears the border radius. */
-  margin: 6px 2px 0;
-  padding-left: 3px;
+
+pre.code {
+  .code-line {
+    min-height: 1.65em;
+  }
+
+  .filename {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-muted);
+    font-size: 11.5px;
+    /* Cancel the pre's 16px top padding and use symmetric 10px above/below the
+       text, so it sits vertically centered in the header strip. */
+    margin: -16px 0 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  /* Verdict glyph in the snippet header, top right: v-good = the way to do it,
+     v-bad = the wrong way, v-warn = an option, but not the ideal one. Same
+     glyphs, weight, and colors as the compare column labels (they render in the
+     sans UI font; the pre's monospace draws them thin and small). */
+  &.v-good .filename::after,
+  &.v-bad .filename::after,
+  &.v-warn .filename::after {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1;
+  }
+  &.v-good .filename::after {
+    content: '\2713'; /* check */
+    color: var(--color-green);
+  }
+  &.v-bad .filename::after {
+    content: '\2715'; /* x */
+    color: var(--color-red);
+  }
+  &.v-warn .filename::after {
+    content: '!';
+    color: var(--color-amber-ink);
+  }
 }
-pre.code .code-line {
-  min-height: 1.65em;
-}
-pre.code .filename {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--color-muted);
-  font-size: 11.5px;
-  /* Cancel the pre's 16px top padding and use symmetric 10px above/below the
-     text, so it sits vertically centered in the header strip. */
-  margin: -16px 0 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--color-line);
-}
-/* Verdict glyph in the snippet header, top right: v-good = the way to do it,
-   v-bad = the wrong way, v-warn = an option, but not the ideal one. Same
-   glyphs, weight, and colors as the compare column labels (they render in the
-   sans UI font; the pre's monospace draws them thin and small). */
-pre.code.v-good .filename::after,
-pre.code.v-bad .filename::after,
-pre.code.v-warn .filename::after {
-  margin-left: auto;
-  flex-shrink: 0;
-  font-family: Inter, system-ui, sans-serif;
-  font-size: 14px;
-  font-weight: 650;
-  line-height: 1;
-}
-pre.code.v-good .filename::after {
-  content: '\2713'; /* check */
-  color: var(--color-green);
-}
-pre.code.v-bad .filename::after {
-  content: '\2715'; /* x */
-  color: var(--color-red);
-}
-pre.code.v-warn .filename::after {
-  content: '!';
-  color: var(--color-amber-ink);
-}
+
 .tok-kw {
   color: var(--color-syntax-kw);
 } /* keywords: magenta (next docs light style) */
@@ -83,54 +90,57 @@ pre.code.v-warn .filename::after {
   margin: 18px 0;
   align-items: stretch;
   width: 100%;
-}
-.compare > div {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-width: 0;
-}
-.compare .snippet,
-.compare figure.diagram {
-  width: 100%;
-}
-.compare .col-label {
-  font-size: 12px;
-  font-weight: 650;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin-bottom: -6px;
-}
-.compare .bad .col-label {
-  color: var(--color-red);
-}
-.compare .good .col-label {
-  color: var(--color-green);
-}
-/* Only the LAST snippet in a column absorbs leftover height, so stacked
-   snippets keep their natural size. Inside that stretched snippet the CODE
-   BOX soaks up the extra height and the caption stays pinned 6px beneath it,
-   so a caption's bottom edge lands flush with the neighboring column's
-   bottom: columns always end on the same line, never on dead white space. */
-.compare .snippet {
-  margin: 0;
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-.compare > div > .snippet:last-of-type {
-  flex: 1 1 auto;
-}
-.compare .snippet pre.code {
-  flex: 1 1 auto;
-}
-.compare figure.diagram {
-  margin: 0;
-  flex: 1 1 auto;
-}
-@media (max-width: 1100px) {
-  .compare {
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .snippet,
+  figure.diagram {
+    width: 100%;
+  }
+
+  .col-label {
+    font-size: 12px;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: -6px;
+  }
+  .bad .col-label {
+    color: var(--color-red);
+  }
+  .good .col-label {
+    color: var(--color-green);
+  }
+
+  /* Only the LAST snippet in a column absorbs leftover height, so stacked
+     snippets keep their natural size. Inside that stretched snippet the CODE
+     BOX soaks up the extra height and the caption stays pinned 6px beneath it,
+     so a caption's bottom edge lands flush with the neighboring column's
+     bottom: columns always end on the same line, never on dead white space. */
+  .snippet {
+    margin: 0;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  > div > .snippet:last-of-type {
+    flex: 1 1 auto;
+  }
+  .snippet pre.code {
+    flex: 1 1 auto;
+  }
+  figure.diagram {
+    margin: 0;
+    flex: 1 1 auto;
+  }
+
+  @media (max-width: 1100px) {
     grid-template-columns: 1fr;
   }
 }

@@ -120,21 +120,22 @@ import CompareCol from '../../components/CompareCol.astro';
 
   <h2 id='what-this-is'>What this is, and why I wrote it</h2>
   <p>
-    Start with what this document is made of. It is stitched together from the official Next.js and
-    React documentation, reorganized and then elaborated: taking what the docs say and explaining
+    This document was created largely from stitched together sources from the official Next.js and
+    React 19 documentation, reorganized and then elaborated: taking what the docs say and explaining
     what those things actually mean, in more detail, with concrete code and diagrams. The docs
     mention genuinely important design patterns briefly, sometimes in a single sentence near the end
     of a paragraph, without the why, the how, or an example. This guide slows down on exactly those
     and expands them into patterns you can actually build from.
   </p>
   <p>
-    The rest of it is a second kind of pattern: the ones the docs never quite name. Work with the
-    App Router the right way for long enough (server as the default, the client only where it's
-    earned) and a set of design patterns starts surfacing on its own, through nothing but repetition
-    and correction. Then comes the strange part: once they've surfaced, you start recognizing them
-    everywhere: half-described in the docs, embedded in other codebases, implied by API shapes that
-    suddenly make sense. Those patterns are written down here up front, because the surfacing takes
-    months and the reading takes an evening.
+    The rest of it is a second kind of pattern: the ones the docs never quite name. Brute-force your
+    way through the App Router for long enough — enough wrong turns, enough head-against-the-wall
+    refactors, until the thing finally starts behaving — and a set of design patterns starts
+    surfacing on its own, through nothing but repetition and correction: server as the default, the
+    client only where it's earned. Then comes the strange part: once they've surfaced, you start
+    recognizing them everywhere: half-described in the docs, embedded in other codebases, implied by
+    API shapes that suddenly make sense. Those patterns are written down here up front, because the
+    surfacing takes months and the reading takes an evening.
   </p>
   <p>
     That second kind is the part I care about most. I started wrestling with the App Router back in

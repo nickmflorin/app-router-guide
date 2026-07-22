@@ -7,55 +7,75 @@
   width: var(--spacing-sidebar);
   flex-shrink: 0;
   border-right: 1px solid var(--color-line);
-  padding: 16px 20px 48px;
+  padding: 16px 20px 0;
   position: sticky;
   top: 0;
   height: 100vh;
-  overflow-y: auto;
-  font-size: 13.5px;
-}
-.sidebar .brand {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 9px;
-  margin: 0 0 10px -8px;
-  padding: 6px 8px;
-  color: var(--color-fg);
-  text-decoration: none;
-  border-radius: 8px;
-}
-.sidebar .brand:hover {
-  background: var(--color-surface);
-}
-.sidebar .brand:hover .brand-sub {
-  color: var(--color-muted);
-}
-/* the standing "a table of contents lives behind this" affordance */
-.sidebar .brand .brand-go {
-  flex-shrink: 0;
-  color: var(--color-neutral-faint);
-  margin-right: 2px;
-  transition: color 0.12s ease;
-}
-.sidebar .brand:hover .brand-go {
-  color: var(--color-muted);
-}
-.sidebar .brand .mark {
-  width: 22px;
-  height: 19px;
-  display: block;
-  margin-top: 1px;
-}
-.sidebar .brand-title {
-  display: block;
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: -0.01em;
-}
-.sidebar .brand-sub {
-  display: block;
-  color: var(--color-faint);
-  font-size: 12px;
-  margin-top: 2px;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 13.5px;
+
+  .brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 9px;
+    margin: 0 0 10px -8px;
+    padding: 6px 8px;
+    color: var(--color-fg);
+    text-decoration: none;
+    border-radius: 8px;
+
+    &:hover {
+      background: var(--color-surface);
+    }
+    &:hover .brand-sub {
+      color: var(--color-muted);
+    }
+
+    /* the standing "a table of contents lives behind this" affordance */
+    .brand-go {
+      flex-shrink: 0;
+      color: var(--color-neutral-faint);
+      margin-right: 2px;
+      transition: color 0.12s ease;
+    }
+    &:hover .brand-go {
+      color: var(--color-muted);
+    }
+
+    .mark {
+      width: 22px;
+      height: 19px;
+      display: block;
+      margin-top: 1px;
+    }
+  }
+
+  .brand-title {
+    display: block;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+  }
+  .brand-sub {
+    display: block;
+    color: var(--color-faint);
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  /* Only the area below the search box scrolls (the TOC, or search
+     results); the brand block and the search input stay fixed. The
+     negative side margins keep the scrollbar flush with the sidebar's
+     outer edge. */
+  .side-scroll {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    margin: 0 -20px;
+    padding: 0 20px 48px;
+  }
 }

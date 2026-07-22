@@ -4,31 +4,35 @@
   border-radius: 12px;
   padding: 22px 24px 16px;
   margin: 22px 0;
-}
-.goal-card .goal-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.goal-card .goal-letter {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 15px;
-  color: var(--color-white);
-  flex-shrink: 0;
-}
-.goal-card h3 {
-  margin: 0;
-}
-.goal-card .goal-tag {
-  color: var(--color-muted);
-  font-size: 14.5px;
-  margin: 10px 0 14px;
+
+  .goal-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .goal-letter {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--color-white);
+    flex-shrink: 0;
+  }
+
+  h3 {
+    margin: 0;
+  }
+
+  .goal-tag {
+    color: var(--color-muted);
+    font-size: 14.5px;
+    margin: 10px 0 14px;
+  }
 }
 .goal-a .goal-letter {
   background: var(--color-accent);
@@ -43,29 +47,34 @@ ul.goal-list {
   list-style: none;
   padding: 0;
   margin: 0;
-}
-ul.goal-list li {
-  padding: 10px 2px;
-  margin: 0;
-  border-top: 1px solid var(--color-line);
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-}
-ul.goal-list li .g-text {
-  flex: 1;
-}
-ul.goal-list li .g-chips {
-  flex-shrink: 0;
-  display: flex;
-  gap: 6px;
-}
-/* gap already spaces these; drop the adjacent-chip margin */
-ul.goal-list li .g-chips .chip + .chip {
-  margin-left: 0;
-}
-ul.goal-list li .g-ref {
-  font-size: 13px;
-  white-space: nowrap;
+
+  li {
+    padding: 10px 2px;
+    margin: 0;
+    border-top: 1px solid var(--color-line);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+
+    .g-text {
+      flex: 1;
+    }
+
+    .g-chips {
+      flex-shrink: 0;
+      display: flex;
+      gap: 6px;
+
+      /* gap already spaces these; drop the adjacent-chip margin */
+      .chip + .chip {
+        margin-left: 0;
+      }
+    }
+
+    .g-ref {
+      font-size: 13px;
+      white-space: nowrap;
+    }
+  }
 }

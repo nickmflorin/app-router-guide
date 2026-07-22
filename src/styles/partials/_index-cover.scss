@@ -1,41 +1,45 @@
 /* ---------- index / cover ---------- */
 .cover {
   padding: 24px 0 8px;
-}
-.cover h1 {
-  font-size: 44px;
+
+  h1 {
+    font-size: 44px;
+  }
 }
 .toc-grid {
   margin-top: 0;
+
+  /* the Contents heading provides the spacing; the first part shouldn't add more */
+  .toc-part:first-child {
+    margin-top: 2px;
+  }
 }
 .toc-part {
   margin: 26px 0;
-}
-/* the Contents heading provides the spacing; the first part shouldn't add more */
-.toc-grid .toc-part:first-child {
-  margin-top: 2px;
-}
-.toc-part .part-name {
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 8px;
-}
-.toc-part .part-name.pa {
-  color: var(--color-accent);
-}
-.toc-part .part-name.pb {
-  color: var(--color-amber);
-}
-.toc-part .part-name.pc {
-  color: var(--color-fg);
-}
-.toc-part .part-name.pd {
-  color: var(--color-green);
-}
-.toc-part .part-name.pz {
-  color: var(--color-muted);
+
+  .part-name {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+
+    &.pa {
+      color: var(--color-accent);
+    }
+    &.pb {
+      color: var(--color-amber);
+    }
+    &.pc {
+      color: var(--color-fg);
+    }
+    &.pd {
+      color: var(--color-green);
+    }
+    &.pz {
+      color: var(--color-muted);
+    }
+  }
 }
 a.toc-row {
   display: flex;
@@ -46,31 +50,33 @@ a.toc-row {
   border-radius: 8px;
   color: var(--color-fg);
   text-decoration: none;
-}
-a.toc-row:hover {
-  background: var(--color-surface);
-  text-decoration: none;
-}
-a.toc-row .n {
-  color: var(--color-faint);
-  font-variant-numeric: tabular-nums;
-  font-size: 13.5px;
-  width: 26px;
-  flex-shrink: 0;
-}
-a.toc-row .t {
-  font-weight: 550;
-}
-a.toc-row .d {
-  color: var(--color-muted);
-  font-size: 13.5px;
-}
-a.toc-row .soon {
-  color: var(--color-faint);
-  font-size: 12px;
-  font-style: italic;
-  margin-left: auto;
-  flex-shrink: 0;
+
+  &:hover {
+    background: var(--color-surface);
+    text-decoration: none;
+  }
+
+  .n {
+    color: var(--color-faint);
+    font-variant-numeric: tabular-nums;
+    font-size: 13.5px;
+    width: 26px;
+    flex-shrink: 0;
+  }
+  .t {
+    font-weight: 550;
+  }
+  .d {
+    color: var(--color-muted);
+    font-size: 13.5px;
+  }
+  .soon {
+    color: var(--color-faint);
+    font-size: 12px;
+    font-style: italic;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
 }
 
 /* legend on index */
@@ -81,44 +87,47 @@ a.toc-row .soon {
   margin: 20px 0;
   /* boxes stretch to matching heights; rows pack at the top of each */
   align-items: stretch;
-}
-/* Each box is a two-column grid: the chip column sizes itself to the widest
-   chip in THAT box, so every description starts on one shared left edge
-   instead of raggedly after each chip. Rows are display:contents so the
-   chip/desc pairs participate in the box's grid directly. */
-.legend .legend-box {
-  border: 1px solid var(--color-line);
-  border-radius: 12px;
-  padding: 18px 20px;
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  column-gap: 14px;
-  row-gap: 12px;
-  align-content: start;
-  /* chips keep their natural height instead of stretching to the row's */
-  align-items: start;
-}
-.legend .legend-box h4 {
-  grid-column: 1 / -1;
-  margin: 0;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-muted);
-}
-.legend .legend-row {
-  display: contents;
-  font-size: 14px;
-}
-.legend .legend-row .chip {
-  justify-self: start;
-  margin-top: 2px; /* optically centers the chip on the desc's first line */
-}
-.legend .legend-row span.desc {
-  color: var(--color-muted);
-}
-@media (max-width: 900px) {
-  .legend {
+
+  /* Each box is a two-column grid: the chip column sizes itself to the widest
+     chip in THAT box, so every description starts on one shared left edge
+     instead of raggedly after each chip. Rows are display:contents so the
+     chip/desc pairs participate in the box's grid directly. */
+  .legend-box {
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 14px;
+    row-gap: 12px;
+    align-content: start;
+    /* chips keep their natural height instead of stretching to the row's */
+    align-items: start;
+
+    h4 {
+      grid-column: 1 / -1;
+      margin: 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-muted);
+    }
+  }
+
+  .legend-row {
+    display: contents;
+    font-size: 14px;
+
+    .chip {
+      justify-self: start;
+      margin-top: 2px; /* optically centers the chip on the desc's first line */
+    }
+    span.desc {
+      color: var(--color-muted);
+    }
+  }
+
+  @media (max-width: 900px) {
     grid-template-columns: 1fr;
   }
 }

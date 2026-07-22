@@ -241,7 +241,20 @@ body.note-mode .content-inner {
   border-radius: 0;
   margin: 10px 0 6px;
 }
+.toc-item.deck-link .n {
+  /* The number column, holding the play icon: centered on the row (the other
+     rows baseline-align their digits), right-aligned like the numbers. */
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.toc-item.deck-link .n .deck-play {
+  display: block;
+}
 .toc-item.deck-link .deck-dev-tag {
+  align-self: center;
+  line-height: 1;
   margin-left: 8px;
   font-size: 9px;
   font-weight: 700;
