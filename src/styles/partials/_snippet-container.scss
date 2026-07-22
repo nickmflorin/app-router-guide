@@ -18,13 +18,13 @@ pre.code .filename {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--muted);
+  color: var(--color-muted);
   font-size: 11.5px;
   /* Cancel the pre's 16px top padding and use symmetric 10px above/below the
      text, so it sits vertically centered in the header strip. */
   margin: -16px 0 12px;
   padding: 10px 0;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-line);
 }
 /* Verdict glyph in the snippet header, top right: v-good = the way to do it,
    v-bad = the wrong way, v-warn = an option, but not the ideal one. Same
@@ -42,11 +42,11 @@ pre.code.v-warn .filename::after {
 }
 pre.code.v-good .filename::after {
   content: '\2713'; /* check */
-  color: var(--green);
+  color: var(--color-green);
 }
 pre.code.v-bad .filename::after {
   content: '\2715'; /* x */
-  color: var(--red);
+  color: var(--color-red);
 }
 pre.code.v-warn .filename::after {
   content: '!';
@@ -102,10 +102,10 @@ pre.code.v-warn .filename::after {
   margin-bottom: -6px;
 }
 .compare .bad .col-label {
-  color: var(--red);
+  color: var(--color-red);
 }
 .compare .good .col-label {
-  color: var(--green);
+  color: var(--color-green);
 }
 /* Only the LAST snippet in a column absorbs leftover height, so stacked
    snippets keep their natural size. Inside that stretched snippet the CODE

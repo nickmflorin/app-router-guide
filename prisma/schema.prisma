@@ -20,8 +20,11 @@ datasource db {
 model Note {
   id         String  @id
   page       String // section file, e.g. "09-server-resolvable-state.html"
-  kind       String  @default("note") // plain string, not an enum; e.g. "note" (future: "slide")
-  status     String  @default("open") // plain string, not an enum; e.g. "open", "resolved"
+  // SQLite can't hold a native Prisma enum, so `kind` and `status` are string
+  // columns whose allowed values are the enums in server/note-enums.mjs
+  // (NoteKind, NoteStatus); every writer validates against them.
+  kind       String  @default("note") // NoteKind: "note" | "slide"
+  status     String  @default("open") // NoteStatus: "open" | "resolved"
   text       String
   resolution String? // free-text resolution write-up (null until resolved)
 

@@ -4,6 +4,7 @@
 // static build.
 
 import { PrismaClient } from '@prisma/client';
+import { NoteStatus, NoteKind, assertStatus, assertKind } from './note-enums.mjs';
 
 // A singleton that survives Vite's dev-server HMR (which re-evaluates modules),
 // so we don't open a new connection pool on every reload.
@@ -34,10 +35,12 @@ function toWire(n) {
 // Wire note -> the column set. `target` is flattened; `path` is JSON-encoded.
 function toColumns(n) {
   const t = n.target ?? {};
+  const kind = assertKind(n.kind ?? NoteKind.Note);
+  const status = assertStatus(n.status ?? NoteStatus.Open);
   return {
     page: n.page,
-    kind: n.kind ?? 'note',
-    status: n.status ?? 'open',
+    kind,
+    status,
     text: n.text ?? '',
     resolution: n.resolution ?? null,
     targetAnchor: t.anchor ?? null,

@@ -63,6 +63,17 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
   (Tailwind hybrid): import src/styles/tailwind.css, map palette to theme tokens, convert
   design-system classes via @apply, utilities for layout; component-by-component with Nick
   reviewing visually.
+- **PALETTE CONSOLIDATED ONTO @theme (2026-07-22, per Nick).** The palette/fonts/layout
+  constants used to be defined TWICE: once as `@theme` tokens in tailwind.css and again as a
+  hand-mirrored `:root` block in _base.scss (short names like --accent, --border, --sans,
+  --sidebar-w) that the SCSS actually referenced. That duplication existed because Tailwind v4
+  TREE-SHAKES unused `@theme` variables out of :root, so hand-written CSS couldn't rely on them.
+  Fix: tailwind.css now uses `@theme static { ... }` (forces every declared token to be emitted
+  as a real CSS custom property, defaults still tree-shaken), and the _base.scss :root block is
+  GONE. The @theme block is the single source of truth. SCSS references tokens by their @theme
+  names: var(--color-accent), var(--color-line)[was --border], var(--font-sans)[was --sans],
+  var(--spacing-sidebar)[was --sidebar-w], etc. To recolor, edit the value in tailwind.css @theme
+  in ONE place. (v4 note: use var(--color-x) in CSS/SCSS, NOT the v3 theme('...') function.)
 - **DIAGRAM COLORS ARE TOKENS (2026-07-21, per Nick).** SVG diagrams no longer use inline
   fill='#..'/stroke='#..' hex. Every diagram color is a @theme token `--color-dg-<name>` in
   src/styles/tailwind.css, referenced on elements as `class='fill-dg-<name> stroke-dg-<name>'`

@@ -32,17 +32,17 @@ p {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--accent);
+  color: var(--color-accent);
   margin-bottom: 7px;
 }
 .lede {
   font-size: 15px;
-  color: var(--muted);
+  color: var(--color-muted);
   line-height: 1.55;
   margin-bottom: 12px;
 }
 a {
-  color: var(--accent);
+  color: var(--color-accent);
   text-decoration: none;
 }
 a:hover {
@@ -53,7 +53,7 @@ strong {
 }
 hr {
   border: none;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--color-line);
   margin: 26px 0;
 }
 ul,
@@ -65,10 +65,10 @@ li {
   margin-bottom: 6px;
 }
 code {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 0.86em;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
   border-radius: 5px;
   padding: 1px 5px;
 }

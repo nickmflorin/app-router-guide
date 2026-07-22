@@ -7,16 +7,24 @@
    Usage now: any Tailwind utility works in .astro files (compiled on demand,
    so this adds ~nothing to the CSS until utilities are actually used).
    Guide palette is exposed as first-class tokens: text-accent, bg-amber-soft,
-   border-line-strong, w-content, etc. */
+   border-line-strong, w-content, etc.
+
+   `@theme static` (not plain `@theme`): Tailwind tree-shakes unused theme
+   variables out of :root by default, which is why this block used to be
+   mirrored by a hand-maintained :root in _base.scss. `static` forces EVERY
+   token below to be emitted as a real CSS custom property, so the SCSS can
+   reference them directly as var(--color-accent), var(--font-sans),
+   var(--spacing-sidebar), etc. This @theme block is now the single source of
+   truth for the palette; there is no duplicate :root. (Only the tokens
+   declared here are forced — Tailwind's imported defaults stay tree-shaken.) */
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css';
 
-@theme {
+@theme static {
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Guide palette (mirrors :root in assets/style.css; that file remains the
-     runtime source of the CSS variables until the conversion completes). */
+  /* Guide palette — the single runtime source of these CSS variables. */
   --color-bg: #ffffff;
   --color-fg: #171717;
   --color-muted: #666666;
@@ -26,6 +34,8 @@
   --color-surface: #fafafa;
   --color-accent: #0070f3;
   --color-accent-soft: #e6f0fd;
+  --color-purple: #7c3aed;
+  --color-purple-soft: #f1e9fe;
   --color-react: #087ea4;
   --color-react-soft: #e6f4f9;
   --color-amber: #b45309;
@@ -34,6 +44,13 @@
   --color-green-soft: #e7f5ee;
   --color-red: #d93025;
   --color-red-soft: #fdecea;
+
+  /* Dark panel surface (diagrams / code blocks in dark form). */
+  --color-panel: #0a0a0a;
+  --color-panel-2: #171717;
+  --color-panel-border: #333333;
+  --color-panel-fg: #ededed;
+  --color-panel-muted: #a1a1a1;
 
   /* ----- diagram palette (dg-*): consolidated semantic scale.
      One token per role per hue; edit a value here to recolor everywhere. ----- */

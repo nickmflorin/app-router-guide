@@ -4,9 +4,9 @@
   min-height: 100vh;
 }
 .sidebar {
-  width: var(--sidebar-w);
+  width: var(--spacing-sidebar);
   flex-shrink: 0;
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--color-line);
   padding: 16px 20px 48px;
   position: sticky;
   top: 0;
@@ -21,15 +21,15 @@
   gap: 9px;
   margin: 0 0 10px -8px;
   padding: 6px 8px;
-  color: var(--fg);
+  color: var(--color-fg);
   text-decoration: none;
   border-radius: 8px;
 }
 .sidebar .brand:hover {
-  background: var(--surface);
+  background: var(--color-surface);
 }
 .sidebar .brand:hover .brand-sub {
-  color: var(--muted);
+  color: var(--color-muted);
 }
 /* the standing "a table of contents lives behind this" affordance */
 .sidebar .brand .brand-go {
@@ -39,7 +39,7 @@
   transition: color 0.12s ease;
 }
 .sidebar .brand:hover .brand-go {
-  color: var(--muted);
+  color: var(--color-muted);
 }
 .sidebar .brand .mark {
   width: 22px;
@@ -55,7 +55,7 @@
 }
 .sidebar .brand-sub {
   display: block;
-  color: var(--faint);
+  color: var(--color-faint);
   font-size: 12px;
   margin-top: 2px;
 }

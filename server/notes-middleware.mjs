@@ -44,6 +44,8 @@ export async function handleNotes(req, res) {
     res.statusCode = 405;
     res.end('Method Not Allowed');
   } catch (e) {
-    json(res, 500, { error: String((e && e.message) || e) });
+    // A bad enum value is the client's fault (400); anything else is ours (500).
+    const code = e && e.code === 'ENUM' ? 400 : 500;
+    json(res, code, { error: String((e && e.message) || e) });
   }
 }

@@ -11,15 +11,15 @@ table.tbl th {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--muted);
+  color: var(--color-muted);
   font-weight: 600;
   padding: 8px 12px;
-  border-bottom: 1px solid var(--border-strong);
+  border-bottom: 1px solid var(--color-line-strong);
 }
 /* Cells always wrap; long rule text may never widen the table past the page. */
 table.tbl td {
   padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-line);
   vertical-align: top;
   overflow-wrap: break-word;
 }

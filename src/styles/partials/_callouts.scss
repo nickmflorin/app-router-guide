@@ -1,11 +1,11 @@
 /* ---------- callouts ---------- */
 .callout {
-  border: 1px solid var(--border);
+  border: 1px solid var(--color-line);
   border-radius: 10px;
   padding: 14px 18px;
   margin: 20px 0;
   font-size: 15px;
-  background: var(--surface);
+  background: var(--color-surface);
 }
 .callout .callout-title {
   font-weight: 650;
@@ -25,22 +25,22 @@
   background: #f5f9ff;
 }
 .callout-info .callout-title {
-  color: var(--accent);
+  color: var(--color-accent);
 }
 .callout-warn {
   border-color: #f3e2c0;
   background: #fdfaf3;
 }
 .callout-warn .callout-title {
-  color: var(--amber);
+  color: var(--color-amber);
 }
 .callout-voice {
-  border-left: 3px solid var(--fg);
+  border-left: 3px solid var(--color-fg);
   border-radius: 0 10px 10px 0;
-  background: var(--surface);
+  background: var(--color-surface);
 }
 .callout-voice .callout-title {
-  color: var(--fg);
+  color: var(--color-fg);
 }
 .callout-alert {
   border: 1.5px solid #ecb4ae;

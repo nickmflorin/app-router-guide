@@ -1,8 +1,8 @@
 /* ---------- code blocks (light) ---------- */
 pre.code {
-  background: var(--surface);
-  color: var(--fg);
-  border: 1px solid var(--border);
+  background: var(--color-surface);
+  color: var(--color-fg);
+  border: 1px solid var(--color-line);
   border-radius: 10px;
   width: 100%;
   max-width: 100%;
@@ -13,7 +13,7 @@ pre.code {
      .code-line divs so continuation lines hang at each line's indentation. */
   white-space: pre-wrap;
   overflow-wrap: break-word;
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.65;
   margin: 0;
