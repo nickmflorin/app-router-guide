@@ -536,11 +536,12 @@ const TOC = [
   /* ---------- pins ---------- */
   const pinLayer = document.createElement('div');
   document.body.appendChild(pinLayer);
-  /* Global creation-order number (1-based) for every note across all pages, so
-     a note's ①②③ is stable regardless of page or how many are resolved. */
+  /* 1-based number for each note, ranked by creation time across ALL pages but
+     over the currently-unresolved notes only: #3 is the 3rd-oldest open note.
+     Resolving a note renumbers the rest. */
   function numberMap() {
     const sorted = data.notes
-      .slice()
+      .filter(n => n.status !== 'resolved')
       .sort((a, b) => String(a.ts || '').localeCompare(String(b.ts || '')));
     const m = {};
     sorted.forEach((n, i) => (m[n.id] = i + 1));
