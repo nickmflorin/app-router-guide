@@ -656,6 +656,7 @@ const TOC = [
   let dialog = null;
   function closeDialog() {
     if (dialog) {
+      if (dialog._cleanup) dialog._cleanup();
       if (dialog._flush) dialog._flush();
       dialog.remove();
       dialog = null;
@@ -691,7 +692,8 @@ const TOC = [
       '<div class="np-where" style="margin-bottom:6px;color:#8a5a00;font-size:11px"></div>' +
       '<textarea placeholder="What should change here? (autosaves as you type)"></textarea>' +
       '<div class="nd-actions">' +
-      '<button type="button" class="note-btn" data-act="discard">Discard</button>' +
+      '<button type="button" class="note-btn danger" data-act="discard" style="margin-right:auto">Discard</button>' +
+      '<button type="button" class="note-btn" data-act="cancel">Cancel</button>' +
       '<button type="button" class="note-btn active" data-act="done">Done</button></div>';
     dialog.querySelector('.np-where').textContent = '“' + note.target.snippet.slice(0, 70) + '…”';
     const ta = dialog.querySelector('textarea');
@@ -723,6 +725,9 @@ const TOC = [
       closeDialog();
       toast('Note discarded');
     });
+    dialog.querySelector('[data-act="cancel"]').addEventListener('click', () => {
+      closeDialog(); // just close; the latest text is kept (empty notes are cleaned up)
+    });
     dialog.querySelector('[data-act="done"]').addEventListener('click', () => {
       const keep = ta.value.trim();
       closeDialog();
@@ -731,6 +736,13 @@ const TOC = [
     });
     document.body.appendChild(dialog);
     ta.focus();
+    /* Click anywhere outside the dialog closes it, same as Cancel. Attached on
+       the next tick so the very click that opened the dialog doesn't close it. */
+    const onOutside = e => {
+      if (dialog && !e.target.closest('.note-dialog')) closeDialog();
+    };
+    setTimeout(() => document.addEventListener('mousedown', onOutside, true), 0);
+    dialog._cleanup = () => document.removeEventListener('mousedown', onOutside, true);
   }
 
   /* ---------- panel ---------- */

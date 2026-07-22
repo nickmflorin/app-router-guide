@@ -58,6 +58,15 @@
   background: var(--color-amber);
   border-color: var(--color-amber);
 }
+.note-btn.danger {
+  color: var(--color-red-ink);
+  border-color: var(--color-red-border);
+}
+.note-btn.danger:hover {
+  background: var(--color-red-soft);
+  border-color: var(--color-red);
+  color: var(--color-red-ink-strong);
+}
 body.note-mode .content-inner {
   cursor: crosshair;
 }
