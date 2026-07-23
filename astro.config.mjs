@@ -33,5 +33,11 @@ export default defineConfig({
   devToolbar: { enabled: false },
   build: { format: 'file' },
   compressHTML: false,
-  vite: { plugins: [tailwindcss(), notesApiDev] },
+  vite: {
+    plugins: [tailwindcss(), notesApiDev],
+    // Junk drawers the dev server must not watch: _to_delete/ holds files the
+    // sandbox can't delete (incl. stale HTML trees), .worktrees/ holds parallel
+    // git worktrees (a full second copy of the project).
+    server: { watch: { ignored: ['**/_to_delete/**', '**/.worktrees/**'] } },
+  },
 });
