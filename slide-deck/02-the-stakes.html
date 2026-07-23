@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2. The stakes - App Router Guide deck</title>
+    <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/guide.css" />
+    <link rel="stylesheet" href="assets/slides.css" />
+  </head>
+  <body class="deck-slide">
+    <main class="slide no-fig">
+      <div class="kicker kz">Introduction</div>
+      <h1>The stakes</h1>
+      <ul class="points">
+        <li>Architecture compounds: <strong>every new page copies the page before it</strong></li>
+        <li>Conventions harden in months; unwinding them takes years</li>
+        <li><strong>Server-first is not a preference.</strong> It is the operating assumption of React 19 and the App Router</li>
+        <li>Build against the grain and nothing throws; it all just quietly works worse</li>
+      </ul>
+    </main>
+    <nav class="deck-nav">
+      <a class="home" href="index.html" title="Contents">&#8962;</a>
+      <a data-nav="prev" class="nv" href="01-why-this-exists.html">&lsaquo;</a>
+      <span class="ct">2 / 13</span>
+      <a data-nav="next" class="nv" href="03-direction-of-travel.html">&rsaquo;</a>
+    </nav>
+<script>
+  (function () {
+    var prev = document.querySelector('[data-nav=prev]');
+    var next = document.querySelector('[data-nav=next]');
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' && prev) location.href = prev.getAttribute('href');
+      if ((e.key === 'ArrowRight' || e.key === ' ') && next) {
+        e.preventDefault();
+        location.href = next.getAttribute('href');
+      }
+      if (e.key === 'Home') location.href = 'index.html';
+    });
+  })();
+</script>
+  </body>
+</html>

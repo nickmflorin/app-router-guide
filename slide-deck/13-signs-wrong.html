@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>13. Signs you&rsquo;re doing it wrong - App Router Guide deck</title>
+    <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/guide.css" />
+    <link rel="stylesheet" href="assets/slides.css" />
+  </head>
+  <body class="deck-slide">
+    <main class="slide">
+      <div class="kicker kd">Part D: Applied</div>
+      <h1>Signs you&rsquo;re doing it wrong</h1>
+      <ul class="points">
+        <li>The client component is the <strong>bottom of the ladder</strong>, reached only after the server can&rsquo;t</li>
+        <li>Fetch-in-useEffect, spinners inside spinners, effects mirroring props into state: smells with names</li>
+        <li>The full checklist is &sect;18; the before/after from Tracker is &sect;19. <strong>Read the docs.</strong></li>
+      </ul>
+      <div class="fig"><svg
+              viewBox="0 0 720 262"
+              xmlns="http://www.w3.org/2000/svg"
+              font-family="Inter, system-ui, sans-serif"
+            >
+              <defs>
+                <marker
+                  id="a15sp"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    class="stroke-dg-gray"
+                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+                    fill="none"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </marker>
+                <marker
+                  id="a15out"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    class="stroke-dg-green-ink"
+                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+                    fill="none"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </marker>
+              </defs>
+
+              <text
+                class="fill-dg-ink"
+                x="360"
+                y="12"
+                font-size="11"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                The one interrogation, top to bottom
+              </text>
+
+              <rect
+                class="fill-dg-white stroke-dg-border"
+                x="40"
+                y="30"
+                width="280"
+                height="44"
+                rx="8"
+              ></rect>
+              <text class="fill-dg-ink" x="180" y="57" font-size="11" text-anchor="middle">
+                You need to render UI or read some data
+              </text>
+
+              <line
+                class="stroke-dg-gray"
+                x1="180"
+                y1="74"
+                x2="180"
+                y2="104"
+                stroke-width="1.5"
+                marker-end="url(#a15sp)"
+              ></line>
+
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="40"
+                y="108"
+                width="280"
+                height="54"
+                rx="8"
+              ></rect>
+              <text
+                class="fill-dg-blue-ink"
+                x="180"
+                y="131"
+                font-size="10.5"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Why can't this be on the server?
+              </text>
+              <text
+                class="fill-dg-blue-ink-soft"
+                x="180"
+                y="148"
+                font-size="9.5"
+                text-anchor="middle"
+              >
+                the default question, asked first
+              </text>
+
+              <line
+                class="stroke-dg-green-ink"
+                x1="320"
+                y1="135"
+                x2="428"
+                y2="135"
+                stroke-width="1.5"
+                marker-end="url(#a15out)"
+              ></line>
+              <rect
+                class="fill-dg-green-soft stroke-dg-green-ink"
+                x="432"
+                y="111"
+                width="248"
+                height="48"
+                rx="8"
+              ></rect>
+              <text
+                class="fill-dg-green-ink"
+                x="556"
+                y="132"
+                font-size="10.5"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                It can: server component.
+              </text>
+              <text
+                class="fill-dg-green-ink-soft"
+                x="556"
+                y="148"
+                font-size="9.5"
+                text-anchor="middle"
+              >
+                no client JS, no spinner
+              </text>
+
+              <line
+                class="stroke-dg-gray"
+                x1="180"
+                y1="162"
+                x2="180"
+                y2="200"
+                stroke-width="1.5"
+                marker-end="url(#a15sp)"
+              ></line>
+              <text class="fill-dg-gray" x="192" y="185" font-size="9.5">
+                it genuinely needs the browser
+              </text>
+
+              <rect
+                class="fill-dg-teal-soft stroke-dg-teal"
+                x="40"
+                y="204"
+                width="280"
+                height="54"
+                rx="8"
+              ></rect>
+              <text
+                class="fill-dg-teal-ink"
+                x="180"
+                y="227"
+                font-size="10.5"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                How far down can I push it?
+              </text>
+              <text class="fill-dg-teal" x="180" y="244" font-size="9.5" text-anchor="middle">
+                find the smallest interactive leaf
+              </text>
+
+              <line
+                class="stroke-dg-green-ink"
+                x1="320"
+                y1="231"
+                x2="428"
+                y2="231"
+                stroke-width="1.5"
+                marker-end="url(#a15out)"
+              ></line>
+              <rect
+                class="fill-dg-green-soft stroke-dg-green-ink"
+                x="432"
+                y="207"
+                width="248"
+                height="48"
+                rx="8"
+              ></rect>
+              <text
+                class="fill-dg-green-ink"
+                x="556"
+                y="228"
+                font-size="10.5"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                Isolate that one leaf.
+              </text>
+              <text
+                class="fill-dg-green-ink-soft"
+                x="556"
+                y="244"
+                font-size="9.5"
+                text-anchor="middle"
+              >
+                everything above stays server
+              </text>
+            </svg></div>
+    </main>
+    <nav class="deck-nav">
+      <a class="home" href="index.html" title="Contents">&#8962;</a>
+      <a data-nav="prev" class="nv" href="12-blocking.html">&lsaquo;</a>
+      <span class="ct">13 / 13</span>
+      <span class="nv off">&rsaquo;</span>
+    </nav>
+<script>
+  (function () {
+    var prev = document.querySelector('[data-nav=prev]');
+    var next = document.querySelector('[data-nav=next]');
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' && prev) location.href = prev.getAttribute('href');
+      if ((e.key === 'ArrowRight' || e.key === ' ') && next) {
+        e.preventDefault();
+        location.href = next.getAttribute('href');
+      }
+      if (e.key === 'Home') location.href = 'index.html';
+    });
+  })();
+</script>
+  </body>
+</html>

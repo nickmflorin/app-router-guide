@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3. The direction of travel - App Router Guide deck</title>
+    <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/guide.css" />
+    <link rel="stylesheet" href="assets/slides.css" />
+  </head>
+  <body class="deck-slide">
+    <main class="slide">
+      <div class="kicker kz">Introduction</div>
+      <h1>The direction of travel</h1>
+      <ul class="points">
+        <li>2013&ndash;2018: the client era built machinery for surviving in the browser</li>
+        <li>2020&ndash;2025: RSC, React 18/19, Next 13&rarr;16 moved the work back to the server</li>
+        <li>Betting against this direction means fighting both React and Vercel</li>
+      </ul>
+      <div class="fig"><svg
+              viewBox="0 0 720 556"
+              xmlns="http://www.w3.org/2000/svg"
+              font-family="Inter, system-ui, sans-serif"
+            >
+              <!-- era 1 spine + header -->
+              <text class="fill-dg-amber-ink" x="40" y="12" font-size="10.5" font-weight="500">
+                The client era: the browser earns every pixel
+              </text>
+              <line
+                class="stroke-dg-amber-border"
+                x1="120"
+                y1="40"
+                x2="120"
+                y2="186"
+                stroke-width="1.5"
+              ></line>
+
+              <rect
+                class="fill-dg-amber-soft stroke-dg-amber"
+                x="40"
+                y="34"
+                width="64"
+                height="20"
+                rx="6"
+              ></rect>
+              <text class="fill-dg-amber-ink" x="72" y="47.5" font-size="9.5" text-anchor="middle">
+                May 2013
+              </text>
+              <circle class="fill-dg-amber" cx="120" cy="44" r="4.5"></circle>
+              <text class="fill-dg-ink" x="140" y="43" font-size="11" font-weight="500">
+                React is open-sourced
+              </text>
+              <text class="fill-dg-muted" x="140" y="58" font-size="9.5">
+                components + the virtual DOM; server rendering ships day one, but the ecosystem goes
+                client
+              </text>
+
+              <rect
+                class="fill-dg-amber-soft stroke-dg-amber"
+                x="40"
+                y="80"
+                width="64"
+                height="20"
+                rx="6"
+              ></rect>
+              <text class="fill-dg-amber-ink" x="72" y="93.5" font-size="9.5" text-anchor="middle">
+                2015
+              </text>
+              <circle class="fill-dg-amber" cx="120" cy="90" r="4.5"></circle>
+              <text class="fill-dg-ink" x="140" y="89" font-size="11" font-weight="500">
+                The SPA toolchain hardens
+              </text>
+              <text class="fill-dg-muted" x="140" y="104" font-size="9.5">
+                Redux, client routers, fetch-in-effect: "empty div + bundle" becomes the default
+                architecture
+              </text>
+
+              <rect
+                class="fill-dg-amber-soft stroke-dg-amber"
+                x="40"
+                y="126"
+                width="64"
+                height="20"
+                rx="6"
+              ></rect>
+              <text class="fill-dg-amber-ink" x="72" y="139.5" font-size="9.5" text-anchor="middle">
+                Oct 2016
+              </text>
+              <circle class="fill-dg-amber" cx="120" cy="136" r="4.5"></circle>
+              <text class="fill-dg-ink" x="140" y="135" font-size="11" font-weight="500">
+                Next.js 1.0
+              </text>
+              <text class="fill-dg-muted" x="140" y="150" font-size="9.5">
+                server rendering as a framework default, file-based routing; the counter-current
+                begins
+              </text>
+
+              <rect
+                class="fill-dg-amber-soft stroke-dg-amber"
+                x="40"
+                y="172"
+                width="64"
+                height="20"
+                rx="6"
+              ></rect>
+              <text class="fill-dg-amber-ink" x="72" y="185.5" font-size="9.5" text-anchor="middle">
+                Oct 2018
+              </text>
+              <circle class="fill-dg-amber" cx="120" cy="182" r="4.5"></circle>
+              <text class="fill-dg-ink" x="140" y="181" font-size="11" font-weight="500">
+                Suspense arrives (React 16.6)
+              </text>
+              <text class="fill-dg-muted" x="140" y="196" font-size="9.5">
+                components stop hand-rolling isLoading: the tree, not each component, coordinates
+                waiting
+              </text>
+
+              <!-- era 2 spine + header -->
+              <text class="fill-dg-blue-ink" x="40" y="228" font-size="10.5" font-weight="500">
+                The server era: stop shipping the app to render the app
+              </text>
+              <line
+                class="stroke-dg-blue-border"
+                x1="120"
+                y1="256"
+                x2="120"
+                y2="540"
+                stroke-width="1.5"
+              ></line>
+
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="40"
+                y="250"
+                width="64"
+                height="20"
+                rx="6"
+              ></rect>
+              <text class="fill-dg-blue-ink" x="72" y="263.5" font-size="9.5" text-anchor="middle">
+                Dec 2020
+              </text>
+              <circle class="fill-dg-blue" cx="120" cy="260" r="4.5"></circle>
+              <text class="fill-dg-ink" x="140" y="259" font-size="11" font-weight="500">
+                React Server Components announced
+              </text>
+              <text class="fill-dg-muted" x="140" y="274" font-size="9.5">
+                the zero-bundle RFC: rendering and data access return to the server
+              </text>
+
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="40"
+                y="296"
+                width="64"
+                height="20"
+                rx="6"
+              ></rect>
+              <text class="fill-dg-blue-ink" x="72" y="309.5" font-size="9.5" text-anchor="middle">
+                Dec 2021
+              </text>
+              <circle class="fill-dg-blue" cx="120" cy="306" r="4.5"></circle>
+              <text class="fill-dg-ink" x="140" y="305" font-size="11" font-weight="500">
+                React core comes to Vercel
+              </text>
+              <text class="fill-dg-muted" x="140" y="320" font-size="9.5">
+                Sebastian Markbåge (RSC's architect) leaves Meta for Vercel; more core members
+                follow
+              </text>
+
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="40"
+                y="342"
+                width="64"
+                height="20"
+                rx="6"
+              ></rect>
+              <text class="fill-dg-blue-ink" x="72" y="355.5" font-size="9.5" text-anchor="middle">
+                Mar 2022
+              </text>
+              <circle class="fill-dg-blue" cx="120" cy="352" r="4.5"></circle>
+              <text class="fill-dg-ink" x="140" y="351" font-size="11" font-weight="500">
+                React 18
+              </text>
+              <text class="fill-dg-muted" x="140" y="366" font-size="9.5">
+                concurrent rendering, streaming SSR, selective hydration: the plumbing RSC needs
+              </text>
+
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="40"
+                y="388"
+                width="64"
+                height="20"
+                rx="6"
+              ></rect>
+              <text class="fill-dg-blue-ink" x="72" y="401.5" font-size="9.5" text-anchor="middle">
+                Oct 2022
+              </text>
+              <circle class="fill-dg-blue" cx="120" cy="398" r="4.5"></circle>
+              <text class="fill-dg-ink" x="140" y="397" font-size="11" font-weight="500">
+                Next.js 13: the App Router
+              </text>
+              <text class="fill-dg-muted" x="140" y="412" font-size="9.5">
+                RSC as an architecture: nested layouts, streaming, colocation of data with UI
+              </text>
+
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="40"
+                y="434"
+                width="64"
+                height="20"
+                rx="6"
+              ></rect>
+              <text class="fill-dg-blue-ink" x="72" y="447.5" font-size="9.5" text-anchor="middle">
+                May 2023
+              </text>
+              <circle class="fill-dg-blue" cx="120" cy="444" r="4.5"></circle>
+              <text class="fill-dg-ink" x="140" y="443" font-size="11" font-weight="500">
+                App Router stable (Next 13.4)
+              </text>
+              <text class="fill-dg-muted" x="140" y="458" font-size="9.5">
+                server-first becomes the recommended path; Server Actions arrive
+              </text>
+
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="40"
+                y="480"
+                width="64"
+                height="20"
+                rx="6"
+              ></rect>
+              <text class="fill-dg-blue-ink" x="72" y="493.5" font-size="9.5" text-anchor="middle">
+                Dec 2024
+              </text>
+              <circle class="fill-dg-blue" cx="120" cy="490" r="4.5"></circle>
+              <text class="fill-dg-ink" x="140" y="489" font-size="11" font-weight="500">
+                React 19
+              </text>
+              <text class="fill-dg-muted" x="140" y="504" font-size="9.5">
+                Actions, use(), stable RSC APIs; server-first is the platform now, not an experiment
+              </text>
+
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="40"
+                y="526"
+                width="64"
+                height="20"
+                rx="6"
+              ></rect>
+              <text class="fill-dg-blue-ink" x="72" y="539.5" font-size="9.5" text-anchor="middle">
+                Oct 2025
+              </text>
+              <circle class="fill-dg-blue" cx="120" cy="536" r="4.5"></circle>
+              <text class="fill-dg-ink" x="140" y="535" font-size="11" font-weight="500">
+                Next.js 16 + React Compiler 1.0
+              </text>
+              <text class="fill-dg-muted" x="140" y="550" font-size="9.5">
+                "use cache" and PPR-by-default under cacheComponents; the compiler ends memo
+                busywork
+              </text>
+            </svg></div>
+    </main>
+    <nav class="deck-nav">
+      <a class="home" href="index.html" title="Contents">&#8962;</a>
+      <a data-nav="prev" class="nv" href="02-the-stakes.html">&lsaquo;</a>
+      <span class="ct">3 / 13</span>
+      <a data-nav="next" class="nv" href="04-the-thesis.html">&rsaquo;</a>
+    </nav>
+<script>
+  (function () {
+    var prev = document.querySelector('[data-nav=prev]');
+    var next = document.querySelector('[data-nav=next]');
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' && prev) location.href = prev.getAttribute('href');
+      if ((e.key === 'ArrowRight' || e.key === ' ') && next) {
+        e.preventDefault();
+        location.href = next.getAttribute('href');
+      }
+      if (e.key === 'Home') location.href = 'index.html';
+    });
+  })();
+</script>
+  </body>
+</html>

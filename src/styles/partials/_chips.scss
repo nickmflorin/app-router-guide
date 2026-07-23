@@ -1,4 +1,3 @@
-/* ---------- chips ---------- */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -20,42 +19,47 @@
     background: currentColor;
   }
 
-  /* Guarantee a gap between adjacent chips even when written with no
-     whitespace between them in the markup. Flex containers that already
-     space chips with `gap` opt out below. */
+  /* Guarantee a gap between adjacent chips even when written with no whitespace between them in the
+     markup. Flex containers that already space chips with `gap` opt out below. */
   & + & {
     margin-left: 6px;
   }
-}
-.chip-react {
-  color: var(--color-react);
-  background: var(--color-react-soft);
-  border-color: var(--color-react-border);
-}
-.chip-next {
-  color: var(--color-neutral-ink);
-  background: var(--color-neutral-fill);
-  border-color: var(--color-neutral-border);
-}
-/* general UI/UX practice, not tied to React or Next */
-.chip-ux {
-  color: var(--color-purple);
-  background: var(--color-purple-soft);
-  border-color: var(--color-purple-border);
-}
-/* importance metric */
-.chip-critical {
-  color: var(--color-red);
-  background: var(--color-red-soft);
-  border-color: var(--color-red-border);
-}
-.chip-very {
-  color: var(--color-amber);
-  background: var(--color-amber-soft);
-  border-color: var(--color-amber-border);
-}
-.chip-imp {
-  color: var(--color-accent);
-  background: var(--color-accent-soft);
-  border-color: var(--color-accent-border);
+
+  &-react {
+    color: var(--color-react);
+    background: var(--color-react-soft);
+    border-color: var(--color-react-border);
+  }
+
+  &-next {
+    color: var(--color-neutral-ink);
+    background: var(--color-neutral-fill);
+    border-color: var(--color-neutral-border);
+  }
+
+  /* general UI/UX practice, not tied to React or Next */
+  &-ux {
+    color: var(--color-purple);
+    background: var(--color-purple-soft);
+    border-color: var(--color-purple-border);
+  }
+
+  /* importance metric */
+  &-critical {
+    color: var(--color-red);
+    background: var(--color-red-soft);
+    border-color: var(--color-red-border);
+  }
+
+  &-very {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+    border-color: var(--color-amber-border);
+  }
+
+  &-imp {
+    color: var(--color-accent);
+    background: var(--color-accent-soft);
+    border-color: var(--color-accent-border);
+  }
 }

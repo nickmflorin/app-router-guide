@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>12. Blocking is positional - App Router Guide deck</title>
+    <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/guide.css" />
+    <link rel="stylesheet" href="assets/slides.css" />
+  </head>
+  <body class="deck-slide">
+    <main class="slide">
+      <div class="kicker kb">Part B: Contain the Unknown</div>
+      <h1>Blocking is positional</h1>
+      <ul class="points">
+        <li>The same three reads, chained on the client: latency stacks</li>
+        <li>An <code>await</code> at the page level gates everything behind the slowest read</li>
+        <li>Structure decides parallelism: siblings fetch in parallel without anyone writing &ldquo;parallel&rdquo;</li>
+      </ul>
+      <div class="fig"><svg
+              viewBox="0 0 720 284"
+              xmlns="http://www.w3.org/2000/svg"
+              font-family="Inter, system-ui, sans-serif"
+            >
+              <defs>
+                <marker
+                  id="a11t"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    class="stroke-dg-gray"
+                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+                    fill="none"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </marker>
+              </defs>
+
+              <text
+                class="fill-dg-ink"
+                x="360"
+                y="12"
+                font-size="10.5"
+                text-anchor="middle"
+                font-weight="500"
+              >
+                The same three reads, four shapes
+              </text>
+
+              <!-- ROW 1: client waterfall. Rows sit on a strict grid: bars are 22px
+     (or 3x16 stacked), rows separated by 20px; every label and annotation is
+     centered on its row's bar-group center via dominant-baseline. -->
+              <text
+                class="fill-dg-amber-ink"
+                x="12"
+                y="47"
+                font-size="10.5"
+                font-weight="500"
+                dominant-baseline="central"
+              >
+                Client waterfall
+              </text>
+              <rect
+                class="fill-dg-amber-soft stroke-dg-amber"
+                x="175"
+                y="36"
+                width="105"
+                height="22"
+                rx="4"
+              ></rect>
+              <text
+                class="fill-dg-amber-ink"
+                x="227"
+                y="47"
+                font-size="9.5"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                profile
+              </text>
+              <rect
+                class="fill-dg-amber-soft stroke-dg-amber"
+                x="284"
+                y="36"
+                width="105"
+                height="22"
+                rx="4"
+              ></rect>
+              <text
+                class="fill-dg-amber-ink"
+                x="336"
+                y="47"
+                font-size="9.5"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                org id
+              </text>
+              <rect
+                class="fill-dg-amber-soft stroke-dg-amber"
+                x="393"
+                y="36"
+                width="105"
+                height="22"
+                rx="4"
+              ></rect>
+              <text
+                class="fill-dg-amber-ink"
+                x="445"
+                y="47"
+                font-size="9.5"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                dashboard
+              </text>
+              <text
+                class="fill-dg-amber"
+                x="514"
+                y="47"
+                font-size="9.5"
+                font-weight="500"
+                dominant-baseline="central"
+              >
+                3 serial round trips
+              </text>
+
+              <!-- ROW 2: server, dependent chain inside one request -->
+              <text
+                class="fill-dg-blue-ink"
+                x="12"
+                y="89"
+                font-size="10.5"
+                font-weight="500"
+                dominant-baseline="central"
+              >
+                On the server
+              </text>
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="175"
+                y="78"
+                width="105"
+                height="22"
+                rx="4"
+              ></rect>
+              <text
+                class="fill-dg-blue-ink"
+                x="227"
+                y="89"
+                font-size="9.5"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                all three
+              </text>
+              <text
+                class="fill-dg-green-ink"
+                x="296"
+                y="89"
+                font-size="9.5"
+                font-weight="500"
+                dominant-baseline="central"
+              >
+                one round trip
+              </text>
+
+              <!-- ROW 3: parallel on the server, one Suspense per region. Short bars:
+     the queries run next to the data. Bar-group center y=148. -->
+              <text
+                class="fill-dg-blue-ink"
+                x="12"
+                y="142"
+                font-size="10.5"
+                font-weight="500"
+                dominant-baseline="central"
+              >
+                Parallel server
+              </text>
+              <text
+                class="fill-dg-blue-ink-soft"
+                x="12"
+                y="155"
+                font-size="9"
+                dominant-baseline="central"
+              >
+                (one Suspense per region)
+              </text>
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="175"
+                y="120"
+                width="80"
+                height="16"
+                rx="3"
+              ></rect>
+              <text
+                class="fill-dg-blue-ink"
+                x="215"
+                y="128"
+                font-size="9"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                query A
+              </text>
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="175"
+                y="140"
+                width="80"
+                height="16"
+                rx="3"
+              ></rect>
+              <text
+                class="fill-dg-blue-ink"
+                x="215"
+                y="148"
+                font-size="9"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                query B
+              </text>
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="175"
+                y="160"
+                width="80"
+                height="16"
+                rx="3"
+              ></rect>
+              <text
+                class="fill-dg-blue-ink"
+                x="215"
+                y="168"
+                font-size="9"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                query C
+              </text>
+              <text
+                class="fill-dg-green-ink"
+                x="271"
+                y="142"
+                font-size="9.5"
+                font-weight="500"
+                dominant-baseline="central"
+              >
+                start at the request; queries run next to the data
+              </text>
+              <text
+                class="fill-dg-green-ink-soft"
+                x="271"
+                y="155"
+                font-size="9"
+                dominant-baseline="central"
+              >
+                each region streams into reserved space the moment it resolves
+              </text>
+
+              <!-- ROW 4: parallel client. Pays for the bundle before any query can
+     start, then each read is a full browser round trip. Center y=224. -->
+              <text
+                class="fill-dg-teal-ink"
+                x="12"
+                y="218"
+                font-size="10.5"
+                font-weight="500"
+                dominant-baseline="central"
+              >
+                Parallel client
+              </text>
+              <text
+                class="fill-dg-teal-ink"
+                x="12"
+                y="231"
+                font-size="9"
+                dominant-baseline="central"
+              >
+                (when unavoidable)
+              </text>
+              <rect
+                class="fill-dg-fill stroke-dg-border"
+                x="175"
+                y="196"
+                width="90"
+                height="56"
+                rx="3"
+              ></rect>
+              <text
+                class="fill-dg-muted"
+                x="220"
+                y="224"
+                font-size="9"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                JS + hydrate
+              </text>
+              <rect
+                class="fill-dg-teal-soft stroke-dg-teal"
+                x="269"
+                y="196"
+                width="135"
+                height="16"
+                rx="3"
+              ></rect>
+              <text
+                class="fill-dg-teal-ink"
+                x="336"
+                y="204"
+                font-size="9"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                query A
+              </text>
+              <rect
+                class="fill-dg-teal-soft stroke-dg-teal"
+                x="269"
+                y="216"
+                width="135"
+                height="16"
+                rx="3"
+              ></rect>
+              <text
+                class="fill-dg-teal-ink"
+                x="336"
+                y="224"
+                font-size="9"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                query B
+              </text>
+              <rect
+                class="fill-dg-teal-soft stroke-dg-teal"
+                x="269"
+                y="236"
+                width="135"
+                height="16"
+                rx="3"
+              ></rect>
+              <text
+                class="fill-dg-teal-ink"
+                x="336"
+                y="244"
+                font-size="9"
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                query C
+              </text>
+              <text
+                class="fill-dg-teal-ink"
+                x="420"
+                y="218"
+                font-size="9.5"
+                font-weight="500"
+                dominant-baseline="central"
+              >
+                can't start until the bundle arrives and hydrates
+              </text>
+              <text
+                class="fill-dg-teal-ink"
+                x="420"
+                y="231"
+                font-size="9"
+                dominant-baseline="central"
+              >
+                then every read is a full browser-to-server round trip
+              </text>
+
+              <!-- time axis -->
+              <line
+                class="stroke-dg-gray"
+                x1="175"
+                y1="266"
+                x2="672"
+                y2="266"
+                stroke-width="1.2"
+                marker-end="url(#a11t)"
+              ></line>
+              <text class="fill-dg-gray" x="175" y="280" font-size="9">start</text>
+              <text class="fill-dg-gray" x="640" y="280" font-size="9">time</text>
+            </svg></div>
+    </main>
+    <nav class="deck-nav">
+      <a class="home" href="index.html" title="Contents">&#8962;</a>
+      <a data-nav="prev" class="nv" href="11-suspense-streaming.html">&lsaquo;</a>
+      <span class="ct">12 / 13</span>
+      <a data-nav="next" class="nv" href="13-signs-wrong.html">&rsaquo;</a>
+    </nav>
+<script>
+  (function () {
+    var prev = document.querySelector('[data-nav=prev]');
+    var next = document.querySelector('[data-nav=next]');
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' && prev) location.href = prev.getAttribute('href');
+      if ((e.key === 'ArrowRight' || e.key === ' ') && next) {
+        e.preventDefault();
+        location.href = next.getAttribute('href');
+      }
+      if (e.key === 'Home') location.href = 'index.html';
+    });
+  })();
+</script>
+  </body>
+</html>

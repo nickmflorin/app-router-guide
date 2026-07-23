@@ -1,7 +1,3 @@
-// Full-screen presentation view for the slide deck. NOT dev-only: the deck
-// distributable inlines these styles. Each slide is a fixed 1280x720 canvas
-// scaled to fit the viewport, so content sizing is consistent.
-
 .deck-view {
   margin: 0;
   height: 100vh;
@@ -28,19 +24,20 @@
     opacity 0.4s ease;
   pointer-events: none;
   will-change: transform, opacity;
-}
-.slide.current {
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
-}
-.slide.is-before {
-  opacity: 0;
-  transform: translateX(-100%);
-}
-.slide.is-after {
-  opacity: 0;
-  transform: translateX(100%);
+
+  &.current {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  &.is-before {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  &.is-after {
+    opacity: 0;
+    transform: translateX(100%);
+  }
 }
 .slide-canvas {
   width: 1280px;
@@ -70,18 +67,19 @@
   gap: 28px;
   align-items: center;
   justify-content: center;
-}
-.slide-body.layout-row {
-  flex-direction: row;
-}
-.slide-body.layout-column,
-.slide-body.layout-free {
-  flex-direction: column;
-}
-.slide-body.layout-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-content: center;
+
+  &.layout-row {
+    flex-direction: row;
+  }
+  &.layout-column,
+  &.layout-free {
+    flex-direction: column;
+  }
+  &.layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-content: center;
+  }
 }
 .slide-item {
   min-width: 0;
@@ -92,26 +90,31 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-}
-.slide-item .diagram {
-  margin: 0;
-  width: 100%;
-}
-.slide-item .diagram svg {
-  width: 100%;
-  height: auto;
-  max-height: 560px;
-}
-/* Deck is diagram-forward: hide the diagram caption unless a slide opts in. */
-.slide-item .diagram figcaption {
-  display: none;
-}
-.slide-item .snippet {
-  margin: 0;
-  width: 100%;
-}
-.slide-item .snippet pre.code {
-  font-size: 15px;
+
+  .diagram {
+    margin: 0;
+    width: 100%;
+
+    svg {
+      width: 100%;
+      height: auto;
+      max-height: 560px;
+    }
+
+    /* Deck is diagram-forward: hide the diagram caption unless a slide opts in. */
+    figcaption {
+      display: none;
+    }
+  }
+
+  .snippet {
+    margin: 0;
+    width: 100%;
+
+    pre.code {
+      font-size: 15px;
+    }
+  }
 }
 .deck-missing {
   font:
@@ -144,20 +147,21 @@
   transition:
     background 0.15s ease,
     opacity 0.15s ease;
-}
-.deck-arrow:hover {
-  background: rgba(255, 255, 255, 0.22);
-  opacity: 1;
-}
-.deck-arrow.left {
-  left: 22px;
-}
-.deck-arrow.right {
-  right: 22px;
-}
-.deck-arrow.hidden {
-  opacity: 0;
-  pointer-events: none;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.22);
+    opacity: 1;
+  }
+  &.left {
+    left: 22px;
+  }
+  &.right {
+    right: 22px;
+  }
+  &.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 .deck-progress {
   position: fixed;
@@ -186,22 +190,24 @@
   display: flex;
   gap: 12px;
   align-items: center;
-}
-.deck-hud button {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  color: #fff;
-  border-radius: 12px;
-  padding: 2px 9px;
-  cursor: pointer;
-  font: inherit;
-}
-.deck-hud button:hover {
-  background: rgba(255, 255, 255, 0.14);
-}
-.deck-hud button.has-note {
-  background: #0070f3;
-  border-color: #0070f3;
+
+  button {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #fff;
+    border-radius: 12px;
+    padding: 2px 9px;
+    cursor: pointer;
+    font: inherit;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+    &.has-note {
+      background: #0070f3;
+      border-color: #0070f3;
+    }
+  }
 }
 .deck-note-editor {
   position: fixed;
@@ -213,27 +219,29 @@
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   padding: 10px;
-}
-.deck-note-editor .dne-head {
-  font:
-    600 12px Inter,
-    system-ui,
-    sans-serif;
-  color: #171717;
-  margin-bottom: 6px;
-}
-.deck-note-editor textarea {
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 90px;
-  font:
-    13px Inter,
-    system-ui,
-    sans-serif;
-  border: 1px solid #d4d4d4;
-  border-radius: 6px;
-  padding: 8px;
-  resize: vertical;
+
+  .dne-head {
+    font:
+      600 12px Inter,
+      system-ui,
+      sans-serif;
+    color: #171717;
+    margin-bottom: 6px;
+  }
+
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 90px;
+    font:
+      13px Inter,
+      system-ui,
+      sans-serif;
+    border: 1px solid #d4d4d4;
+    border-radius: 6px;
+    padding: 8px;
+    resize: vertical;
+  }
 }
 .deck-empty {
   color: #fff;
@@ -257,35 +265,38 @@
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 16px;
   align-content: start;
-}
-.deck-overview .ov-slide {
-  background: var(--color-white, #fff);
-  color: var(--color-fg, #171717);
-  border-radius: 8px;
-  min-height: 130px;
-  cursor: pointer;
-  padding: 12px 14px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-}
-.deck-overview .ov-slide:hover {
-  outline: 2px solid #0070f3;
-}
-.deck-overview .ov-num {
-  font:
-    600 12px Inter,
-    sans-serif;
-  color: #737373;
-}
-.deck-overview .ov-title {
-  font:
-    600 15px Inter,
-    sans-serif;
-  margin: 2px 0 8px;
-}
-.deck-overview .ov-refs {
-  font:
-    11px ui-monospace,
-    monospace;
-  color: #525252;
-  white-space: pre-line;
+
+  .ov-slide {
+    background: var(--color-white, #fff);
+    color: var(--color-fg, #171717);
+    border-radius: 8px;
+    min-height: 130px;
+    cursor: pointer;
+    padding: 12px 14px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+
+    &:hover {
+      outline: 2px solid #0070f3;
+    }
+  }
+
+  .ov-num {
+    font:
+      600 12px Inter,
+      sans-serif;
+    color: #737373;
+  }
+  .ov-title {
+    font:
+      600 15px Inter,
+      sans-serif;
+    margin: 2px 0 8px;
+  }
+  .ov-refs {
+    font:
+      11px ui-monospace,
+      monospace;
+    color: #525252;
+    white-space: pre-line;
+  }
 }

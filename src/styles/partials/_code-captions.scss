@@ -1,7 +1,5 @@
-/* ---------- code captions ---------- */
-/* The code counterpart of a diagram's figcaption: formal prose right under
-   a pre.code. Lives inside a <Snippet> with the pre it describes; the
-   snippet container owns its spacing. */
+/* The code counterpart of a diagram's figcaption: formal prose right under a pre.code. Lives inside
+   a <Snippet> with the pre it describes; the snippet container owns its spacing. */
 .code-caption {
   color: var(--color-muted);
   font-size: 13px;

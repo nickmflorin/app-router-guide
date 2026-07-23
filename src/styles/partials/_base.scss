@@ -1,14 +1,7 @@
-/* ============================================================
-   App Router Guide - design system
-   Styled after nextjs.org docs: light canvas, dark diagram
-   panels, Geist-ish typography, blue accent.
-   ============================================================ */
-
-/* The palette, fonts, and layout constants live in the `@theme static` block
-   in tailwind.css — the single source of truth. They are emitted as CSS
-   custom properties (--color-*, --font-*, --spacing-*) and referenced below
-   and throughout the partials as var(--color-accent), var(--font-sans), etc.
-   There is intentionally no :root token block here anymore. */
+/* The palette, fonts, and layout constants live in the `@theme static` block in tailwind.css — the
+   single source of truth. They are emitted as CSS custom properties (--color-*, --font-*,
+   --spacing-*) and referenced below and throughout the partials as var(--color-accent),
+   var(--font-sans), etc. There is intentionally no :root token block here anymore. */
 
 * {
   box-sizing: border-box;
@@ -16,8 +9,8 @@
 html {
   scroll-behavior: smooth;
 }
-/* Nothing may ever scroll the page horizontally; wide content wraps or
-   scrolls inside its own block. */
+/* Nothing may ever scroll the page horizontally; wide content wraps or scrolls inside its own
+   block. */
 html,
 body {
   overflow-x: clip;

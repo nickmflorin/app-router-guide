@@ -1,4 +1,3 @@
-/* ---------- sidebar search ---------- */
 .side-search {
   position: relative;
   margin: 2px 0 10px;
@@ -131,7 +130,7 @@
     color: var(--color-muted);
     text-decoration: none;
     border-radius: 6px;
-    line-height: 1.45;
+    line-height: 24px;
 
     &:hover {
       color: var(--color-fg);

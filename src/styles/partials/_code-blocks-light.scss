@@ -1,4 +1,3 @@
-/* ---------- code blocks (light) ---------- */
 pre.code {
   background: var(--color-surface);
   color: var(--color-fg);
@@ -7,10 +6,10 @@ pre.code {
   width: 100%;
   max-width: 100%;
   padding: 16px 18px;
-  /* Wrap to the container instead of scrolling: pre-wrap preserves the code's
-     own indentation and newlines; break-word is the safety valve for single
-     unbreakable tokens (long URLs, template strings). nav.js splits blocks into
-     .code-line divs so continuation lines hang at each line's indentation. */
+  /* Wrap to the container instead of scrolling: pre-wrap preserves the code's own indentation and
+     newlines; break-word is the safety valve for single unbreakable tokens (long URLs, template
+     strings). nav.js splits blocks into .code-line divs so continuation lines hang at each line's
+     indentation. */
   white-space: pre-wrap;
   overflow-wrap: break-word;
   font-family: var(--font-mono);

@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>5. Same page, two architectures - App Router Guide deck</title>
+    <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/guide.css" />
+    <link rel="stylesheet" href="assets/slides.css" />
+  </head>
+  <body class="deck-slide">
+    <main class="slide">
+      <div class="kicker kz">The Mental Model</div>
+      <h1>Same page, two architectures</h1>
+      <ul class="points">
+        <li>The SPA chain serializes five steps, with a spinner at each</li>
+        <li>Server-first: one render, streamed; the browser paints content, not scaffolding</li>
+        <li>The app directory is your app&rsquo;s scaffold, not just its routes</li>
+      </ul>
+      <div class="fig"><svg
+              viewBox="0 0 720 344"
+              xmlns="http://www.w3.org/2000/svg"
+              font-family="Inter, system-ui, sans-serif"
+            >
+              <text class="fill-dg-ink" x="12" y="10.64" font-size="11" font-weight="500">
+                SPA-style page (client-fetch chain)
+              </text>
+              <!-- track 1 -->
+              <rect
+                class="fill-dg-white stroke-dg-border"
+                x="12"
+                y="24.64"
+                width="90"
+                height="24"
+                rx="5"
+              ></rect>
+              <text class="fill-dg-muted" x="57" y="40.64" font-size="10" text-anchor="middle">
+                HTML shell
+              </text>
+              <rect
+                class="fill-dg-white stroke-dg-border"
+                x="104"
+                y="54.64"
+                width="140"
+                height="24"
+                rx="5"
+              ></rect>
+              <text class="fill-dg-muted" x="174" y="70.64" font-size="10" text-anchor="middle">
+                download + parse JS
+              </text>
+              <rect
+                class="fill-dg-white stroke-dg-border"
+                x="246"
+                y="84.64"
+                width="90"
+                height="24"
+                rx="5"
+              ></rect>
+              <text class="fill-dg-muted" x="291" y="100.64" font-size="10" text-anchor="middle">
+                hydrate
+              </text>
+              <rect
+                class="fill-dg-amber-soft stroke-dg-amber"
+                x="338"
+                y="114.64"
+                width="120"
+                height="24"
+                rx="5"
+              ></rect>
+              <text
+                class="fill-dg-amber-ink"
+                x="398"
+                y="130.64"
+                font-size="10"
+                text-anchor="middle"
+              >
+                fetch /users/me
+              </text>
+              <rect
+                class="fill-dg-amber-soft stroke-dg-amber"
+                x="460"
+                y="144.64"
+                width="130"
+                height="24"
+                rx="5"
+              ></rect>
+              <text
+                class="fill-dg-amber-ink"
+                x="525"
+                y="160.64"
+                font-size="10"
+                text-anchor="middle"
+              >
+                fetch page data
+              </text>
+              <rect
+                class="fill-dg-green-soft stroke-dg-green"
+                x="592"
+                y="174.64"
+                width="110"
+                height="24"
+                rx="5"
+              ></rect>
+              <text
+                class="fill-dg-green-ink"
+                x="647"
+                y="190.64"
+                font-size="10"
+                text-anchor="middle"
+              >
+                content visible
+              </text>
+              <line
+                class="stroke-dg-green"
+                x1="647"
+                y1="204.64"
+                x2="647"
+                y2="220.64"
+                stroke-dasharray="3 3"
+              ></line>
+              <text
+                class="fill-dg-green-ink"
+                x="638"
+                y="234.64"
+                font-size="10"
+                text-anchor="middle"
+              >
+                T₅: five serialized steps
+              </text>
+              <text class="fill-dg-gray" x="12" y="234.64" font-size="10.5">
+                spinners at each step · layout shifts as each lands · every step repeats on every
+                navigation
+              </text>
+
+              <line class="stroke-dg-line-strong" x1="12" y1="250.64" x2="708" y2="250.64"></line>
+
+              <text class="fill-dg-ink" x="12" y="274.64" font-size="10.5" font-weight="500">
+                Server-first page (same data)
+              </text>
+              <rect
+                class="fill-dg-blue-soft stroke-dg-blue"
+                x="12"
+                y="301.64"
+                width="200"
+                height="24"
+                rx="5"
+              ></rect>
+              <text class="fill-dg-blue-ink" x="112" y="317.64" font-size="10" text-anchor="middle">
+                server: fetch in parallel + render
+              </text>
+              <rect
+                class="fill-dg-green-soft stroke-dg-green"
+                x="214"
+                y="301.64"
+                width="130"
+                height="24"
+                rx="5"
+              ></rect>
+              <text
+                class="fill-dg-green-ink"
+                x="279"
+                y="317.64"
+                font-size="10"
+                text-anchor="middle"
+              >
+                content visible: T₁
+              </text>
+              <rect
+                class="fill-dg-amber-soft stroke-dg-amber"
+                x="346"
+                y="286.64"
+                width="150"
+                height="24"
+                rx="5"
+                stroke-dasharray="4 3"
+              ></rect>
+              <text
+                class="fill-dg-amber-ink"
+                x="421"
+                y="302.64"
+                font-size="10"
+                text-anchor="middle"
+              >
+                slow regions stream in
+              </text>
+              <rect
+                class="fill-dg-teal-soft stroke-dg-teal"
+                x="346"
+                y="316.64"
+                width="150"
+                height="24"
+                rx="5"
+              ></rect>
+              <text class="fill-dg-teal-ink" x="421" y="332.64" font-size="10" text-anchor="middle">
+                + leaves hydrate
+              </text>
+              <text
+                class="fill-dg-gray"
+                x="508"
+                y="317.64"
+                font-size="8.5"
+                dominant-baseline="central"
+              >
+                stacked: both happen at once
+              </text>
+            </svg></div>
+    </main>
+    <nav class="deck-nav">
+      <a class="home" href="index.html" title="Contents">&#8962;</a>
+      <a data-nav="prev" class="nv" href="04-the-thesis.html">&lsaquo;</a>
+      <span class="ct">5 / 13</span>
+      <a data-nav="next" class="nv" href="06-the-spinner-tower.html">&rsaquo;</a>
+    </nav>
+<script>
+  (function () {
+    var prev = document.querySelector('[data-nav=prev]');
+    var next = document.querySelector('[data-nav=next]');
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' && prev) location.href = prev.getAttribute('href');
+      if ((e.key === 'ArrowRight' || e.key === ' ') && next) {
+        e.preventDefault();
+        location.href = next.getAttribute('href');
+      }
+      if (e.key === 'Home') location.href = 'index.html';
+    });
+  })();
+</script>
+  </body>
+</html>

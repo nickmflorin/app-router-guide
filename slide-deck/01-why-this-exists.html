@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>1. Why this guide exists - App Router Guide deck</title>
+    <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/guide.css" />
+    <link rel="stylesheet" href="assets/slides.css" />
+  </head>
+  <body class="deck-slide">
+    <main class="slide no-fig">
+      <div class="kicker kz">Introduction</div>
+      <h1>Why this guide exists</h1>
+      <ul class="points">
+        <li>Stitched from the official Next.js 16 + React 19 docs: reorganized, expanded, made concrete</li>
+        <li>Plus the patterns the docs never quite name, the ones you only learn by shipping against the App Router</li>
+        <li><strong>The one ask: read the docs.</strong> As a description of a model, not as an API reference when something breaks</li>
+        <li>This deck is the summary; the guide has the detail; the docs are the territory</li>
+      </ul>
+    </main>
+    <nav class="deck-nav">
+      <a class="home" href="index.html" title="Contents">&#8962;</a>
+      <a data-nav="prev" class="nv" href="index.html">&lsaquo;</a>
+      <span class="ct">1 / 13</span>
+      <a data-nav="next" class="nv" href="02-the-stakes.html">&rsaquo;</a>
+    </nav>
+<script>
+  (function () {
+    var prev = document.querySelector('[data-nav=prev]');
+    var next = document.querySelector('[data-nav=next]');
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' && prev) location.href = prev.getAttribute('href');
+      if ((e.key === 'ArrowRight' || e.key === ' ') && next) {
+        e.preventDefault();
+        location.href = next.getAttribute('href');
+      }
+      if (e.key === 'Home') location.href = 'index.html';
+    });
+  })();
+</script>
+  </body>
+</html>

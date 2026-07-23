@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The App Router Guide - deck</title>
+    <link rel="icon" href="assets/logomark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/guide.css" />
+    <link rel="stylesheet" href="assets/slides.css" />
+  </head>
+  <body class="deck-cover">
+    <main class="cover">
+      <img class="mark" src="assets/logomark.svg" alt="Craft Education" />
+      <div class="kicker kz">Craft Education &middot; Engineering</div>
+      <h1>The App Router Guide</h1>
+      <p class="sub">
+        Server-first Next.js 16 / React 19: what we optimize for on every page, and the patterns
+        that get us there. The short version; the guide has the detail.
+      </p>
+      <div class="agenda">
+        <a class="ag" href="01-why-this-exists.html"><span class="n">1</span><span class="t">Why this guide exists</span></a>
+        <a class="ag" href="02-the-stakes.html"><span class="n">2</span><span class="t">The stakes</span></a>
+        <a class="ag" href="03-direction-of-travel.html"><span class="n">3</span><span class="t">The direction of travel</span></a>
+        <a class="ag" href="04-the-thesis.html"><span class="n">4</span><span class="t">Separate the known from the unknown</span></a>
+        <a class="ag" href="05-rendering-model.html"><span class="n">5</span><span class="t">Same page, two architectures</span></a>
+        <a class="ag" href="06-the-spinner-tower.html"><span class="n">6</span><span class="t">The spinner tower</span></a>
+        <a class="ag" href="07-boundaries.html"><span class="n">7</span><span class="t">Push interactivity to the leaves</span></a>
+        <a class="ag" href="08-bundle-size.html"><span class="n">8</span><span class="t">Wholesale components fuse the known to the unknown</span></a>
+        <a class="ag" href="09-url-state.html"><span class="n">9</span><span class="t">The URL is the state manager</span></a>
+        <a class="ag" href="10-containers.html"><span class="n">10</span><span class="t">Containers reserve space</span></a>
+        <a class="ag" href="11-suspense-streaming.html"><span class="n">11</span><span class="t">Suspense &amp; streaming</span></a>
+        <a class="ag" href="12-blocking.html"><span class="n">12</span><span class="t">Blocking is positional</span></a>
+        <a class="ag" href="13-signs-wrong.html"><span class="n">13</span><span class="t">Signs you&rsquo;re doing it wrong</span></a>
+      </div>
+      <a class="start" data-nav="next" href="01-why-this-exists.html">Start &rsaquo;</a>
+    </main>
+<script>
+  (function () {
+    var prev = document.querySelector('[data-nav=prev]');
+    var next = document.querySelector('[data-nav=next]');
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' && prev) location.href = prev.getAttribute('href');
+      if ((e.key === 'ArrowRight' || e.key === ' ') && next) {
+        e.preventDefault();
+        location.href = next.getAttribute('href');
+      }
+      if (e.key === 'Home') location.href = 'index.html';
+    });
+  })();
+</script>
+  </body>
+</html>

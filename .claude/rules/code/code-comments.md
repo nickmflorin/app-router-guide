@@ -1,6 +1,6 @@
 ---
 paths:
-  - '**/*.{ts,tsx,js,jsx,mjs,cjs}'
+  - '**/*.{ts,tsx,js,jsx,mjs,cjs,astro,scss,css}'
 description: 'Code comment and JSDoc standards'
 ---
 
@@ -255,6 +255,25 @@ Extract a trivial function when it exists mainly to carry the explanation of why
 const buildFrameAncestorsDirective = (): string =>
   "frame-ancestors 'self' https://*.instructure.com;";
 ```
+
+## CSS and SCSS Comments
+
+CSS/SCSS files (including the SCSS partials in `src/styles/`) have no JSDoc; the same principles
+apply to their `/* */` comments as to inline comments above. Comment only what is not obvious, and
+only the **why**, never a restatement of what the rules plainly do.
+
+- Decorative and section-banner comments are forbidden. Do not write divider or label comments whose
+  only content is the name of the section they head, such as `/* ---------- chips ---------- */`,
+  `/* ===== layout ===== */`, or a rule of dashes. The partial's filename and the selector names
+  already say what the block is; a banner that repeats them carries no information. Remove any that
+  exist and never add new ones.
+- Keep a comment only when it explains something the CSS cannot: a non-obvious reason for a value, a
+  cross-browser workaround, a constraint imposed from elsewhere, or intent that the properties alone
+  do not reveal. If the declarations already make the intent clear, no comment is needed.
+- SCSS nesting is preferred over flat, prefix-repeating selectors: nest descendants, pseudo-classes
+  and pseudo-elements (`&:hover`, `&::before`), modifier and state classes (`&.active`, `&-variant`),
+  and combinators (`& + &`) under their parent rather than restating the ancestor selector on every
+  line. This structure replaces most banner comments outright.
 
 ## Prohibited
 
