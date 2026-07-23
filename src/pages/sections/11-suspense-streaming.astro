@@ -1815,14 +1815,21 @@ flowchart LR
     </CodeCaption>
   </Snippet>
 
+  <h3 id='skeletons-example-fix'>The fix: separate the known, and re-home the dialog's data</h3>
   <p>
-    The fix is structural, and it is the same separation this guide keeps returning to: decide
+    For the dialog's data there are exactly two good options, and both take it off the first paint's
+    critical path. Either the dialog <strong>fetches its own data client-side when it opens</strong> (a
+    key-based fetch that fires on mount, <a href='16-dedupe-caching.html#client'>§16.3</a>), or the
+    server <strong>starts the fetch without awaiting it and passes the promise down</strong>,
+    letting the dialog resolve it with <code>use()</code> once it is open (<a href='#pass-promises'
+      >§11.2</a
+    >). The rest of the fix is structural, and it is the same separation this guide keeps returning
+    to: decide
     <strong>which parts of the component are known and which genuinely wait</strong>, and give each
     its own home. The section owns the chrome and renders it immediately; a small server child owns
-    the one await the rows actually need; and the dialog's data stops being first-paint data at all,
-    because the dialog lives in the button that opens it (<a
+    the one await the rows actually need; and the dialog lives in the button that opens it (<a
       href='05-client-server-boundaries.html#self-contained'>§5.7</a
-    >):
+    >). Here is the rewrite, using the promise; the fetch-on-open variant follows it:
   </p>
 
   <Snippet>
