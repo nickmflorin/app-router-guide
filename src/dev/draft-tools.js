@@ -71,19 +71,29 @@
     return res.status === 204 ? null : res.json();
   }
   function pushNote(note) {
-    if (apiUp === false) return; // known-down: local flow owns persistence
+    /* Always attempt, and fail LOUDLY: the old silent apiUp latch once
+       stranded notes in localStorage. syncFromApi() re-uploads local-only
+       notes on the next page load, so nothing stays stranded. */
     apiSend('POST', '', note).then(
       () => {
         apiUp = true;
       },
       () => {
         apiUp = false;
+        toast('Note save FAILED: kept locally, will re-sync on reload');
       },
     );
   }
   function deleteNoteRemote(id) {
-    if (apiUp === false) return;
-    apiSend('DELETE', '?id=' + encodeURIComponent(id)).catch(() => {});
+    apiSend('DELETE', '?id=' + encodeURIComponent(id)).then(
+      () => {
+        apiUp = true;
+      },
+      () => {
+        apiUp = false;
+        toast('Note delete FAILED: not in the DB');
+      },
+    );
   }
   async function syncFromApi() {
     try {
@@ -95,7 +105,12 @@
       const byId = {};
       d.notes.forEach(n => (byId[n.id] = n));
       data.notes.forEach(n => {
-        if (!byId[n.id]) byId[n.id] = n;
+        if (!byId[n.id]) {
+          byId[n.id] = n;
+          /* Local-only note (created while the endpoint was down): upload it
+             now so the DB — the store Claude reads — has it too. */
+          pushNote(n);
+        }
       });
       data = { notes: Object.values(byId) };
       persist();

@@ -116,6 +116,16 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 
 ## Decisions log
 
+- 2026-07-23: **Notes/deck saves fail LOUDLY + self-heal (no more silent latches).** Both dev
+  modules once latched apiUp/deckApiUp false after one failed request and silently stopped
+  persisting (this stranded a batch of Nick's notes in localStorage and an entire deck arrangement
+  in a closed tab). Now: every save is attempted, failures toast, deck re-arms flush the local
+  arrangement up, and page load re-uploads local-only notes to the DB. COROLLARY for Claude: never
+  DELETE a note row from the DB if Nick's browser may still hold it locally (the re-upload will
+  resurrect it) — set status='resolved' instead; true deletion only via the UI, which clears both
+  stores. Small direct DB writes from the sandbox work with PRAGMA journal_mode=OFF (avoids the
+  journal unlink the mount forbids); never overwrite notes.db wholesale while the dev server runs.
+
 - 2026-07-23: **nav.js componentized into Astro (branch nav-componentization, per Nick).** The
   sidebar/TOC/pager are now SERVER-RENDERED: `src/components/Sidebar.astro` + the pager in
   GuidePage.astro, both derived from `src/data/toc.js`, which is THE single TOC source (nav.js's
