@@ -6,6 +6,8 @@ import GoDeeper from '../../components/GoDeeper.astro';
 import Diagram from '../../components/Diagram.astro';
 import CodeCaption from '../../components/CodeCaption.astro';
 import Snippet from '../../components/Snippet.astro';
+import Compare from '../../components/Compare.astro';
+import CompareCol from '../../components/CompareCol.astro';
 ---
 
 <GuidePage title='Component Breakdown - App Router Guide' root='..'>
@@ -486,7 +488,183 @@ flowchart TB
     </Fragment>
   </Diagram>
 
-  <h2 id='one-per-file'>17.5 One component per file</h2>
+  <h2 id='composability'>17.5 Composability: the pieces must reassemble</h2>
+  <p>
+    Decomposition has a second half this chapter has so far taken for granted:
+    <strong>the pieces have to go back together.</strong>
+    <Chip k='react' />
+    <Chip k='critical' /> A composite is only truly broken down if its parts can be reassembled in JSX,
+    each carrying its own capabilities and nothing else. The failure mode is the component that can only
+    be used through a configuration prop: <code
+      >items=&#123;[&#123; label, href, onClick, badge &#125;]&#125;</code
+    >. The shape looks tidy (one component, one prop), but it is markup encoded as data, and it
+    quietly un-decomposes the component: whatever <em>any</em> item needs, the <em>whole</em> composite
+    now needs.
+  </p>
+  <p>
+    The first fusion is the boundary, and it is mechanical, not stylistic. Props that cross the
+    server/client boundary must be serializable, and a function cannot cross (<a
+      href='05-client-server-boundaries.html#children-pattern'>§5.4</a
+    >). The moment one item's config carries an <code>onClick</code>, the array can only be built
+    inside a client component, so the whole nav, and whatever builds its items, crosses the boundary
+    with it. There is no way to mark one entry of an array <code>"use client"</code>; the directive
+    marks modules, and the config shape has already fused every entry into one value. One
+    interactive item has converted an entire region of static links: the wholesale trap of <a
+      href='08-bundle-size-code-splitting.html#wholesale'>§8.2</a
+    >, rebuilt at home.
+  </p>
+  <p>
+    The second fusion is data. If a badge count lives in the config, the count must exist where the
+    config is built: at the top. One item's lookup becomes the whole nav's data need, fetched
+    together, awaited together, suspended together, with every static link standing behind the gate
+    as a bystander (<a href='14-blocking-requests.html#no-bystanders'>§14.5</a>). This is the thesis
+    of <a href='02-goals.html'>§2</a> failing at component scale:
+    <strong
+      >the granularity of your known/unknown separation is capped by the granularity of your
+      composition.</strong
+    > When the pieces are fused, there is nowhere to draw the boundary where known meets unknown, so you
+    end up suspending links that were knowable at build time because one sibling is waiting, exactly the
+    skeleton-over-known-content failure of <a href='11-suspense-streaming.html#skeletons-example'
+      >§11.4</a
+    >. Embedding parts with different data needs and different boundary needs into one fused shape
+    is a recipe for inflexibility.
+  </p>
+
+  <Compare>
+    <CompareCol kind='bad' label='✕ Configured: every item pays for one'>
+      <Snippet>
+        <pre
+          class='code v-bad'
+          is:raw><span class="filename">AppNavWithUser.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+<span class="tok-kw">import</span> { useUnreadCount } <span class="tok-kw">from</span> <span class="tok-str">"@/hooks"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">AppNavWithUser</span>() {
+  <span class="tok-com">/* One onClick makes this file client;
+     one badge makes it fetch. Every
+     static link now pays for both. */</span>
+  <span class="tok-kw">const</span> unread = <span class="tok-fn">useUnreadCount</span>();
+  <span class="tok-kw">const</span> [prefsOpen, setPrefsOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
+
+  <span class="tok-kw">const</span> items = [
+    { <span class="tok-prop">label</span>: <span class="tok-str">"Dashboard"</span>, <span class="tok-prop">href</span>: <span class="tok-str">"/dashboard"</span> },
+    { <span class="tok-prop">label</span>: <span class="tok-str">"Programs"</span>, <span class="tok-prop">href</span>: <span class="tok-str">"/programs"</span> },
+    {
+      <span class="tok-prop">label</span>: <span class="tok-str">"Notifications"</span>,
+      <span class="tok-prop">href</span>: <span class="tok-str">"/notifications"</span>,
+      <span class="tok-prop">badge</span>: unread,
+    },
+    {
+      <span class="tok-prop">label</span>: <span class="tok-str">"Preferences"</span>,
+      <span class="tok-prop">onClick</span>: () =&gt; <span class="tok-fn">setPrefsOpen</span>(<span class="tok-kw">true</span>),
+    },
+  ];
+
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">AppNav</span> <span class="tok-prop">items</span>={items} /&gt;;
+}</pre>
+      </Snippet>
+    </CompareCol>
+    <CompareCol kind='good' label='✓ Composed: each piece carries its own'>
+      <Snippet>
+        <pre
+          class='code v-good'
+          is:raw><span class="filename">AppNav.tsx</span><span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">AppNav</span>() {
+  <span class="tok-com">/* Assembled, not configured. The links
+     are server-rendered and static; the
+     one unknown and the one interactive
+     piece are isolated below. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">nav</span>&gt;
+      &lt;<span class="tok-fn">NavLink</span> <span class="tok-prop">href</span>=<span class="tok-str">"/dashboard"</span>&gt;Dashboard&lt;/<span class="tok-fn">NavLink</span>&gt;
+      &lt;<span class="tok-fn">NavLink</span> <span class="tok-prop">href</span>=<span class="tok-str">"/programs"</span>&gt;Programs&lt;/<span class="tok-fn">NavLink</span>&gt;
+      &lt;<span class="tok-fn">NavLink</span> <span class="tok-prop">href</span>=<span class="tok-str">"/notifications"</span>&gt;
+        Notifications
+        &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">BadgeDot</span> /&gt;}&gt;
+          &lt;<span class="tok-fn">UnreadBadge</span> /&gt;
+        &lt;/<span class="tok-fn">Suspense</span>&gt;
+      &lt;/<span class="tok-fn">NavLink</span>&gt;
+      &lt;<span class="tok-fn">PreferencesItem</span> /&gt;
+    &lt;/<span class="tok-fn">nav</span>&gt;
+  );
+}</pre>
+      </Snippet>
+    </CompareCol>
+  </Compare>
+
+  <p>
+    The two pieces that earn their keep are exactly the two that made the config version fuse, and
+    each is a handful of lines:
+  </p>
+
+  <Compare>
+    <CompareCol kind='good' label='✓ The one unknown, isolated'>
+      <Snippet>
+        <pre
+          class='code v-good'
+          is:raw><span class="filename">UnreadBadge.tsx</span><span class="tok-kw">import</span> { getUnreadCount } <span class="tok-kw">from</span> <span class="tok-str">"@/server/alerts"</span>;
+
+<span class="tok-kw">export async function</span> <span class="tok-fn">UnreadBadge</span>() {
+  <span class="tok-com">/* The nav's only data need, owned by
+     the one piece that renders from it.
+     Everything else ships static. */</span>
+  <span class="tok-kw">const</span> count = <span class="tok-kw">await</span> <span class="tok-fn">getUnreadCount</span>();
+  <span class="tok-kw">if</span> (count === 0) <span class="tok-kw">return</span> <span class="tok-kw">null</span>;
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">Badge</span>&gt;{count}&lt;/<span class="tok-fn">Badge</span>&gt;;
+}</pre>
+      </Snippet>
+    </CompareCol>
+    <CompareCol kind='good' label='✓ The one client leaf, isolated'>
+      <Snippet>
+        <pre
+          class='code v-good'
+          is:raw><span class="filename">PreferencesItem.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">PreferencesItem</span>() {
+  <span class="tok-kw">const</span> [open, setOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
+
+  <span class="tok-com">/* The nav's only interactivity, in a
+     leaf, with its sheet encapsulated
+     and conditionally rendered (§15.6). */</span>
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">NavButton</span> <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">true</span>)}&gt;
+        Preferences
+      &lt;/<span class="tok-fn">NavButton</span>&gt;
+      {open &amp;&amp; (
+        &lt;<span class="tok-fn">PreferencesSheet</span>
+          <span class="tok-prop">onClose</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">false</span>)}
+        /&gt;
+      )}
+    &lt;/&gt;
+  );
+}</pre>
+        <CodeCaption>
+          Now the badge suspends alone behind a badge-sized fallback while every link paints static
+          in the shell, and the preferences leaf is the only client module in the nav. The same
+          items, the same sidebar; the only thing that changed is that the pieces exist as
+          components instead of entries in an array.
+        </CodeCaption>
+      </Snippet>
+    </CompareCol>
+  </Compare>
+
+  <p>
+    The test to apply is simple: <strong
+      >can you rebuild the composite from its exported pieces, in JSX, and put a boundary anywhere
+      you need one?</strong
+    > Configuration is for options; composition is for structure. A config array of plain serializable
+    values (labels and hrefs) is harmless right up until an entry needs a capability: a callback, a fetch,
+    a piece of client state. At that moment the entry needs to become a component, because components
+    are the only unit that can carry a boundary (<a
+      href='05-client-server-boundaries.html#children-pattern'>§5.4</a
+    >), own a data dependency (<a href='15-minimize-the-wires.html#dialogs'>§15.6</a>), and be
+    wrapped in Suspense (<a href='11-suspense-streaming.html#skeletons'>§11.4</a>) on its own.
+  </p>
+
+  <h2 id='one-per-file'>17.6 One component per file</h2>
   <p>
     This habit sounds like style guidance. In the App Router it is structural, because
     <strong
@@ -576,6 +754,15 @@ flowchart TB
         </td>
         <td><Chip k='react' /></td>
         <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>
+          A composite is <strong>reassemblable from its pieces in JSX</strong>; config-object APIs
+          (item arrays carrying callbacks or data needs) fuse every part's boundary and data into
+          one.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
       </tr>
     </tbody>
   </table>
