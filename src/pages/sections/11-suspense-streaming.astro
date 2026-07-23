@@ -1747,42 +1747,56 @@ flowchart LR
     boundary around the whole panel and fetches everything the panel might ever need in one place:
   </p>
 
-  <Snippet>
-    <pre
-      class='code v-bad'
-      is:raw><span class="filename">MembersSection.tsx</span><span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+  <Compare>
+    <CompareCol kind='bad' label='✕ One boundary over the whole panel'>
+      <Snippet>
+        <pre
+          class='code v-bad'
+          is:raw><span class="filename">MembersSection.tsx</span><span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 <span class="tok-kw">import</span> { MembersLoader } <span class="tok-kw">from</span> <span class="tok-str">"./MembersLoader"</span>;
 <span class="tok-kw">import</span> { MembersSkeleton } <span class="tok-kw">from</span> <span class="tok-str">"./MembersSkeleton"</span>;
 
-<span class="tok-kw">export function</span> <span class="tok-fn">MembersSection</span>({ programId }: <span class="tok-fn">MembersSectionProps</span>) {
-  <span class="tok-com">/* One boundary over the whole panel: the fallback covers everything
-     below it, including the parts that never needed data. */</span>
+<span class="tok-kw">export function</span> <span class="tok-fn">MembersSection</span>({ programId }) {
+  <span class="tok-com">/* One boundary over the whole panel: the
+     fallback covers everything below it, even
+     the parts that never needed data. */</span>
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">MembersSkeleton</span> /&gt;}&gt;
       &lt;<span class="tok-fn">MembersLoader</span> <span class="tok-prop">programId</span>={programId} /&gt;
     &lt;/<span class="tok-fn">Suspense</span>&gt;
   );
 }</pre>
-  </Snippet>
-
-  <Snippet>
-    <pre
-      class='code v-bad'
-      is:raw><span class="filename">MembersLoader.tsx</span><span class="tok-kw">import</span> { getMembers, getInvitablePeople } <span class="tok-kw">from</span> <span class="tok-str">"@/server/members"</span>;
+      </Snippet>
+    </CompareCol>
+    <CompareCol kind='bad' label='✕ Two fetches, one gate'>
+      <Snippet>
+        <pre
+          class='code v-bad'
+          is:raw><span class="filename">MembersLoader.tsx</span><span class="tok-kw">import</span> {
+  getMembers,
+  getInvitablePeople,
+} <span class="tok-kw">from</span> <span class="tok-str">"@/server/members"</span>;
 <span class="tok-kw">import</span> { MembersPanel } <span class="tok-kw">from</span> <span class="tok-str">"./MembersPanel"</span>;
 
-<span class="tok-kw">export async function</span> <span class="tok-fn">MembersLoader</span>({ programId }: <span class="tok-fn">MembersLoaderProps</span>) {
-  <span class="tok-com">/* Two unrelated needs, fused into one gate. The rows need the members
-     on first paint; the invitable-people list is for a dialog nobody has
-     opened. The slower of the two now paces both. */</span>
+<span class="tok-kw">export async function</span> <span class="tok-fn">MembersLoader</span>({ programId }) {
+  <span class="tok-com">/* The rows need members on first paint; the
+     invitable people are for a dialog nobody
+     has opened. The slower fetch paces both. */</span>
   <span class="tok-kw">const</span> [members, invitable] = <span class="tok-kw">await</span> Promise.<span class="tok-fn">all</span>([
     <span class="tok-fn">getMembers</span>(programId),
     <span class="tok-fn">getInvitablePeople</span>(programId),
   ]);
 
-  <span class="tok-kw">return</span> &lt;<span class="tok-fn">MembersPanel</span> <span class="tok-prop">members</span>={members} <span class="tok-prop">invitable</span>={invitable} /&gt;;
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">MembersPanel</span>
+      <span class="tok-prop">members</span>={members}
+      <span class="tok-prop">invitable</span>={invitable}
+    /&gt;
+  );
 }</pre>
-  </Snippet>
+      </Snippet>
+    </CompareCol>
+  </Compare>
 
   <Snippet>
     <pre
@@ -1904,52 +1918,63 @@ flowchart LR
 }</pre>
   </Snippet>
 
-  <Snippet>
-    <pre
-      class='code v-good'
-      is:raw><span class="filename">InviteMemberDialog.tsx</span><span class="tok-dir">"use client"</span>;
+  <Compare>
+    <CompareCol kind='good' label='✓ The frame: known, opens instantly'>
+      <Snippet>
+        <pre
+          class='code v-good'
+          is:raw><span class="filename">InviteMemberDialog.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
-<span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberDialog</span>({ peoplePromise, onClose }: <span class="tok-fn">InviteMemberDialogProps</span>) {
-  <span class="tok-com">/* The frame, title, and close affordance are known: the dialog opens
-     the instant the user clicks. Only the people-backed interior waits,
-     behind its own boundary, on rows-shaped skeletons. */</span>
+<span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberDialog</span>({
+  peoplePromise,
+  onClose,
+}) {
+  <span class="tok-com">/* The frame, title, and close affordance
+     are known: the dialog opens the instant
+     the user clicks. Only the interior waits,
+     behind its own boundary. */</span>
   <span class="tok-kw">return</span> (
     &lt;<span class="tok-fn">Dialog</span> <span class="tok-prop">title</span>=<span class="tok-str">"Invite member"</span> <span class="tok-prop">onClose</span>={onClose}&gt;
       &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">InviteRowsSkeleton</span> /&gt;}&gt;
-        &lt;<span class="tok-fn">InviteMemberDialogContent</span> <span class="tok-prop">peoplePromise</span>={peoplePromise} /&gt;
+        &lt;<span class="tok-fn">InviteMemberDialogContent</span>
+          <span class="tok-prop">peoplePromise</span>={peoplePromise}
+        /&gt;
       &lt;/<span class="tok-fn">Suspense</span>&gt;
     &lt;/<span class="tok-fn">Dialog</span>&gt;
   );
 }</pre>
-  </Snippet>
-
-  <Snippet>
-    <pre
-      class='code v-good'
-      is:raw><span class="filename">InviteMemberDialogContent.tsx</span><span class="tok-dir">"use client"</span>;
+      </Snippet>
+    </CompareCol>
+    <CompareCol kind='good' label='✓ The content: the only part that waits'>
+      <Snippet>
+        <pre
+          class='code v-good'
+          is:raw><span class="filename">InviteMemberDialogContent.tsx</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { use } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
-<span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberDialogContent</span>({ peoplePromise }: <span class="tok-fn">InviteMemberDialogContentProps</span>) {
-  <span class="tok-com">/* Resolves the promise the server started. If it settled while the
-     dialog was closed, this never suspends at all. */</span>
+<span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberDialogContent</span>({
+  peoplePromise,
+}) {
+  <span class="tok-com">/* Resolves the promise the server started.
+     If it settled while the dialog was
+     closed, this never suspends at all. */</span>
   <span class="tok-kw">const</span> people = <span class="tok-fn">use</span>(peoplePromise);
 
-  <span class="tok-com">/* The picker of invitable people, the form, and the submit action
-     render here as usual. */</span>
+  <span class="tok-com">/* The picker of invitable people, the
+     form, and the submit action render here
+     as usual. */</span>
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">DialogContent</span>&gt;{<span class="tok-com">/* … */</span>}&lt;/<span class="tok-fn">DialogContent</span>&gt;;
 }</pre>
-    <CodeCaption>
-      The rewrite pulls the three concerns apart, and then applies the same separation one level
-      deeper. The heading and the invite button paint with the page; the rows suspend alone inside
-      their reserved container; and the dialog's data rides an unawaited promise (<a
-        href='#pass-promises'>§11.2</a
-      >) resolved with <code>use()</code> in the content component, so the dialog itself opens instantly
-      with its frame and title while only its interior shows row skeletons. Opening late costs nothing,
-      because the promise settled in the background. Known and unknown stay separated at every level of
-      the tree, all the way into the dialog.
-    </CodeCaption>
-  </Snippet>
+        <CodeCaption>
+          Known and unknown stay separated at every level of the tree, all the way into the dialog:
+          the frame paints on click, the interior shows row skeletons only until the promise (<a
+            href='#pass-promises'>§11.2</a
+          >) settles, and opening late costs nothing because it settled in the background.
+        </CodeCaption>
+      </Snippet>
+    </CompareCol>
+  </Compare>
 
   <p>
     The promise-as-prop version warms the data ahead of need, which is the right call when opening
@@ -1984,6 +2009,241 @@ flowchart LR
       >only</em
     > the unknown; everything else was known all along, and now it shows up that way.
   </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 660 228'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker
+          id='skexA'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            class='stroke-dg-amber'
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+
+      <!-- divider -->
+      <line class='stroke-dg-line' x1='330' y1='2' x2='330' y2='226' stroke-width='1'></line>
+
+      <!-- ============ left: one gate for everything ============ -->
+      <text
+        class='fill-dg-red'
+        x='166'
+        y='10'
+        font-size='10.5'
+        font-weight='500'
+        text-anchor='middle'>One gate for everything</text
+      >
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='22' y='24' width='128' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='86' y='38.5' font-size='10' text-anchor='middle'
+        >getMembers()</text
+      >
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='176' y='24' width='140' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='246' y='38.5' font-size='10' text-anchor='middle'
+        >getInvitablePeople()</text
+      >
+      <line
+        class='stroke-dg-amber'
+        x1='86'
+        y1='46'
+        x2='146'
+        y2='66'
+        stroke-width='1.4'
+        marker-end='url(#skexA)'></line>
+      <line
+        class='stroke-dg-amber'
+        x1='246'
+        y1='46'
+        x2='186'
+        y2='66'
+        stroke-width='1.4'
+        marker-end='url(#skexA)'></line>
+      <rect class='fill-dg-white stroke-dg-amber' x='101' y='68' width='130' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='166' y='82.5' font-size='10' text-anchor='middle'
+        >await Promise.all([…])</text
+      >
+      <line
+        class='stroke-dg-amber'
+        x1='166'
+        y1='90'
+        x2='166'
+        y2='106'
+        stroke-width='1.4'
+        marker-end='url(#skexA)'></line>
+      <rect
+        class='stroke-dg-amber'
+        x='22'
+        y='108'
+        width='284'
+        height='115'
+        rx='8'
+        fill='none'
+        stroke-dasharray='4 3'></rect>
+      <text class='fill-dg-amber-ink' x='166' y='122' font-size='9.5' text-anchor='middle'
+        >Suspense boundary: the whole panel</text
+      >
+      <rect class='fill-dg-skel stroke-dg-border' x='46' y='128' width='236' height='24' rx='5'
+      ></rect>
+      <text class='fill-dg-muted' x='164' y='143.5' font-size='10' text-anchor='middle'
+        >Heading (known)</text
+      >
+      <rect class='fill-dg-skel stroke-dg-border' x='46' y='160' width='236' height='24' rx='5'
+      ></rect>
+      <text class='fill-dg-muted' x='164' y='175.5' font-size='10' text-anchor='middle'
+        >Invite button (known)</text
+      >
+      <rect class='fill-dg-skel stroke-dg-border' x='46' y='192' width='236' height='24' rx='5'
+      ></rect>
+      <text class='fill-dg-muted' x='164' y='207.5' font-size='10' text-anchor='middle'
+        >Member rows (waiting)</text
+      >
+
+      <!-- ============ right: each part gates only itself ============ -->
+      <text
+        class='fill-dg-green-ink'
+        x='495'
+        y='10'
+        font-size='10.5'
+        font-weight='500'
+        text-anchor='middle'>Each part gates only itself</text
+      >
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='354' y='24' width='134' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='421' y='38.5' font-size='10' text-anchor='middle'
+        >Heading</text
+      >
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='504' y='24' width='134' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='571' y='38.5' font-size='10' text-anchor='middle'
+        >Invite button</text
+      >
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='354' y='68' width='134' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='421' y='82.5' font-size='10' text-anchor='middle'
+        >getMembers()</text
+      >
+      <rect class='fill-dg-amber-soft stroke-dg-amber' x='504' y='68' width='134' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-amber-ink' x='571' y='82.5' font-size='10' text-anchor='middle'
+        >getInvitablePeople()</text
+      >
+      <line
+        class='stroke-dg-amber'
+        x1='421'
+        y1='90'
+        x2='421'
+        y2='106'
+        stroke-width='1.4'
+        marker-end='url(#skexA)'></line>
+      <rect
+        class='stroke-dg-amber'
+        x='354'
+        y='108'
+        width='134'
+        height='55'
+        rx='8'
+        fill='none'
+        stroke-dasharray='4 3'></rect>
+      <text class='fill-dg-amber-ink' x='421' y='122' font-size='9.5' text-anchor='middle'
+        >Suspense: rows</text
+      >
+      <rect class='fill-dg-skel stroke-dg-border' x='366' y='132' width='110' height='24' rx='5'
+      ></rect>
+      <text class='fill-dg-muted' x='421' y='147.5' font-size='10' text-anchor='middle'
+        >Member rows</text
+      >
+      <line
+        class='stroke-dg-amber'
+        x1='571'
+        y1='90'
+        x2='571'
+        y2='194'
+        stroke-width='1.4'
+        stroke-dasharray='4 3'
+        marker-end='url(#skexA)'></line>
+      <text class='fill-dg-amber-ink' x='583' y='130' font-size='9.5' text-anchor='start'
+        >unawaited</text
+      >
+      <text class='fill-dg-amber-ink' x='583' y='142' font-size='9.5' text-anchor='start'
+        >promise,</text
+      >
+      <text class='fill-dg-amber-ink' x='583' y='154' font-size='9.5' text-anchor='start'
+        >use() on open</text
+      >
+      <rect class='fill-dg-teal-soft stroke-dg-teal' x='504' y='196' width='134' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-teal-ink' x='571' y='210.5' font-size='10' text-anchor='middle'
+        >Dialog (on open)</text
+      >
+    </svg>
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart TD
+  gm("getMembers()"):::amber
+  gi("getInvitablePeople()"):::amber
+  pa("await Promise.all([…])"):::amberline
+  subgraph SB["Suspense: whole panel"]
+    hd("Heading (known)"):::skel
+    bt("Invite button (known)"):::skel
+    rw("Member rows (waiting)"):::skel
+  end
+  gm --> pa
+  gi --> pa
+  pa --> SB
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef amberline fill:#ffffff,stroke:#b45309,color:#8a5a00
+  classDef skel fill:#f0f0f0,stroke:#c9c9c9,color:#737373
+  style SB fill:#ffffff,stroke:#b45309,stroke-dasharray:4 3,rx:8px,ry:8px
+  linkStyle default stroke:#737373,stroke-width:1.5px
+%%split%%
+flowchart TD
+  hd2("Heading"):::blue
+  bt2("Invite button"):::blue
+  gm2("getMembers()"):::amber
+  gi2("getInvitablePeople()"):::amber
+  subgraph SR["Suspense: rows"]
+    rw2("Member rows"):::skel
+  end
+  dg("Dialog (on open)"):::teal
+  bt2 --- dg
+  gm2 --> SR
+  gi2 -. "unawaited promise, resolved on open" .-> dg
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef skel fill:#f0f0f0,stroke:#c9c9c9,color:#737373
+  classDef teal fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+  style SR fill:#ffffff,stroke:#b45309,stroke-dasharray:4 3,rx:8px,ry:8px
+  linkStyle default stroke:#737373,stroke-width:1.5px
+</pre>
+    <Fragment slot='caption'>
+      The blocking relationships, both ways. Left: two fetches with different lifetimes meet in one
+      <code>Promise.all</code>, and one panel-wide boundary suspends everything beneath it, so the
+      known heading and button render as skeleton alongside the rows that genuinely wait. Right: the
+      chrome renders at first paint with no gate at all; <code>getMembers()</code> gates exactly one region
+      (the rows); and <code>getInvitablePeople()</code> gates nothing on screen: it rides an unawaited
+      promise that only the dialog's interior resolves, when it opens. See <a
+        href='#skeletons-example-fix'>the rewrite above</a
+      >.
+    </Fragment>
+  </Diagram>
 
   <h2 id='refetch'>11.5 Refetches show stale content, never fallbacks</h2>
   <p>
