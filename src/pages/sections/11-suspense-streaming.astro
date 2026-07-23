@@ -1737,6 +1737,227 @@ flowchart LR
     </li>
   </ul>
 
+  <h3 id='skeletons-example'>
+    Worked example: known chrome held hostage by a closed dialog's data
+  </h3>
+  <p>
+    Here is the shape where that last rule gets violated most often: a panel with a heading, an
+    action button, and a data-backed list, where the button opens a dialog (adding, inviting,
+    connecting something) whose dropdown needs its own lookup. The tempting arrangement wraps one
+    boundary around the whole panel and fetches everything the panel might ever need in one place:
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-bad'
+      is:raw><span class="filename">MembersSection.tsx</span><span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+<span class="tok-kw">import</span> { MembersLoader } <span class="tok-kw">from</span> <span class="tok-str">"./MembersLoader"</span>;
+<span class="tok-kw">import</span> { MembersSkeleton } <span class="tok-kw">from</span> <span class="tok-str">"./MembersSkeleton"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">MembersSection</span>({ programId }: <span class="tok-fn">MembersSectionProps</span>) {
+  <span class="tok-com">/* One boundary over the whole panel: the fallback covers everything
+     below it, including the parts that never needed data. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">MembersSkeleton</span> /&gt;}&gt;
+      &lt;<span class="tok-fn">MembersLoader</span> <span class="tok-prop">programId</span>={programId} /&gt;
+    &lt;/<span class="tok-fn">Suspense</span>&gt;
+  );
+}</pre>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-bad'
+      is:raw><span class="filename">MembersLoader.tsx</span><span class="tok-kw">import</span> { getMembers, getInvitablePeople } <span class="tok-kw">from</span> <span class="tok-str">"@/server/members"</span>;
+<span class="tok-kw">import</span> { MembersPanel } <span class="tok-kw">from</span> <span class="tok-str">"./MembersPanel"</span>;
+
+<span class="tok-kw">export async function</span> <span class="tok-fn">MembersLoader</span>({ programId }: <span class="tok-fn">MembersLoaderProps</span>) {
+  <span class="tok-com">/* Two unrelated needs, fused into one gate. The rows need the members
+     on first paint; the invitable-people list is for a dialog nobody has
+     opened. The slower of the two now paces both. */</span>
+  <span class="tok-kw">const</span> [members, invitable] = <span class="tok-kw">await</span> Promise.<span class="tok-fn">all</span>([
+    <span class="tok-fn">getMembers</span>(programId),
+    <span class="tok-fn">getInvitablePeople</span>(programId),
+  ]);
+
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">MembersPanel</span> <span class="tok-prop">members</span>={members} <span class="tok-prop">invitable</span>={invitable} /&gt;;
+}</pre>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-bad'
+      is:raw><span class="filename">MembersPanel.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">MembersPanel</span>({ members, invitable }: <span class="tok-fn">MembersPanelProps</span>) {
+  <span class="tok-kw">const</span> [open, setOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
+
+  <span class="tok-com">/* The heading and the invite button depend on nothing, yet they live
+     below the loader, so the skeleton covers them too. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">section</span>&gt;
+      &lt;<span class="tok-fn">header</span>&gt;
+        &lt;<span class="tok-fn">h3</span>&gt;Members&lt;/<span class="tok-fn">h3</span>&gt;
+        &lt;<span class="tok-fn">Button</span> <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">true</span>)}&gt;Invite member&lt;/<span class="tok-fn">Button</span>&gt;
+      &lt;/<span class="tok-fn">header</span>&gt;
+      &lt;<span class="tok-fn">MemberList</span> <span class="tok-prop">members</span>={members} /&gt;
+      {open &amp;&amp; &lt;<span class="tok-fn">InviteMemberDialog</span> <span class="tok-prop">people</span>={invitable} <span class="tok-prop">onClose</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">false</span>)} /&gt;}
+    &lt;/<span class="tok-fn">section</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Three separate mistakes share this tree. The heading and button are known content held behind
+      the fallback. The dialog's dropdown data gates the first paint of a dialog that is not open.
+      And the <code>Promise.all</code> fuses two fetches with different lifetimes, so the slower one paces
+      the section. None of this is a data problem; it is component architecture: what is static and what
+      waits were never separated.
+    </CodeCaption>
+  </Snippet>
+
+  <p>
+    The fix is structural, and it is the same separation this guide keeps returning to: decide
+    <strong>which parts of the component are known and which genuinely wait</strong>, and give each
+    its own home. The section owns the chrome and renders it immediately; a small server child owns
+    the one await the rows actually need; and the dialog's data stops being first-paint data at all,
+    because the dialog lives in the button that opens it (<a
+      href='05-client-server-boundaries.html#self-contained'>§5.7</a
+    >):
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">MembersSection.tsx</span><span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+<span class="tok-kw">import</span> { getInvitablePeople } <span class="tok-kw">from</span> <span class="tok-str">"@/server/members"</span>;
+<span class="tok-kw">import</span> { InviteMemberButton } <span class="tok-kw">from</span> <span class="tok-str">"./InviteMemberButton"</span>;
+<span class="tok-kw">import</span> { MemberRows } <span class="tok-kw">from</span> <span class="tok-str">"./MemberRows"</span>;
+<span class="tok-kw">import</span> { MemberRowsSkeleton } <span class="tok-kw">from</span> <span class="tok-str">"./MemberRowsSkeleton"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">MembersSection</span>({ programId }: <span class="tok-fn">MembersSectionProps</span>) {
+  <span class="tok-com">/* Start the dialog's fetch WITHOUT awaiting it. The promise streams to
+     the client as a prop; nothing on this page waits for it. */</span>
+  <span class="tok-kw">const</span> invitablePromise = <span class="tok-fn">getInvitablePeople</span>(programId);
+
+  <span class="tok-com">/* The chrome is known, so it paints immediately. The boundary wraps
+     only the rows: the one region that depends on data. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">section</span>&gt;
+      &lt;<span class="tok-fn">header</span>&gt;
+        &lt;<span class="tok-fn">h3</span>&gt;Members&lt;/<span class="tok-fn">h3</span>&gt;
+        &lt;<span class="tok-fn">InviteMemberButton</span> <span class="tok-prop">peoplePromise</span>={invitablePromise} /&gt;
+      &lt;/<span class="tok-fn">header</span>&gt;
+      &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">MemberRowsSkeleton</span> /&gt;}&gt;
+        &lt;<span class="tok-fn">MemberRows</span> <span class="tok-prop">programId</span>={programId} /&gt;
+      &lt;/<span class="tok-fn">Suspense</span>&gt;
+    &lt;/<span class="tok-fn">section</span>&gt;
+  );
+}</pre>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">MemberRows.tsx</span><span class="tok-kw">import</span> { getMembers } <span class="tok-kw">from</span> <span class="tok-str">"@/server/members"</span>;
+<span class="tok-kw">import</span> { MemberList } <span class="tok-kw">from</span> <span class="tok-str">"./MemberList"</span>;
+
+<span class="tok-kw">export async function</span> <span class="tok-fn">MemberRows</span>({ programId }: <span class="tok-fn">MemberRowsProps</span>) {
+  <span class="tok-com">/* Awaits only what the rows themselves need. */</span>
+  <span class="tok-kw">const</span> members = <span class="tok-kw">await</span> <span class="tok-fn">getMembers</span>(programId);
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">MemberList</span> <span class="tok-prop">members</span>={members} /&gt;;
+}</pre>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">InviteMemberButton.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { Suspense, useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+<span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
+
+<span class="tok-com">/* The dialog's chunk loads on demand, when it first opens. */</span>
+<span class="tok-kw">const</span> InviteMemberDialog = <span class="tok-fn">dynamic</span>(() =&gt;
+  <span class="tok-kw">import</span>(<span class="tok-str">"./InviteMemberDialog"</span>).<span class="tok-fn">then</span>(m =&gt; m.InviteMemberDialog),
+);
+
+<span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberButton</span>({ peoplePromise }: <span class="tok-fn">InviteMemberButtonProps</span>) {
+  <span class="tok-kw">const</span> [open, setOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
+
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">Button</span> <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">true</span>)}&gt;Invite member&lt;/<span class="tok-fn">Button</span>&gt;
+      {open &amp;&amp; (
+        &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">DialogSkeleton</span> /&gt;}&gt;
+          &lt;<span class="tok-fn">InviteMemberDialog</span>
+            <span class="tok-prop">peoplePromise</span>={peoplePromise}
+            <span class="tok-prop">onClose</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">false</span>)}
+          /&gt;
+        &lt;/<span class="tok-fn">Suspense</span>&gt;
+      )}
+    &lt;/&gt;
+  );
+}</pre>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">InviteMemberDialog.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { use } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberDialog</span>({ peoplePromise, onClose }: <span class="tok-fn">InviteMemberDialogProps</span>) {
+  <span class="tok-com">/* Resolves the promise the server started. If it settled while the
+     dialog was closed, this never suspends at all. */</span>
+  <span class="tok-kw">const</span> people = <span class="tok-fn">use</span>(peoplePromise);
+
+  <span class="tok-com">/* The dropdown of invitable people, the form, and the submit action
+     render here as usual. */</span>
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">Dialog</span> <span class="tok-prop">onClose</span>={onClose}&gt;{<span class="tok-com">/* … */</span>}&lt;/<span class="tok-fn">Dialog</span>&gt;;
+}</pre>
+    <CodeCaption>
+      The rewrite pulls the three concerns apart. The heading and the invite button paint with the
+      page; the rows suspend alone inside their reserved container; and the dialog's data rides an
+      unawaited promise (<a href='#pass-promises'>§11.2</a>) that the dialog resolves with <code
+        >use()</code
+      > only when it mounts. Opening early shows the dialog's own small fallback; opening late costs nothing,
+      because the promise settled in the background.
+    </CodeCaption>
+  </Snippet>
+
+  <p>
+    The promise-as-prop version warms the data ahead of need, which is the right call when opening
+    the dialog is likely and the lookup is cheap. When it is rare or expensive, go one step further:
+    don't fetch until the dialog exists. A client-side key-based fetch inside the dialog (<a
+      href='16-dedupe-caching.html#client'>§16.3</a
+    >) fires on first open, caches for the next one, and the server never runs the lookup for visits
+    that never open the dialog:
+  </p>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">InviteMemberDialog.tsx (fetch-on-open variant)</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> useSWR <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberDialog</span>({ programId, onClose }: <span class="tok-fn">InviteMemberDialogProps</span>) {
+  <span class="tok-com">/* No lookup happens until the dialog mounts, and it mounts on open.
+     The key caches the result for the next open. */</span>
+  <span class="tok-kw">const</span> { data: people, isLoading } = <span class="tok-fn">useSWR</span>(
+    [<span class="tok-str">"invitable-people"</span>, programId],
+    () =&gt; <span class="tok-fn">fetchInvitablePeople</span>(programId),
+  );
+
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">Dialog</span> <span class="tok-prop">onClose</span>={onClose}&gt;{<span class="tok-com">/* … */</span>}&lt;/<span class="tok-fn">Dialog</span>&gt;;
+}</pre>
+  </Snippet>
+
+  <p>
+    Either way, the section's first paint carries the real heading, a working invite button, and one
+    tightly-scoped skeleton where the rows will land. The skeleton stands in for the unknown, and <em
+      >only</em
+    > the unknown; everything else was known all along, and now it shows up that way.
+  </p>
+
   <h2 id='refetch'>11.5 Refetches show stale content, never fallbacks</h2>
   <p>
     <Chip k='react' />
@@ -2848,6 +3069,31 @@ flowchart LR
         </td>
         <td><Chip k='next' /></td>
         <td><Chip k='very' /></td>
+      </tr>
+      <tr>
+        <td>
+          <strong>Never block or suspend statically known content.</strong> Chrome, headings, buttons,
+          and inputs render at first paint unless there is an intentional reason to hold them back.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
+          <strong>Fetch where the data is needed, when it is needed</strong>: push fetches down to
+          the component that renders from them, or delay them behind the interaction that needs them
+          (<a href='#skeletons-example'>the dialog rule</a>).
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
+          A boundary <strong>suspends only on fetches its own subtree renders from</strong>, never
+          on data for somewhere else in the tree or for some later interaction.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
       </tr>
     </tbody>
   </table>
