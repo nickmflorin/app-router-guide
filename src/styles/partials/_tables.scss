@@ -18,7 +18,7 @@ table.tbl {
 
   /* Cells always wrap; long rule text may never widen the table past the page. */
   td {
-    padding: 10px 12px;
+    padding: 6px 10px;
     border-bottom: 1px solid var(--color-line);
     vertical-align: top;
     overflow-wrap: break-word;
