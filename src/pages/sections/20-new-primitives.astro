@@ -14,8 +14,12 @@ import Snippet from '../../components/Snippet.astro';
   <h1>New Primitives</h1>
   <p class='lede'>
     The reference catalog behind <a href='01-introduction.html#direction'>§1</a>'s direction of
-    travel: the primitives React 19 and Next.js 16 ship, what each one is for, and a working example
-    of each. Skim the map, then read the entries you need.
+    travel: the primitives <a
+      href='https://react.dev/blog/2024/12/05/react-19'
+      target='_blank'
+      rel='noopener'>React 19</a
+    > and <a href='https://nextjs.org/blog/next-16' target='_blank' rel='noopener'>Next.js 16</a> ship,
+    what each one is for, and a working example of each. Skim the map, then read the entries you need.
   </p>
 
   <p>
@@ -37,11 +41,14 @@ import Snippet from '../../components/Snippet.astro';
     Two things to notice as you read. First,
     <strong>almost every primitive here assumes the server-first architecture</strong> the rest of this
     guide describes: actions assume mutations live on the server,
-    <code>use()</code> assumes promises are created on the server and read under Suspense, the caching
-    primitives assume the server renders something worth caching. They are the payoff of the model, not
-    add-ons to it. Second, these are <em>primitives</em>, not goals: the chapters own the patterns,
-    and this appendix owns the API surface. Where a primitive already has a home in a chapter, the
-    entry links there instead of repeating the doctrine.
+    <code>use()</code> assumes promises are created on the server and read under <a
+      href='https://react.dev/reference/react/Suspense'
+      target='_blank'
+      rel='noopener'>Suspense</a
+    >, the caching primitives assume the server renders something worth caching. They are the payoff
+    of the model, not add-ons to it. Second, these are <em>primitives</em>, not goals: the chapters
+    own the patterns, and this appendix owns the API surface. Where a primitive already has a home
+    in a chapter, the entry links there instead of repeating the doctrine.
   </p>
 
   <h2 id='map'>20.1 The map</h2>

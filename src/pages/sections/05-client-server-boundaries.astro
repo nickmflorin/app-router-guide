@@ -22,9 +22,12 @@ import Snippet from '../../components/Snippet.astro';
 
   <h2 id='what-it-means'>5.1 What <code>"use client"</code> actually means</h2>
   <p>
-    <code>"use client"</code> is not a per-component setting, and it isn't "this component is interactive."
-    It is a <strong>module-graph marker</strong>: it declares the point where the server hands the
-    tree to the browser. The directive goes at the top of a file, and from that file onward,
+    <a href='https://react.dev/reference/rsc/use-client' target='_blank' rel='noopener'
+      ><code>"use client"</code></a
+    > is not a per-component setting, and it isn't "this component is interactive." It is a <strong
+      >module-graph marker</strong
+    >: it declares the point where the server hands the tree to the browser. The directive goes at
+    the top of a file, and from that file onward,
     <em>every module it imports, and everything those import</em>, becomes client code: bundled,
     shipped, parsed, and hydrated. <Chip k='react' />
     <Chip k='critical' />
@@ -299,8 +302,10 @@ flowchart LR
     <li>
       <strong>Props crossing the boundary must be serializable.</strong> The server sends them over the
       wire: plain objects, arrays, strings, numbers: yes; functions, class instances, DB handles: no.
-      (Server Actions and JSX are the special, allowed exceptions.) If you're fighting serialization errors,
-      the boundary is probably in the wrong place.
+      (<a href='https://react.dev/reference/rsc/use-server' target='_blank' rel='noopener'
+        >Server Actions</a
+      > and JSX are the special, allowed exceptions.) If you're fighting serialization errors, the boundary
+      is probably in the wrong place.
     </li>
     <li>
       <strong>The dependency arrow points one way.</strong> A client module can't import a server component;
@@ -347,14 +352,20 @@ flowchart LR
       <tr>
         <td>
           <strong>Effects and lifecycle:</strong>
-          <code>useEffect</code> (and it had better not be fetching;
+          <a
+            href='https://react.dev/learn/you-might-not-need-an-effect'
+            target='_blank'
+            rel='noopener'><code>useEffect</code></a
+          > (and it had better not be fetching;
           <a href='11-suspense-streaming.html'>§11</a>)
         </td>
         <td>
           <strong>Reading route input:</strong>
-          <code>params</code> and <code>searchParams</code> arrive as page props (<a
-            href='09-server-resolvable-state.html'>§9</a
-          >)
+          <code>params</code> and <a
+            href='https://nextjs.org/docs/app/api-reference/file-conventions/page'
+            target='_blank'
+            rel='noopener'><code>searchParams</code></a
+          > arrive as page props (<a href='09-server-resolvable-state.html'>§9</a>)
         </td>
       </tr>
       <tr>
@@ -370,8 +381,18 @@ flowchart LR
       <tr>
         <td>
           <strong>Interactivity hooks:</strong>
-          <code>useRouter</code>, <code>useOptimistic</code>,
-          <code>useTransition</code>
+          <a
+            href='https://nextjs.org/docs/app/api-reference/functions/use-router'
+            target='_blank'
+            rel='noopener'><code>useRouter</code></a
+          >, <a
+            href='https://react.dev/reference/react/useOptimistic'
+            target='_blank'
+            rel='noopener'><code>useOptimistic</code></a
+          >,
+          <a href='https://react.dev/reference/react/useTransition' target='_blank' rel='noopener'
+            ><code>useTransition</code></a
+          >
         </td>
         <td>
           <strong>Authorization decisions:</strong> cookie/session reads belong on the server, with
@@ -655,7 +676,11 @@ flowchart TB
     >). If a file in <code>app/</code> carries the directive, the scaffold itself has crossed the boundary,
     and everything slotted into it goes along. Client code lives in leaf components, imported <em
       >into</em
-    > the scaffold. Legitimate exceptions exist (<code>error.tsx</code>
+    > the scaffold. Legitimate exceptions exist (<a
+      href='https://nextjs.org/docs/app/api-reference/file-conventions/error'
+      target='_blank'
+      rel='noopener'><code>error.tsx</code></a
+    >
     is required to be a client component; a page that is genuinely one interactive surface, like a canvas
     editor), but each one should be an explicit decision, not a reflex to make a hook error go away.
   </p>
@@ -788,7 +813,11 @@ flowchart TB
       <code>useParams</code>/<code>useSearchParams</code> in a client page is usually the
       <em>reason</em> the page went client in the first place (<a
         href='09-server-resolvable-state.html'>§9</a
-      >). Same for cookies and headers: <code>next/headers</code>, on the server.
+      >). Same for <a
+        href='https://nextjs.org/docs/app/api-reference/functions/cookies'
+        target='_blank'
+        rel='noopener'>cookies</a
+      > and headers: <code>next/headers</code>, on the server.
     </li>
     <li>
       <strong>Authorization is a server decision.</strong> A guard component that fetches "am I allowed?"
@@ -1007,7 +1036,11 @@ flowchart TB
     One boundary case is mechanical enough to deserve its own pattern: it sits exactly at the
     intersection of this chapter and
     <a href='09-server-resolvable-state.html'>§9</a> (the URL as state). A client component that calls
-    <code>useSearchParams()</code>
+    <a
+      href='https://nextjs.org/docs/app/api-reference/functions/use-search-params'
+      target='_blank'
+      rel='noopener'><code>useSearchParams()</code></a
+    >
     <strong>must render inside a <code>&lt;Suspense&gt;</code> boundary.</strong>
     <Chip k='next' />
     <Chip k='critical' />
@@ -1029,9 +1062,12 @@ flowchart TB
       to accommodate one filter input. With one, the "dynamic hole" is exactly the size of the leaf.
     </li>
     <li>
-      <strong>The build passes under PPR.</strong> With <code>cacheComponents</code>, a request-time
-      read outside a Suspense boundary isn't a deopt; it's an error. The boundary is how you declare
-      "this part is dynamic, on purpose."
+      <strong>The build passes under PPR.</strong> With <a
+        href='https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents'
+        target='_blank'
+        rel='noopener'><code>cacheComponents</code></a
+      >, a request-time read outside a Suspense boundary isn't a deopt; it's an error. The boundary
+      is how you declare "this part is dynamic, on purpose."
     </li>
   </ul>
   <p>
@@ -1207,9 +1243,11 @@ flowchart TB
   <p>
     Encapsulating the dialog also hands you a bundle win for free: since the dialog is invisible
     until its button is clicked, its JavaScript has no business in the first-render bundle. Load it
-    with <code>next/dynamic</code> and render it conditionally: the chunk downloads on first open, and
-    until then the page carries only the button (<a href='07-first-render-js.html'>§7</a>'s subject,
-    met here in its most common form):
+    with <a href='https://nextjs.org/docs/app/guides/lazy-loading' target='_blank' rel='noopener'
+      ><code>next/dynamic</code></a
+    > and render it conditionally: the chunk downloads on first open, and until then the page carries
+    only the button (<a href='07-first-render-js.html'>§7</a>'s subject, met here in its most common
+    form):
   </p>
 
   <Snippet>
@@ -2782,7 +2820,11 @@ flowchart TB
 
   <p>
     The submit button is deliberately not written inline, because pending state is where forms
-    usually grow wires. <code>useFormStatus</code>
+    usually grow wires. <a
+      href='https://react.dev/reference/react-dom/hooks/useFormStatus'
+      target='_blank'
+      rel='noopener'><code>useFormStatus</code></a
+    >
     <Chip k='react' />
     <Chip k='very' /> lets a leaf component read the status of the <em
       >form it happens to be inside</em
@@ -2813,8 +2855,12 @@ flowchart TB
   </Snippet>
 
   <p>
-    Finally, Next's <code>&lt;Form&gt;</code> component (<code>next/form</code>) extends the native
-    element for the <em>other</em> kind of form: the one whose submit is a navigation, not a mutation.
+    Finally, Next's <a
+      href='https://nextjs.org/docs/app/api-reference/components/form'
+      target='_blank'
+      rel='noopener'><code>&lt;Form&gt;</code></a
+    > component (<code>next/form</code>) extends the native element for the <em>other</em> kind of form:
+    the one whose submit is a navigation, not a mutation.
     <Chip k='next' />
     <Chip k='very' /> Give it a <strong>string</strong>
     <code>action</code> and the fields become query parameters of that path, navigated to client-side,

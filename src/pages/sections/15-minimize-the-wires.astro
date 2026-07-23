@@ -437,9 +437,11 @@ flowchart TB
     <code>getProgram(id)</code>; only one real request happens, because the data layer is deduped (<a
       href='16-dedupe-caching.html'>§16</a
     > covers the mechanics:
-    <code>cache()</code>, fetch dedupe, SWR keys). The page went from a data router back to what it
-    should be: structure. And each child is now <strong>portable</strong>: drop it into any page,
-    any parallel route, any dialog, hand it an id, and it works.
+    <a href='https://react.dev/reference/react/cache' target='_blank' rel='noopener'
+      ><code>cache()</code></a
+    >, fetch dedupe, SWR keys). The page went from a data router back to what it should be:
+    structure. And each child is now <strong>portable</strong>: drop it into any page, any parallel
+    route, any dialog, hand it an id, and it works.
   </p>
 
   <Callout kind='info' title='This works on both sides of the boundary'>
@@ -661,7 +663,11 @@ flowchart LR
   <p>
     The same two regions also split cleanly along <em>route</em> lines. If the details region should change
     with nested sub-views (activity, history, settings) while the header stays put, make the regions <strong
-      >parallel-route slots</strong
+      ><a
+        href='https://nextjs.org/docs/app/api-reference/file-conventions/parallel-routes'
+        target='_blank'
+        rel='noopener'>parallel-route slots</a
+      ></strong
     > (<a href='14-blocking-requests.html#parallel-routes'>§14.3</a>): the layout renders <code
       >@header</code
     > and <code>@details</code> side by side, and
@@ -877,18 +883,27 @@ flowchart TB
   <ul>
     <li>
       <strong>The URL</strong>: filters, tabs, selection, pagination. A filter bar that calls <code
-        >router.replace()</code
+        ><a
+          href='https://nextjs.org/docs/app/api-reference/functions/use-router'
+          target='_blank'
+          rel='noopener'>router.replace()</a
+        ></code
       > with new search params doesn't need to know a table exists; the table re-renders because the page's
       inputs changed (<a href='09-server-resolvable-state.html'>§9</a>).
     </li>
     <li>
       <strong>Cache invalidation</strong>: after a mutation,
-      <code>revalidatePath</code>/<code>revalidateTag</code> on the server, or SWR/React Query invalidation
-      on the client. Every component reading that data updates, with no parent orchestrating (<a
-        href='16-dedupe-caching.html'>§16</a
-      >; the full mutation cycle is drawn in <a href='05-client-server-boundaries.html#refresh'
-        >§5.8</a
-      >).
+      <a
+        href='https://nextjs.org/docs/app/api-reference/functions/revalidatePath'
+        target='_blank'
+        rel='noopener'><code>revalidatePath</code></a
+      >/<a
+        href='https://nextjs.org/docs/app/api-reference/functions/revalidateTag'
+        target='_blank'
+        rel='noopener'><code>revalidateTag</code></a
+      > on the server, or SWR/React Query invalidation on the client. Every component reading that data
+      updates, with no parent orchestrating (<a href='16-dedupe-caching.html'>§16</a>; the full
+      mutation cycle is drawn in <a href='05-client-server-boundaries.html#refresh'>§5.8</a>).
     </li>
   </ul>
   <p>

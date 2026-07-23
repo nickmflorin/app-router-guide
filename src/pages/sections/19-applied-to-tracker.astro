@@ -338,7 +338,11 @@ flowchart TB
 
   <h2 id='numbers'>19.3 The numbers</h2>
   <p>
-    Counted across the monorepo on 2026-07-08, all six apps, Next.js 16. The
+    Counted across the monorepo on 2026-07-08, all six apps, <a
+      href='https://nextjs.org/blog/next-16'
+      target='_blank'
+      rel='noopener'>Next.js 16</a
+    >. The
     <code>"use client"</code> column reads "directive files / total source files".
   </p>
   <table class='tbl'>
@@ -431,16 +435,28 @@ flowchart TB
 
   <Callout kind='warn' title='The zeroes are the headline'>
     <p>
-      Across the entire repo: <strong>zero server actions</strong> (<code>"use server"</code>), <strong
-        >zero caching primitives</strong
-      > (<code>"use cache"</code>,
-      <code>revalidate</code>, <code>React.cache()</code>), and <strong>zero SWR</strong>. Every <code
-        >&lt;Suspense&gt;</code
-      > that exists is there to silence the
-      <code>useSearchParams</code> build error (<a
-        href='05-client-server-boundaries.html#searchparams-boundary'>§5.6</a
-      >), not to stream. Roughly 60% of all source files carry <code>"use client"</code>. The server
-      side of this stack, Part A and Part B of this guide in their entirety, is essentially unused.
+      Across the entire repo: <strong>zero server actions</strong> (<a
+        href='https://react.dev/reference/rsc/use-server'
+        target='_blank'
+        rel='noopener'><code>"use server"</code></a
+      >), <strong>zero caching primitives</strong> (<a
+        href='https://nextjs.org/docs/app/getting-started/caching'
+        target='_blank'
+        rel='noopener'><code>"use cache"</code></a
+      >,
+      <code>revalidate</code>, <a
+        href='https://react.dev/reference/react/cache'
+        target='_blank'
+        rel='noopener'><code>React.cache()</code></a
+      >), and <strong>zero SWR</strong>. Every <code>&lt;Suspense&gt;</code> that exists is there to silence
+      the
+      <a
+        href='https://nextjs.org/docs/app/api-reference/functions/use-search-params'
+        target='_blank'
+        rel='noopener'><code>useSearchParams</code></a
+      > build error (<a href='05-client-server-boundaries.html#searchparams-boundary'>§5.6</a>), not
+      to stream. Roughly 60% of all source files carry <code>"use client"</code>. The server side of
+      this stack, Part A and Part B of this guide in their entirety, is essentially unused.
     </p>
   </Callout>
 
@@ -534,8 +550,17 @@ flowchart TB
   <h3 id='finding-5'>Finding 5: No streaming, no route-level loading or error boundaries</h3>
   <p>
     24 of 32 ojl-ui routes, including all 15 participant and reviewer pages (the highest-traffic
-    surfaces), have <strong>no loading.tsx or error.tsx</strong>. The other four apps have zero,
-    total. Every loading state is a hand-rolled
+    surfaces), have <strong
+      >no <a
+        href='https://nextjs.org/docs/app/api-reference/file-conventions/loading'
+        target='_blank'
+        rel='noopener'>loading.tsx</a
+      > or <a
+        href='https://nextjs.org/docs/app/api-reference/file-conventions/error'
+        target='_blank'
+        rel='noopener'>error.tsx</a
+      ></strong
+    >. The other four apps have zero, total. Every loading state is a hand-rolled
     <code>isLoading</code> conditional; every error path falls through to
     <code>global-error.tsx</code> or a blank crash. No <code>&lt;Suspense&gt;</code> streams server data
     anywhere; one page even renders <code>&lt;Suspense&gt;</code> with no fallback.
@@ -554,7 +579,11 @@ flowchart TB
     <strong>53 <code>enabled:</code>-gated dependent queries</strong> in ojl-ui, each one a client round-trip
     that a server component would resolve in a single pass with
     <code>Promise.all</code>. A <code>consistencyToken</code> search-param hack exists to get read-your-writes
-    after create: a problem <code>revalidatePath</code> plus server actions solve natively.
+    after create: a problem <a
+      href='https://nextjs.org/docs/app/api-reference/functions/revalidatePath'
+      target='_blank'
+      rel='noopener'><code>revalidatePath</code></a
+    > plus server actions solve natively.
   </p>
   <p>
     <strong>Where the fix lives:</strong> parallel fetching and minimized fetch dependencies (<a
@@ -580,10 +609,17 @@ flowchart TB
 
   <h3 id='finding-8'>Finding 8: App Router features missing entirely</h3>
   <p>
-    No parallel routes, no intercepting routes, anywhere, despite many drawer and sheet flows that
-    are pure client state and not URL-addressable (<a href='09-server-resolvable-state.html#tabs'
-      >§9.3</a
-    >). No server actions despite dozens of form mutations. No
+    No <a
+      href='https://nextjs.org/docs/app/api-reference/file-conventions/parallel-routes'
+      target='_blank'
+      rel='noopener'>parallel routes</a
+    >, no <a
+      href='https://nextjs.org/docs/app/api-reference/file-conventions/intercepting-routes'
+      target='_blank'
+      rel='noopener'>intercepting routes</a
+    >, anywhere, despite many drawer and sheet flows that are pure client state and not
+    URL-addressable (<a href='09-server-resolvable-state.html#tabs'>§9.3</a>). No server actions
+    despite dozens of form mutations. No
     <code>not-found.tsx</code> outside the roots. These are not exotic extras; they are the primitives
     Part B and <a href='20-new-primitives.html'>§20</a> are about, and their absence is why the apps re-implement
     what the framework provides.

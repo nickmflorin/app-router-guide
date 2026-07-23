@@ -30,17 +30,26 @@ import Snippet from '../../components/Snippet.astro';
     if they're in the main bundle, the user pays for them before the first button click works.
   </p>
   <p>
-    And the cost isn't limited to interactivity. <code>&lt;Link&gt;</code> can't start prefetching until
-    it hydrates (<a href='04-ssr.html#dynamic-loading'>§4.5</a>), so a heavy bundle doesn't just
-    delay this page, it delays the head start on the
-    <em>next</em> one. Note what doesn't help here: the React Compiler removes re-render busywork, not
-    bytes. The only cure for shipping too much code is shipping less of it.
+    And the cost isn't limited to interactivity. <code>&lt;Link&gt;</code> can't start <a
+      href='https://nextjs.org/docs/app/getting-started/linking-and-navigating'
+      target='_blank'
+      rel='noopener'>prefetching</a
+    > until it hydrates (<a href='04-ssr.html#dynamic-loading'>§4.5</a>), so a heavy bundle doesn't
+    just delay this page, it delays the head start on the
+    <em>next</em> one. Note what doesn't help here: the <a
+      href='https://react.dev/learn/react-compiler'
+      target='_blank'
+      rel='noopener'>React Compiler</a
+    > removes re-render busywork, not bytes. The only cure for shipping too much code is shipping less
+    of it.
   </p>
   <p>
     What determines the bundle's size is exactly one thing:
     <strong>the module graphs of your client components</strong> (<a
       href='05-client-server-boundaries.html#what-it-means'>§5.1</a
-    >). Every <code>"use client"</code> file, everything it imports, and everything
+    >). Every <a href='https://react.dev/reference/rsc/use-client' target='_blank' rel='noopener'
+      ><code>"use client"</code></a
+    > file, everything it imports, and everything
     <em>those</em> import: that is the bundle. Server components contribute zero bytes, no matter how
     heavy their dependencies are; their markdown parsers and date libraries run on the server and stay
     there (<a href='04-ssr.html#benefits'>§4.2</a>).
@@ -199,8 +208,13 @@ flowchart LR
 
   <h2 id='dynamic'>7.3 <code>dynamic()</code>: loading client code on demand</h2>
   <p>
-    <code>next/dynamic</code> is <code>React.lazy()</code> plus Suspense in one call: it turns an import
-    into a separate chunk, gives you a <code>loading</code> fallback for the gap, and, critically,
+    <a href='https://nextjs.org/docs/app/guides/lazy-loading' target='_blank' rel='noopener'
+      ><code>next/dynamic</code></a
+    > is <a href='https://react.dev/reference/react/lazy' target='_blank' rel='noopener'
+      ><code>React.lazy()</code></a
+    > plus Suspense in one call: it turns an import into a separate chunk, gives you a <code
+      >loading</code
+    > fallback for the gap, and, critically,
     <strong>moves the download to the moment the component first renders</strong>. Combined with
     conditional rendering, "first renders" becomes "the user actually asked for it":
   </p>
@@ -377,10 +391,11 @@ flowchart LR
   <p>
     Don't guess: <strong>measure</strong>. <Chip k='react' />
     <Chip k='very' />
-    <code>@next/bundle-analyzer</code> shows exactly which imports own the bytes; the browser's coverage
-    panel shows how much of the bundle the first paint actually executed. The two usual convictions: a
-    heavy library imported by a component that's visible for 5% of sessions, and a "shared utils" module
-    that drags a whale in through one re-export.
+    <a href='https://nextjs.org/docs/app/guides/package-bundling' target='_blank' rel='noopener'
+      ><code>@next/bundle-analyzer</code></a
+    > shows exactly which imports own the bytes; the browser's coverage panel shows how much of the bundle
+    the first paint actually executed. The two usual convictions: a heavy library imported by a component
+    that's visible for 5% of sessions, and a "shared utils" module that drags a whale in through one re-export.
   </p>
 
   <h2 id='rules'>The rules</h2>

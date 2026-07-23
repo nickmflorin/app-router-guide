@@ -22,7 +22,9 @@ import Snippet from '../../components/Snippet.astro';
 
   <h2 id='mechanism'>11.1 How Suspense actually works</h2>
   <p>
-    A <code>&lt;Suspense&gt;</code> boundary is a declaration about the tree:
+    A <a href='https://react.dev/reference/react/Suspense' target='_blank' rel='noopener'
+      ><code>&lt;Suspense&gt;</code></a
+    > boundary is a declaration about the tree:
     <em>"everything below this point may not be ready yet; here is what to show in its place."</em>
     When a component inside the boundary <strong>suspends</strong> (it's waiting on something asynchronous),
     React walks <em>up</em> the tree to the nearest boundary, renders its <code>fallback</code> there,
@@ -220,11 +222,13 @@ flowchart LR
     It's worth slowing down on what "suspends" mechanically means, because the mental model most of
     React's guarantees hang on lives here. During render, a component that isn't ready
     <strong>throws</strong>: historically a promise, today the thenable protocol behind
-    <code>use()</code> and the framework's data APIs. React catches it at the nearest boundary. And here
-    is the part that matters: that render was <strong>an attempt, not a commitment</strong>. The
-    suspended component was never mounted. No DOM was created for it, none of its effects ran, no
-    lifecycle happened, nothing it might have rendered reaches the screen. React discards the
-    attempt, commits the boundary's fallback instead, and when the thenable resolves, <strong
+    <a href='https://react.dev/reference/react/use' target='_blank' rel='noopener'
+      ><code>use()</code></a
+    > and the framework's data APIs. React catches it at the nearest boundary. And here is the part that
+    matters: that render was <strong>an attempt, not a commitment</strong>. The suspended component
+    was never mounted. No DOM was created for it, none of its effects ran, no lifecycle happened,
+    nothing it might have rendered reaches the screen. React discards the attempt, commits the
+    boundary's fallback instead, and when the thenable resolves, <strong
       >re-renders the subtree from scratch</strong
     >. If the retry completes, the finished result is swapped in whole.
     <Chip k='react' />
@@ -651,9 +655,15 @@ flowchart LR
       A boundary that has already revealed content will <strong>not</strong> revert to its fallback when
       an update inside it suspends during a <em>transition</em>: router navigations and <code
         >startTransition</code
-      > updates keep the existing content visible while the new content prepares. React 19.2 further batches
-      how server-streamed boundaries reveal. The fallback is a <em>first-render</em> device; everything
-      after first render should follow the stale-content rules in <a href='#skeletons'>§11.4</a>.
+      > updates keep the existing content visible while the new content prepares. <a
+        href='https://react.dev/blog/2025/10/01/react-19-2'
+        target='_blank'
+        rel='noopener'>React 19.2</a
+      > further batches how server-streamed boundaries reveal. The fallback is a <em
+        >first-render</em
+      > device; everything after first render should follow the stale-content rules in <a
+        href='#skeletons'>§11.4</a
+      >.
     </p>
   </Callout>
 
@@ -664,7 +674,11 @@ flowchart LR
     With Suspense boundaries, the server streams the page in order of readiness: the shell (layout,
     containers, everything known) goes out immediately, and each suspended region follows as its
     data resolves, injected into its reserved slot without re-rendering anything around it. (Making
-    the waits themselves small and parallel, rather than just streaming around them, is
+    the waits themselves small and parallel, rather than just <a
+      href='https://nextjs.org/docs/app/guides/streaming'
+      target='_blank'
+      rel='noopener'>streaming</a
+    > around them, is
     <a href='14-blocking-requests.html'>§14</a>'s subject.)
   </p>
 
@@ -846,8 +860,14 @@ flowchart LR
   </p>
   <ul>
     <li>
-      <strong><code>loading.tsx</code> is a route-level Suspense boundary</strong> the framework wires
-      up for you: it wraps the page, shows instantly on navigation, and is even <em>prefetched</em>
+      <strong
+        ><a
+          href='https://nextjs.org/docs/app/api-reference/file-conventions/loading'
+          target='_blank'
+          rel='noopener'><code>loading.tsx</code></a
+        > is a route-level Suspense boundary</strong
+      > the framework wires up for you: it wraps the page, shows instantly on navigation, and is even
+      <em>prefetched</em>
       along with the route so the fallback can appear before the server responds at all. Use it for the
       route transition, but treat it as the coarsest tool: a whole-page skeleton is exactly the page-level
       skeleton to avoid (<a href='#skeletons'>§11.4</a>). Prefer a
@@ -859,8 +879,12 @@ flowchart LR
       component (<a href='15-minimize-the-wires.html#streaming'>§15.3</a>), placed inside the known
       container (<a href='10-containers-content-shifting.html'>§10</a>). This is also what Partial
       Prerendering builds on: with
-      <code>cacheComponents</code>, everything outside your Suspense boundaries becomes the static
-      shell served instantly, and the boundaries define exactly where dynamic content streams in.
+      <a
+        href='https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents'
+        target='_blank'
+        rel='noopener'><code>cacheComponents</code></a
+      >, everything outside your Suspense boundaries becomes the static shell served instantly, and
+      the boundaries define exactly where dynamic content streams in.
     </li>
   </ul>
 
@@ -1165,10 +1189,13 @@ flowchart TB
 </pre>
 
     <Fragment slot='caption'>
-      loading.tsx and error.tsx are sugar for boundaries Next.js wraps around your page (pattern
-      from the Next.js docs). In contain-the-unknown terms: the Layout is the known scaffold and
-      never unmounts; Suspense contains the waiting; the ErrorBoundary contains the failing; and the
-      page itself knows about none of it.
+      loading.tsx and <a
+        href='https://nextjs.org/docs/app/api-reference/file-conventions/error'
+        target='_blank'
+        rel='noopener'>error.tsx</a
+      > are sugar for boundaries Next.js wraps around your page (pattern from the Next.js docs). In contain-the-unknown
+      terms: the Layout is the known scaffold and never unmounts; Suspense contains the waiting; the ErrorBoundary
+      contains the failing; and the page itself knows about none of it.
     </Fragment>
   </Diagram>
 
@@ -1851,10 +1878,12 @@ flowchart LR
     </li>
     <li>
       <strong>Client-rendered results of a fast-changing value</strong>:
-      <code>useDeferredValue</code>. When the value drives client-side rendering or client-fetched
-      queries (an autocomplete, search-as-you-type against the client cache), render against the
-      deferred value; <code>value !== deferredValue</code> drives the dimmed opacity. Same presentation
-      rule, client-side mechanism. Shown in
+      <a href='https://react.dev/reference/react/useDeferredValue' target='_blank' rel='noopener'
+        ><code>useDeferredValue</code></a
+      >. When the value drives client-side rendering or client-fetched queries (an autocomplete,
+      search-as-you-type against the client cache), render against the deferred value; <code
+        >value !== deferredValue</code
+      > drives the dimmed opacity. Same presentation rule, client-side mechanism. Shown in
       <a href='#example-deferred'>the second example below</a>.
     </li>
   </ul>
@@ -2595,8 +2624,9 @@ flowchart LR
     Every state update in React is <em>urgent</em> by default: React drops what it is doing and re-renders
     to reflect it as fast as it can. <Chip k='react' />
     <Chip k='very' />
-    <code>useTransition</code> (and its standalone form <code>startTransition</code>) marks an
-    update as
+    <a href='https://react.dev/reference/react/useTransition' target='_blank' rel='noopener'
+      ><code>useTransition</code></a
+    > (and its standalone form <code>startTransition</code>) marks an update as
     <strong>non-urgent</strong>: React prepares the resulting UI <em>in the background</em>
     while the current one stays visible and interactive, and if a genuinely urgent update (a keystroke)
     lands mid-render, React abandons the background work, handles the keystroke, and restarts. One flag,

@@ -23,17 +23,26 @@ import Snippet from '../../components/Snippet.astro';
 
   <p>
     <a href='11-suspense-streaming.html'>§11</a> made the case that loading belongs to the tree, not the
-    component: a <code>&lt;Suspense&gt;</code> boundary above a component decides what shows while it
-    waits, and <code>loading.tsx</code> is that boundary drawn around a route segment. Errors are the
-    same story with a different verb. A component that throws should not decide what the user sees any
-    more than a component that suspends should; a boundary above it should. The App Router gives you the
-    same two tools it gave you for loading: a file convention (<code>error.tsx</code>) for the route
-    segment, and a plain React boundary you place by hand for anything finer.
+    component: a <a href='https://react.dev/reference/react/Suspense' target='_blank' rel='noopener'
+      ><code>&lt;Suspense&gt;</code></a
+    > boundary above a component decides what shows while it waits, and <a
+      href='https://nextjs.org/docs/app/api-reference/file-conventions/loading'
+      target='_blank'
+      rel='noopener'><code>loading.tsx</code></a
+    > is that boundary drawn around a route segment. Errors are the same story with a different verb.
+    A component that throws should not decide what the user sees any more than a component that suspends
+    should; a boundary above it should. The App Router gives you the same two tools it gave you for loading:
+    a file convention (<code>error.tsx</code>) for the route segment, and a plain React boundary you
+    place by hand for anything finer.
   </p>
 
   <h2 id='mechanism'>12.1 The boundary catches the throw</h2>
   <p>
-    An <code>error.tsx</code> file is a <strong
+    An <a
+      href='https://nextjs.org/docs/app/api-reference/file-conventions/error'
+      target='_blank'
+      rel='noopener'><code>error.tsx</code></a
+    > file is a <strong
       >Client Component that Next.js wraps as a React error boundary around the segment</strong
     >: the page and everything rendered beneath it.
     <Chip k='next' />
@@ -610,13 +619,17 @@ flowchart TB
     Segment boundaries follow the URL, but a single page often shows several independent regions
     that can fail on their own: a summary card, a header, an activity feed, each with its own data.
     <Chip k='next' />
-    <Chip k='very' /> Give each region its own <strong>parallel-route slot</strong> (<a
-      href='14-blocking-requests.html#parallel-routes'>§14.3</a
-    >), and each slot, being its own segment, takes its own <code>error.tsx</code> (and its own <code
-      >loading.tsx</code
-    >). Now a throw in the summary's data renders the summary slot's fallback while the header and
-    the feed keep rendering and streaming, untouched. This is the finest isolation the file system
-    alone can express: one region's failure contained to that region, decided by the route tree.
+    <Chip k='very' /> Give each region its own <strong
+      ><a
+        href='https://nextjs.org/docs/app/api-reference/file-conventions/parallel-routes'
+        target='_blank'
+        rel='noopener'>parallel-route slot</a
+      ></strong
+    > (<a href='14-blocking-requests.html#parallel-routes'>§14.3</a>), and each slot, being its own
+    segment, takes its own <code>error.tsx</code> (and its own <code>loading.tsx</code>). Now a
+    throw in the summary's data renders the summary slot's fallback while the header and the feed
+    keep rendering and streaming, untouched. This is the finest isolation the file system alone can
+    express: one region's failure contained to that region, decided by the route tree.
   </p>
 
   <Diagram>

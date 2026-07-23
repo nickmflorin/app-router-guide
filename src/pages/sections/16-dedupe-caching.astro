@@ -46,7 +46,11 @@ import Snippet from '../../components/Snippet.astro';
         <td><Chip k='critical' /></td>
       </tr>
       <tr>
-        <td><code>React.cache()</code></td>
+        <td
+          ><a href='https://react.dev/reference/react/cache' target='_blank' rel='noopener'
+            ><code>React.cache()</code></a
+          ></td
+        >
         <td>One request</td>
         <td>
           Memoizes any server function per request: DB queries, SDK calls, computations.
@@ -55,14 +59,28 @@ import Snippet from '../../components/Snippet.astro';
         <td><Chip k='critical' /></td>
       </tr>
       <tr>
-        <td><code>"use cache"</code></td>
+        <td
+          ><a
+            href='https://nextjs.org/docs/app/getting-started/caching'
+            target='_blank'
+            rel='noopener'><code>"use cache"</code></a
+          ></td
+        >
         <td>Cross-request</td>
         <td>
           Caches a function/component's output
           <strong><em>across</em> requests and users</strong>; <code>cacheLife</code> sets duration, <code
             >cacheTag</code
-          > enables targeted invalidation. Opt-in (Next 16,
-          <code>cacheComponents</code>).
+          > enables targeted invalidation. Opt-in (<a
+            href='https://nextjs.org/blog/next-16'
+            target='_blank'
+            rel='noopener'>Next 16</a
+          >,
+          <a
+            href='https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents'
+            target='_blank'
+            rel='noopener'><code>cacheComponents</code></a
+          >).
         </td>
         <td><Chip k='very' /></td>
       </tr>
@@ -546,7 +564,11 @@ flowchart TB
       <tr>
         <td><strong>Changed by a mutation</strong></td>
         <td>
-          Action + <code>revalidateTag</code> (server) / <code>mutate()</code> (client)
+          Action + <a
+            href='https://nextjs.org/docs/app/api-reference/functions/revalidateTag'
+            target='_blank'
+            rel='noopener'><code>revalidateTag</code></a
+          > (server) / <code>mutate()</code> (client)
         </td>
         <td>everything above, after a write</td>
       </tr>

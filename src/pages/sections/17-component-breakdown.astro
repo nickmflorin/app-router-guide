@@ -316,8 +316,12 @@ import Snippet from '../../components/Snippet.astro';
       <tr>
         <td><strong>Thin provider</strong></td>
         <td>
-          Context provider as a client wrapper around <code>&#123;children&#125;</code>, rendered as
-          deep as possible; converts nothing below it.
+          <a
+            href='https://react.dev/learn/passing-data-deeply-with-context'
+            target='_blank'
+            rel='noopener'>Context provider</a
+          > as a client wrapper around <code>&#123;children&#125;</code>, rendered as deep as
+          possible; converts nothing below it.
         </td>
         <td><a href='05-client-server-boundaries.html#children-pattern'>§5.4</a></td>
       </tr>
@@ -332,8 +336,11 @@ import Snippet from '../../components/Snippet.astro';
       <tr>
         <td><strong>Lazy heavyweight</strong></td>
         <td>
-          Client component loaded on interaction via <code>dynamic()</code>; charts, editors,
-          anything that shouldn't tax first render.
+          Client component loaded on interaction via <a
+            href='https://nextjs.org/docs/app/guides/lazy-loading'
+            target='_blank'
+            rel='noopener'><code>dynamic()</code></a
+          >; charts, editors, anything that shouldn't tax first render.
         </td>
         <td><a href='08-bundle-size-code-splitting.html'>§8</a></td>
       </tr>

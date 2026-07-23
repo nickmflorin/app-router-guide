@@ -46,12 +46,19 @@ import CompareCol from '../../components/CompareCol.astro';
 
   <h2 id='rendering-model'>3.1 What actually happens when a page renders</h2>
   <p>
-    In the App Router, every component is a <strong>server component by default</strong>. When a
-    request comes in, the server executes your component tree (running your
+    In the App Router, every component is a <strong
+      ><a
+        href='https://nextjs.org/docs/app/getting-started/server-and-client-components'
+        target='_blank'
+        rel='noopener'>server component by default</a
+      ></strong
+    >. When a request comes in, the server executes your component tree (running your
     <code>async</code> components, awaiting your data) and streams the result to the browser as HTML,
     immediately, including real content for everything that was knowable and reserved fallbacks for everything
-    that wasn't. Client components (only the subtrees you explicitly mark with <code
-      >"use client"</code
+    that wasn't. Client components (only the subtrees you explicitly mark with <a
+      href='https://react.dev/reference/rsc/use-client'
+      target='_blank'
+      rel='noopener'><code>"use client"</code></a
     >) are the only parts that ship JavaScript, hydrate, and become interactive.
   </p>
 
@@ -601,7 +608,13 @@ flowchart LR
       <tr>
         <td>Fetch after hydration (effects, client query hooks)</td>
         <td>
-          Streaming and <code>loading.tsx</code>:
+          <a href='https://nextjs.org/docs/app/guides/streaming' target='_blank' rel='noopener'
+            >Streaming</a
+          > and <a
+            href='https://nextjs.org/docs/app/api-reference/file-conventions/loading'
+            target='_blank'
+            rel='noopener'><code>loading.tsx</code></a
+          >:
           <strong>there's nothing to stream</strong>; the server finishes instantly with an empty
           shell.
         </td>
@@ -617,14 +630,26 @@ flowchart LR
       <tr>
         <td>Requests the server never sees</td>
         <td>
-          The whole caching model: <code>"use cache"</code>, revalidation, request dedupe.
+          The whole caching model: <a
+            href='https://nextjs.org/docs/app/getting-started/caching'
+            target='_blank'
+            rel='noopener'><code>"use cache"</code></a
+          >, revalidation, request dedupe.
           <strong>You rebuild caching by hand</strong>, per hook.
         </td>
       </tr>
       <tr>
         <td>Mutations via hand-rolled API routes</td>
         <td>
-          Actions, <code>revalidatePath</code>/<code>revalidateTag</code>:
+          Actions, <a
+            href='https://nextjs.org/docs/app/api-reference/functions/revalidatePath'
+            target='_blank'
+            rel='noopener'><code>revalidatePath</code></a
+          >/<a
+            href='https://nextjs.org/docs/app/api-reference/functions/revalidateTag'
+            target='_blank'
+            rel='noopener'><code>revalidateTag</code></a
+          >:
           <strong>read-your-writes consistency becomes your problem</strong>, solved with things
           like consistency tokens.
         </td>
@@ -663,8 +688,11 @@ flowchart LR
       <tr>
         <td>Auth resolved in the browser (fetch the session, then decide what to render)</td>
         <td>
-          The request already carried identity (cookies): the server could have rendered the right
-          page immediately. Instead
+          The request already carried identity (<a
+            href='https://nextjs.org/docs/app/api-reference/functions/cookies'
+            target='_blank'
+            rel='noopener'>cookies</a
+          >): the server could have rendered the right page immediately. Instead
           <strong>every page boots, asks who you are, and flashes the wrong state</strong> while it waits.
         </td>
       </tr>

@@ -311,13 +311,27 @@ flowchart LR
     <a href='10-containers-content-shifting.html#layouts'>§10.4</a> put the containers in the layout;
     <a href='15-minimize-the-wires.html'>§15</a> made the regions self-fetching;
     <a href='11-suspense-streaming.html'>§11</a> gave each one a boundary.
-    <strong>Parallel routes</strong> are the framework formalizing that whole pattern as filesystem structure:
-    a layout declares named <em>slots</em> (<code>@header</code>,
+    <strong
+      ><a
+        href='https://nextjs.org/docs/app/api-reference/file-conventions/parallel-routes'
+        target='_blank'
+        rel='noopener'>Parallel routes</a
+      ></strong
+    > are the framework formalizing that whole pattern as filesystem structure: a layout declares named
+    <em>slots</em> (<code>@header</code>,
     <code>@summary</code>, <code>@table</code>), each slot is its own mini-page, and the framework
     fills them
     <strong
-      >independently - each with its own <code>loading.tsx</code>, its own
-      <code>error.tsx</code>, its own streaming lifecycle.</strong
+      >independently - each with its own <a
+        href='https://nextjs.org/docs/app/api-reference/file-conventions/loading'
+        target='_blank'
+        rel='noopener'><code>loading.tsx</code></a
+      >, its own
+      <a
+        href='https://nextjs.org/docs/app/api-reference/file-conventions/error'
+        target='_blank'
+        rel='noopener'><code>error.tsx</code></a
+      >, its own streaming lifecycle.</strong
     >
     <Chip k='next' />
     <Chip k='very' />

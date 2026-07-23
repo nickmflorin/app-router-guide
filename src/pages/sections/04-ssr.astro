@@ -31,10 +31,14 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     In the App Router this is not a feature you enable; it is the default posture of the entire
     framework. <Chip k='next' />
-    <Chip k='critical' /> Every component is a server component unless you mark it otherwise, so every
-    route starts life fully server-rendered. Even client components participate: Next.js renders their
-    initial HTML on the server too, then <em>hydrates</em> them (attaches the event handlers and state)
-    once their JavaScript arrives. The practical consequence, and the reason this chapter leads Part A:
+    <Chip k='critical' /> Every component is a <a
+      href='https://nextjs.org/docs/app/getting-started/server-and-client-components'
+      target='_blank'
+      rel='noopener'>server component</a
+    > unless you mark it otherwise, so every route starts life fully server-rendered. Even client components
+    participate: Next.js renders their initial HTML on the server too, then <em>hydrates</em> them (attaches
+    the event handlers and state) once their JavaScript arrives. The practical consequence, and the reason
+    this chapter leads Part A:
     <strong>everything the server can resolve arrives finished</strong>, and only the parts you
     explicitly carve out ever depend on the client. The rest of Part A is about keeping that
     carved-out surface small (<a href='05-client-server-boundaries.html'>§5</a>–<a
@@ -565,9 +569,13 @@ flowchart LR
     collapses the two products into one: the unit the server exposes is not
     <code>/api/reports</code> returning rows, it is the reports page returning the table. The data's shape
     can change freely because nothing in the browser ever depended on it. (Mutations get the same collapse
-    from server actions, <a href='05-client-server-boundaries.html#server-actions'>§5.8</a>: a typed
-    call instead of a hand-built endpoint. Building JSON routes for your own pages' first-render
-    data is the pattern the audit flagged, <a href='19-applied-to-tracker.html'>§19</a>.)
+    from <a
+      href='https://nextjs.org/docs/app/getting-started/mutating-data'
+      target='_blank'
+      rel='noopener'>server actions</a
+    >, <a href='05-client-server-boundaries.html#server-actions'>§5.8</a>: a typed call instead of a
+    hand-built endpoint. Building JSON routes for your own pages' first-render data is the pattern
+    the audit flagged, <a href='19-applied-to-tracker.html'>§19</a>.)
   </p>
   <p>
     And there is a name for where this is heading. The pattern emerging across the ecosystem is that <strong
@@ -615,16 +623,20 @@ flowchart LR
   </p>
   <h3 id='streaming-principle'>Streaming: the same principle, inside one response</h3>
   <p>
-    <strong>Streaming is the same principle applied within a single response.</strong> Plain SSR has a
-    weakness: if the server waits for <em>all</em> data before sending anything, the slowest query gates
-    the entire page. Streaming removes that gate: the server sends the known immediately (structure, containers,
-    everything already resolved) and flushes the slow parts into their reserved slots as they finish,
-    over the same response (<a href='11-suspense-streaming.html#streaming'>§11.2</a>). Perceived
-    performance is governed by when the first meaningful content lands and whether the page holds
-    still afterward; streaming makes the first independent of your slowest query, and containers (<a
-      href='10-containers-content-shifting.html'>§10</a
-    >) guarantee the second. That is the whole Part B playbook in one sentence, powered by the fact
-    that rendering happens on a server that can flush incrementally.
+    <strong
+      ><a href='https://nextjs.org/docs/app/guides/streaming' target='_blank' rel='noopener'
+        >Streaming</a
+      > is the same principle applied within a single response.</strong
+    > Plain SSR has a weakness: if the server waits for <em>all</em> data before sending anything, the
+    slowest query gates the entire page. Streaming removes that gate: the server sends the known immediately
+    (structure, containers, everything already resolved) and flushes the slow parts into their reserved
+    slots as they finish, over the same response (<a href='11-suspense-streaming.html#streaming'
+      >§11.2</a
+    >). Perceived performance is governed by when the first meaningful content lands and whether the
+    page holds still afterward; streaming makes the first independent of your slowest query, and
+    containers (<a href='10-containers-content-shifting.html'>§10</a>) guarantee the second. That is
+    the whole Part B playbook in one sentence, powered by the fact that rendering happens on a
+    server that can flush incrementally.
   </p>
 
   <h3 id='tti'>Time-to-interactive is a dead metric</h3>
@@ -682,9 +694,17 @@ flowchart LR
     > (at build time, or on first request, or on a revalidation schedule), and the cached output is served
     to every subsequent visitor without re-rendering: effectively a static site, per route. When part
     of a page
-    <em>does</em> need request-time data, the modern model (Partial Prerendering /
+    <em>does</em> need request-time data, the modern model (<a
+      href='https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents'
+      target='_blank'
+      rel='noopener'>Partial Prerendering</a
+    > /
     <code>cacheComponents</code>) caches the static shell and streams only the dynamic holes into
-    it. The mechanics (<code>"use cache"</code>, revalidation, cache tags) live in
+    it. The mechanics (<a
+      href='https://nextjs.org/docs/app/getting-started/caching'
+      target='_blank'
+      rel='noopener'><code>"use cache"</code></a
+    >, revalidation, cache tags) live in
     <a href='16-dedupe-caching.html'>§16</a>; what belongs here is the architectural point:
   </p>
   <p>
@@ -928,8 +948,11 @@ flowchart LR
 
   <h3 id='prefetching'>Links and prefetching</h3>
   <p>
-    The instant-navigation story above hangs on one component: <code>&lt;Link&gt;</code>. Internal
-    navigation always goes through <code>&lt;Link&gt;</code>, never a plain
+    The instant-navigation story above hangs on one component: <a
+      href='https://nextjs.org/docs/app/getting-started/linking-and-navigating'
+      target='_blank'
+      rel='noopener'><code>&lt;Link&gt;</code></a
+    >. Internal navigation always goes through <code>&lt;Link&gt;</code>, never a plain
     <code>&lt;a&gt;</code>: an anchor tag opts out of the entire model with a full document load:
     layouts torn down, state cleared, scroll reset.
     <Chip k='next' />
@@ -991,7 +1014,11 @@ flowchart LR
     <em>nothing happens</em> until the server finishes rendering. Click… wait… still the old page. In
     the docs' words, it "can give the users the impression that the app is not responding." Every dynamic
     route should have a
-    <code>loading.tsx</code> (or an equivalent Suspense boundary).
+    <code>loading.tsx</code> (or an equivalent <a
+      href='https://react.dev/reference/react/Suspense'
+      target='_blank'
+      rel='noopener'>Suspense boundary</a
+    >).
     <Chip k='next' />
     <Chip k='very' />
   </p>
@@ -1010,9 +1037,12 @@ flowchart LR
     Three edge notes close the loop. If a dynamic segment's pages are enumerable ahead of time, <code
       >generateStaticParams</code
     > promotes them to prerendered static routes: full prefetch, no fallback needed at all. On slow networks
-    the prefetch may not finish before the click; <code>useLinkStatus</code> exposes a <code
-      >pending</code
-    > flag for an immediate, debounced hint on the link itself. And prefetching can't start until
+    the prefetch may not finish before the click; <a
+      href='https://nextjs.org/docs/app/api-reference/functions/use-link-status'
+      target='_blank'
+      rel='noopener'><code>useLinkStatus</code></a
+    > exposes a <code>pending</code> flag for an immediate, debounced hint on the link itself. And prefetching
+    can't start until
     <code>&lt;Link&gt;</code> hydrates (it is a client component), which is one more reason to keep first-render
     JavaScript small (<a href='07-first-render-js.html'>§7</a>).
   </p>

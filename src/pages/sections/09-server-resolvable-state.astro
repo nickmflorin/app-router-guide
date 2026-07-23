@@ -199,7 +199,13 @@ flowchart LR
     >; in short, anything that describes
     <em>which view of the data the user is looking at</em>.
     <Chip k='next' />
-    <Chip k='very' /> The reading side is a server page prop; both are Promises in Next 16:
+    <Chip k='very' /> The reading side is a <a
+      href='https://nextjs.org/docs/app/api-reference/file-conventions/page'
+      target='_blank'
+      rel='noopener'>server page prop</a
+    >; both are Promises in <a href='https://nextjs.org/blog/next-16' target='_blank' rel='noopener'
+      >Next 16</a
+    >:
   </p>
 
   <Snippet>
@@ -220,7 +226,11 @@ flowchart LR
 
   <p>
     The writing side you've already seen: an interactive leaf updates the query string with
-    <code>router.replace()</code> inside a transition, and the server page re-renders with fresh rows:
+    <a
+      href='https://nextjs.org/docs/app/api-reference/functions/use-router'
+      target='_blank'
+      rel='noopener'><code>router.replace()</code></a
+    > inside a transition, and the server page re-renders with fresh rows:
     <a href='05-client-server-boundaries.html#refresh'>§5.8</a> has the search input, <a
       href='11-suspense-streaming.html#refetch'>§11.5</a
     > builds the full table around it, and
@@ -456,12 +466,16 @@ flowchart LR
   <p>
     A third segment-based shape exists for a specific composition: the tabbed area is <em>part</em>
     of the page, sitting beside content that must not re-render when the tab changes. Make the tabbed
-    region a <strong>parallel-route slot</strong> (<a
-      href='14-blocking-requests.html#parallel-routes'>§14.3</a
-    >) with its own sub-routes: the tab links are ordinary URLs, only the slot's subtree navigates,
-    and every sibling region keeps its state untouched (<a
-      href='14-blocking-requests.html#slot-subroutes'>§14.3</a
-    >'s sub-navigation mechanics). Each tab is still a real segment, so the per-tab splitting,
+    region a <strong
+      ><a
+        href='https://nextjs.org/docs/app/api-reference/file-conventions/parallel-routes'
+        target='_blank'
+        rel='noopener'>parallel-route slot</a
+      ></strong
+    > (<a href='14-blocking-requests.html#parallel-routes'>§14.3</a>) with its own sub-routes: the
+    tab links are ordinary URLs, only the slot's subtree navigates, and every sibling region keeps
+    its state untouched (<a href='14-blocking-requests.html#slot-subroutes'>§14.3</a>'s
+    sub-navigation mechanics). Each tab is still a real segment, so the per-tab splitting,
     <code>loading.tsx</code>/<code>error.tsx</code>, and prefetching all survive.
   </p>
 
@@ -962,9 +976,11 @@ flowchart LR
     The problem with URL-derived tab state alone: the active highlight comes from
     <code>searchParams</code>, which only changes when the server render lands. Click a tab and the
     highlight lags behind by the length of the render. React 19's
-    <code>useOptimistic</code> closes that gap: set the optimistic value immediately inside the transition,
-    and React reconciles it with the URL-derived value automatically when the new payload arrives (or
-    reverts it if the navigation fails):
+    <a href='https://react.dev/reference/react/useOptimistic' target='_blank' rel='noopener'
+      ><code>useOptimistic</code></a
+    > closes that gap: set the optimistic value immediately inside the transition, and React reconciles
+    it with the URL-derived value automatically when the new payload arrives (or reverts it if the navigation
+    fails):
   </p>
 
   <Snippet>
@@ -1268,8 +1284,12 @@ flowchart TB
 }</pre>
     <CodeCaption>
       Two independent leaves, two params, and neither clobbers the other: each rebuilds the query
-      from the live <code>useSearchParams()</code> and changes only its own key. Add a sort control or
-      a date range later and it is one more leaf, not a rewrite of a growing filter object.
+      from the live <a
+        href='https://nextjs.org/docs/app/api-reference/functions/use-search-params'
+        target='_blank'
+        rel='noopener'><code>useSearchParams()</code></a
+      > and changes only its own key. Add a sort control or a date range later and it is one more leaf,
+      not a rewrite of a growing filter object.
     </CodeCaption>
   </Snippet>
 
@@ -1539,7 +1559,11 @@ flowchart LR
   <p>
     Some state should survive across pages and sessions but has no business in a link: the collapsed
     sidebar, a table-density preference, the dismissed-announcement flag, theme. Put those in <strong
-      >cookies</strong
+      ><a
+        href='https://nextjs.org/docs/app/api-reference/functions/cookies'
+        target='_blank'
+        rel='noopener'>cookies</a
+      ></strong
     > (the other channel the request carries), and the server resolves them at first render, which is
     what kills the flash-of-wrong-state that
     <code>localStorage</code> approaches are doomed to (the server can't read

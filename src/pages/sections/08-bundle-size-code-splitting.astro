@@ -738,9 +738,13 @@ flowchart LR
   </Compare>
 
   <p>
-    Modern bundlers and Next's <code>optimizePackageImports</code> can claw some of this back, and for
-    well-behaved side-effect-free packages the damage is smaller than it used to be. But the reliable
-    habit is to not create the problem: import from the specific module, and
+    Modern bundlers and Next's <a
+      href='https://nextjs.org/docs/app/guides/package-bundling'
+      target='_blank'
+      rel='noopener'><code>optimizePackageImports</code></a
+    > can claw some of this back, and for well-behaved side-effect-free packages the damage is smaller
+    than it used to be. But the reliable habit is to not create the problem: import from the specific
+    module, and
     <strong>don't ship <code>index.ts</code> barrels for your own component libraries</strong>. This
     is also where bundle size meets component design: barrels tend to grow around files that hold
     too many components, which is the same instinct

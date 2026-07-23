@@ -38,12 +38,15 @@ import CompareCol from '../../components/CompareCol.astro';
       <strong
         >not a preference, not a style, and not one architecture among several we could reasonably
         choose</strong
-      >. It is the operating assumption of React 19 and the App Router: the contract every primitive
-      in this stack is built against. Every one of them assumes you are already thinking this way,
-      so when you aren't, nothing throws an error; it just quietly works worse. The framework
-      doesn't offer "SPA mode" as a supported alternative; it offers silence. Build against the
-      grain and nothing stops you: the page renders, the demo works, the sprint closes. What you've
-      actually done is taken out a loan no one issues a statement for.
+      >. It is the operating assumption of <a
+        href='https://react.dev/blog/2024/12/05/react-19'
+        target='_blank'
+        rel='noopener'>React 19</a
+      > and the App Router: the contract every primitive in this stack is built against. Every one of
+      them assumes you are already thinking this way, so when you aren't, nothing throws an error; it
+      just quietly works worse. The framework doesn't offer "SPA mode" as a supported alternative; it
+      offers silence. Build against the grain and nothing stops you: the page renders, the demo works,
+      the sprint closes. What you've actually done is taken out a loan no one issues a statement for.
     </p>
     <p>
       So the question is
@@ -112,20 +115,28 @@ import CompareCol from '../../components/CompareCol.astro';
       progressively
       <em>lose the ability to adopt the tools designed to fix these problems</em>. Streaming can't
       help a page whose data loads after hydration. Caching can't help a request the server never
-      sees. Partial prerendering can't help a tree that's client-rendered from the root. The further
-      you build into the wrong model, the more expensive the road back; the refactoring becomes a
-      never-ending battle.
+      sees. <a
+        href='https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents'
+        target='_blank'
+        rel='noopener'>Partial prerendering</a
+      > can't help a tree that's client-rendered from the root. The further you build into the wrong model,
+      the more expensive the road back; the refactoring becomes a never-ending battle.
     </p>
   </Callout>
 
   <h2 id='what-this-is'>What this is, and why I wrote it</h2>
   <p>
-    This document was created largely from stitched together sources from the official Next.js and
-    React 19 documentation, reorganized and then elaborated: taking what the docs say and explaining
-    what those things actually mean, in more detail, with concrete code and diagrams. The docs
-    mention genuinely important design patterns briefly, sometimes in a single sentence near the end
-    of a paragraph, without the why, the how, or an example. This guide slows down on exactly those
-    and expands them into patterns you can actually build from.
+    This document was created largely from stitched together sources from the official <a
+      href='https://nextjs.org/docs'
+      target='_blank'
+      rel='noopener'>Next.js</a
+    > and
+    <a href='https://react.dev' target='_blank' rel='noopener'>React 19 documentation</a>,
+    reorganized and then elaborated: taking what the docs say and explaining what those things
+    actually mean, in more detail, with concrete code and diagrams. The docs mention genuinely
+    important design patterns briefly, sometimes in a single sentence near the end of a paragraph,
+    without the why, the how, or an example. This guide slows down on exactly those and expands them
+    into patterns you can actually build from.
   </p>
   <p>
     The rest of it is a second kind of pattern: the ones the docs never quite name. Brute-force your
@@ -156,17 +167,23 @@ import CompareCol from '../../components/CompareCol.astro';
       you wince, a cost to be justified rather than a tool to reach for, and you are forced to
       stretch the muscles that find another way: derive it during render, move it into the event
       handler, ask the server. That stretching is what makes you better at <em>React itself</em>;
-      the library's own design patterns start surfacing on their own, and the docs' "you might not
-      need an effect" guidance stops reading like advice and starts reading like the obvious move.
+      the library's own design patterns start surfacing on their own, and the docs' "<a
+        href='https://react.dev/learn/you-might-not-need-an-effect'
+        target='_blank'
+        rel='noopener'>you might not need an effect</a
+      >" guidance stops reading like advice and starts reading like the obvious move.
     </p>
     <p>
-      Then apply the same treatment to <code>"use client"</code>. Treat every directive as a small
-      defeat, avoid it like the plague, and the brain starts down the server-first paths instead:
-      pushing the boundary lower, splitting along capability seams, asking why the server can't
-      finish this. Stretch those muscles long enough and the design patterns of React 19 and the App
-      Router emerge naturally, through nothing more than the trial and error of avoidance. They are
-      the same patterns this guide hands you up front, to save you the months it takes to notice
-      them.
+      Then apply the same treatment to <a
+        href='https://react.dev/reference/rsc/use-client'
+        target='_blank'
+        rel='noopener'><code>"use client"</code></a
+      >. Treat every directive as a small defeat, avoid it like the plague, and the brain starts
+      down the server-first paths instead: pushing the boundary lower, splitting along capability
+      seams, asking why the server can't finish this. Stretch those muscles long enough and the
+      design patterns of React 19 and the App Router emerge naturally, through nothing more than the
+      trial and error of avoidance. They are the same patterns this guide hands you up front, to
+      save you the months it takes to notice them.
     </p>
   </Callout>
   <p>
@@ -439,25 +456,46 @@ flowchart TB
   </p>
   <ul>
     <li>
-      <strong>React Server Components</strong> moved rendering (and with it, data access) to the server,
-      making "component that runs in the browser" the explicitly-marked exception rather than the assumption.
+      <strong
+        ><a href='https://react.dev/reference/rsc/server-components' target='_blank' rel='noopener'
+          >React Server Components</a
+        ></strong
+      > moved rendering (and with it, data access) to the server, making "component that runs in the browser"
+      the explicitly-marked exception rather than the assumption.
     </li>
     <li>
-      <strong>Actions</strong> moved mutations to the server, making "POST to an API route, then juggle
-      client state" unnecessary for the common case.
+      <strong
+        ><a href='https://react.dev/reference/rsc/use-server' target='_blank' rel='noopener'
+          >Actions</a
+        ></strong
+      > moved mutations to the server, making "POST to an API route, then juggle client state" unnecessary
+      for the common case.
     </li>
     <li>
-      <strong>Suspense and streaming</strong> moved loading states out of components and into the tree
-      structure, making "this component shows its own spinner" an anti-pattern rather than a convention.
+      <strong
+        ><a href='https://react.dev/reference/react/Suspense' target='_blank' rel='noopener'
+          >Suspense</a
+        > and <a href='https://nextjs.org/docs/app/guides/streaming' target='_blank' rel='noopener'
+          >streaming</a
+        ></strong
+      > moved loading states out of components and into the tree structure, making "this component shows
+      its own spinner" an anti-pattern rather than a convention.
     </li>
     <li>
-      <strong>Next.js 16's caching model</strong> (opt-in caching, partial prerendering by default when
-      enabled) is built on the assumption that most of a page is server-rendered and cacheable, with dynamic
-      regions marked by Suspense, an assumption an SPA-style app violates on every page.
+      <strong
+        ><a href='https://nextjs.org/blog/next-16' target='_blank' rel='noopener'>Next.js 16</a>'s
+        caching model</strong
+      > (opt-in caching, partial prerendering by default when enabled) is built on the assumption that
+      most of a page is server-rendered and cacheable, with dynamic regions marked by Suspense, an assumption
+      an SPA-style app violates on every page.
     </li>
     <li>
-      <strong>The React Compiler</strong> removes the memoization busywork that made "just put everything
-      in one big client component" feel pragmatic.
+      <strong
+        >The <a href='https://react.dev/learn/react-compiler' target='_blank' rel='noopener'
+          >React Compiler</a
+        ></strong
+      > removes the memoization busywork that made "just put everything in one big client component" feel
+      pragmatic.
     </li>
   </ul>
   <p>

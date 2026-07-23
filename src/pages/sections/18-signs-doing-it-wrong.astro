@@ -327,7 +327,15 @@ flowchart TB
     </thead>
     <tbody>
       <tr>
-        <td><strong>You're fetching inside a useEffect.</strong></td>
+        <td
+          ><strong
+            >You're fetching inside a <a
+              href='https://react.dev/learn/you-might-not-need-an-effect'
+              target='_blank'
+              rel='noopener'>useEffect</a
+            >.</strong
+          ></td
+        >
         <td>
           First-render data belongs on the server; the effect + state + isLoading triple is the tell
           you're rebuilding by hand what the framework does for free. Fixed in
@@ -340,8 +348,10 @@ flowchart TB
       <tr>
         <td><strong>A mutation goes through a Next.js API route.</strong></td>
         <td>
-          A server action replaces the hand-written POST endpoint and gives you end-to-end type
-          safety and cache revalidation for free. Fixed in
+          A <a href='https://react.dev/reference/rsc/use-server' target='_blank' rel='noopener'
+            >server action</a
+          > replaces the hand-written POST endpoint and gives you end-to-end type safety and cache revalidation
+          for free. Fixed in
           <a href='05-client-server-boundaries.html#self-contained'>§5.7</a> and
           <a href='20-new-primitives.html#use-server'>§20</a>.
         </td>
@@ -399,7 +409,15 @@ flowchart TB
         <td><strong>A child calls back up so the parent can refetch.</strong></td>
         <td>
           <code>onSuccess</code> then <code>refetchAll()</code> is orchestration. Invalidate the cache
-          instead (<code>revalidateTag</code>, <code>router.refresh</code>, SWR
+          instead (<a
+            href='https://nextjs.org/docs/app/api-reference/functions/revalidateTag'
+            target='_blank'
+            rel='noopener'><code>revalidateTag</code></a
+          >, <a
+            href='https://nextjs.org/docs/app/api-reference/functions/use-router'
+            target='_blank'
+            rel='noopener'><code>router.refresh</code></a
+          >, SWR
           <code>mutate</code>) and every reader updates itself, no wire required. Fixed in
           <a href='05-client-server-boundaries.html#refresh'>§5.8</a> and
           <a href='15-minimize-the-wires.html#callbacks'>§15.4</a>.
@@ -420,10 +438,12 @@ flowchart TB
       <tr>
         <td><strong>A component renders its own spinner.</strong></td>
         <td>
-          Components don't own loading states; the Suspense boundary above them does. A component
-          that manages its own <code>isLoading</code> is doing the boundary's job badly. Fixed in <a
-            href='11-suspense-streaming.html#no-own-loading'>§11</a
-          >.
+          Components don't own loading states; the <a
+            href='https://react.dev/reference/react/Suspense'
+            target='_blank'
+            rel='noopener'>Suspense boundary</a
+          > above them does. A component that manages its own <code>isLoading</code> is doing the boundary's
+          job badly. Fixed in <a href='11-suspense-streaming.html#no-own-loading'>§11</a>.
         </td>
       </tr>
       <tr>
@@ -527,8 +547,13 @@ flowchart TB
         </td>
         <td>
           If it isn't on screen immediately (dialogs, drawers, below-the-fold panels), it should
-          load on demand with <code>next/dynamic</code>, not sit in the bundle every visitor
-          downloads. Fixed in <a href='07-first-render-js.html#dynamic'>§7.3</a>.
+          load on demand with <a
+            href='https://nextjs.org/docs/app/guides/lazy-loading'
+            target='_blank'
+            rel='noopener'><code>next/dynamic</code></a
+          >, not sit in the bundle every visitor downloads. Fixed in <a
+            href='07-first-render-js.html#dynamic'>§7.3</a
+          >.
           <em>Exception:</em> small modules that are needed right away, where a dynamic import only buys
           you an extra round-trip.
         </td>

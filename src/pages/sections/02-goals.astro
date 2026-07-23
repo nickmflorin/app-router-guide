@@ -264,8 +264,11 @@ flowchart LR
       </li>
       <li>
         <span class='g-text'
-          >Prefer state the server can resolve (the URL, route params, search params, cookies) over
-          client state the server can't see.</span
+          >Prefer state the server can resolve (the URL, route params, search params, <a
+            href='https://nextjs.org/docs/app/api-reference/functions/cookies'
+            target='_blank'
+            rel='noopener'>cookies</a
+          >) over client state the server can't see.</span
         ><span class='g-chips'><Chip k='next' /></span><span class='g-ref'
           ><a href='09-server-resolvable-state.html'>§9</a></span
         >
@@ -370,11 +373,14 @@ flowchart LR
   <h2 id='tension'>When goals collide</h2>
   <p>
     These goals occasionally pull against each other, and it's worth knowing the tiebreakers in
-    advance. Containing the unknown (B) can tempt you to over-fragment a page into a dozen suspense
-    boundaries, but decoupling (C) is about <em>dependencies</em>, not confetti; a boundary should
-    trace a real data dependency, not a visual whim. Maximizing the known (A) can tempt you to block
-    the whole page on a fetch so everything arrives "known", but that violates B: knowledge that
-    arrives late and all-at-once is worse than structure that arrives instantly with the slow parts
+    advance. Containing the unknown (B) can tempt you to over-fragment a page into a dozen <a
+      href='https://react.dev/reference/react/Suspense'
+      target='_blank'
+      rel='noopener'>suspense boundaries</a
+    >, but decoupling (C) is about <em>dependencies</em>, not confetti; a boundary should trace a
+    real data dependency, not a visual whim. Maximizing the known (A) can tempt you to block the
+    whole page on a fetch so everything arrives "known", but that violates B: knowledge that arrives
+    late and all-at-once is worse than structure that arrives instantly with the slow parts
     contained. When in doubt:
     <strong>structure first, then contain, then optimize what's inside</strong>.
   </p>
