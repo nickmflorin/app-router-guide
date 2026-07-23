@@ -497,96 +497,114 @@ flowchart TB
     each carrying its own capabilities and nothing else. The failure mode is the component that can only
     be used through a configuration prop: <code
       >items=&#123;[&#123; label, href, onClick, badge &#125;]&#125;</code
-    >. The shape looks tidy (one component, one prop), but it is markup encoded as data, and it
-    quietly un-decomposes the component: whatever <em>any</em> item needs, the <em>whole</em> composite
-    now needs.
+    >. The shape looks tidy (one component, one prop), and it usually ships in two layers that make
+    it feel even tidier: a shared library component that accepts the config and iterates over it,
+    and an app wrapper that builds the config. But the config prop fuses the layers right back
+    together: it is markup encoded as data, and whatever
+    <em>any</em> item needs, the <em>whole</em> composite now needs.
   </p>
+
+  <Snippet>
+    <pre
+      class='code v-bad'
+      is:raw><span class="filename">AppNav.tsx (in @internal-ui-lib, the shared library)</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> Link <span class="tok-kw">from</span> <span class="tok-str">"next/link"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">AppNav</span>({ items }: <span class="tok-fn">AppNavProps</span>) {
+  <span class="tok-com">/* The library iterates; the entries are data. Because any entry MAY
+     carry an onClick, this must be a client module, and so must anything
+     that builds an items array. The fusion is in the API. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">nav</span>&gt;
+      {items.map((item) =&gt;
+        item.onClick ? (
+          &lt;<span class="tok-fn">button</span> <span class="tok-prop">key</span>={item.label} <span class="tok-prop">onClick</span>={item.onClick}&gt;
+            {item.label}
+          &lt;/<span class="tok-fn">button</span>&gt;
+        ) : (
+          &lt;<span class="tok-fn">Link</span> <span class="tok-prop">key</span>={item.label} <span class="tok-prop">href</span>={item.href}&gt;
+            {item.label}
+            {item.badge != <span class="tok-kw">null</span> &amp;&amp; &lt;<span class="tok-fn">Badge</span>&gt;{item.badge}&lt;/<span class="tok-fn">Badge</span>&gt;}
+          &lt;/<span class="tok-fn">Link</span>&gt;
+        ),
+      )}
+    &lt;/<span class="tok-fn">nav</span>&gt;
+  );
+}</pre>
+  </Snippet>
+
   <p>
-    The first fusion is the boundary, and it is mechanical, not stylistic. Props that cross the
-    server/client boundary must be serializable, and a function cannot cross (<a
+    Now follow the two casualties downstream of that API, one per fusion. First the boundary: props
+    that cross the server/client boundary must be serializable, and a function cannot cross (<a
       href='05-client-server-boundaries.html#children-pattern'>§5.4</a
-    >). The moment one item's config carries an <code>onClick</code>, the array can only be built
-    inside a client component, so the whole nav, and whatever builds its items, crosses the boundary
-    with it. There is no way to mark one entry of an array <code>"use client"</code>; the directive
-    marks modules, and the config shape has already fused every entry into one value. One
-    interactive item has converted an entire region of static links: the wholesale trap of <a
-      href='08-bundle-size-code-splitting.html#wholesale'>§8.2</a
-    >, rebuilt at home.
-  </p>
-  <p>
-    The second fusion is data. If a badge count lives in the config, the count must exist where the
-    config is built: at the top. One item's lookup becomes the whole nav's data need, fetched
-    together, awaited together, suspended together, with every static link standing behind the gate
-    as a bystander (<a href='14-blocking-requests.html#no-bystanders'>§14.5</a>). This is the thesis
-    of <a href='02-goals.html'>§2</a> failing at component scale:
-    <strong
-      >the granularity of your known/unknown separation is capped by the granularity of your
-      composition.</strong
-    > When the pieces are fused, there is nowhere to draw the boundary where known meets unknown, so you
-    end up suspending links that were knowable at build time because one sibling is waiting, exactly the
-    skeleton-over-known-content failure of <a href='11-suspense-streaming.html#skeletons-example'
-      >§11.4</a
-    >. Embedding parts with different data needs and different boundary needs into one fused shape
-    is a recipe for inflexibility.
+    >). Because <em>one</em>
+    item carries an <code>onClick</code>, the app wrapper that builds the array must be a client
+    component, even though every other item is a plain <code>href</code>. There is no way to mark
+    one entry of an array <code>"use client"</code>; the directive marks modules, and the config
+    shape already fused the entries into one value. Second the data: a client component cannot
+    await, so the one badge count climbs out of the nav entirely, all the way to a server parent at
+    the root, which now blocks on one nav item's lookup before the nav (or anything else) renders: a
+    bystander gate (<a href='14-blocking-requests.html#no-bystanders'>§14.5</a>) at the worst
+    possible altitude.
   </p>
 
   <Compare>
-    <CompareCol kind='bad' label='✕ Configured: every item pays for one'>
+    <CompareCol kind='bad' label='✕ (a) One onClick: the whole nav is client'>
       <Snippet>
         <pre
           class='code v-bad'
-          is:raw><span class="filename">AppNavWithUser.tsx</span><span class="tok-dir">"use client"</span>;
+          is:raw><span class="filename">MyAppNav.tsx (in @my-app-ui)</span><span class="tok-dir">"use client"</span>;
 <span class="tok-kw">import</span> { useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
-<span class="tok-kw">import</span> { useUnreadCount } <span class="tok-kw">from</span> <span class="tok-str">"@/hooks"</span>;
+<span class="tok-kw">import</span> { AppNav } <span class="tok-kw">from</span> <span class="tok-str">"@internal-ui-lib"</span>;
 
-<span class="tok-kw">export function</span> <span class="tok-fn">AppNavWithUser</span>() {
-  <span class="tok-com">/* One onClick makes this file client;
-     one badge makes it fetch. Every
-     static link now pays for both. */</span>
-  <span class="tok-kw">const</span> unread = <span class="tok-fn">useUnreadCount</span>();
+<span class="tok-kw">export function</span> <span class="tok-fn">MyAppNav</span>({ unread }) {
+  <span class="tok-com">/* Client, because ONE item needs a
+     handler. The three href items did
+     not ask for any of this. */</span>
   <span class="tok-kw">const</span> [prefsOpen, setPrefsOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
 
-  <span class="tok-kw">const</span> items = [
-    { <span class="tok-prop">label</span>: <span class="tok-str">"Dashboard"</span>, <span class="tok-prop">href</span>: <span class="tok-str">"/dashboard"</span> },
-    { <span class="tok-prop">label</span>: <span class="tok-str">"Programs"</span>, <span class="tok-prop">href</span>: <span class="tok-str">"/programs"</span> },
-    {
-      <span class="tok-prop">label</span>: <span class="tok-str">"Notifications"</span>,
-      <span class="tok-prop">href</span>: <span class="tok-str">"/notifications"</span>,
-      <span class="tok-prop">badge</span>: unread,
-    },
-    {
-      <span class="tok-prop">label</span>: <span class="tok-str">"Preferences"</span>,
-      <span class="tok-prop">onClick</span>: () =&gt; <span class="tok-fn">setPrefsOpen</span>(<span class="tok-kw">true</span>),
-    },
-  ];
-
-  <span class="tok-kw">return</span> &lt;<span class="tok-fn">AppNav</span> <span class="tok-prop">items</span>={items} /&gt;;
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">AppNav</span>
+      <span class="tok-prop">items</span>={[
+        { <span class="tok-prop">label</span>: <span class="tok-str">"Dashboard"</span>, <span class="tok-prop">href</span>: <span class="tok-str">"/dashboard"</span> },
+        { <span class="tok-prop">label</span>: <span class="tok-str">"Programs"</span>, <span class="tok-prop">href</span>: <span class="tok-str">"/programs"</span> },
+        {
+          <span class="tok-prop">label</span>: <span class="tok-str">"Notifications"</span>,
+          <span class="tok-prop">href</span>: <span class="tok-str">"/notifications"</span>,
+          <span class="tok-prop">badge</span>: unread,
+        },
+        {
+          <span class="tok-prop">label</span>: <span class="tok-str">"Preferences"</span>,
+          <span class="tok-prop">onClick</span>: () =&gt; <span class="tok-fn">setPrefsOpen</span>(<span class="tok-kw">true</span>),
+        },
+      ]}
+    /&gt;
+  );
 }</pre>
       </Snippet>
     </CompareCol>
-    <CompareCol kind='good' label='✓ Composed: each piece carries its own'>
+    <CompareCol kind='bad' label='✕ (b) The fetch climbs to the root'>
       <Snippet>
         <pre
-          class='code v-good'
-          is:raw><span class="filename">AppNav.tsx</span><span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+          class='code v-bad'
+          is:raw><span class="filename">app/layout.tsx</span><span class="tok-kw">import</span> { getUnreadCount } <span class="tok-kw">from</span> <span class="tok-str">"@/server/alerts"</span>;
 
-<span class="tok-kw">export function</span> <span class="tok-fn">AppNav</span>() {
-  <span class="tok-com">/* Assembled, not configured. The links
-     are server-rendered and static; the
-     one unknown and the one interactive
-     piece are isolated below. */</span>
+<span class="tok-kw">export default async function</span> <span class="tok-fn">RootLayout</span>({
+  children,
+}) {
+  <span class="tok-com">/* A client component cannot await, so
+     one nav item's badge count climbs
+     here. The ROOT layout now blocks on
+     it before the nav, or anything
+     else, can render (§14.5). */</span>
+  <span class="tok-kw">const</span> unread = <span class="tok-kw">await</span> <span class="tok-fn">getUnreadCount</span>();
+
   <span class="tok-kw">return</span> (
-    &lt;<span class="tok-fn">nav</span>&gt;
-      &lt;<span class="tok-fn">NavLink</span> <span class="tok-prop">href</span>=<span class="tok-str">"/dashboard"</span>&gt;Dashboard&lt;/<span class="tok-fn">NavLink</span>&gt;
-      &lt;<span class="tok-fn">NavLink</span> <span class="tok-prop">href</span>=<span class="tok-str">"/programs"</span>&gt;Programs&lt;/<span class="tok-fn">NavLink</span>&gt;
-      &lt;<span class="tok-fn">NavLink</span> <span class="tok-prop">href</span>=<span class="tok-str">"/notifications"</span>&gt;
-        Notifications
-        &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">BadgeDot</span> /&gt;}&gt;
-          &lt;<span class="tok-fn">UnreadBadge</span> /&gt;
-        &lt;/<span class="tok-fn">Suspense</span>&gt;
-      &lt;/<span class="tok-fn">NavLink</span>&gt;
-      &lt;<span class="tok-fn">PreferencesItem</span> /&gt;
-    &lt;/<span class="tok-fn">nav</span>&gt;
+    &lt;<span class="tok-fn">Shell</span>
+      <span class="tok-prop">nav</span>={&lt;<span class="tok-fn">MyAppNav</span> <span class="tok-prop">unread</span>={unread} /&gt;}
+    &gt;
+      {children}
+    &lt;/<span class="tok-fn">Shell</span>&gt;
   );
 }</pre>
       </Snippet>
@@ -594,8 +612,96 @@ flowchart TB
   </Compare>
 
   <p>
-    The two pieces that earn their keep are exactly the two that made the config version fuse, and
-    each is a handful of lines:
+    This is the thesis of <a href='02-goals.html'>§2</a> failing at component scale:
+    <strong
+      >the granularity of your known/unknown separation is capped by the granularity of your
+      composition.</strong
+    > When the pieces are fused, there is nowhere to draw the boundary where known meets unknown, so links
+    that were knowable at build time render as client JavaScript and wait on a root-level fetch because
+    one sibling clicks and another counts (<a href='11-suspense-streaming.html#skeletons-example'
+      >§11.4</a
+    >). Embedding parts with different data needs and different boundary needs into one fused shape
+    is a recipe for inflexibility. The fix belongs to <strong>the library's export surface</strong>:
+    export the container, and export the item, <em>separately</em>, so the app can assemble and
+    extend them:
+  </p>
+
+  <Compare>
+    <CompareCol kind='good' label='✓ The container, exported alone'>
+      <Snippet>
+        <pre
+          class='code v-good'
+          is:raw><span class="filename">AppNav.tsx (in @internal-ui-lib)</span><span class="tok-kw">export function</span> <span class="tok-fn">AppNav</span>({ children }) {
+  <span class="tok-com">/* No items prop, no iteration, no
+     opinion about what an item is, and
+     no directive: the container stays
+     server-compatible. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">nav</span> <span class="tok-prop">className</span>=<span class="tok-str">"app-nav"</span>&gt;
+      {children}
+    &lt;/<span class="tok-fn">nav</span>&gt;
+  );
+}</pre>
+      </Snippet>
+    </CompareCol>
+    <CompareCol kind='good' label='✓ The item, exported alone'>
+      <Snippet>
+        <pre
+          class='code v-good'
+          is:raw><span class="filename">NavItem.tsx (in @internal-ui-lib)</span><span class="tok-kw">import</span> Link <span class="tok-kw">from</span> <span class="tok-str">"next/link"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">NavItem</span>({ href, children }) {
+  <span class="tok-com">/* One item, server-compatible, with
+     a children slot where a badge (or
+     anything else) can land. Extend
+     it; don't configure it. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Link</span> <span class="tok-prop">className</span>=<span class="tok-str">"nav-item"</span> <span class="tok-prop">href</span>={href}&gt;
+      {children}
+    &lt;/<span class="tok-fn">Link</span>&gt;
+  );
+}</pre>
+      </Snippet>
+    </CompareCol>
+  </Compare>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">MyAppNav.tsx (in @my-app-ui)</span><span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+<span class="tok-kw">import</span> { AppNav, NavItem } <span class="tok-kw">from</span> <span class="tok-str">"@internal-ui-lib"</span>;
+<span class="tok-kw">import</span> { UnreadBadge } <span class="tok-kw">from</span> <span class="tok-str">"./UnreadBadge"</span>;
+<span class="tok-kw">import</span> { PreferencesItem } <span class="tok-kw">from</span> <span class="tok-str">"./PreferencesItem"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">MyAppNav</span>() {
+  <span class="tok-com">/* No directive, no data props, nothing awaited at the root. The nav is
+     a server component again: the links ship static in the shell, and the
+     two capabilities live in leaves below, each alone. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">AppNav</span>&gt;
+      &lt;<span class="tok-fn">NavItem</span> <span class="tok-prop">href</span>=<span class="tok-str">"/dashboard"</span>&gt;Dashboard&lt;/<span class="tok-fn">NavItem</span>&gt;
+      &lt;<span class="tok-fn">NavItem</span> <span class="tok-prop">href</span>=<span class="tok-str">"/programs"</span>&gt;Programs&lt;/<span class="tok-fn">NavItem</span>&gt;
+      &lt;<span class="tok-fn">NavItem</span> <span class="tok-prop">href</span>=<span class="tok-str">"/notifications"</span>&gt;
+        Notifications
+        &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">BadgeDot</span> /&gt;}&gt;
+          &lt;<span class="tok-fn">UnreadBadge</span> /&gt;
+        &lt;/<span class="tok-fn">Suspense</span>&gt;
+      &lt;/<span class="tok-fn">NavItem</span>&gt;
+      &lt;<span class="tok-fn">PreferencesItem</span> /&gt;
+    &lt;/<span class="tok-fn">AppNav</span>&gt;
+  );
+}</pre>
+    <CodeCaption>
+      Both bad paths reverse at once. The nav sheds its <code>"use client"</code> because the handler
+      now lives in one extended item, and the root sheds its await because the badge's fetch moved into
+      the one component that renders from it, behind a badge-sized boundary. The nav could equally await
+      server data itself if the <em>whole</em> nav depended on it; the point is that it finally has the
+      choice.
+    </CodeCaption>
+  </Snippet>
+
+  <p>
+    The two extended items are each a handful of lines, and each carries exactly one capability:
   </p>
 
   <Compare>
@@ -607,8 +713,8 @@ flowchart TB
 
 <span class="tok-kw">export async function</span> <span class="tok-fn">UnreadBadge</span>() {
   <span class="tok-com">/* The nav's only data need, owned by
-     the one piece that renders from it.
-     Everything else ships static. */</span>
+     the one piece that renders from it,
+     suspending alone inside its item. */</span>
   <span class="tok-kw">const</span> count = <span class="tok-kw">await</span> <span class="tok-fn">getUnreadCount</span>();
   <span class="tok-kw">if</span> (count === 0) <span class="tok-kw">return</span> <span class="tok-kw">null</span>;
   <span class="tok-kw">return</span> &lt;<span class="tok-fn">Badge</span>&gt;{count}&lt;/<span class="tok-fn">Badge</span>&gt;;
@@ -625,9 +731,10 @@ flowchart TB
 <span class="tok-kw">export function</span> <span class="tok-fn">PreferencesItem</span>() {
   <span class="tok-kw">const</span> [open, setOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
 
-  <span class="tok-com">/* The nav's only interactivity, in a
-     leaf, with its sheet encapsulated
-     and conditionally rendered (§15.6). */</span>
+  <span class="tok-com">/* The app extends the library's item
+     family with the nav's only
+     interactivity; the sheet is
+     encapsulated, §15.6-style. */</span>
   <span class="tok-kw">return</span> (
     &lt;&gt;
       &lt;<span class="tok-fn">NavButton</span> <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">true</span>)}&gt;
@@ -641,12 +748,6 @@ flowchart TB
     &lt;/&gt;
   );
 }</pre>
-        <CodeCaption>
-          Now the badge suspends alone behind a badge-sized fallback while every link paints static
-          in the shell, and the preferences leaf is the only client module in the nav. The same
-          items, the same sidebar; the only thing that changed is that the pieces exist as
-          components instead of entries in an array.
-        </CodeCaption>
       </Snippet>
     </CompareCol>
   </Compare>
@@ -663,6 +764,221 @@ flowchart TB
     >), own a data dependency (<a href='15-minimize-the-wires.html#dialogs'>§15.6</a>), and be
     wrapped in Suspense (<a href='11-suspense-streaming.html#skeletons'>§11.4</a>) on its own.
   </p>
+
+  <Diagram>
+    <svg
+      viewBox='0 0 660 227'
+      xmlns='http://www.w3.org/2000/svg'
+      font-family='Inter, system-ui, sans-serif'
+    >
+      <defs>
+        <marker
+          id='cmpA'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            class='stroke-dg-amber'
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+        <marker
+          id='cmpG'
+          viewBox='0 0 10 10'
+          refX='8'
+          refY='5'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            class='stroke-dg-gray'
+            d='M 2.5 1.5 L 8 5 L 2.5 8.5'
+            fill='none'
+            stroke-width='1.8'
+            stroke-linecap='round'
+            stroke-linejoin='round'></path>
+        </marker>
+      </defs>
+
+      <line class='stroke-dg-line' x1='330' y1='2' x2='330' y2='225' stroke-width='1'></line>
+
+      <!-- ===== left: configured ===== -->
+      <text
+        class='fill-dg-red'
+        x='166'
+        y='10'
+        font-size='10.5'
+        font-weight='500'
+        text-anchor='middle'>Configured: one module, one fate</text
+      >
+      <rect class='fill-dg-white stroke-dg-amber' x='60' y='22' width='210' height='34' rx='6'
+      ></rect>
+      <text class='fill-dg-ink' x='165' y='36' font-size='10' text-anchor='middle'
+        >app/layout.tsx (server)</text
+      >
+      <text class='fill-dg-amber-ink' x='165' y='49' font-size='9' text-anchor='middle'
+        >await getUnreadCount()</text
+      >
+      <line
+        class='stroke-dg-amber'
+        x1='165'
+        y1='56'
+        x2='165'
+        y2='71'
+        stroke-width='1.4'
+        marker-end='url(#cmpA)'></line>
+      <text class='fill-dg-amber-ink' x='177' y='67' font-size='9' text-anchor='start'
+        >unread, as a prop</text
+      >
+      <rect class='fill-dg-teal-soft stroke-dg-teal' x='22' y='74' width='286' height='151' rx='8'
+      ></rect>
+      <text class='fill-dg-teal-ink' x='166' y='88' font-size='9.5' text-anchor='middle'
+        >"use client": the entire nav</text
+      >
+      <rect class='fill-dg-white stroke-dg-teal' x='42' y='100' width='246' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-teal-ink' x='52' y='114.5' font-size='10' text-anchor='start'
+        >Dashboard</text
+      >
+      <rect class='fill-dg-white stroke-dg-teal' x='42' y='132' width='246' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-teal-ink' x='52' y='146.5' font-size='10' text-anchor='start'
+        >Programs</text
+      >
+      <rect class='fill-dg-white stroke-dg-teal' x='42' y='164' width='246' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-teal-ink' x='52' y='178.5' font-size='10' text-anchor='start'
+        >Notifications</text
+      >
+      <rect
+        class='fill-dg-amber-soft stroke-dg-amber'
+        x='180'
+        y='166'
+        width='100'
+        height='18'
+        rx='4'
+        stroke-dasharray='4 3'></rect>
+      <text class='fill-dg-amber-ink' x='230' y='178' font-size='9' text-anchor='middle'
+        >badge via prop drill</text
+      >
+      <rect class='fill-dg-white stroke-dg-teal' x='42' y='196' width='246' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-teal-ink' x='52' y='210.5' font-size='10' text-anchor='start'
+        >Preferences · onClick</text
+      >
+
+      <!-- ===== right: composed ===== -->
+      <text
+        class='fill-dg-green-ink'
+        x='495'
+        y='10'
+        font-size='10.5'
+        font-weight='500'
+        text-anchor='middle'>Composed: each piece chooses</text
+      >
+      <rect class='fill-dg-white stroke-dg-blue' x='390' y='22' width='210' height='34' rx='6'
+      ></rect>
+      <text class='fill-dg-ink' x='495' y='36' font-size='10' text-anchor='middle'
+        >app/layout.tsx (server)</text
+      >
+      <text class='fill-dg-green-ink' x='495' y='49' font-size='9' text-anchor='middle'
+        >no gate: renders immediately</text
+      >
+      <line
+        class='stroke-dg-gray'
+        x1='495'
+        y1='56'
+        x2='495'
+        y2='71'
+        stroke-width='1.4'
+        marker-end='url(#cmpG)'></line>
+      <rect class='fill-dg-white stroke-dg-blue' x='352' y='74' width='286' height='151' rx='8'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='495' y='88' font-size='9.5' text-anchor='middle'
+        >MyAppNav (server)</text
+      >
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='372' y='100' width='246' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='382' y='114.5' font-size='10' text-anchor='start'
+        >Dashboard</text
+      >
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='372' y='132' width='246' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='382' y='146.5' font-size='10' text-anchor='start'
+        >Programs</text
+      >
+      <rect class='fill-dg-blue-soft stroke-dg-blue' x='372' y='164' width='246' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-blue-ink' x='382' y='178.5' font-size='10' text-anchor='start'
+        >Notifications</text
+      >
+      <rect
+        class='fill-dg-amber-soft stroke-dg-amber'
+        x='510'
+        y='166'
+        width='100'
+        height='18'
+        rx='4'
+        stroke-dasharray='4 3'></rect>
+      <text class='fill-dg-amber-ink' x='560' y='178' font-size='9' text-anchor='middle'
+        >awaits its own count</text
+      >
+      <rect class='fill-dg-teal-soft stroke-dg-teal' x='372' y='196' width='246' height='22' rx='5'
+      ></rect>
+      <text class='fill-dg-teal-ink' x='382' y='210.5' font-size='10' text-anchor='start'
+        >Preferences · the one client leaf</text
+      >
+    </svg>
+    <pre
+      slot='mermaid'
+      is:raw>
+flowchart TD
+  rt("app/layout.tsx · await getUnreadCount()"):::amber
+  subgraph CL["use client: the entire nav"]
+    d1("Dashboard"):::teal
+    p1("Programs"):::teal
+    n1("Notifications · badge via prop drill"):::teal
+    f1("Preferences · onClick"):::teal
+  end
+  rt -- "unread, as a prop" --> CL
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef teal fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+  style CL fill:#e0f5f9,stroke:#0891b2,rx:8px,ry:8px
+  linkStyle default stroke:#737373,stroke-width:1.5px
+%%split%%
+flowchart TD
+  rt2("app/layout.tsx · no gate"):::blue
+  subgraph SV["MyAppNav (server)"]
+    d2("Dashboard"):::blue
+    p2("Programs"):::blue
+    n2("Notifications · badge awaits its own count"):::amber
+    f2("Preferences · the one client leaf"):::teal
+  end
+  rt2 --> SV
+  classDef blue fill:#eaf3fe,stroke:#0070f3,color:#0757ba
+  classDef amber fill:#fdf3e3,stroke:#b45309,color:#8a5a00
+  classDef teal fill:#e0f5f9,stroke:#0891b2,color:#0e7490
+  style SV fill:#ffffff,stroke:#0070f3,rx:8px,ry:8px
+  linkStyle default stroke:#737373,stroke-width:1.5px
+</pre>
+    <Fragment slot='caption'>
+      The same nav, both architectures, colored by fate. Left: the config API makes the whole nav
+      one client module (teal), so three static links ship as JavaScript, the badge arrives by prop
+      drill, and the root layout carries an await for data only one item renders from. Right: the
+      composed nav is a server component; the links are static (blue) and ship in the shell, the
+      badge is the only thing that suspends (amber, inside its own item), and Preferences is the
+      only client module (teal). Granularity of composition is what lets each piece choose its own
+      boundary and its own data, instead of one entry choosing for all of them.
+    </Fragment>
+  </Diagram>
 
   <h2 id='one-per-file'>17.6 One component per file</h2>
   <p>
