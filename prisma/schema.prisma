@@ -1,13 +1,3 @@
-// Dev-only store for the guide's annotation + slide-deck tooling.
-//
-// This is dev tooling: prisma/notes.db is committed to source control and
-// read/written only by `astro dev` (see astro.config.mjs) and build/seed
-// scripts. `astro build` ships static HTML; it never bundles Prisma or the DB.
-//
-// Enums (status, kind, surface, layout) can't be native Prisma enums on SQLite,
-// so they are plain string columns whose allowed values live in
-// server/note-enums.mjs and server/deck-enums.mjs; every writer validates.
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -75,6 +65,7 @@ model SlideItem {
   contentRef String // stable id of the block in the doc (e.g. "diagram:12.1-...")
   order      Int      @default(0) // position within the slide
   included   Boolean  @default(true) // staged in but temporarily excluded when false
+  altText    String? // Claude-authored condensed HTML, rendered on the slide INSTEAD of the live block when set
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

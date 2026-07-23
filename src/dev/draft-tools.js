@@ -1084,9 +1084,17 @@
           (chap ? '§' + Number(chap) + ' · ' : meta.slug + ' · ') + meta.type + ' ' + meta.n;
         row.querySelector('.dp-ref').title = it.contentRef;
         const sumEl = row.querySelector('.dp-summary');
-        refSummary(it.contentRef, t => {
-          sumEl.textContent = t || it.contentRef;
-        });
+        if (it.altText) {
+          /* Claude-condensed override: show what the slide will actually say. */
+          row.querySelector('.dp-meta').textContent += ' · ✎ condensed';
+          const tmp = document.createElement('div');
+          tmp.innerHTML = it.altText;
+          sumEl.textContent = (tmp.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 200);
+        } else {
+          refSummary(it.contentRef, t => {
+            sumEl.textContent = t || it.contentRef;
+          });
+        }
         row.querySelector('.dp-inc input').addEventListener('change', e => {
           it.included = e.target.checked;
           saveItemRemote(it);

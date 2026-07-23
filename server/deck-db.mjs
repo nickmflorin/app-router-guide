@@ -13,6 +13,7 @@ function itemToWire(i) {
     contentRef: i.contentRef,
     order: i.order,
     included: i.included,
+    altText: i.altText ?? undefined,
   };
 }
 
@@ -59,6 +60,9 @@ export async function upsertItem(i) {
     order: Number.isFinite(i.order) ? i.order : 0,
     included: i.included !== false,
   };
+  /* altText is Claude-managed: only touched when the payload carries the key,
+     so ordinary panel saves (which never send it) can't blank it out. */
+  if ('altText' in i) data.altText = i.altText;
   const row = await prisma.slideItem.upsert({
     where: { id: i.id },
     create: { id: i.id, ...data },

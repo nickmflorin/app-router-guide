@@ -91,9 +91,10 @@
         .forEach(it => {
           const cell = document.createElement('div');
           cell.className = 'slide-item';
-          cell.innerHTML =
-            blocks[it.contentRef] ||
-            '<div class="deck-missing">missing: ' + it.contentRef + '</div>';
+          cell.innerHTML = it.altText
+            ? '<div class="deck-condensed">' + it.altText + '</div>'
+            : blocks[it.contentRef] ||
+              '<div class="deck-missing">missing: ' + it.contentRef + '</div>';
           body.appendChild(cell);
         });
       canvas.appendChild(body);

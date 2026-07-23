@@ -40,7 +40,7 @@ def read_deck(db_path):
         items_by_slide = {}
         try:
             for r in con.execute(
-                'select id, slideId, page, contentRef, "order", included from SlideItem '
+                'select id, slideId, page, contentRef, "order", included, altText from SlideItem '
                 'order by "order" asc'
             ):
                 items_by_slide.setdefault(r[1], []).append(
@@ -51,6 +51,7 @@ def read_deck(db_path):
                         "contentRef": r[3],
                         "order": r[4],
                         "included": bool(r[5]),
+                        "altText": r[6] or None,
                     }
                 )
         except sqlite3.OperationalError:
