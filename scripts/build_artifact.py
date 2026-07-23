@@ -3,7 +3,7 @@
 Bundle the multi-page guide into ONE self-contained HTML file for publishing
 as a Claude artifact (.preview/artifact.html; NOT a distributable).
 
-- Parses the TOC from build/output/app-router-guide_html/assets/nav.js (single source of truth), so section
+- Parses the TOC from src/data/toc.js (single source of truth), so section
   renumbers propagate automatically.
 - Each page becomes a <section class="chapter"> shown/hidden by a tiny hash
   router (#ch5, #ch5-refresh, #cover), preserving the multi-page feel.
@@ -37,13 +37,13 @@ def read(p):
         return f.read()
 
 
-# ---------- TOC from nav.js ----------
-nav = read("build/output/app-router-guide_html/assets/nav.js")
+# ---------- TOC from src/data/toc.js (the single TOC source) ----------
+nav = read("src/data/toc.js")
 groups = []
 # Tolerant of prettier's formatting: single or double quotes, multi-line
 # objects, trailing commas.
-group_re = re.compile(r"\{\s*part:\s*(null|['\"][^'\"]*['\"])\s*,\s*items:\s*\[(.*?)\]\s*,?\s*\}", re.S)
-item_re = re.compile(r"\{\s*n:\s*(['\"])(\d+)\1\s*,\s*title:\s*(['\"])(.*?)\3\s*,\s*file:\s*(['\"])(.*?)\5\s*,?\s*\}", re.S)
+group_re = re.compile(r"\{\s*part:\s*(null|['\"][^'\"]*['\"])\s*,(?:\s*cls:\s*['\"][^'\"]*['\"]\s*,)?\s*items:\s*\[(.*?)\]\s*,?\s*\}", re.S)
+item_re = re.compile(r"\{\s*n:\s*(['\"])(\d+)\1\s*,\s*title:\s*(['\"])(.*?)\3\s*,\s*file:\s*(['\"])(.*?)\5[^{}]*\}", re.S)
 for gm in group_re.finditer(nav):
     part = None if gm.group(1) == "null" else gm.group(1)[1:-1]
     items = []
@@ -76,7 +76,8 @@ def namespace(content, tag):
     content = re.sub(r'\bid="([\w-]+)"', lambda m: f'id="{tag}-{m.group(1)}"', content)
     content = re.sub(r'url\(#([\w-]+)\)', lambda m: f'url(#{tag}-{m.group(1)})', content)
     # Drop the per-page pager placeholder (a namespaced one survives otherwise).
-    content = content.replace(f'<div id="{tag}-pager"></div>', "")
+    # It ships empty but carries data-prev/next attributes, so match by regex.
+    content = re.sub(rf'<div\s+id="{tag}-pager"[^>]*></div>', "", content)
     return content
 
 

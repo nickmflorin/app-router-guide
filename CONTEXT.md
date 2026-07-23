@@ -34,8 +34,12 @@ slide-deck authoring system (see below).
   layer).
 - `src/styles/style.scss` + `src/styles/partials/*` — the design system.
   `partials/_draft-tools.scss` and `partials/_deck-view.scss` are the tooling styles.
-- `public/assets/nav.js` — sidebar/TOC + search **and** the dev-only notes + deck-authoring UI (in a
-  stripped block).
+- `src/data/toc.js` — THE single TOC source: sidebar, pager, cover grid, and the build scripts all
+  derive from it. `src/components/Sidebar.astro` server-renders the sidebar (deck link only in dev).
+- `public/assets/nav.js` — runtime behavior only (code-wrap, search, scroll persistence, pager fill
+  from data attributes); a classic script because the shipped guide must work over `file://`.
+- `src/dev/draft-tools.js` — the dev-only notes + deck-designation tooling, loaded by GuidePage
+  behind `import.meta.env.DEV`; never part of `astro build` output.
 - `public/assets/deck-view.js` — the presentation renderer (dev `/deck` + the distributable).
 - `server/` — dev-only API code: `db.mjs` (Prisma singleton + notes), `note-enums.mjs`,
   `notes-middleware.mjs`, `deck-db.mjs`, `deck-enums.mjs`, `deck-middleware.mjs`.
@@ -51,12 +55,14 @@ slide-deck authoring system (see below).
 - **Dev** (`npm run dev`): the annotation + deck-authoring UI is live, and two dev-only endpoints
   exist — `/api/notes` and `/api/deck` — served by a Vite plugin in `astro.config.mjs`
   (`apply: 'serve'`, lazy-imported). They read/write the committed SQLite DB via Prisma.
-- **Build** (`astro build`): 100% static HTML. The dev-only block in `nav.js` and the dev-only SCSS
-  are **stripped** by `postbuild_relativize.py`; the Vite middleware never applies; Prisma/DB never
-  ship. If you add tooling, keep it inside the dev-only paths so it strips.
-- Sanity checks after any nav.js/SCSS change: `npm run build` must exit 0 and print "draft layer
-  stripped", and `grep` the built `nav.js` to confirm your new tooling strings (e.g. `api/deck`) are
-  **absent** from the shipped file.
+- **Build** (`astro build`): 100% static HTML. Dev tooling never ships by construction: the JS
+  (`src/dev/draft-tools.js`) loads behind `import.meta.env.DEV` in GuidePage, the SCSS
+  (`_draft-tools.scss`) is a DEV-gated import, and the sidebar deck link is rendered only in dev.
+  `postbuild_relativize.py` VERIFIES this (fails the build if any dev fingerprint reaches the
+  output) instead of stripping. If you add dev tooling, put it in `src/dev/` and, if it introduces
+  new user-visible class names/endpoints, add them to the postbuild fingerprint check.
+- Sanity checks after any nav/dev-tooling change: `npm run build` must exit 0 and print
+  "dev-tooling gate: clean".
 
 ---
 

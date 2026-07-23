@@ -37,10 +37,10 @@ def read(p):
 
 
 # ---------------- TOC (same tolerant parse as the other scripts) ----------------
-nav = read(os.path.join(SITE, "assets", "nav.js"))
-group_re = re.compile(r"\{\s*part:\s*(null|['\"][^'\"]*['\"])\s*,\s*items:\s*\[(.*?)\]\s*,?\s*\}", re.S)
+nav = read(os.path.join(ROOT, "src", "data", "toc.js"))
+group_re = re.compile(r"\{\s*part:\s*(null|['\"][^'\"]*['\"])\s*,(?:\s*cls:\s*['\"][^'\"]*['\"]\s*,)?\s*items:\s*\[(.*?)\]\s*,?\s*\}", re.S)
 item_re = re.compile(
-    r"\{\s*n:\s*(['\"])(\d+)\1\s*,\s*title:\s*(['\"])(.*?)\3\s*,\s*file:\s*(['\"])(.*?)\5\s*,?\s*\}", re.S)
+    r"\{\s*n:\s*(['\"])(\d+)\1\s*,\s*title:\s*(['\"])(.*?)\3\s*,\s*file:\s*(['\"])(.*?)\5[^{}]*\}", re.S)
 GROUPS = []
 for gm in group_re.finditer(nav):
     part = None if gm.group(1) == "null" else gm.group(1)[1:-1]

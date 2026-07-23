@@ -5,12 +5,15 @@ import '../styles/tailwind.css';
 // tailwind.css so its cascade order matches the old static <link> (which sat
 // below the tailwind import in the head).
 import '../styles/style.scss';
+import Sidebar from '../components/Sidebar.astro';
+import { TOC } from '../data/toc.js';
 import { stampContentIds } from '../lib/content-ids.mjs';
 // The draft layer (badge + annotation styles) is dev-only. This branch is
 // dead-code-eliminated from the production build (import.meta.env.DEV is a
-// compile-time false), so the draft CSS never ships — replacing the old
-// post-build marker-strip. The annotation JS in nav.js is still gated to
-// localhost separately.
+// compile-time false), so the draft CSS never ships. The matching dev-only
+// TOOLING (notes + deck designation) is src/dev/draft-tools.js, loaded by the
+// conditional script tag at the bottom of the body — same mechanism, so
+// neither the styles nor the code can reach `astro build` output.
 if (import.meta.env.DEV) {
   await import('../styles/partials/_draft-tools.scss');
 }
@@ -29,6 +32,16 @@ const slug = (Astro.url.pathname.split('/').filter(Boolean).pop() || 'index').re
   '',
 );
 const content = stampContentIds(await Astro.slots.render('default'), slug);
+
+/* The current page's TOC identity, and its prev/next neighbours. The pager
+   div ships EMPTY (the markdown/search/artifact extractors rely on that) and
+   carries the neighbours as data attributes; assets/nav.js renders the links
+   at runtime. */
+const currentFile = cover ? 'index.html' : `${slug}.html`;
+const flat = TOC.flatMap(g => g.items);
+const idx = flat.findIndex(i => i.file === currentFile);
+const prev = idx > 0 ? flat[idx - 1] : null;
+const next = idx !== -1 && idx + 1 < flat.length ? flat[idx + 1] : null;
 ---
 
 <!doctype html>
@@ -41,16 +54,32 @@ const content = stampContentIds(await Astro.slots.render('default'), slug);
   </head>
   <body>
     <div class='shell'>
-      <nav class='sidebar' id='sidebar'></nav>
+      <Sidebar current={currentFile} root={root} />
       <main class='content'>
         <div class={cover ? 'content-inner cover' : 'content-inner'}>
           <Fragment set:html={content} />
-          {!cover && <div id='pager' />}
+          {
+            !cover && (
+              <div
+                id='pager'
+                data-prev-href={prev ? prev.file : undefined}
+                data-prev-label={prev ? `${prev.n}. ${prev.title}` : undefined}
+                data-next-href={next ? next.file : undefined}
+                data-next-label={next ? `${next.n}. ${next.title}` : undefined}
+              />
+            )
+          }
         </div>
       </main>
     </div>
     {/* Generated at build time; a script tag (not fetch) so file:// works. */}
     <script is:inline defer src={`${prefix}assets/search-index.js`}></script>
     <script is:inline src={`${prefix}assets/nav.js`}></script>
+    {
+      /* Dev-only notes + deck tooling. is:inline keeps Astro from hoisting it,
+         so the conditional is honoured: compile-time false in `astro build`,
+         and the module never appears in the shipped guide. */
+      import.meta.env.DEV && <script is:inline type='module' src='/src/dev/draft-tools.js' />
+    }
   </body>
 </html>

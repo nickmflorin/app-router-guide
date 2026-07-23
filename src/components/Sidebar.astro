@@ -1,0 +1,131 @@
+---
+/* The guide's sidebar chrome, server-rendered from the single TOC source
+   (src/data/toc.js): brand header, search box, and the chapter list with the
+   current page highlighted at render time. Runtime behavior (search, scroll
+   persistence, keyboard shortcuts, pager fill) attaches in assets/nav.js,
+   which expects exactly these ids: #sidebar, #side-scroll,
+   #side-search-results, #side-toc, #side-search-input, #side-search-clear.
+
+   The Slide deck link renders only under `astro dev` (import.meta.env.DEV is
+   compile-time false during `astro build`), so the shipped static guide never
+   contains it. */
+import { TOC } from '../data/toc.js';
+
+const { current, root = '..' } = Astro.props;
+const isCover = root === '.';
+const prefix = isCover ? 'sections/' : '';
+const homeHref = isCover ? 'index.html' : '../index.html';
+const assetPrefix = isCover ? '' : '../';
+const deckHref = isCover ? 'deck' : '../deck';
+---
+
+<nav class='sidebar' id='sidebar'>
+  <a class='brand' href={homeHref} title='Back to the table of contents'>
+    <div style='display:flex;flex-direction:column;align-items:flex-start;'>
+      <div style='display:flex;align-items:center;justify-content:center;gap:12px;'>
+        <img class='mark' src={`${assetPrefix}assets/logomark.svg`} alt='Craft Education' />
+        <div class='brand-title'>App Router Guide</div>
+      </div>
+      <div style='display:flex;flex-direction:column;gap:0px;padding-left:34px'>
+        <div class='brand-sub'>NextJS 16 App Router &middot; React 19</div>
+      </div>
+    </div>
+    <svg class='brand-go' viewBox='0 0 16 16' width='15' height='15' aria-hidden='true'>
+      <circle cx='2.5' cy='3.5' r='1.1' fill='currentColor'></circle>
+      <line
+        x1='6'
+        y1='3.5'
+        x2='14'
+        y2='3.5'
+        stroke='currentColor'
+        stroke-width='1.5'
+        stroke-linecap='round'></line>
+      <circle cx='2.5' cy='8' r='1.1' fill='currentColor'></circle>
+      <line
+        x1='6'
+        y1='8'
+        x2='14'
+        y2='8'
+        stroke='currentColor'
+        stroke-width='1.5'
+        stroke-linecap='round'></line>
+      <circle cx='2.5' cy='12.5' r='1.1' fill='currentColor'></circle>
+      <line
+        x1='6'
+        y1='12.5'
+        x2='14'
+        y2='12.5'
+        stroke='currentColor'
+        stroke-width='1.5'
+        stroke-linecap='round'></line>
+    </svg>
+  </a>
+  <div class='side-search'>
+    <input
+      id='side-search-input'
+      type='search'
+      placeholder='Search the guide…  /'
+      autocomplete='off'
+      spellcheck='false'
+      aria-label='Search the guide'
+    />
+    <button
+      id='side-search-clear'
+      class='side-search-clear'
+      type='button'
+      aria-label='Clear search'
+      hidden
+    >
+      <svg viewBox='0 0 14 14' width='13' height='13' aria-hidden='true'>
+        <path
+          d='M 2.5 2.5 L 11.5 11.5 M 11.5 2.5 L 2.5 11.5'
+          stroke='currentColor'
+          stroke-width='1.6'
+          stroke-linecap='round'
+          fill='none'></path>
+      </svg>
+    </button>
+  </div>
+  <div id='side-scroll' class='side-scroll'>
+    <div id='side-search-results' hidden></div>
+    <div id='side-toc'>
+      {
+        TOC.map(group => (
+          <>
+            {group.part && <div class='part-label'>{group.part}</div>}
+            {group.items.map(item => (
+              <a
+                class={item.file === current ? 'toc-item current' : 'toc-item'}
+                href={prefix + item.file}
+              >
+                <span class='n'>{item.n}</span>
+                {item.title}
+              </a>
+            ))}
+          </>
+        ))
+      }
+    </div>
+    {
+      import.meta.env.DEV && (
+        <>
+          <div class='deck-sep' />
+          <a class='toc-item deck-link' href={deckHref}>
+            <span class='n'>
+              <svg class='deck-play' viewBox='0 0 10 10' width='10' height='10' aria-hidden='true'>
+                <path
+                  d='M2.6 1.4 L8.6 5 L2.6 8.6 Z'
+                  fill='currentColor'
+                  stroke='currentColor'
+                  stroke-width='1'
+                  stroke-linejoin='round'
+                />
+              </svg>
+            </span>
+            Slide deck<span class='deck-dev-tag'>dev</span>
+          </a>
+        </>
+      )
+    }
+  </div>
+</nav>

@@ -11,9 +11,11 @@ lives in `build/README.md`.
 - `src/` is the source of truth: Astro pages (`src/pages/sections/NN-slug.astro`), components,
   layouts, `src/data/toc.js`, and styles. All authoring happens here. Never hand-edit anything under
   `build/output/`; the build clears and regenerates it.
-- `public/assets/` holds runtime assets copied into the build: `nav.js` (sidebar, search, pager,
-  code-wrap, and the dev-only annotation layer), plus the **generated** `search-index.js` (gitignored,
-  rebuilt by the scripts below). Styles are no longer a static asset here — Vite compiles the SCSS
+- `public/assets/` holds runtime assets copied into the build: `nav.js` (runtime behavior only:
+  search, sidebar scroll persistence, pager fill, code-wrap; the sidebar itself is server-rendered
+  by `src/components/Sidebar.astro` from `src/data/toc.js`, the single TOC source), plus the
+  **generated** `search-index.js` (gitignored, rebuilt by the scripts below). The dev-only
+  annotation + deck tooling lives in `src/dev/draft-tools.js` and never ships. Styles are no longer a static asset here — Vite compiles the SCSS
   and emits it into `_astro/` (see below).
 - `build/` contains a committed `README.md` for recipients and a gitignored `output/` with every
   distributable. Zipping `build/` is the intended way to send the guide out.
@@ -61,12 +63,12 @@ blocks on the page (including TOC rows and sidebar links, which are selectable w
 Notes append to `public/page-notes.json`, the ledger that drives review rounds: open notes get
 addressed, then marked `resolved` with a `resolution` explaining what changed.
 
-This whole layer is development-only. It is gated to localhost at runtime and physically removed
-from builds. The JS module sits between `/* @dev-only:start */` and `/* @dev-only:end */` markers in
-`nav.js`, which the postbuild step strips (and it excludes `page-notes.json`). Its styles live in
-`_draft-tools.scss`, which `GuidePage.astro` imports only under `import.meta.env.DEV`, so `astro
-build` dead-code-eliminates them and they never reach `_astro/`. Built output must never show a
-DRAFT badge or any annotation UI.
+This whole layer is development-only and never ships by construction: the JS lives in
+`src/dev/draft-tools.js`, loaded by `GuidePage.astro` only under `import.meta.env.DEV`; its styles
+live in `_draft-tools.scss`, imported the same DEV-gated way, so `astro build` dead-code-eliminates
+both. The postbuild step verifies it (the "dev-tooling gate"), deletes `page-notes.json` from the
+output, and fails the build if any dev fingerprint leaks. Built output must never show a DRAFT
+badge or any annotation UI.
 
 ## Diagrams
 

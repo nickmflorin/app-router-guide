@@ -1,5 +1,6 @@
 ---
 import GuidePage from '../layouts/GuidePage.astro';
+import { TOC } from '../data/toc.js';
 import Chip from '../components/Chip.astro';
 import Callout from '../components/Callout.astro';
 import GoDeeper from '../components/GoDeeper.astro';
@@ -85,128 +86,19 @@ import CompareCol from '../components/CompareCol.astro';
 
   <h2>Contents</h2>
   <div class='toc-grid'>
-    <div class='toc-part'>
-      <div class='part-name pz'>Foundation</div>
-      <a class='toc-row' href='sections/01-introduction.html'
-        ><span class='n'>1</span><span class='t'>Introduction</span><span class='d'
-          >don't fight the framework</span
-        ></a
-      >
-      <a class='toc-row' href='sections/02-goals.html'
-        ><span class='n'>2</span><span class='t'>The Goals</span><span class='d'
-          >what you're optimizing, on every page</span
-        ></a
-      >
-      <a class='toc-row' href='sections/03-mental-model.html'
-        ><span class='n'>3</span><span class='t'>The Mental Model</span><span class='d'
-          >what a render actually is, and why the old model breaks</span
-        ></a
-      >
-    </div>
-    <div class='toc-part'>
-      <div class='part-name pa'>Part A: Maximize the Known</div>
-      <a class='toc-row' href='sections/04-ssr.html'
-        ><span class='n'>4</span><span class='t'>Server-Side Rendering</span><span class='d'
-          >what it is, and why the server wins</span
-        ></a
-      >
-      <a class='toc-row' href='sections/05-client-server-boundaries.html'
-        ><span class='n'>5</span><span class='t'>Client/Server Boundaries</span><span class='d'
-          >push interactivity to the leaves</span
-        ></a
-      >
-      <a class='toc-row' href='sections/06-bootstrapping-first-paint.html'
-        ><span class='n'>6</span><span class='t'>Bootstrapping the First Paint</span><span class='d'
-          >complete paint when URL state won't fit; idle-deferred client twin</span
-        ></a
-      >
-      <a class='toc-row' href='sections/07-first-render-js.html'
-        ><span class='n'>7</span><span class='t'>First-Render JavaScript</span><span class='d'
-          >dynamic imports, heavy dependencies</span
-        ></a
-      >
-      <a class='toc-row' href='sections/08-bundle-size-code-splitting.html'
-        ><span class='n'>8</span><span class='t'>Bundle Size &amp; Code Splitting</span><span
-          class='d'>wholesale components, heavy imports, barrels</span
-        ></a
-      >
-      <a class='toc-row' href='sections/09-server-resolvable-state.html'
-        ><span class='n'>9</span><span class='t'>Server-Resolvable State</span><span class='d'
-          >use the URL more</span
-        ></a
-      >
-    </div>
-    <div class='toc-part'>
-      <div class='part-name pb'>Part B: Contain the Unknown</div>
-      <a class='toc-row' href='sections/10-containers-content-shifting.html'
-        ><span class='n'>10</span><span class='t'>Containers &amp; Content Shifting</span><span
-          class='d'>containers are known; they reserve space</span
-        ></a
-      >
-      <a class='toc-row' href='sections/11-suspense-streaming.html'
-        ><span class='n'>11</span><span class='t'>Suspense &amp; Streaming</span><span class='d'
-          >boundary placement, streaming, loading files</span
-        ></a
-      >
-      <a class='toc-row' href='sections/12-error-boundaries.html'
-        ><span class='n'>12</span><span class='t'>Error Boundaries</span><span class='d'
-          >granular error.tsx, parallel-route isolation, custom boundaries</span
-        ></a
-      >
-      <a class='toc-row' href='sections/13-designing-for-the-unknown.html'
-        ><span class='n'>13</span><span class='t'>Designing for the Unknown</span><span class='d'
-          >stability is designed with UX, not retrofitted</span
-        ></a
-      >
-      <a class='toc-row' href='sections/14-blocking-requests.html'
-        ><span class='n'>14</span><span class='t'>Blocking Requests</span><span class='d'
-          >parallel fetching, parallel routes</span
-        ></a
-      >
-    </div>
-    <div class='toc-part'>
-      <div class='part-name pc'>Part C: Decouple the Parts</div>
-      <a class='toc-row' href='sections/15-minimize-the-wires.html'
-        ><span class='n'>15</span><span class='t'>Minimize the Wires</span><span class='d'
-          >props, callbacks, and repetition over dependency</span
-        ></a
-      >
-      <a class='toc-row' href='sections/16-dedupe-caching.html'
-        ><span class='n'>16</span><span class='t'>Dedupe &amp; Caching</span><span class='d'
-          >fetch dedupe, React cache, "use cache", SWR</span
-        ></a
-      >
-      <a class='toc-row' href='sections/17-component-breakdown.html'
-        ><span class='n'>17</span><span class='t'>Component Breakdown</span><span class='d'
-          >by UI and responsibility; one per file</span
-        ></a
-      >
-    </div>
-    <div class='toc-part'>
-      <div class='part-name pd'>Part D: Applied</div>
-      <a class='toc-row' href='sections/18-signs-doing-it-wrong.html'
-        ><span class='n'>18</span><span class='t'>Signs You're Doing It Wrong</span><span class='d'
-          >the checklist, grouped by category</span
-        ></a
-      >
-      <a class='toc-row' href='sections/19-applied-to-tracker.html'
-        ><span class='n'>19</span><span class='t'>Applied to Tracker</span><span class='d'
-          >the audit: findings, and where each fix lives</span
-        ></a
-      >
-    </div>
-    <div class='toc-part'>
-      <div class='part-name pz'>Appendix</div>
-      <a class='toc-row' href='sections/20-new-primitives.html'
-        ><span class='n'>20</span><span class='t'>New Primitives</span><span class='d'
-          >Actions, form hooks, ViewTransition, Activity</span
-        ></a
-      >
-      <a class='toc-row' href='sections/21-references.html'
-        ><span class='n'>21</span><span class='t'>References</span><span class='d'
-          >every source used in this guide</span
-        ></a
-      >
-    </div>
+    {
+      TOC.map(group => (
+        <div class='toc-part'>
+          <div class={`part-name ${group.cls}`}>{group.part}</div>
+          {group.items.map(item => (
+            <a class='toc-row' href={`sections/${item.file}`}>
+              <span class='n'>{item.n}</span>
+              <span class='t'>{item.title}</span>
+              <span class='d'>{item.d}</span>
+            </a>
+          ))}
+        </div>
+      ))
+    }
   </div>
 </GuidePage>

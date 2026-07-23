@@ -32,20 +32,28 @@ if os.path.exists(ledger):
     os.remove(ledger)
     print('page-notes.json stripped from build output')
 
-# Strip the dev-only draft layer (annotation module) from the BUILT nav.js.
-# The source file in public/ keeps the code between /* @dev-only:start */ ...
-# /* @dev-only:end */ markers; the dev server serves those, the distributable
-# never sees them.
-#
-# The draft-tools STYLES no longer need stripping here: they live in a separate
-# SCSS partial that GuidePage.astro imports only under import.meta.env.DEV, so
-# `astro build` dead-code-eliminates them and they never reach _astro/*.css.
-DEV_BLOCK = re.compile(r'/\* @dev-only:start \*/.*?/\* @dev-only:end \*/\n?', re.S)
-for rel in ('assets/nav.js',):
-    p = os.path.join(OUT, rel)
-    s = open(p).read()
-    stripped, n = DEV_BLOCK.subn('', s)
-    if n == 0:
-        raise SystemExit(f'ERROR: no @dev-only markers found in {rel}; refusing to ship unstripped')
-    open(p, 'w').write(stripped)
-    print(f'dev-only draft layer stripped from {rel} ({n} block(s), {len(s) - len(stripped)} bytes)')
+# The dev-only tooling (notes + deck designation) lives in src/dev/, loaded
+# only under `astro dev` via an import.meta.env.DEV-gated script tag in
+# GuidePage.astro, and the draft styles are a DEV-gated SCSS import — so
+# `astro build` output should contain none of it. VERIFY that instead of
+# trusting it: if any dev-tooling fingerprint reaches the build, fail loudly
+# rather than ship it.
+import glob
+
+checks = {
+    os.path.join(OUT, 'assets', 'nav.js'): ('/api/notes', '/api/deck', 'arg-notes-v1', 'deckArmed', 'draft-tools'),
+}
+for page in glob.glob(os.path.join(OUT, '**', '*.html'), recursive=True):
+    checks[page] = ('draft-badge', 'deck-link', 'note-pin', 'deck-panel', 'src/dev/')
+for css in glob.glob(os.path.join(OUT, '_astro', '*.css')):
+    checks[css] = ('note-pin', 'deck-panel', 'draft-badge', 'note-toast')
+
+bad = []
+for path, needles in checks.items():
+    body = open(path, encoding='utf-8').read()
+    for n in needles:
+        if n in body:
+            bad.append(f'{os.path.relpath(path, OUT)}: {n!r}')
+if bad:
+    raise SystemExit('ERROR: dev tooling leaked into the build output:\n  ' + '\n  '.join(bad))
+print(f'dev-tooling gate: clean ({len(checks)} files checked); draft layer verified absent')

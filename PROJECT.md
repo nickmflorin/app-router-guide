@@ -116,6 +116,29 @@ direction React/Vercel are heading. Nick presents to the team in ~2 weeks.
 
 ## Decisions log
 
+- 2026-07-23: **nav.js componentized into Astro (branch nav-componentization, per Nick).** The
+  sidebar/TOC/pager are now SERVER-RENDERED: `src/components/Sidebar.astro` + the pager in
+  GuidePage.astro, both derived from `src/data/toc.js`, which is THE single TOC source (nav.js's
+  TOC array and index.astro's hand-authored Contents grid are gone; toc.js gained `cls` per group
+  and `d` per item for the cover). The RESTRUCTURING rule's "three TOCs" is now one file.
+  `public/assets/nav.js` is runtime behavior only (~280 lines: code-wrap, search, sidebar scroll
+  persistence, pager fill from the pager div's data-prev/next attributes) and stays a CLASSIC
+  external script because module scripts are CORS-blocked over `file://`. The dev-only notes+deck
+  tooling moved verbatim to `src/dev/draft-tools.js`, loaded by an `import.meta.env.DEV`-gated
+  `is:inline type="module"` script tag in GuidePage (is:inline prevents hoisting, so the
+  conditional is honoured at build time). The `@dev-only` marker-strip in postbuild_relativize.py
+  is RETIRED, replaced by a fingerprint GATE that fails the build if any dev string ('/api/notes',
+  'draft-badge', 'note-pin', ...) reaches the output ("dev-tooling gate: clean"). Build scripts
+  (build_artifact.py, build_md.py, build_search_index.py) parse the TOC from src/data/toc.js with
+  the same tolerant regex (extended: optional `cls` between part/items, extra fields after `file`);
+  build_artifact.py drops the server-rendered pager placeholder via a whitespace-tolerant regex.
+  The pager div ships EMPTY with data attributes so the md/search/artifact extractors keep their
+  empty-pager invariant. Sidebar markup/ids are byte-compatible with the old runtime-rendered DOM
+  (#sidebar, #side-scroll, #side-toc, .toc-item .n, ...), so all sidebar SCSS applies unchanged.
+  Verified: dev/build stamped-id parity (79 ids on §9 in both), dev module served by Vite (200),
+  built pages carry the sidebar with exactly one `.current` and no deck link, md/artifact/deck
+  outputs clean (no chrome leakage, no leftover pagers, no dup ids), svg_lint CLEAN.
+
 - 2026-07-22: **Deck designation covers EVERY block region (per Nick: "+ To deck" must select
   regions like note mode does).** Root cause of the "green plus cursor but nothing selectable"
   report: only Diagram/Snippet emitted `data-content-id`, so 95% of the page ignored deck-mode

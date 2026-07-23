@@ -14,8 +14,8 @@ imported here to keep sessions light.
 - **Commit as Nick:**
   `git -c user.name="Nick Florin" -c user.email="nick.florin@crafteducation.com" commit`
 - **Run the build/verify gate before committing** (see CONTEXT.md): `npm run build` must exit 0 and
-  strip the dev layer; `python3 scripts/svg_lint.py` must be `CLEAN.`; keep every `<Diagram>`'s
-  Mermaid twin in sync.
+  print "dev-tooling gate: clean"; `python3 scripts/svg_lint.py` must be `CLEAN.`; keep every
+  `<Diagram>`'s Mermaid twin in sync.
 - **Parallel work goes in a git worktree — but never create a branch or worktree without asking
   first.** Don't assume parallelism. Lightweight edits (a quick single file, read-only tasks, a note
   resolution, a DB-only change) can stay in the main tree.

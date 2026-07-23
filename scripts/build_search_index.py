@@ -23,13 +23,13 @@ def read(p):
         return f.read()
 
 
-# ---------- TOC from nav.js (same tolerant parse as build_artifact.py) ----------
-nav = read("build/output/app-router-guide_html/assets/nav.js")
+# ---------- TOC from src/data/toc.js (same tolerant parse as build_artifact.py) ----------
+nav = read("src/data/toc.js")
 group_re = re.compile(
-    r"\{\s*part:\s*(null|['\"][^'\"]*['\"])\s*,\s*items:\s*\[(.*?)\]\s*,?\s*\}", re.S
+    r"\{\s*part:\s*(null|['\"][^'\"]*['\"])\s*,(?:\s*cls:\s*['\"][^'\"]*['\"]\s*,)?\s*items:\s*\[(.*?)\]\s*,?\s*\}", re.S
 )
 item_re = re.compile(
-    r"\{\s*n:\s*(['\"])(\d+)\1\s*,\s*title:\s*(['\"])(.*?)\3\s*,\s*file:\s*(['\"])(.*?)\5\s*,?\s*\}",
+    r"\{\s*n:\s*(['\"])(\d+)\1\s*,\s*title:\s*(['\"])(.*?)\3\s*,\s*file:\s*(['\"])(.*?)\5[^{}]*\}",
     re.S,
 )
 flat = []
