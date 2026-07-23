@@ -61,8 +61,8 @@ slide-deck authoring system (see below).
   `postbuild_relativize.py` VERIFIES this (fails the build if any dev fingerprint reaches the
   output) instead of stripping. If you add dev tooling, put it in `src/dev/` and, if it introduces
   new user-visible class names/endpoints, add them to the postbuild fingerprint check.
-- Sanity checks after any nav/dev-tooling change: `npm run build` must exit 0 and print
-  "dev-tooling gate: clean".
+- Sanity checks after any nav/dev-tooling change: `npm run build` must exit 0 and print "dev-tooling
+  gate: clean".
 
 ---
 

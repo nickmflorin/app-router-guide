@@ -271,9 +271,9 @@ only the **why**, never a restatement of what the rules plainly do.
   cross-browser workaround, a constraint imposed from elsewhere, or intent that the properties alone
   do not reveal. If the declarations already make the intent clear, no comment is needed.
 - SCSS nesting is preferred over flat, prefix-repeating selectors: nest descendants, pseudo-classes
-  and pseudo-elements (`&:hover`, `&::before`), modifier and state classes (`&.active`, `&-variant`),
-  and combinators (`& + &`) under their parent rather than restating the ancestor selector on every
-  line. This structure replaces most banner comments outright.
+  and pseudo-elements (`&:hover`, `&::before`), modifier and state classes (`&.active`,
+  `&-variant`), and combinators (`& + &`) under their parent rather than restating the ancestor
+  selector on every line. This structure replaces most banner comments outright.
 
 ## Prohibited
 

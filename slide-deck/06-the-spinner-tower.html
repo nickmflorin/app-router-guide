@@ -17,169 +17,129 @@
         <li>Server-side, the waiting happens where the data lives</li>
         <li>Streaming paints the shell first; content replaces placeholders as it resolves</li>
       </ul>
-      <div class="fig"><svg
-              viewBox="0 0 720 268"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
-            >
-              <!-- left: client-side nesting -->
-              <text
-                class="fill-dg-red"
-                x="178"
-                y="12"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                Client-rendered: each layer blocks the next
-              </text>
-              <rect
-                class="stroke-dg-amber"
-                x="58"
-                y="26"
-                width="240"
-                height="216"
-                rx="8"
-                fill="none"
-                stroke-width="1.5"
-                stroke-dasharray="5 4"
-              ></rect>
-              <text class="fill-dg-amber-ink" x="70" y="44" font-size="9.5">
-                ① page: spinner while fetching /me
-              </text>
-              <rect
-                class="stroke-dg-amber"
-                x="74"
-                y="58"
-                width="208"
-                height="168"
-                rx="7"
-                fill="none"
-                stroke-width="1.5"
-                stroke-dasharray="5 4"
-              ></rect>
-              <text class="fill-dg-amber-ink" x="86" y="76" font-size="9.5">
-                ② section: fetching the list
-              </text>
-              <rect
-                class="stroke-dg-amber"
-                x="90"
-                y="90"
-                width="176"
-                height="120"
-                rx="6"
-                fill="none"
-                stroke-width="1.5"
-                stroke-dasharray="5 4"
-              ></rect>
-              <text class="fill-dg-amber-ink" x="102" y="108" font-size="9.5">
-                ③ widget: fetching stats
-              </text>
-              <rect
-                class="fill-dg-amber-border"
-                x="106"
-                y="122"
-                width="144"
-                height="7"
-                rx="3"
-              ></rect>
-              <rect
-                class="fill-dg-amber-border"
-                x="106"
-                y="136"
-                width="144"
-                height="7"
-                rx="3"
-              ></rect>
-              <rect
-                class="fill-dg-amber-border"
-                x="106"
-                y="150"
-                width="144"
-                height="7"
-                rx="3"
-              ></rect>
-              <rect
-                class="fill-dg-amber-border"
-                x="106"
-                y="164"
-                width="144"
-                height="7"
-                rx="3"
-              ></rect>
-              <rect
-                class="fill-dg-amber-border"
-                x="106"
-                y="178"
-                width="144"
-                height="7"
-                rx="3"
-              ></rect>
-              <rect
-                class="fill-dg-amber-border"
-                x="106"
-                y="192"
-                width="144"
-                height="7"
-                rx="3"
-              ></rect>
-              <text
-                class="fill-dg-red"
-                x="178"
-                y="262"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                first content: t₁ + t₂ + t₃ (serialized)
-              </text>
+      <div class="fig">
+        <svg
+          viewBox="0 0 720 268"
+          xmlns="http://www.w3.org/2000/svg"
+          font-family="Inter, system-ui, sans-serif"
+        >
+          <!-- left: client-side nesting -->
+          <text
+            class="fill-dg-red"
+            x="178"
+            y="12"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            Client-rendered: each layer blocks the next
+          </text>
+          <rect
+            class="stroke-dg-amber"
+            x="58"
+            y="26"
+            width="240"
+            height="216"
+            rx="8"
+            fill="none"
+            stroke-width="1.5"
+            stroke-dasharray="5 4"
+          ></rect>
+          <text class="fill-dg-amber-ink" x="70" y="44" font-size="9.5">
+            ① page: spinner while fetching /me
+          </text>
+          <rect
+            class="stroke-dg-amber"
+            x="74"
+            y="58"
+            width="208"
+            height="168"
+            rx="7"
+            fill="none"
+            stroke-width="1.5"
+            stroke-dasharray="5 4"
+          ></rect>
+          <text class="fill-dg-amber-ink" x="86" y="76" font-size="9.5">
+            ② section: fetching the list
+          </text>
+          <rect
+            class="stroke-dg-amber"
+            x="90"
+            y="90"
+            width="176"
+            height="120"
+            rx="6"
+            fill="none"
+            stroke-width="1.5"
+            stroke-dasharray="5 4"
+          ></rect>
+          <text class="fill-dg-amber-ink" x="102" y="108" font-size="9.5">
+            ③ widget: fetching stats
+          </text>
+          <rect class="fill-dg-amber-border" x="106" y="122" width="144" height="7" rx="3"></rect>
+          <rect class="fill-dg-amber-border" x="106" y="136" width="144" height="7" rx="3"></rect>
+          <rect class="fill-dg-amber-border" x="106" y="150" width="144" height="7" rx="3"></rect>
+          <rect class="fill-dg-amber-border" x="106" y="164" width="144" height="7" rx="3"></rect>
+          <rect class="fill-dg-amber-border" x="106" y="178" width="144" height="7" rx="3"></rect>
+          <rect class="fill-dg-amber-border" x="106" y="192" width="144" height="7" rx="3"></rect>
+          <text
+            class="fill-dg-red"
+            x="178"
+            y="262"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            first content: t₁ + t₂ + t₃ (serialized)
+          </text>
 
-              <!-- right: server-side single pass -->
-              <text
-                class="fill-dg-green-ink"
-                x="542"
-                y="12"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                Server-rendered: one pass, awaits are values
-              </text>
-              <rect
-                class="fill-dg-white stroke-dg-green"
-                x="422"
-                y="26"
-                width="240"
-                height="216"
-                rx="8"
-                stroke-width="1.5"
-              ></rect>
-              <text class="fill-dg-green-ink" x="434" y="44" font-size="9.5">
-                HTML arrives complete; no layer waits
-              </text>
-              <rect class="fill-dg-blue-fill" x="434" y="58" width="216" height="16" rx="4"></rect>
-              <rect class="fill-dg-green-skel" x="434" y="84" width="216" height="7" rx="3"></rect>
-              <rect class="fill-dg-green-skel" x="434" y="98" width="216" height="7" rx="3"></rect>
-              <rect class="fill-dg-green-skel" x="434" y="112" width="216" height="7" rx="3"></rect>
-              <rect class="fill-dg-green-skel" x="434" y="126" width="216" height="7" rx="3"></rect>
-              <rect class="fill-dg-green-skel" x="434" y="140" width="216" height="7" rx="3"></rect>
-              <rect class="fill-dg-green-skel" x="434" y="154" width="216" height="7" rx="3"></rect>
-              <rect class="fill-dg-green-skel" x="434" y="168" width="216" height="7" rx="3"></rect>
-              <rect class="fill-dg-green-skel" x="434" y="182" width="216" height="7" rx="3"></rect>
-              <rect class="fill-dg-green-skel" x="434" y="196" width="216" height="7" rx="3"></rect>
-              <rect class="fill-dg-green-skel" x="434" y="210" width="216" height="7" rx="3"></rect>
-              <rect class="fill-dg-green-skel" x="434" y="224" width="216" height="7" rx="3"></rect>
-              <text
-                class="fill-dg-green-ink"
-                x="542"
-                y="262"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                first content: t₁ (one server pass)
-              </text>
-            </svg></div>
+          <!-- right: server-side single pass -->
+          <text
+            class="fill-dg-green-ink"
+            x="542"
+            y="12"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            Server-rendered: one pass, awaits are values
+          </text>
+          <rect
+            class="fill-dg-white stroke-dg-green"
+            x="422"
+            y="26"
+            width="240"
+            height="216"
+            rx="8"
+            stroke-width="1.5"
+          ></rect>
+          <text class="fill-dg-green-ink" x="434" y="44" font-size="9.5">
+            HTML arrives complete; no layer waits
+          </text>
+          <rect class="fill-dg-blue-fill" x="434" y="58" width="216" height="16" rx="4"></rect>
+          <rect class="fill-dg-green-skel" x="434" y="84" width="216" height="7" rx="3"></rect>
+          <rect class="fill-dg-green-skel" x="434" y="98" width="216" height="7" rx="3"></rect>
+          <rect class="fill-dg-green-skel" x="434" y="112" width="216" height="7" rx="3"></rect>
+          <rect class="fill-dg-green-skel" x="434" y="126" width="216" height="7" rx="3"></rect>
+          <rect class="fill-dg-green-skel" x="434" y="140" width="216" height="7" rx="3"></rect>
+          <rect class="fill-dg-green-skel" x="434" y="154" width="216" height="7" rx="3"></rect>
+          <rect class="fill-dg-green-skel" x="434" y="168" width="216" height="7" rx="3"></rect>
+          <rect class="fill-dg-green-skel" x="434" y="182" width="216" height="7" rx="3"></rect>
+          <rect class="fill-dg-green-skel" x="434" y="196" width="216" height="7" rx="3"></rect>
+          <rect class="fill-dg-green-skel" x="434" y="210" width="216" height="7" rx="3"></rect>
+          <rect class="fill-dg-green-skel" x="434" y="224" width="216" height="7" rx="3"></rect>
+          <text
+            class="fill-dg-green-ink"
+            x="542"
+            y="262"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            first content: t₁ (one server pass)
+          </text>
+        </svg>
+      </div>
     </main>
     <nav class="deck-nav">
       <a class="home" href="index.html" title="Contents">&#8962;</a>
@@ -187,19 +147,19 @@
       <span class="ct">6 / 13</span>
       <a data-nav="next" class="nv" href="07-boundaries.html">&rsaquo;</a>
     </nav>
-<script>
-  (function () {
-    var prev = document.querySelector('[data-nav=prev]');
-    var next = document.querySelector('[data-nav=next]');
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowLeft' && prev) location.href = prev.getAttribute('href');
-      if ((e.key === 'ArrowRight' || e.key === ' ') && next) {
-        e.preventDefault();
-        location.href = next.getAttribute('href');
-      }
-      if (e.key === 'Home') location.href = 'index.html';
-    });
-  })();
-</script>
+    <script>
+      (function () {
+        var prev = document.querySelector('[data-nav=prev]');
+        var next = document.querySelector('[data-nav=next]');
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowLeft' && prev) location.href = prev.getAttribute('href');
+          if ((e.key === 'ArrowRight' || e.key === ' ') && next) {
+            e.preventDefault();
+            location.href = next.getAttribute('href');
+          }
+          if (e.key === 'Home') location.href = 'index.html';
+        });
+      })();
+    </script>
   </body>
 </html>

@@ -15,8 +15,8 @@ lives in `build/README.md`.
   search, sidebar scroll persistence, pager fill, code-wrap; the sidebar itself is server-rendered
   by `src/components/Sidebar.astro` from `src/data/toc.js`, the single TOC source), plus the
   **generated** `search-index.js` (gitignored, rebuilt by the scripts below). The dev-only
-  annotation + deck tooling lives in `src/dev/draft-tools.js` and never ships. Styles are no longer a static asset here — Vite compiles the SCSS
-  and emits it into `_astro/` (see below).
+  annotation + deck tooling lives in `src/dev/draft-tools.js` and never ships. Styles are no longer
+  a static asset here — Vite compiles the SCSS and emits it into `_astro/` (see below).
 - `build/` contains a committed `README.md` for recipients and a gitignored `output/` with every
   distributable. Zipping `build/` is the intended way to send the guide out.
 - `supplementary/` holds the working documents: `working-notes.md` (the running content queue; note
@@ -33,9 +33,9 @@ npm run dev        # starts the Astro dev server
 ```
 
 Edit under `src/`, view on the dev server. Styles are SCSS: `src/styles/style.scss` plus
-`src/styles/partials/_*.scss`, imported from `src/layouts/GuidePage.astro`. Vite (dart-sass) compiles
-them, so editing any partial hot-reloads in the browser with no server restart. `astro build` emits
-the compiled CSS into `_astro/`; there is no separate CSS build step to run.
+`src/styles/partials/_*.scss`, imported from `src/layouts/GuidePage.astro`. Vite (dart-sass)
+compiles them, so editing any partial hot-reloads in the browser with no server restart.
+`astro build` emits the compiled CSS into `_astro/`; there is no separate CSS build step to run.
 
 ## Building the outputs
 
@@ -67,8 +67,8 @@ This whole layer is development-only and never ships by construction: the JS liv
 `src/dev/draft-tools.js`, loaded by `GuidePage.astro` only under `import.meta.env.DEV`; its styles
 live in `_draft-tools.scss`, imported the same DEV-gated way, so `astro build` dead-code-eliminates
 both. The postbuild step verifies it (the "dev-tooling gate"), deletes `page-notes.json` from the
-output, and fails the build if any dev fingerprint leaks. Built output must never show a DRAFT
-badge or any annotation UI.
+output, and fails the build if any dev fingerprint leaks. Built output must never show a DRAFT badge
+or any annotation UI.
 
 ## Diagrams
 

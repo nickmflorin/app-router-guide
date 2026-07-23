@@ -13,359 +13,354 @@
       <div class="kicker ka">Part A: Maximize the Known</div>
       <h1>Push interactivity to the leaves</h1>
       <ul class="points">
-        <li><code>"use client"</code> marks where the server hands off, not which component is interactive</li>
-        <li>One directive at the top converts the whole tree; at the leaves it costs almost nothing</li>
+        <li>
+          <code>"use client"</code> marks where the server hands off, not which component is
+          interactive
+        </li>
+        <li>
+          One directive at the top converts the whole tree; at the leaves it costs almost nothing
+        </li>
         <li>Server components pass through the boundary as <code>children</code></li>
       </ul>
-      <div class="fig"><svg
-              viewBox="0 0 720 306"
-              xmlns="http://www.w3.org/2000/svg"
-              font-family="Inter, system-ui, sans-serif"
+      <div class="fig">
+        <svg
+          viewBox="0 0 720 306"
+          xmlns="http://www.w3.org/2000/svg"
+          font-family="Inter, system-ui, sans-serif"
+        >
+          <defs>
+            <marker
+              id="mC"
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
             >
-              <defs>
-                <marker
-                  id="mC"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path
-                    class="stroke-dg-gray"
-                    d="M 2.5 1.5 L 8 5 L 2.5 8.5"
-                    fill="none"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  ></path>
-                </marker>
-              </defs>
-              <text
-                class="fill-dg-red"
-                x="178"
-                y="12"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                One client boundary at the top
-              </text>
-              <text
-                class="fill-dg-green-ink"
-                x="542"
-                y="12"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                Server tree, client leaf
-              </text>
-              <line class="stroke-dg-line" x1="360" y1="2" x2="360" y2="304"></line>
-
-              <!-- LEFT: god tree -->
-              <rect
-                class="fill-dg-red-soft stroke-dg-red"
-                x="58"
-                y="26"
-                width="240"
-                height="40"
-                rx="7"
-                stroke-width="1.5"
-              ></rect>
-              <text
-                class="fill-dg-red"
-                x="178"
-                y="42"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                "use client": ProgramsManager
-              </text>
-              <text class="fill-dg-red" x="178" y="56" font-size="9" text-anchor="middle">
-                fetches + UI state + callbacks, all in one
-              </text>
-              <rect
-                class="fill-dg-teal-soft stroke-dg-teal"
-                x="58"
-                y="92"
-                width="240"
-                height="40"
-                rx="7"
-                stroke-width="1.5"
-              ></rect>
-              <text
-                class="fill-dg-teal"
-                x="178"
-                y="108"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                SectionLayout
-              </text>
-              <text class="fill-dg-teal" x="178" y="122" font-size="9" text-anchor="middle">
-                client, dragged in by the import graph
-              </text>
-              <rect
-                class="fill-dg-teal-soft stroke-dg-teal"
-                x="58"
-                y="158"
-                width="240"
-                height="40"
-                rx="7"
-                stroke-width="1.5"
-              ></rect>
-              <text
-                class="fill-dg-teal"
-                x="178"
-                y="174"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                ProgramsTable
-              </text>
-              <text class="fill-dg-teal" x="178" y="188" font-size="9" text-anchor="middle">
-                client, waits for props from the top
-              </text>
-              <rect
-                class="fill-dg-teal-soft stroke-dg-teal"
-                x="58"
-                y="224"
-                width="240"
-                height="40"
-                rx="7"
-                stroke-width="1.5"
-              ></rect>
-              <text
-                class="fill-dg-teal"
-                x="178"
-                y="240"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                PublishButton
-              </text>
-              <text class="fill-dg-teal" x="178" y="254" font-size="9" text-anchor="middle">
-                client, handed onSave it didn't ask for
-              </text>
-
-              <line
+              <path
                 class="stroke-dg-gray"
-                x1="178"
-                y1="70"
-                x2="178"
-                y2="88"
-                stroke-width="1.5"
-                marker-end="url(#mC)"
-              ></line>
-              <line
-                class="stroke-dg-gray"
-                x1="178"
-                y1="136"
-                x2="178"
-                y2="154"
-                stroke-width="1.5"
-                marker-end="url(#mC)"
-              ></line>
-              <line
-                class="stroke-dg-gray"
-                x1="178"
-                y1="202"
-                x2="178"
-                y2="220"
-                stroke-width="1.5"
-                marker-end="url(#mC)"
-              ></line>
-              <text class="fill-dg-red" x="190" y="82" font-size="9.5">props + callbacks</text>
-              <text class="fill-dg-red" x="190" y="148" font-size="9.5">props + callbacks</text>
-              <text class="fill-dg-red" x="190" y="214" font-size="9.5">props + callbacks</text>
+                d="M 2.5 1.5 L 8 5 L 2.5 8.5"
+                fill="none"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </marker>
+          </defs>
+          <text
+            class="fill-dg-red"
+            x="178"
+            y="12"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            One client boundary at the top
+          </text>
+          <text
+            class="fill-dg-green-ink"
+            x="542"
+            y="12"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            Server tree, client leaf
+          </text>
+          <line class="stroke-dg-line" x1="360" y1="2" x2="360" y2="304"></line>
 
-              <text
-                class="fill-dg-red"
-                x="178"
-                y="286"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                client-rendered from the root:
-              </text>
-              <text
-                class="fill-dg-red"
-                x="178"
-                y="300"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                streaming, caching, actions: all foreclosed
-              </text>
+          <!-- LEFT: god tree -->
+          <rect
+            class="fill-dg-red-soft stroke-dg-red"
+            x="58"
+            y="26"
+            width="240"
+            height="40"
+            rx="7"
+            stroke-width="1.5"
+          ></rect>
+          <text
+            class="fill-dg-red"
+            x="178"
+            y="42"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            "use client": ProgramsManager
+          </text>
+          <text class="fill-dg-red" x="178" y="56" font-size="9" text-anchor="middle">
+            fetches + UI state + callbacks, all in one
+          </text>
+          <rect
+            class="fill-dg-teal-soft stroke-dg-teal"
+            x="58"
+            y="92"
+            width="240"
+            height="40"
+            rx="7"
+            stroke-width="1.5"
+          ></rect>
+          <text
+            class="fill-dg-teal"
+            x="178"
+            y="108"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            SectionLayout
+          </text>
+          <text class="fill-dg-teal" x="178" y="122" font-size="9" text-anchor="middle">
+            client, dragged in by the import graph
+          </text>
+          <rect
+            class="fill-dg-teal-soft stroke-dg-teal"
+            x="58"
+            y="158"
+            width="240"
+            height="40"
+            rx="7"
+            stroke-width="1.5"
+          ></rect>
+          <text
+            class="fill-dg-teal"
+            x="178"
+            y="174"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            ProgramsTable
+          </text>
+          <text class="fill-dg-teal" x="178" y="188" font-size="9" text-anchor="middle">
+            client, waits for props from the top
+          </text>
+          <rect
+            class="fill-dg-teal-soft stroke-dg-teal"
+            x="58"
+            y="224"
+            width="240"
+            height="40"
+            rx="7"
+            stroke-width="1.5"
+          ></rect>
+          <text
+            class="fill-dg-teal"
+            x="178"
+            y="240"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            PublishButton
+          </text>
+          <text class="fill-dg-teal" x="178" y="254" font-size="9" text-anchor="middle">
+            client, handed onSave it didn't ask for
+          </text>
 
-              <!-- RIGHT: server tree -->
-              <rect
-                class="fill-dg-blue-soft stroke-dg-blue"
-                x="422"
-                y="26"
-                width="240"
-                height="40"
-                rx="7"
-                stroke-width="1.5"
-              ></rect>
-              <text
-                class="fill-dg-blue-ink"
-                x="542"
-                y="42"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                Page: server
-              </text>
-              <text class="fill-dg-blue-ink-soft" x="542" y="56" font-size="9" text-anchor="middle">
-                async: awaits tagged data, streams HTML
-              </text>
-              <rect
-                class="fill-dg-blue-soft stroke-dg-blue"
-                x="422"
-                y="92"
-                width="240"
-                height="40"
-                rx="7"
-                stroke-width="1.5"
-              ></rect>
-              <text
-                class="fill-dg-blue-ink"
-                x="542"
-                y="108"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                SectionLayout: server
-              </text>
-              <text
-                class="fill-dg-blue-ink-soft"
-                x="542"
-                y="122"
-                font-size="9"
-                text-anchor="middle"
-              >
-                zero JavaScript shipped
-              </text>
-              <rect
-                class="fill-dg-blue-soft stroke-dg-blue"
-                x="422"
-                y="158"
-                width="240"
-                height="40"
-                rx="7"
-                stroke-width="1.5"
-              ></rect>
-              <text
-                class="fill-dg-blue-ink"
-                x="542"
-                y="174"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                ProgramsTable: server
-              </text>
-              <text
-                class="fill-dg-blue-ink-soft"
-                x="542"
-                y="188"
-                font-size="9"
-                text-anchor="middle"
-              >
-                rows rendered as HTML on the server
-              </text>
-              <rect
-                class="fill-dg-teal-soft stroke-dg-teal"
-                x="422"
-                y="224"
-                width="240"
-                height="40"
-                rx="7"
-                stroke-width="1.5"
-              ></rect>
-              <text
-                class="fill-dg-teal"
-                x="542"
-                y="240"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                PublishButton: client leaf
-              </text>
-              <text class="fill-dg-teal" x="542" y="254" font-size="9" text-anchor="middle">
-                owns its click, pending state, and dialog
-              </text>
+          <line
+            class="stroke-dg-gray"
+            x1="178"
+            y1="70"
+            x2="178"
+            y2="88"
+            stroke-width="1.5"
+            marker-end="url(#mC)"
+          ></line>
+          <line
+            class="stroke-dg-gray"
+            x1="178"
+            y1="136"
+            x2="178"
+            y2="154"
+            stroke-width="1.5"
+            marker-end="url(#mC)"
+          ></line>
+          <line
+            class="stroke-dg-gray"
+            x1="178"
+            y1="202"
+            x2="178"
+            y2="220"
+            stroke-width="1.5"
+            marker-end="url(#mC)"
+          ></line>
+          <text class="fill-dg-red" x="190" y="82" font-size="9.5">props + callbacks</text>
+          <text class="fill-dg-red" x="190" y="148" font-size="9.5">props + callbacks</text>
+          <text class="fill-dg-red" x="190" y="214" font-size="9.5">props + callbacks</text>
 
-              <line
-                class="stroke-dg-gray"
-                x1="542"
-                y1="70"
-                x2="542"
-                y2="88"
-                stroke-width="1.5"
-                marker-end="url(#mC)"
-              ></line>
-              <line
-                class="stroke-dg-gray"
-                x1="542"
-                y1="136"
-                x2="542"
-                y2="154"
-                stroke-width="1.5"
-                marker-end="url(#mC)"
-              ></line>
-              <line
-                class="stroke-dg-gray"
-                x1="542"
-                y1="202"
-                x2="542"
-                y2="220"
-                stroke-width="1.5"
-                marker-end="url(#mC)"
-              ></line>
-              <text class="fill-dg-green" x="530" y="82" font-size="9.5" text-anchor="end">
-                children
-              </text>
-              <text class="fill-dg-green" x="530" y="148" font-size="9.5" text-anchor="end">
-                children
-              </text>
-              <text class="fill-dg-green" x="530" y="214" font-size="9.5" text-anchor="end">
-                children
-              </text>
+          <text
+            class="fill-dg-red"
+            x="178"
+            y="286"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            client-rendered from the root:
+          </text>
+          <text
+            class="fill-dg-red"
+            x="178"
+            y="300"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            streaming, caching, actions: all foreclosed
+          </text>
 
-              <text
-                class="fill-dg-green"
-                x="542"
-                y="286"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                server renders everything it can;
-              </text>
-              <text
-                class="fill-dg-green"
-                x="542"
-                y="300"
-                font-size="10.5"
-                text-anchor="middle"
-                font-weight="500"
-              >
-                the only JavaScript is the leaf
-              </text>
-            </svg></div>
+          <!-- RIGHT: server tree -->
+          <rect
+            class="fill-dg-blue-soft stroke-dg-blue"
+            x="422"
+            y="26"
+            width="240"
+            height="40"
+            rx="7"
+            stroke-width="1.5"
+          ></rect>
+          <text
+            class="fill-dg-blue-ink"
+            x="542"
+            y="42"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            Page: server
+          </text>
+          <text class="fill-dg-blue-ink-soft" x="542" y="56" font-size="9" text-anchor="middle">
+            async: awaits tagged data, streams HTML
+          </text>
+          <rect
+            class="fill-dg-blue-soft stroke-dg-blue"
+            x="422"
+            y="92"
+            width="240"
+            height="40"
+            rx="7"
+            stroke-width="1.5"
+          ></rect>
+          <text
+            class="fill-dg-blue-ink"
+            x="542"
+            y="108"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            SectionLayout: server
+          </text>
+          <text class="fill-dg-blue-ink-soft" x="542" y="122" font-size="9" text-anchor="middle">
+            zero JavaScript shipped
+          </text>
+          <rect
+            class="fill-dg-blue-soft stroke-dg-blue"
+            x="422"
+            y="158"
+            width="240"
+            height="40"
+            rx="7"
+            stroke-width="1.5"
+          ></rect>
+          <text
+            class="fill-dg-blue-ink"
+            x="542"
+            y="174"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            ProgramsTable: server
+          </text>
+          <text class="fill-dg-blue-ink-soft" x="542" y="188" font-size="9" text-anchor="middle">
+            rows rendered as HTML on the server
+          </text>
+          <rect
+            class="fill-dg-teal-soft stroke-dg-teal"
+            x="422"
+            y="224"
+            width="240"
+            height="40"
+            rx="7"
+            stroke-width="1.5"
+          ></rect>
+          <text
+            class="fill-dg-teal"
+            x="542"
+            y="240"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            PublishButton: client leaf
+          </text>
+          <text class="fill-dg-teal" x="542" y="254" font-size="9" text-anchor="middle">
+            owns its click, pending state, and dialog
+          </text>
+
+          <line
+            class="stroke-dg-gray"
+            x1="542"
+            y1="70"
+            x2="542"
+            y2="88"
+            stroke-width="1.5"
+            marker-end="url(#mC)"
+          ></line>
+          <line
+            class="stroke-dg-gray"
+            x1="542"
+            y1="136"
+            x2="542"
+            y2="154"
+            stroke-width="1.5"
+            marker-end="url(#mC)"
+          ></line>
+          <line
+            class="stroke-dg-gray"
+            x1="542"
+            y1="202"
+            x2="542"
+            y2="220"
+            stroke-width="1.5"
+            marker-end="url(#mC)"
+          ></line>
+          <text class="fill-dg-green" x="530" y="82" font-size="9.5" text-anchor="end">
+            children
+          </text>
+          <text class="fill-dg-green" x="530" y="148" font-size="9.5" text-anchor="end">
+            children
+          </text>
+          <text class="fill-dg-green" x="530" y="214" font-size="9.5" text-anchor="end">
+            children
+          </text>
+
+          <text
+            class="fill-dg-green"
+            x="542"
+            y="286"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            server renders everything it can;
+          </text>
+          <text
+            class="fill-dg-green"
+            x="542"
+            y="300"
+            font-size="10.5"
+            text-anchor="middle"
+            font-weight="500"
+          >
+            the only JavaScript is the leaf
+          </text>
+        </svg>
+      </div>
     </main>
     <nav class="deck-nav">
       <a class="home" href="index.html" title="Contents">&#8962;</a>
@@ -373,19 +368,19 @@
       <span class="ct">7 / 13</span>
       <a data-nav="next" class="nv" href="08-bundle-size.html">&rsaquo;</a>
     </nav>
-<script>
-  (function () {
-    var prev = document.querySelector('[data-nav=prev]');
-    var next = document.querySelector('[data-nav=next]');
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowLeft' && prev) location.href = prev.getAttribute('href');
-      if ((e.key === 'ArrowRight' || e.key === ' ') && next) {
-        e.preventDefault();
-        location.href = next.getAttribute('href');
-      }
-      if (e.key === 'Home') location.href = 'index.html';
-    });
-  })();
-</script>
+    <script>
+      (function () {
+        var prev = document.querySelector('[data-nav=prev]');
+        var next = document.querySelector('[data-nav=next]');
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowLeft' && prev) location.href = prev.getAttribute('href');
+          if ((e.key === 'ArrowRight' || e.key === ' ') && next) {
+            e.preventDefault();
+            location.href = next.getAttribute('href');
+          }
+          if (e.key === 'Home') location.href = 'index.html';
+        });
+      })();
+    </script>
   </body>
 </html>
