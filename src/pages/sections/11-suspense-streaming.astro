@@ -1872,7 +1872,7 @@ flowchart LR
     <pre
       class='code v-good'
       is:raw><span class="filename">InviteMemberButton.tsx</span><span class="tok-dir">"use client"</span>;
-<span class="tok-kw">import</span> { Suspense, useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+<span class="tok-kw">import</span> { useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 <span class="tok-kw">import</span> dynamic <span class="tok-kw">from</span> <span class="tok-str">"next/dynamic"</span>;
 
 <span class="tok-com">/* The dialog's chunk loads on demand, when it first opens. */</span>
@@ -1887,12 +1887,10 @@ flowchart LR
     &lt;&gt;
       &lt;<span class="tok-fn">Button</span> <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">true</span>)}&gt;Invite member&lt;/<span class="tok-fn">Button</span>&gt;
       {open &amp;&amp; (
-        &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">DialogSkeleton</span> /&gt;}&gt;
-          &lt;<span class="tok-fn">InviteMemberDialog</span>
-            <span class="tok-prop">peoplePromise</span>={peoplePromise}
-            <span class="tok-prop">onClose</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">false</span>)}
-          /&gt;
-        &lt;/<span class="tok-fn">Suspense</span>&gt;
+        &lt;<span class="tok-fn">InviteMemberDialog</span>
+          <span class="tok-prop">peoplePromise</span>={peoplePromise}
+          <span class="tok-prop">onClose</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">false</span>)}
+        /&gt;
       )}
     &lt;/&gt;
   );
@@ -1903,24 +1901,46 @@ flowchart LR
     <pre
       class='code v-good'
       is:raw><span class="filename">InviteMemberDialog.tsx</span><span class="tok-dir">"use client"</span>;
-<span class="tok-kw">import</span> { use } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+<span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberDialog</span>({ peoplePromise, onClose }: <span class="tok-fn">InviteMemberDialogProps</span>) {
+  <span class="tok-com">/* The frame, title, and close affordance are known: the dialog opens
+     the instant the user clicks. Only the people-backed interior waits,
+     behind its own boundary, on rows-shaped skeletons. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Dialog</span> <span class="tok-prop">title</span>=<span class="tok-str">"Invite member"</span> <span class="tok-prop">onClose</span>={onClose}&gt;
+      &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">InviteRowsSkeleton</span> /&gt;}&gt;
+        &lt;<span class="tok-fn">InviteMemberDialogContent</span> <span class="tok-prop">peoplePromise</span>={peoplePromise} /&gt;
+      &lt;/<span class="tok-fn">Suspense</span>&gt;
+    &lt;/<span class="tok-fn">Dialog</span>&gt;
+  );
+}</pre>
+  </Snippet>
+
+  <Snippet>
+    <pre
+      class='code v-good'
+      is:raw><span class="filename">InviteMemberDialogContent.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { use } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberDialogContent</span>({ peoplePromise }: <span class="tok-fn">InviteMemberDialogContentProps</span>) {
   <span class="tok-com">/* Resolves the promise the server started. If it settled while the
      dialog was closed, this never suspends at all. */</span>
   <span class="tok-kw">const</span> people = <span class="tok-fn">use</span>(peoplePromise);
 
-  <span class="tok-com">/* The dropdown of invitable people, the form, and the submit action
+  <span class="tok-com">/* The picker of invitable people, the form, and the submit action
      render here as usual. */</span>
-  <span class="tok-kw">return</span> &lt;<span class="tok-fn">Dialog</span> <span class="tok-prop">onClose</span>={onClose}&gt;{<span class="tok-com">/* … */</span>}&lt;/<span class="tok-fn">Dialog</span>&gt;;
+  <span class="tok-kw">return</span> &lt;<span class="tok-fn">DialogContent</span>&gt;{<span class="tok-com">/* … */</span>}&lt;/<span class="tok-fn">DialogContent</span>&gt;;
 }</pre>
     <CodeCaption>
-      The rewrite pulls the three concerns apart. The heading and the invite button paint with the
-      page; the rows suspend alone inside their reserved container; and the dialog's data rides an
-      unawaited promise (<a href='#pass-promises'>§11.2</a>) that the dialog resolves with <code
-        >use()</code
-      > only when it mounts. Opening early shows the dialog's own small fallback; opening late costs nothing,
-      because the promise settled in the background.
+      The rewrite pulls the three concerns apart, and then applies the same separation one level
+      deeper. The heading and the invite button paint with the page; the rows suspend alone inside
+      their reserved container; and the dialog's data rides an unawaited promise (<a
+        href='#pass-promises'>§11.2</a
+      >) resolved with <code>use()</code> in the content component, so the dialog itself opens instantly
+      with its frame and title while only its interior shows row skeletons. Opening late costs nothing,
+      because the promise settled in the background. Known and unknown stay separated at every level of
+      the tree, all the way into the dialog.
     </CodeCaption>
   </Snippet>
 
