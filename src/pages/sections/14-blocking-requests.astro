@@ -1972,6 +1972,48 @@ flowchart LR
     is a design bug, not a constraint.
   </p>
 
+  <h2 id='no-bystanders'>14.5 Nothing waits that could already be on screen</h2>
+  <p>
+    Everything so far in this chapter is about requests waiting on requests. This section is about
+    requests making <em>content</em> wait: the bystander cost of a misplaced await.
+    <Chip k='react' />
+    <Chip k='critical' /> An await is a positional gate (<a href='#scope'>§14.1</a>), and its blast
+    radius is positional too: it holds up everything rendered after it, not just the content that
+    renders <em>from</em> the data. <strong>Blocking is never neutral, even on the server.</strong>
+    Server-side blocking feels free because nobody sees a spinner, but the stream (<a
+      href='11-suspense-streaming.html#streaming'>§11.2</a
+    >) makes the cost concrete: every byte of HTML positioned after the gate ships later, including
+    markup that is purely static. A heading, a toolbar, or a form frame waiting behind someone
+    else's fetch is not "loading"; it is finished work being withheld.
+  </p>
+  <p>
+    The rule has no soft edges. <strong
+      >A fetch may gate only the content that renders from it</strong
+    >, and <strong>a server suspension must never gate static content</strong>: the known parts of
+    the page belong to the shell, ship in the first chunk, and are on screen before any data
+    resolves. If something could be on screen earlier, put it on screen earlier; hold it back only
+    as a deliberate design decision (a reveal you chose on purpose), never as a side effect of where
+    an await happens to sit. The fallback-shaped version of this failure is drawn out in full in <a
+      href='11-suspense-streaming.html#skeletons-example'>§11.4's worked example</a
+    >: one panel-wide boundary and one <code>Promise.all</code> fused a closed dialog's lookup to the
+    rows' data and buried the panel's own chrome beneath both, three bystanders behind one gate.
+  </p>
+  <p>
+    The way out is worth restating conceptually, because it generalizes past that example.
+    <strong>Starting a fetch costs nothing; awaiting it is what blocks.</strong> Kick the request off
+    high, where its inputs are known; pass the <em>promise</em> down unawaited (<a
+      href='11-suspense-streaming.html#pass-promises'>§11.2</a
+    >); and let the one component that renders from the data resolve it, inside its own boundary.
+    The gate then sits exactly where the data lands, at exactly the moment it is needed, and nothing
+    else in the tree ever learns the fetch happened. One caveat, also from the example: an unawaited
+    promise still starts the work. When the data may never be needed at all (a dialog that may never
+    open), deferral beats de-blocking: fetch on the interaction itself (<a
+      href='16-dedupe-caching.html#client'>§16.3</a
+    >). The encapsulation pattern that packages all of this into self-contained components is <a
+      href='15-minimize-the-wires.html#dialogs'>§15.6</a
+    >.
+  </p>
+
   <h2 id='rules'>The rules</h2>
   <table class='tbl'>
     <thead>
@@ -2025,6 +2067,22 @@ flowchart LR
         <td>
           No client-side dependent query chains -
           <strong>resolve dependencies on the server</strong>, or collapse them into one key.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
+          <strong>A fetch gates only the content that renders from it.</strong> An await above bystander
+          content is misplaced, even on the server: it delays the stream.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
+          <strong>Server suspension never gates static content.</strong> The known parts ship in the shell,
+          on screen before any data resolves; if it could be on screen earlier, it must be.
         </td>
         <td><Chip k='react' /></td>
         <td><Chip k='critical' /></td>

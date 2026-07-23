@@ -1274,6 +1274,128 @@ flowchart LR
     one of them is portable independently.
   </p>
 
+  <h2 id='dialogs'>15.6 Dialogs are encapsulation boundaries</h2>
+  <p>
+    A dialog is the cleanest test of this chapter's discipline, because it is a complete interaction
+    in one component: a trigger opens it, a body collects input (often against a fetched list of
+    options), and a mutation closes it.
+    <Chip k='react' />
+    <Chip k='very' /> Count the wires the naive version borrows from its host: the open flag lifted into
+    the page, the options fetched and <em>awaited at the page level</em> and drilled down, an <code
+      >onSubmit</code
+    > callback up, an <code>onSuccess</code> refresh callback after that. Five wires for one interaction.
+    The host re-renders on every open and close, the page pays a server-side gate for data nothing on
+    screen renders from (<a href='14-blocking-requests.html#no-bystanders'>§14.5</a>), and the
+    dialog cannot move anywhere without re-plumbing all of it (<a href='#cost'>§15.1</a>, <a
+      href='#portability'>§15.5</a
+    >).
+  </p>
+  <p>The encapsulated version keeps all three concerns inside:</p>
+  <ul>
+    <li>
+      <strong>State: the open flag lives with the trigger.</strong> The button that opens the dialog owns
+      whether it is open (<a href='05-client-server-boundaries.html#self-contained'>§5.7</a>); the
+      page never knows. Opening and closing re-render one leaf, not the host tree.
+    </li>
+    <li>
+      <strong>Data: a dialog's options are never page-level data.</strong> Nothing on screen renders from
+      them while the dialog is closed, so awaiting them at the page level is a pure bystander gate. They
+      have exactly two good homes: a client-side fetch that fires when the dialog opens (<a
+        href='16-dedupe-caching.html#client'>§16.3</a
+      >), or a streamed, unawaited promise the dialog's interior resolves with <code>use()</code> behind
+      its own boundary (the full mechanics are <a
+        href='11-suspense-streaming.html#skeletons-example'>§11.4's worked example</a
+      >).
+    </li>
+    <li>
+      <strong>Mutations: the dialog imports its own server action.</strong> Submission and its pending
+      state live inside; completion propagates by invalidating the name, never by a callback wire: <code
+        >revalidateTag</code
+      >/<code>revalidatePath</code> or
+      <code>router.refresh()</code> for server-rendered consumers (<a
+        href='05-client-server-boundaries.html#self-contained'>§5.7</a
+      >), a keyed <code>mutate</code> when the consumer is legitimately client-side (<a
+        href='#callbacks'>§15.4</a
+      >).
+    </li>
+  </ul>
+
+  <Compare>
+    <CompareCol kind='bad' label='✕ Five wires for one interaction'>
+      <Snippet>
+        <pre
+          class='code v-bad'
+          is:raw><span class="filename">ProgramHeader.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+<span class="tok-kw">import</span> { useRouter } <span class="tok-kw">from</span> <span class="tok-str">"next/navigation"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramHeader</span>({
+  programId,
+  invitable,
+}) {
+  <span class="tok-kw">const</span> [open, setOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
+  <span class="tok-kw">const</span> router = <span class="tok-fn">useRouter</span>();
+
+  <span class="tok-com">/* The host holds the dialog's state, its
+     data (awaited at the page level), and
+     both ends of its mutation. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">Button</span> <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">true</span>)}&gt;
+        Invite member
+      &lt;/<span class="tok-fn">Button</span>&gt;
+      {open &amp;&amp; (
+        &lt;<span class="tok-fn">InviteMemberDialog</span>
+          <span class="tok-prop">people</span>={invitable}
+          <span class="tok-prop">onClose</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">false</span>)}
+          <span class="tok-prop">onSubmit</span>={inviteMember}
+          <span class="tok-prop">onSuccess</span>={() =&gt; router.<span class="tok-fn">refresh</span>()}
+        /&gt;
+      )}
+    &lt;/&gt;
+  );
+}</pre>
+      </Snippet>
+    </CompareCol>
+    <CompareCol kind='good' label='✓ One wire: identity'>
+      <Snippet>
+        <pre
+          class='code v-good'
+          is:raw><span class="filename">ProgramHeader.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { InviteMemberButton } <span class="tok-kw">from</span> <span class="tok-str">"./InviteMemberButton"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">ProgramHeader</span>({ programId }) {
+  <span class="tok-com">/* The trigger owns the dialog: its open
+     state, its data, and its mutation all
+     live inside. The host passes identity
+     and nothing else. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">h1</span>&gt;Program&lt;/<span class="tok-fn">h1</span>&gt;
+      &lt;<span class="tok-fn">InviteMemberButton</span> <span class="tok-prop">programId</span>={programId} /&gt;
+    &lt;/&gt;
+  );
+}</pre>
+        <CodeCaption>
+          One identity prop is the entire contract. The same button now drops into the page header,
+          a row's action menu, or an empty state without touching the host, which is the portability
+          test of <a href='#portability'>§15.5</a> passed by construction.
+        </CodeCaption>
+      </Snippet>
+    </CompareCol>
+  </Compare>
+
+  <p>
+    The client-fetch variant is the extreme of this argument, and that is precisely its appeal: with
+    the options fetched inside on open, the dialog has <em>no data contract at all</em>, only
+    identity. Two different screens can mount the same dialog and share one cache entry through the
+    fetch key instead of sharing a wire (<a href='#repetition'>§15.2</a>,
+    <a href='16-dedupe-caching.html#client'>§16.3</a>). Prefer it whenever the lookup is cheap;
+    reach for the streamed promise when warming the data ahead of the click is genuinely worth it.
+    Either way the dialog stays portable, independent, and invisible to its host: encapsulation is
+    not a style preference here, it is what makes the component safe to move.
+  </p>
+
   <h2 id='rules'>The rules</h2>
   <table class='tbl'>
     <thead>
@@ -1330,6 +1452,15 @@ flowchart LR
         </td>
         <td><Chip k='react' /></td>
         <td><Chip k='critical' /></td>
+      </tr>
+      <tr>
+        <td>
+          Self-contained interactions (dialogs above all) <strong
+            >carry their own state, data, and mutation</strong
+          >; the consumer passes identity, nothing else.
+        </td>
+        <td><Chip k='react' /></td>
+        <td><Chip k='very' /></td>
       </tr>
     </tbody>
   </table>
