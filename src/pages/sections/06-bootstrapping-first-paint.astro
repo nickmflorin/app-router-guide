@@ -30,9 +30,9 @@ import Snippet from '../../components/Snippet.astro';
     a saved-views system) that was never going to read <code>searchParams</code>.
   </p>
   <p>
-    The common surrender at that point is to hand the whole view to the client: fetch in a hook,
-    paint a skeleton first, content later. And that surrender gives up the one thing this entire
-    part of the guide exists to protect, the complete first paint. There is a middle path, and it
+    The common fallback at that point is to hand the whole view to the client: fetch in a hook,
+    paint a skeleton first, content later. And that fallback gives up the one thing this entire part
+    of the guide exists to protect, the complete first paint. There is a middle path, and it
     predates the App Router: <strong
       >bootstrap the view from the server, and defer the client's own fetching until after the paint</strong
     >.
@@ -384,7 +384,7 @@ flowchart LR
     so a cold load spent seconds inside the chain before the page shell appeared: hard-navigation TTI
     ran seconds long while soft navigations took a few hundred milliseconds, a split that averages quietly
     hide. It is <a href='14-blocking-requests.html#csr-depth'>§14.5</a>'s serial-by-structure
-    waterfall, wearing auth clothing.
+    waterfall, applied to auth.
   </p>
   <p>
     The tell, and the reason this is a bootstrap case study, is that

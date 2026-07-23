@@ -641,8 +641,8 @@ flowchart LR
 
   <h3 id='tti'>Time-to-interactive is a dead metric</h3>
   <p>
-    A question worth asking a room of engineers: how many of you actually interact with a page
-    within 500ms of it loading? Nobody does. You land, you orient, you read; the first click comes
+    A question worth asking: how many users actually interact with a page within 500ms of it
+    loading? In practice, almost nobody. You land, you orient, you read; the first click comes
     seconds later, after the content has told you what is worth clicking on. Optimizing for the
     earliest possible moment of interactivity is optimizing a moment that nobody uses.
   </p>
@@ -666,8 +666,7 @@ flowchart LR
     unprofessional, and, crucially, <em>slower</em>, even when the wall-clock time is identical.
     Every spinner and every reflow gives the user a blatant look into the intermediate machinery:
     here is what has not been fetched yet, here is the empty space being held with fallback content,
-    here is everything arriving one request at a time, in whatever order the network chose. The user
-    is made to watch the kitchen.
+    here is everything arriving one request at a time, in whatever order the network chose.
   </p>
   <p>
     All of that can simply be swooped up onto the server. Resolve the data there and the

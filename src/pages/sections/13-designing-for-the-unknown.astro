@@ -31,8 +31,8 @@ import Snippet from '../../components/Snippet.astro';
     </p>
     <p>
       That cuts both ways. If design is how it works, then design has technical elements, always,
-      and the people who know how it works are obligated to be part of designing it. Comps aren't
-      scripture to implement and mocks aren't the end of the conversation: how a layout behaves
+      and the people who know how it works are obligated to be part of designing it. Comps aren't a
+      fixed spec to implement, and mocks aren't the end of the conversation: how a layout behaves
       while its data is unknown is a design property, and it's one that engineering understands
       first. This chapter is about carrying that knowledge back across the table.
     </p>
@@ -149,7 +149,8 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     Every naive answer fails a different way. <strong>Guess 1, split the height 50/50:</strong> the guess
     is wrong almost every time, because real data is skewed: the top table has 1 assignment and sits in
-    a sea of dead space while the bottom one crams 50 submissions into the same half and scrolls furiously.
+    a sea of dead space while the bottom one crams 50 submissions into the same half and scrolls within
+    it.
     <strong>Guess 2, size each table to its content with a min-height:</strong> now the pre-data state
     reserves the min-height, but the moment the top table's 30 rows arrive it grows and
     <em>shoves the bottom table down the page</em>, possibly below the fold: the exact
@@ -645,7 +646,7 @@ flowchart LR
       </tr>
       <tr>
         <td><strong>Images and embeds without dimensions</strong></td>
-        <td>Height is unknown until the asset loads; every image is a small earthquake.</td>
+        <td>Height is unknown until the asset loads; every image shifts everything below it.</td>
         <td>
           Aspect-ratio boxes reserved in CSS (<code>next/image</code> requires dimensions for exactly
           this reason).
@@ -933,7 +934,7 @@ flowchart LR
   <h4 id='wizard-shell-bad'>The wrong shape: a drawer per step</h4>
   <p>
     The failure mode is worth seeing before the fix. Give each step its own drawer component and the
-    flow becomes a parade of teardowns: React sees a different element type on every advance, so it
+    flow tears itself down on every advance: React sees a different element type each time, so it
     unmounts the entire tree the user is standing in and mounts a lookalike.
   </p>
 

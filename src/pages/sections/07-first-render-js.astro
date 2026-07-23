@@ -24,10 +24,11 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     Server rendering gets content on screen before any JavaScript runs (<a href='04-ssr.html'>§4</a
     >), but the page isn't <em>done</em> at first paint. The client bundle still has to download, parse,
-    and execute before hydration attaches your event handlers, and until then the page is a photograph:
-    visible, correct, and deaf. Everything in the bundle gates that moment, whether or not it participates
-    in it. The dialog no one has opened, the chart on a collapsed tab, the editor behind an "Edit" button:
-    if they're in the main bundle, the user pays for them before the first button click works.
+    and execute before hydration attaches your event handlers, and until then the page is a still image:
+    visible and correct, but unable to respond. Everything in the bundle gates that moment, whether or
+    not it participates in it. The dialog no one has opened, the chart on a collapsed tab, the editor
+    behind an "Edit" button: if they're in the main bundle, the user pays for them before the first button
+    click works.
   </p>
   <p>
     And the cost isn't limited to interactivity. <code>&lt;Link&gt;</code> can't start <a
@@ -395,7 +396,8 @@ flowchart LR
       ><code>@next/bundle-analyzer</code></a
     > shows exactly which imports own the bytes; the browser's coverage panel shows how much of the bundle
     the first paint actually executed. The two usual convictions: a heavy library imported by a component
-    that's visible for 5% of sessions, and a "shared utils" module that drags a whale in through one re-export.
+    that's visible for 5% of sessions, and a "shared utils" module that pulls in a huge dependency through
+    one re-export.
   </p>
 
   <h2 id='rules'>The rules</h2>

@@ -38,8 +38,7 @@ import Snippet from '../../components/Snippet.astro';
     client component mounts and initializes it. So the table can't be server-rendered with real
     content; it becomes a client component that fetches after hydration, and that buys the entire
     Part B problem set (spinners, shifting, waterfalls; <a href='04-ssr.html#simplicity'>§4.2</a>)
-    for a filter that would have fit in twelve characters of query string. Move the same state into
-    the URL and the request
+    for a filter the URL could have carried. Move the same state into the URL and the request
     <em>is</em> the state: the server reads <code>?status=active</code>, renders the right rows into
     HTML, and the "state management" is the platform's.
   </p>

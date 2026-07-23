@@ -1696,7 +1696,7 @@ flowchart LR
     <strong>have not even started</strong>, because a component that isn't mounted can't fetch.
     Depth in the tree becomes serialization on the network, automatically, with nobody ever choosing
     it. Each layer resolves, renders, and thereby <em>begins</em> the next layer's wait: the user watches
-    spinner generations hatch one inside another.
+    one spinner resolve only to reveal the next.
     <Chip k='react' />
     <Chip k='critical' />
   </p>

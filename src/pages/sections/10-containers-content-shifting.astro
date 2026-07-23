@@ -16,7 +16,7 @@ import Snippet from '../../components/Snippet.astro';
   <p class='lede'>
     Containers are the known half of "contain the unknown": they render immediately, they reserve
     accurate space, and everything uncertain happens <em>inside</em> them. Get this right and nothing
-    on the page ever moves; get it wrong and every request landing is a small earthquake.
+    on the page ever moves; get it wrong and the page shoves itself around every time a request lands.
   </p>
 
   <h2 id='cost'>10.1 What content shifting costs</h2>
@@ -31,7 +31,7 @@ import Snippet from '../../components/Snippet.astro';
   <p>
     This is measured in the field as <strong>Cumulative Layout Shift (CLS)</strong>, one of Google's
     Core Web Vitals: every unexpected shift is scored by how much of the viewport it moved, and the
-    scores accumulate. But the metric is just the symptom sheet. The disease has one cause:
+    scores accumulate. But the metric only measures the damage. The cause is always the same:
     <strong>something rendered without its space having been reserved.</strong> And SPA-style pages have
     it worst, because when all data arrives after hydration (<a href='03-mental-model.html'>§3</a>), <em
       >every region</em
@@ -547,7 +547,7 @@ flowchart LR
     <li>
       <strong><code>min-height</code>, when only the floor is knowable.</strong> Reserve the minimum honest
       footprint: enough that the common case doesn't shift, growth is rare and downward. A dishonest reservation
-      (a token 40px under a region that always renders 400px) is just a smaller earthquake.
+      (a token 40px under a region that always renders 400px) is just a smaller version of the same shift.
     </li>
     <li>
       <strong>Flex-grow and scroll, for the main content region.</strong> The strongest reservation is

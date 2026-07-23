@@ -47,10 +47,10 @@ import CompareCol from '../../components/CompareCol.astro';
 
   <h2 id='verdict'>19.2 The verdict</h2>
   <p>
-    <strong>The apps are SPAs wearing an App Router costume.</strong> The Next server is used almost exclusively
-    to serve an empty shell and proxy API calls; nearly all data fetching, authorization, and loading-state
-    management happens client-side, after hydration. In the vocabulary of <a href='02-goals.html'
-      >§2</a
+    <strong>The apps use the App Router, but they run as client-side SPAs.</strong> The Next server is
+    used almost exclusively to serve an empty shell and proxy API calls; nearly all data fetching, authorization,
+    and loading-state management happens client-side, after hydration. In the vocabulary of <a
+      href='02-goals.html'>§2</a
     >: almost nothing is treated as knowable at first render, so nearly everything a page shows is
     delivered as the unknown, with all the machinery (spinners, effects, hand-rolled loading flags)
     that
@@ -486,7 +486,9 @@ flowchart TB
     >).
   </p>
 
-  <h3 id='finding-2'>Finding 2: "use client" poisons whole subtrees instead of leaves</h3>
+  <h3 id='finding-2'>
+    Finding 2: "use client" pulls whole subtrees across the boundary instead of leaves
+  </h3>
   <p>
     The directive sits at page and layout level, usually just to call
     <code>useParams</code>/<code>useSearchParams</code>/<code>useRouter</code>: values a server page
@@ -510,7 +512,7 @@ flowchart TB
   <p>
     The audit found fetch-in-effect with hand-rolled state
     <em>next to an installed React Query</em>; a hand-written React Query (a
-    <code>useState</code>+<code>useEffect</code> fetch with a module-level in-flight-promise dedup hack);
+    <code>useState</code>+<code>useEffect</code> fetch with a module-level in-flight-promise dedup workaround);
     a <strong>mutation fired from an effect</strong> (verify-email POST, with a
     <code>useRef</code> guard against StrictMode double-invoke, for a token that should be verified server-side
     and rendered as plain HTML); and prop-to-state sync effects across sibling dialogs, one carrying an
@@ -578,7 +580,7 @@ flowchart TB
     of it, then enable the dashboard query. There are
     <strong>53 <code>enabled:</code>-gated dependent queries</strong> in ojl-ui, each one a client round-trip
     that a server component would resolve in a single pass with
-    <code>Promise.all</code>. A <code>consistencyToken</code> search-param hack exists to get read-your-writes
+    <code>Promise.all</code>. A <code>consistencyToken</code> search-param workaround exists to get read-your-writes
     after create: a problem <a
       href='https://nextjs.org/docs/app/api-reference/functions/revalidatePath'
       target='_blank'
@@ -661,7 +663,7 @@ flowchart TB
         <td>
           <strong>Push "use client" to the leaves.</strong> Pages and layouts server by default; params
           and searchParams via props, not hooks. De-clientify the participant and onboarding layouts first:
-          they poison everything below them.
+          they drag everything below them to the client.
         </td>
         <td>
           <a href='05-client-server-boundaries.html'>§5</a>,
@@ -695,7 +697,7 @@ flowchart TB
           <strong>Kill fetch-in-useEffect.</strong> Server components for initial data; one client data
           paradigm (not three) for what genuinely loads client-side; the
           <code>key</code> prop instead of prop-sync effects; server actions plus
-          <code>revalidatePath</code> instead of the <code>consistencyToken</code> hack.
+          <code>revalidatePath</code> instead of the <code>consistencyToken</code> workaround.
         </td>
         <td>
           <a href='05-client-server-boundaries.html#self-contained'>§5.7</a>,

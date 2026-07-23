@@ -647,8 +647,8 @@ flowchart LR
     Just as important is what does <em>not</em> trigger suspension:
     <strong>a fetch inside <code>useEffect</code> is invisible to React.</strong> Nothing suspends, no
     boundary activates, no streaming happens; the framework doesn't even know the component is waiting.
-    Every hand-rolled <code>isLoading</code> flag in a codebase exists because the fetching pattern opted
-    out of the mechanism that would have made it unnecessary.
+    Most hand-rolled <code>isLoading</code> flags exist because the fetching pattern opted out of the
+    mechanism that would have made them unnecessary.
   </p>
   <Callout kind='info' title="Boundaries don't re-trigger on updates">
     <p>

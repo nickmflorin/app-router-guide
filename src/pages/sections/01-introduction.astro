@@ -44,9 +44,8 @@ import CompareCol from '../../components/CompareCol.astro';
         rel='noopener'>React 19</a
       > and the App Router: the contract every primitive in this stack is built against. Every one of
       them assumes you are already thinking this way, so when you aren't, nothing throws an error; it
-      just quietly works worse. The framework doesn't offer "SPA mode" as a supported alternative; it
-      offers silence. Build against the grain and nothing stops you: the page renders, the demo works,
-      the sprint closes. What you've actually done is taken out a loan no one issues a statement for.
+      just quietly works worse. There is no supported "SPA mode", and nothing stops you from building
+      one anyway: the page renders, the demo works, the sprint closes.
     </p>
     <p>
       So the question is
@@ -111,7 +110,7 @@ import CompareCol from '../../components/CompareCol.astro';
   <Callout kind='warn' title='What it looks like when it compounds'>
     <p>
       Pages that take visibly long to navigate to, in production, on real networks. Spinners nested
-      inside spinners. Content that jumps as each request lands. And the insidious part: you
+      inside spinners. Content that jumps as each request lands. And the costlier part: you
       progressively
       <em>lose the ability to adopt the tools designed to fix these problems</em>. Streaming can't
       help a page whose data loads after hydration. Caching can't help a request the server never
@@ -120,7 +119,7 @@ import CompareCol from '../../components/CompareCol.astro';
         target='_blank'
         rel='noopener'>Partial prerendering</a
       > can't help a tree that's client-rendered from the root. The further you build into the wrong model,
-      the more expensive the road back; the refactoring becomes a never-ending battle.
+      the more expensive the road back.
     </p>
   </Callout>
 
@@ -140,8 +139,8 @@ import CompareCol from '../../components/CompareCol.astro';
   </p>
   <p>
     The rest of it is a second kind of pattern: the ones the docs never quite name. Brute-force your
-    way through the App Router for long enough — enough wrong turns, enough head-against-the-wall
-    refactors, until the thing finally starts behaving — and a set of design patterns starts
+    way through the App Router for long enough (enough wrong turns, enough head-against-the-wall
+    refactors, until the thing finally starts behaving) and a set of design patterns starts
     surfacing on its own, through nothing but repetition and correction: server as the default, the
     client only where it's earned. Then comes the strange part: once they've surfaced, you start
     recognizing them everywhere: half-described in the docs, embedded in other codebases, implied by
@@ -178,12 +177,10 @@ import CompareCol from '../../components/CompareCol.astro';
         href='https://react.dev/reference/rsc/use-client'
         target='_blank'
         rel='noopener'><code>"use client"</code></a
-      >. Treat every directive as a small defeat, avoid it like the plague, and the brain starts
-      down the server-first paths instead: pushing the boundary lower, splitting along capability
-      seams, asking why the server can't finish this. Stretch those muscles long enough and the
-      design patterns of React 19 and the App Router emerge naturally, through nothing more than the
-      trial and error of avoidance. They are the same patterns this guide hands you up front, to
-      save you the months it takes to notice them.
+      >. Treat every directive as a small defeat, reach for it as rarely as you can, and the brain
+      starts down the server-first paths instead: pushing the boundary lower, splitting along
+      capability seams, asking why the server can't finish this. Stretch those muscles long enough
+      and the design patterns of React 19 and the App Router emerge on their own.
     </p>
   </Callout>
   <p>
@@ -207,8 +204,8 @@ import CompareCol from '../../components/CompareCol.astro';
     to.
   </p>
   <p>
-    This guide is the map, not the territory. Every chapter links to the primary sources, official
-    Next.js and React documentation, collected in
+    Every chapter links to the primary sources, official Next.js and React documentation, collected
+    in
     <a href='21-references.html'>§21 References</a>.
   </p>
 
@@ -222,14 +219,10 @@ import CompareCol from '../../components/CompareCol.astro';
     Next.js-level rule exists.
   </p>
   <p>
-    There is a specific reward for pushing through the terse parts. If you commit to server-first
-    thinking and force your brain down those paths through trial and error until you start getting
-    it right, the design patterns begin to emerge on their own. And then something useful happens:
-    the next time you hit one of those single-sentence pronouncements in the Next.js docs, it
-    finally lands, because you have already felt the problem it was quietly solving. Much of this
-    guide is an attempt to front-load that click, to explain the why and the how behind the terse
-    lines so you spend less time confused. It will not remove the process; nothing does. It just
-    makes it less painful.
+    There is a specific reward for pushing through the terse parts. Once you have spent real time
+    building server-first, those single-sentence pronouncements start to land, because you have
+    already felt the problem each one was quietly solving. Much of this guide is an attempt to
+    front-load that click.
   </p>
 
   <h2 id='direction'>The direction of travel</h2>
@@ -238,9 +231,8 @@ import CompareCol from '../../components/CompareCol.astro';
     object, and that it has been moving in one direction for over a decade. For roughly ten years
     (call it 2013 to 2020), "a React app" meant one thing: the server sends an empty HTML shell and
     a JavaScript bundle; the bundle boots; components mount; effects fire; data is fetched; the page
-    assembles itself in the browser. Everything we internalized as "how React works"
-    (fetch-in-effect, loading flags in state, lifting state up, client routers, spinners) is
-    machinery for surviving inside that model.
+    assembles itself in the browser. Everything we internalized as "how React works" is machinery
+    for surviving inside that model.
   </p>
   <p>
     But that model was a stop on the road, not the destination, and the history makes the trajectory

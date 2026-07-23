@@ -377,11 +377,11 @@ flowchart LR
       href='https://react.dev/reference/react/Suspense'
       target='_blank'
       rel='noopener'>suspense boundaries</a
-    >, but decoupling (C) is about <em>dependencies</em>, not confetti; a boundary should trace a
-    real data dependency, not a visual whim. Maximizing the known (A) can tempt you to block the
-    whole page on a fetch so everything arrives "known", but that violates B: knowledge that arrives
-    late and all-at-once is worse than structure that arrives instantly with the slow parts
-    contained. When in doubt:
+    >, but decoupling (C) is about real <em>dependencies</em>; a boundary should trace a real data
+    dependency, not a visual whim. Maximizing the known (A) can tempt you to block the whole page on
+    a fetch so everything arrives "known", but that violates B: knowledge that arrives late and
+    all-at-once is worse than structure that arrives instantly with the slow parts contained. When
+    in doubt:
     <strong>structure first, then contain, then optimize what's inside</strong>.
   </p>
 

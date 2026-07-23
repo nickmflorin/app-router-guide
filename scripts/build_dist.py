@@ -31,7 +31,11 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FORMATS = ("html", "md", "deck")
+# TEMPORARILY DISABLED (per Nick, 2026-07-23): the "deck" format is left out of
+# the dist while the standalone slide-deck/ folder is the deck being iterated
+# on. To re-enable, add "deck" back to FORMATS and uncomment the deck block in
+# main() below.
+FORMATS = ("html", "md")
 PACKAGINGS = ("folder", "file")
 
 
@@ -112,13 +116,15 @@ def main():
         if "file" in packagings:
             built.append("build/output/app-router-guide.md     (single-file markdown)")
 
-    if "deck" in formats:
-        # The slide deck: composed from the built guide HTML (blocks pulled by
-        # data-content-id) + the committed DB (which blocks, and their
-        # arrangement). Always one self-contained presentation file.
-        ensure_html()
-        run([sys.executable, "scripts/build_deck.py"])
-        built.append("build/output/app-router-guide-deck.html  (self-contained presentation)")
+    # TEMPORARILY DISABLED (per Nick, 2026-07-23): deck output is not built for
+    # now; see the FORMATS note above. Uncomment to restore.
+    # if "deck" in formats:
+    #     # The slide deck: composed from the built guide HTML (blocks pulled by
+    #     # data-content-id) + the committed DB (which blocks, and their
+    #     # arrangement). Always one self-contained presentation file.
+    #     ensure_html()
+    #     run([sys.executable, "scripts/build_deck.py"])
+    #     built.append("build/output/app-router-guide-deck.html  (self-contained presentation)")
 
     print("\ndist summary")
     for b in built:

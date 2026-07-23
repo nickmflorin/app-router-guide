@@ -33,7 +33,7 @@ import Snippet from '../../components/Snippet.astro';
     <Chip k='critical' />
   </p>
   <p>
-    That's why one careless directive is never one component's problem. A
+    That's why one misplaced directive is never one component's problem. A
     <code>"use client"</code> at the top of a page doesn't make a page interactive: it drags the page's
     entire import graph across the boundary. Components that render pure markup, utilities that format
     dates, the icon set, the table internals: all of it ships and hydrates, whether or not it ever does
@@ -1687,7 +1687,8 @@ flowchart LR
 
   <h2 id='god-components'>5.9 The God component: one boundary to lose everything</h2>
   <p>
-    Now invert every rule in this chapter at once, because the Tracker codebase does. Put a
+    This is the shape the Tracker codebase falls into, and it inverts several of this chapter's
+    rules at once. Put a
     <code>"use client"</code> component (or its more respectable-looking cousins, a provider or a <code
       >useXManager()</code
     > hook) at the top of a tree, and have it do three jobs:
@@ -1731,7 +1732,7 @@ flowchart LR
   </Snippet>
 
   <p>
-    That's the hook spelling. The same disease wears a component costume just as often: a page or
+    That's the hook spelling. The same problem shows up as a component just as often: a page or
     container that fetches everything in sight, holds state it never reads, and threads all of it
     down through layers that are nothing but couriers:
   </p>
@@ -1780,9 +1781,10 @@ flowchart LR
     state, every callback exists on behalf of someone else: the page is a warehouse, and <code
       >SectionLayout</code
     >, <code>ProgramsToolbar</code>, and
-    <code>ProgramsTable</code> are its delivery routes (the coupling-layer autopsy of
-    <a href='15-minimize-the-wires.html#cost'>§15.1</a>, wearing its boundary costume). And the
-    threading doesn't stop where the snippet does: <code>selectedId</code> rides through
+    <code>ProgramsTable</code> are its delivery routes (the same coupling <a
+      href='15-minimize-the-wires.html#cost'>§15.1</a
+    > takes apart, surfacing here as a boundary problem). And the threading doesn't stop where the snippet
+    does: <code>selectedId</code> rides through
     <code>ProgramsTable</code> into <code>Row</code> into <code>Cell</code>, coupling four
     signatures to one piece of state that exactly one of them reads.
   </p>
@@ -1825,7 +1827,7 @@ flowchart LR
     <li>
       <strong>Refactor gravity.</strong> Children written against the manager's context can't be lifted
       out or rendered on the server without rewriting them, so the cheapest place to add feature N+1 is
-      inside the God component, which is how it got this big last time.
+      inside the God component, which is exactly how it grows.
     </li>
   </ul>
 

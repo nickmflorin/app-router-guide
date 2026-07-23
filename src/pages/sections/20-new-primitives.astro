@@ -24,17 +24,16 @@ import Snippet from '../../components/Snippet.astro';
 
   <p>
     Before the catalog, a nudge: a lot of this is genuinely new, and a fair amount of it is easy to
-    miss. The platform ships APIs faster than most teams read the changelogs, and many of them exist
-    precisely to <strong>delete work still being done by hand</strong>: a hook that replaces a whole <code
-      >isLoading</code
-    >/<code>errors</code> state pair (<a href='#use-action-state'>useActionState</a>), a value that
-    replaces a debounce (<a href='#use-deferred-value'>useDeferredValue</a>), a component that
-    replaces a mount/unmount dance (<a href='#activity'>Activity</a>), a compiler that replaces a
-    wall of <code>useMemo</code> (<a href='#compiler'>the React Compiler</a>). Half the reason this
-    appendix exists is discovery: to put the current server-first toolkit in one place, so the next
-    time you're about to reach for a manual workaround, you can check here first and find that the
-    framework already ships the thing. If an entry below is new to you, that is exactly the point;
-    skim the map for the names you don't recognize.
+    miss. The platform ships new APIs at a steady clip, and many of them exist precisely to <strong
+      >delete work still being done by hand</strong
+    >: a hook that replaces a whole <code>isLoading</code>/<code>errors</code> state pair (<a
+      href='#use-action-state'>useActionState</a
+    >), a compiler that replaces a wall of <code>useMemo</code> (<a href='#compiler'
+      >the React Compiler</a
+    >). Half the reason this appendix exists is discovery: to put the current server-first toolkit
+    in one place, so the next time you're about to reach for a manual workaround, you can check here
+    first and find that the framework already ships the thing. If an entry below is new to you, that
+    is exactly the point; skim the map for the names you don't recognize.
   </p>
 
   <p>
@@ -46,9 +45,9 @@ import Snippet from '../../components/Snippet.astro';
       target='_blank'
       rel='noopener'>Suspense</a
     >, the caching primitives assume the server renders something worth caching. They are the payoff
-    of the model, not add-ons to it. Second, these are <em>primitives</em>, not goals: the chapters
-    own the patterns, and this appendix owns the API surface. Where a primitive already has a home
-    in a chapter, the entry links there instead of repeating the doctrine.
+    of the model. Second, these are <em>primitives</em>, not goals: the chapters own the patterns,
+    and this appendix owns the API surface. Where a primitive already has a home in a chapter, the
+    entry links there instead of repeating the doctrine.
   </p>
 
   <h2 id='map'>20.1 The map</h2>
@@ -596,8 +595,8 @@ import Snippet from '../../components/Snippet.astro';
   <h3 id='use-id'><code>useId</code></h3>
   <p>
     Generates ids that are <strong>stable across server render and hydration</strong>. Hand-written
-    or randomly generated element ids are a hydration-mismatch factory in an SSR world; this is the
-    sanctioned replacement, chiefly for accessibility wiring.
+    or randomly generated element ids are a common source of hydration mismatches under SSR; this is
+    the sanctioned replacement, chiefly for accessibility wiring.
   </p>
   <Snippet>
     <pre
