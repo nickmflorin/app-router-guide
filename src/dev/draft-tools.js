@@ -574,6 +574,53 @@
   function currentPageSlug() {
     return (page || '').replace(/\.html$/, '');
   }
+  /* ---- human-readable summaries for contentRefs (deck panel rows) ----
+     Same-page refs read the live DOM; off-page refs lazily fetch + parse the
+     served section page once and cache the Document. */
+  const pageDocCache = {};
+  function refMeta(ref) {
+    const [slug, type, n] = ref.split('::');
+    return { slug, type, n };
+  }
+  function lookupRef(doc, ref) {
+    const esc = window.CSS && CSS.escape ? CSS.escape(ref) : ref;
+    return doc.querySelector('[data-content-id="' + esc + '"]');
+  }
+  function summarizeEl(el) {
+    if (!el) return null;
+    let t = '';
+    if (el.matches('figure.diagram')) {
+      const cap = el.querySelector('figcaption');
+      t = 'Diagram: ' + ((cap && cap.textContent) || '(no caption)').trim();
+    } else if (el.classList.contains('snippet')) {
+      const fn = el.querySelector('.filename');
+      t = 'Code: ' + ((fn && fn.textContent) || el.textContent || '').trim();
+    } else {
+      t = (el.textContent || '').trim();
+    }
+    t = t.replace(/\s+/g, ' ');
+    return t.length > 200 ? t.slice(0, 200) + '…' : t;
+  }
+  function refSummary(ref, cb) {
+    const meta = refMeta(ref);
+    if (meta.slug === currentPageSlug()) return cb(summarizeEl(lookupRef(document, ref)));
+    if (meta.slug in pageDocCache) {
+      const doc = pageDocCache[meta.slug];
+      return cb(doc ? summarizeEl(lookupRef(doc, ref)) : null);
+    }
+    const href =
+      (location.pathname.includes('/sections/') ? '' : 'sections/') + meta.slug + '.html';
+    fetch(href, { cache: 'no-store' })
+      .then(r => (r.ok ? r.text() : Promise.reject(new Error('' + r.status))))
+      .then(html => {
+        pageDocCache[meta.slug] = new DOMParser().parseFromString(html, 'text/html');
+        cb(summarizeEl(lookupRef(pageDocCache[meta.slug], ref)));
+      })
+      .catch(() => {
+        pageDocCache[meta.slug] = null;
+        cb(null);
+      });
+  }
   async function deckSend(method, q, body) {
     const res = await fetch(DECK_API + (q || ''), {
       method,
@@ -868,17 +915,27 @@
         if (!el) return;
         el.classList.add('deck-included');
         const r = el.getBoundingClientRect();
+        const box = document.createElement('div');
+        box.className = 'deck-tagbox';
+        box.style.top = window.scrollY + r.top + 6 + 'px';
+        box.style.left = window.scrollX + r.right - 6 + 'px';
         const badge = document.createElement('div');
         badge.className = 'deck-badge' + (s.id === activeSlideId ? ' active' : '');
         badge.textContent = 'S' + (si + 1);
         badge.title = 'Slide ' + (si + 1) + (it.included === false ? ' · excluded' : '');
-        badge.style.top = window.scrollY + r.top + 6 + 'px';
-        badge.style.left = window.scrollX + r.right - 30 + 'px';
         badge.addEventListener('click', () => {
           activeSlideId = s.id;
           openDeckPanel();
         });
-        deckLayer.appendChild(badge);
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'deck-badge-x';
+        del.textContent = '×';
+        del.title = 'Remove from slide ' + (si + 1);
+        del.addEventListener('click', () => removeDeckItem(it));
+        box.appendChild(badge);
+        box.appendChild(del);
+        deckLayer.appendChild(box);
       });
     });
   }
@@ -1015,13 +1072,21 @@
         row.innerHTML =
           '<label class="dp-inc"><input type="checkbox" ' +
           (it.included !== false ? 'checked' : '') +
-          '/></label><span class="dp-ref"></span>' +
+          '/></label><span class="dp-ref"><span class="dp-meta"></span><span class="dp-summary">…</span></span>' +
           '<span class="dp-actions"><button type="button" data-a="up">↑</button>' +
           '<button type="button" data-a="down">↓</button><select class="dp-move">' +
           slideOpts +
           '</select><button type="button" data-a="rm">✕</button></span>' +
           '<textarea class="dp-itemnote" placeholder="Note for this block"></textarea>';
-        row.querySelector('.dp-ref').textContent = it.contentRef;
+        const meta = refMeta(it.contentRef);
+        const chap = (meta.slug.match(/^(\d+)/) || [])[1];
+        row.querySelector('.dp-meta').textContent =
+          (chap ? '§' + Number(chap) + ' · ' : meta.slug + ' · ') + meta.type + ' ' + meta.n;
+        row.querySelector('.dp-ref').title = it.contentRef;
+        const sumEl = row.querySelector('.dp-summary');
+        refSummary(it.contentRef, t => {
+          sumEl.textContent = t || it.contentRef;
+        });
         row.querySelector('.dp-inc input').addEventListener('change', e => {
           it.included = e.target.checked;
           saveItemRemote(it);

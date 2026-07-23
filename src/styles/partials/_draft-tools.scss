@@ -1,10 +1,9 @@
 /* @dev-only:start */
-/* ---------- draft tools: badge + annotation layer (remove when the guide ships) ---------- */
+/* Draft tools: the badge + annotation layer. Stripped from production builds (see @dev-only). */
 
-/* Dev-tool chrome grays. Kept LOCAL (not in the tailwind.css @theme palette)
-   on purpose: this whole layer is dev-only and dead-code-eliminated from the
-   production build, so its colors must not leak into the shipped token set.
-   Brand colors reused by these tools reference the real @theme tokens
+/* Dev-tool chrome grays. Kept LOCAL (not in the tailwind.css @theme palette) on purpose: this whole
+   layer is dev-only and dead-code-eliminated from the production build, so its colors must not leak
+   into the shipped token set. Brand colors reused by these tools reference the real @theme tokens
    (var(--color-amber), var(--color-white), etc.) directly. */
 :root {
   --note-ink: #444;
@@ -49,23 +48,25 @@
   border-radius: 6px;
   padding: 3px 10px;
   cursor: pointer;
-}
-.note-btn:hover {
-  background: var(--note-hover);
-}
-.note-btn.active {
-  color: var(--color-white);
-  background: var(--color-amber);
-  border-color: var(--color-amber);
-}
-.note-btn.danger {
-  color: var(--color-red-ink);
-  border-color: var(--color-red-border);
-}
-.note-btn.danger:hover {
-  background: var(--color-red-soft);
-  border-color: var(--color-red);
-  color: var(--color-red-ink-strong);
+
+  &:hover {
+    background: var(--note-hover);
+  }
+  &.active {
+    color: var(--color-white);
+    background: var(--color-amber);
+    border-color: var(--color-amber);
+  }
+  &.danger {
+    color: var(--color-red-ink);
+    border-color: var(--color-red-border);
+
+    &:hover {
+      background: var(--color-red-soft);
+      border-color: var(--color-red);
+      color: var(--color-red-ink-strong);
+    }
+  }
 }
 body.note-mode .content-inner {
   cursor: crosshair;
@@ -97,11 +98,12 @@ body.note-mode .content-inner {
     background 0.12s ease,
     border-color 0.12s ease,
     color 0.12s ease;
-}
-.note-pin:hover {
-  background: var(--note-hover);
-  border-color: var(--note-pin-hover-border);
-  color: var(--color-neutral-ink);
+
+  &:hover {
+    background: var(--note-hover);
+    border-color: var(--note-pin-hover-border);
+    color: var(--color-neutral-ink);
+  }
 }
 .note-flash {
   animation: note-flash 1.6s ease-out;
@@ -131,61 +133,70 @@ body.note-mode .content-inner {
   border-radius: 10px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
   font-size: 12.5px;
-}
-.notes-panel .np-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--note-line);
-  font-weight: 650;
-}
-.notes-panel .np-list {
-  overflow-y: auto;
-  flex: 1;
-}
-.notes-panel .np-item {
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--note-line-soft);
-}
-.notes-panel .np-item.resolved {
-  opacity: 0.5;
-}
-.notes-panel .np-where {
-  color: var(--color-amber-ink);
-  font-size: 11px;
-  margin-bottom: 2px;
-}
-.notes-panel .np-text {
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
-}
-.notes-panel .np-actions {
-  margin-top: 5px;
-  display: flex;
-  gap: 6px;
-}
-.notes-panel .np-actions button,
-.notes-panel .np-foot button {
-  font: inherit;
-  font-size: 11px;
-  color: var(--note-ink);
-  background: var(--note-btn-bg);
-  border: 1px solid var(--note-btn-border);
-  border-radius: 5px;
-  padding: 2px 8px;
-  cursor: pointer;
-}
-.notes-panel .np-actions button:hover,
-.notes-panel .np-foot button:hover {
-  background: var(--note-btn-hover);
-}
-.notes-panel .np-foot {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px 12px;
-  border-top: 1px solid var(--note-line);
+
+  .np-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--note-line);
+    font-weight: 650;
+  }
+
+  .np-list {
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .np-item {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--note-line-soft);
+
+    &.resolved {
+      opacity: 0.5;
+    }
+  }
+
+  .np-where {
+    color: var(--color-amber-ink);
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+
+  .np-text {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+  }
+
+  .np-actions {
+    margin-top: 5px;
+    display: flex;
+    gap: 6px;
+  }
+
+  .np-actions button,
+  .np-foot button {
+    font: inherit;
+    font-size: 11px;
+    color: var(--note-ink);
+    background: var(--note-btn-bg);
+    border: 1px solid var(--note-btn-border);
+    border-radius: 5px;
+    padding: 2px 8px;
+    cursor: pointer;
+  }
+  .np-actions button:hover,
+  .np-foot button:hover {
+    background: var(--note-btn-hover);
+  }
+
+  .np-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 12px;
+    border-top: 1px solid var(--note-line);
+  }
 }
 .note-dialog {
   position: fixed;
@@ -199,23 +210,25 @@ body.note-mode .content-inner {
   border-radius: 10px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
   padding: 12px;
-}
-.note-dialog textarea {
-  width: 100%;
-  min-height: 90px;
-  font: inherit;
-  font-size: 13px;
-  border: 1px solid var(--note-input-border);
-  border-radius: 6px;
-  padding: 8px;
-  box-sizing: border-box;
-  resize: vertical;
-}
-.note-dialog .nd-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 8px;
+
+  textarea {
+    width: 100%;
+    min-height: 90px;
+    font: inherit;
+    font-size: 13px;
+    border: 1px solid var(--note-input-border);
+    border-radius: 6px;
+    padding: 8px;
+    box-sizing: border-box;
+    resize: vertical;
+  }
+
+  .nd-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+  }
 }
 .note-toast {
   position: fixed;
@@ -230,40 +243,42 @@ body.note-mode .content-inner {
   padding: 6px 14px;
 }
 
-/* ---------- dev-only sidebar deck link ---------- */
-/* The link is a plain .toc-item — no colour/border/padding overrides — so its
-   hover background and metrics match every other nav item exactly. The divider
-   is a SEPARATE element above it (a flat hairline, no radius, not hoverable), so
-   the hover fill never reaches the divider. Only a faint DEV marker sets it apart. */
+/* The link is a plain .toc-item — no colour/border/padding overrides — so its hover background and
+   metrics match every other nav item exactly. The divider is a SEPARATE element above it (a flat
+   hairline, no radius, not hoverable), so the hover fill never reaches the divider. Only a faint DEV
+   marker sets it apart. */
 .deck-sep {
   height: 0;
   border-top: 1px solid var(--color-line);
   border-radius: 0;
   margin: 10px 0 6px;
 }
-.toc-item.deck-link .n {
-  /* The number column, holding the play icon: centered on the row (the other
-     rows baseline-align their digits), right-aligned like the numbers. */
-  align-self: center;
-  display: inline-flex;
+.toc-item.deck-link {
+  /* Unlike the chapter rows (baseline-aligned digits + text), this row mixes an svg icon, text, and
+     a mini tag: center everything on one line. */
   align-items: center;
-  justify-content: flex-end;
-}
-.toc-item.deck-link .n .deck-play {
-  display: block;
-}
-.toc-item.deck-link .deck-dev-tag {
-  align-self: center;
-  line-height: 1;
-  margin-left: 8px;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-faint);
+
+  .n {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    .deck-play {
+      display: block;
+    }
+  }
+
+  .deck-dev-tag {
+    line-height: 24px;
+    margin-left: 8px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
 }
 
-/* ---------- deck mode: designation UI ---------- */
 body.deck-mode .content-inner {
   cursor: copy;
 }
@@ -272,8 +287,36 @@ body.deck-mode .content-inner {
   outline-offset: 4px;
   border-radius: 4px;
 }
-.deck-badge {
+.deck-tagbox {
   position: absolute;
+  z-index: 56;
+  display: flex;
+  gap: 4px;
+  transform: translateX(-100%); /* left is the block's right edge; grow leftward */
+}
+.deck-badge-x {
+  min-width: 20px;
+  height: 20px;
+  padding: 0;
+  border-radius: 5px;
+  background: var(--color-white);
+  border: 1px solid var(--color-red-border, #f3b4ad);
+  color: var(--color-red-ink, #b42318);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.deck-badge-x:hover {
+  background: var(--color-red-soft, #fdecea);
+  border-color: var(--color-red, #d92d20);
+}
+.deck-badge {
+  position: static;
   z-index: 56;
   min-width: 22px;
   height: 20px;
@@ -289,18 +332,19 @@ body.deck-mode .content-inner {
   justify-content: center;
   cursor: pointer;
   box-sizing: border-box;
-}
-.deck-badge.active {
-  background: var(--color-blue, #0070f3);
-  color: var(--color-white);
+
+  &.active {
+    background: var(--color-blue, #0070f3);
+    color: var(--color-white);
+  }
 }
 .deck-panel {
   position: fixed;
   bottom: 14px;
   left: 14px;
   z-index: 70;
-  width: 360px;
-  max-height: 70vh;
+  width: min(600px, calc(100vw - 28px));
+  max-height: 84vh;
   display: flex;
   flex-direction: column;
   background: var(--color-white);
@@ -308,55 +352,61 @@ body.deck-mode .content-inner {
   border-radius: 10px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
   font-size: 12px;
-}
-.deck-panel .np-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--note-line);
-  font-weight: 650;
-}
-.deck-panel .np-head .dp-open {
-  font-size: 11px;
-  margin-right: 8px;
-}
-.deck-panel .dp-list {
-  overflow-y: auto;
-  flex: 1;
-  padding: 6px;
-}
-.deck-panel .np-foot {
-  display: flex;
-  gap: 6px;
-  padding: 8px 12px;
-  border-top: 1px solid var(--note-line);
-}
-.deck-panel .np-foot button,
-.deck-panel .dp-actions button,
-.deck-panel .np-head button {
-  font: inherit;
-  font-size: 11px;
-  color: var(--note-ink);
-  background: var(--note-btn-bg);
-  border: 1px solid var(--note-btn-border);
-  border-radius: 5px;
-  padding: 2px 7px;
-  cursor: pointer;
-}
-.deck-panel .np-foot button:hover,
-.deck-panel .dp-actions button:hover {
-  background: var(--note-btn-hover);
+
+  .np-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--note-line);
+    font-weight: 650;
+
+    .dp-open {
+      font-size: 11px;
+      margin-right: 8px;
+    }
+  }
+
+  .dp-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 6px;
+  }
+
+  .np-foot {
+    display: flex;
+    gap: 6px;
+    padding: 8px 12px;
+    border-top: 1px solid var(--note-line);
+  }
+
+  .np-foot button,
+  .dp-actions button,
+  .np-head button {
+    font: inherit;
+    font-size: 11px;
+    color: var(--note-ink);
+    background: var(--note-btn-bg);
+    border: 1px solid var(--note-btn-border);
+    border-radius: 5px;
+    padding: 2px 7px;
+    cursor: pointer;
+  }
+  .np-foot button:hover,
+  .dp-actions button:hover {
+    background: var(--note-btn-hover);
+  }
 }
 .dp-slide {
   border: 1px solid var(--note-line);
   border-radius: 8px;
   padding: 8px;
   margin-bottom: 8px;
-}
-.dp-slide.active {
-  border-color: var(--color-blue, #0070f3);
-  box-shadow: 0 0 0 1px var(--color-blue, #0070f3);
+
+  &.active {
+    border-color: var(--color-blue, #0070f3);
+    box-shadow: 0 0 0 1px var(--color-blue, #0070f3);
+  }
 }
 .dp-slide-head {
   display: flex;
@@ -380,9 +430,10 @@ body.deck-mode .content-inner {
   gap: 4px;
   white-space: nowrap;
   user-select: none;
-}
-.dp-auto input {
-  margin: 0;
+
+  input {
+    margin: 0;
+  }
 }
 .dp-title {
   flex: 1;
@@ -431,20 +482,37 @@ body.deck-mode .content-inner {
   grid-template-columns: auto 1fr auto;
   grid-gap: 4px;
   align-items: center;
-}
-.dp-item .dp-ref {
-  font-family: ui-monospace, monospace;
-  font-size: 10.5px;
-  color: var(--note-ink);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.dp-item .dp-itemnote {
-  grid-column: 1 / -1;
-}
-.dp-item.excluded {
-  opacity: 0.5;
+
+  .dp-ref {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+  .dp-meta {
+    font-family: ui-monospace, monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
+  .dp-summary {
+    font-size: 11px;
+    line-height: 1.35;
+    color: var(--note-ink);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .dp-itemnote {
+    grid-column: 1 / -1;
+  }
+
+  &.excluded {
+    opacity: 0.5;
+  }
 }
 .dp-empty {
   color: var(--color-neutral-ink, #737373);
