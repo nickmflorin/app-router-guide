@@ -1341,6 +1341,7 @@ flowchart LR
      both ends of its mutation. */</span>
   <span class="tok-kw">return</span> (
     &lt;&gt;
+      &lt;<span class="tok-fn">h1</span>&gt;Program&lt;/<span class="tok-fn">h1</span>&gt;
       &lt;<span class="tok-fn">Button</span> <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">true</span>)}&gt;
         Invite member
       &lt;/<span class="tok-fn">Button</span>&gt;
@@ -1362,7 +1363,9 @@ flowchart LR
         <pre
           class='code v-good'
           is:raw><span class="filename">ProgramHeader.tsx</span><span class="tok-dir">"use client"</span>;
-<span class="tok-kw">import</span> { InviteMemberButton } <span class="tok-kw">from</span> <span class="tok-str">"./InviteMemberButton"</span>;
+<span class="tok-kw">import</span> {
+  InviteMemberButton,
+} <span class="tok-kw">from</span> <span class="tok-str">"./InviteMemberButton"</span>;
 
 <span class="tok-kw">export function</span> <span class="tok-fn">ProgramHeader</span>({ programId }) {
   <span class="tok-com">/* The trigger owns the dialog: its open
@@ -1380,6 +1383,168 @@ flowchart LR
           One identity prop is the entire contract. The same button now drops into the page header,
           a row's action menu, or an empty state without touching the host, which is the portability
           test of <a href='#portability'>§15.5</a> passed by construction.
+        </CodeCaption>
+      </Snippet>
+    </CompareCol>
+  </Compare>
+
+  <p>
+    Inside the trigger, one detail carries most of the weight:
+    <strong
+      >conditionally render the dialog; never park it mounted and toggle an
+      <code>open</code> prop.</strong
+    > A permanently mounted dialog runs its hooks from the page's first paint: a client fetch fires for
+    a dialog nobody opened, and a <code>use()</code> on a passed promise suspends for something invisible.
+    "Fetch on open" and "resolve on open" only mean anything because <em>open</em> means <em
+      >mounted</em
+    >:
+  </p>
+
+  <Compare>
+    <CompareCol kind='bad' label='✕ Always mounted, told to hide'>
+      <Snippet>
+        <pre
+          class='code v-bad'
+          is:raw><span class="filename">InviteMemberButton.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberButton</span>({ programId }) {
+  <span class="tok-kw">const</span> [open, setOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
+
+  <span class="tok-com">/* Mounted from the first paint: its
+     hooks run, its fetch fires, and a
+     use() would suspend, all for a
+     dialog nobody opened. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">Button</span> <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">true</span>)}&gt;
+        Invite member
+      &lt;/<span class="tok-fn">Button</span>&gt;
+      &lt;<span class="tok-fn">InviteMemberDialog</span>
+        <span class="tok-prop">open</span>={open}
+        <span class="tok-prop">programId</span>={programId}
+        <span class="tok-prop">onClose</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">false</span>)}
+      /&gt;
+    &lt;/&gt;
+  );
+}</pre>
+      </Snippet>
+    </CompareCol>
+    <CompareCol kind='good' label='✓ Conditionally rendered'>
+      <Snippet>
+        <pre
+          class='code v-good'
+          is:raw><span class="filename">InviteMemberButton.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { useState } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberButton</span>({ programId }) {
+  <span class="tok-kw">const</span> [open, setOpen] = <span class="tok-fn">useState</span>(<span class="tok-kw">false</span>);
+
+  <span class="tok-com">/* Not rendered until open: no mount,
+     no hooks, no fetch, no resolved
+     promise. "Open" means "exists". */</span>
+  <span class="tok-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tok-fn">Button</span> <span class="tok-prop">onClick</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">true</span>)}&gt;
+        Invite member
+      &lt;/<span class="tok-fn">Button</span>&gt;
+      {open &amp;&amp; (
+        &lt;<span class="tok-fn">InviteMemberDialog</span>
+          <span class="tok-prop">programId</span>={programId}
+          <span class="tok-prop">onClose</span>={() =&gt; <span class="tok-fn">setOpen</span>(<span class="tok-kw">false</span>)}
+        /&gt;
+      )}
+    &lt;/&gt;
+  );
+}</pre>
+      </Snippet>
+    </CompareCol>
+  </Compare>
+
+  <p>
+    And the dialog itself, in both data shapes, each performing <strong>its own mutation</strong>:
+    the server action is imported by the dialog, submission runs in a transition inside it, and
+    there is no <code>onSubmit</code> or <code>onSuccess</code> in its props at all. Consumers find out
+    the way everything else does: the action revalidates, and server-rendered content refreshes by name
+    (<a href='#callbacks'>§15.4</a>):
+  </p>
+
+  <Compare>
+    <CompareCol kind='good' label='✓ Fetch on open: no data contract'>
+      <Snippet>
+        <pre
+          class='code v-good'
+          is:raw><span class="filename">InviteMemberDialog.tsx</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { useTransition } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+<span class="tok-kw">import</span> useSWR <span class="tok-kw">from</span> <span class="tok-str">"swr"</span>;
+<span class="tok-kw">import</span> { inviteMember } <span class="tok-kw">from</span> <span class="tok-str">"./actions"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberDialog</span>({
+  programId,
+  onClose,
+}) {
+  <span class="tok-com">/* Data: fetched here, on mount, which
+     the trigger has made mean "on open". */</span>
+  <span class="tok-kw">const</span> { data: people, isLoading } = <span class="tok-fn">useSWR</span>(
+    [<span class="tok-str">"invitable"</span>, programId],
+    () =&gt; <span class="tok-fn">fetchInvitablePeople</span>(programId),
+  );
+  <span class="tok-kw">const</span> [isPending, start] = <span class="tok-fn">useTransition</span>();
+
+  <span class="tok-com">/* Mutation: the dialog's own action.
+     No onSubmit wire, no onSuccess. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Dialog</span> <span class="tok-prop">onClose</span>={onClose}&gt;
+      &lt;<span class="tok-fn">InviteForm</span>
+        <span class="tok-prop">people</span>={people}
+        <span class="tok-prop">loading</span>={isLoading}
+        <span class="tok-prop">pending</span>={isPending}
+        <span class="tok-prop">onInvite</span>={(personId) =&gt;
+          <span class="tok-fn">start</span>(<span class="tok-kw">async</span> () =&gt; {
+            <span class="tok-kw">await</span> <span class="tok-fn">inviteMember</span>({
+              programId,
+              personId,
+            });
+            <span class="tok-fn">onClose</span>();
+          })
+        }
+      /&gt;
+    &lt;/<span class="tok-fn">Dialog</span>&gt;
+  );
+}</pre>
+      </Snippet>
+    </CompareCol>
+    <CompareCol kind='good' label='✓ Streamed promise: warmed data'>
+      <Snippet>
+        <pre
+          class='code v-good'
+          is:raw><span class="filename">InviteMemberDialog.tsx (promise variant)</span><span class="tok-dir">"use client"</span>;
+<span class="tok-kw">import</span> { Suspense } <span class="tok-kw">from</span> <span class="tok-str">"react"</span>;
+
+<span class="tok-kw">export function</span> <span class="tok-fn">InviteMemberDialog</span>({
+  peoplePromise,
+  onClose,
+}) {
+  <span class="tok-com">/* Data: a streamed, unawaited promise
+     (§14.5). The interior resolves it
+     with use() behind this boundary, on
+     open; full mechanics in §11.4. */</span>
+  <span class="tok-kw">return</span> (
+    &lt;<span class="tok-fn">Dialog</span> <span class="tok-prop">onClose</span>={onClose}&gt;
+      &lt;<span class="tok-fn">Suspense</span> <span class="tok-prop">fallback</span>={&lt;<span class="tok-fn">OptionsSkeleton</span> /&gt;}&gt;
+        &lt;<span class="tok-fn">InviteDialogContent</span>
+          <span class="tok-prop">peoplePromise</span>={peoplePromise}
+          <span class="tok-prop">onDone</span>={onClose}
+        /&gt;
+      &lt;/<span class="tok-fn">Suspense</span>&gt;
+    &lt;/<span class="tok-fn">Dialog</span>&gt;
+  );
+}</pre>
+        <CodeCaption>
+          The interior owns the same dialog-scoped mutation as the client-fetch variant: it imports
+          the action itself and closes the dialog when the transition settles. In both shapes the
+          dialog's public surface stays identity plus <code>onClose</code>: no data props in the
+          first, no callback wires in either.
         </CodeCaption>
       </Snippet>
     </CompareCol>
