@@ -13,6 +13,11 @@ The output inlines the guide CSS, the extracted blocks (window.__BLOCKS__), the
 deck data (window.__DECK__), and public/assets/deck-view.js, so the single file
 opens as a full-screen presentation with no server.
 """
+# NOTE (2026-07-23): currently NOT wired into build_dist.py (deck output is
+# temporarily disabled), and _deck-view.scss no longer ships in the guide's CSS
+# bundle (it is imported only by src/dev/deck.astro). When re-enabling this
+# script, it must compile/inline the deck styles itself rather than relying on
+# the _astro bundle to contain them.
 import argparse
 import glob
 import json

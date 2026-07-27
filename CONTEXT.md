@@ -17,7 +17,9 @@ It ships as several **distributables** under `build/output/` (gitignored):
 - `app-router-guide_html/` — the browsable multi-page site (Astro's `outDir`).
 - `app-router-guide.html` — one self-contained HTML file.
 - `app-router-guide_md/` + `app-router-guide.md` — markdown forms.
-- `app-router-guide-deck.html` — the self-contained **slide deck** presentation.
+- ~~`app-router-guide-deck.html`~~ — the DB-driven deck distributable is **temporarily disabled**
+  (removed from build_dist FORMATS); the deck being iterated on is the standalone `slide-deck/`
+  folder at the repo root.
 
 There are also two **dev-only tooling layers** that never ship: a page-notes annotation system and a
 slide-deck authoring system (see below).
@@ -27,7 +29,7 @@ slide-deck authoring system (see below).
 ## Repo map
 
 - `src/pages/sections/NN-slug.astro` — the 21 chapters (the content).
-- `src/pages/index.astro` — the cover / TOC. `src/pages/deck.astro` — the deck view.
+- `src/pages/index.astro` — the cover / TOC. `src/dev/deck.astro` — the deck view (dev-only route, injected by astro.config.mjs under `astro dev` only).
 - `src/components/` — `Diagram.astro`, `Snippet.astro`, `Compare*.astro`, `Chip`, `Callout`,
   `GoDeeper`, `CodeCaption`, etc.
 - `src/layouts/GuidePage.astro` — the guide page shell (imports styles; dev-gates the annotation

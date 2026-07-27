@@ -1,10 +1,12 @@
 ---
 /* The slide deck, viewed inside the guide's Astro app (dev) at /deck.
-   Standalone (not the guide layout): a presentation shell whose slides are
-   composed from the live document by deck-view.js. In dev it reads /api/deck
-   and pulls blocks from the served section pages; the shipped presentation is
-   the separate distributable (scripts/build_deck.py), not this page. */
+   DEV-ONLY: this file lives in src/dev/ (not src/pages/), and the /deck route
+   is injected by astro.config.mjs only under `astro dev`, so `astro build`
+   never emits deck.html. Standalone (not the guide layout): a presentation
+   shell whose slides are composed from the live document by deck-view.js,
+   reading /api/deck and pulling blocks from the served section pages. */
 import '../styles/style.scss';
+import '../styles/partials/_deck-view.scss';
 ---
 
 <!doctype html>

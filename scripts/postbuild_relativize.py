@@ -32,6 +32,16 @@ if os.path.exists(ledger):
     os.remove(ledger)
     print('page-notes.json stripped from build output')
 
+# Deck tooling never ships (the deck is iterated on in slide-deck/ for now):
+# deck-view.js is a dev asset copied from public/, and deck.html must not
+# exist at all (the /deck route is injected only under `astro dev`).
+deck_js = os.path.join(OUT, 'assets', 'deck-view.js')
+if os.path.exists(deck_js):
+    os.remove(deck_js)
+    print('deck-view.js stripped from build output')
+if os.path.exists(os.path.join(OUT, 'deck.html')):
+    raise SystemExit('ERROR: deck.html reached the build output; the /deck route must be dev-only')
+
 # The dev-only tooling (notes + deck designation) lives in src/dev/, loaded
 # only under `astro dev` via an import.meta.env.DEV-gated script tag in
 # GuidePage.astro, and the draft styles are a DEV-gated SCSS import — so
@@ -46,7 +56,7 @@ checks = {
 for page in glob.glob(os.path.join(OUT, '**', '*.html'), recursive=True):
     checks[page] = ('draft-badge', 'deck-link', 'note-pin', 'deck-panel', 'src/dev/')
 for css in glob.glob(os.path.join(OUT, '_astro', '*.css')):
-    checks[css] = ('note-pin', 'deck-panel', 'draft-badge', 'note-toast')
+    checks[css] = ('note-pin', 'deck-panel', 'draft-badge', 'note-toast', 'deck-stage', 'deck-hud')
 
 bad = []
 for path, needles in checks.items():

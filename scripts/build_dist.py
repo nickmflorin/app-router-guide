@@ -17,7 +17,6 @@ Output layout:
     ├── app-router-guide.html    html + file:   one self-contained document
     ├── app-router-guide_md/     md + folder:   multi-page markdown docs
     ├── app-router-guide.md      md + file:     one markdown document
-    ├── app-router-guide-deck.html  deck:       self-contained presentation
     (the Cowork DRAFT preview lives outside this folder, in .preview/,
      so zipping build/ ships only final outputs)
 

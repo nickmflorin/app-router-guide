@@ -20,6 +20,20 @@ const notesApiDev = {
   },
 };
 
+/* Dev-only /deck route. The deck viewer page lives in src/dev/ (outside
+   src/pages/), and this integration injects the route only under `astro dev`,
+   so `astro build` never emits deck.html or any deck content. */
+const deckRouteDev = {
+  name: 'deck-route-dev',
+  hooks: {
+    'astro:config:setup': ({ command, injectRoute }) => {
+      if (command === 'dev') {
+        injectRoute({ pattern: '/deck', entrypoint: './src/dev/deck.astro' });
+      }
+    },
+  },
+};
+
 /* The built site goes straight to build/output/app-router-guide_html/ (the distributable folder
    form), same URLs and file names as always (sections/NN-slug.html), so every downstream tool
    (svg_lint, build_artifact.py, file:// viewing) reads one location. compressHTML stays off so the
@@ -31,6 +45,7 @@ export default defineConfig({
   devToolbar: { enabled: false },
   build: { format: 'file' },
   compressHTML: false,
+  integrations: [deckRouteDev],
   vite: {
     plugins: [tailwindcss(), notesApiDev],
     // Junk drawers the dev server must not watch: _to_delete/ holds files the sandbox can't

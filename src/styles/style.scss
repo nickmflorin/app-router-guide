@@ -22,4 +22,5 @@
 @use 'partials/prev-next-footer';
 @use 'partials/index-cover';
 @use 'partials/code-captions';
-@use 'partials/deck-view';
+// deck-view styles are dev-only: imported directly by src/dev/deck.astro,
+// never part of the shipped bundle.
